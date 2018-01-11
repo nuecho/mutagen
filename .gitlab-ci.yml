@@ -1,0 +1,55 @@
+# We redirect the gradle user home using -g so that it caches the
+# wrapper and dependencies.
+# https://docs.gradle.org/current/userguide/gradle_command_line.html
+#
+# Unfortunately it also caches the build output so
+# cleaning removes reminants of any cached builds.
+# The assemble task actually builds the project.
+# If it fails here, the tests can't run.
+#
+
+stages:
+  - check
+  - build
+  - test
+  - publish
+
+before_script:
+  - "TAG=$CI_BUILD_TAG source ./ci/version.sh"
+
+check:shell:
+  tags:
+    - dind
+  stage: check
+  services:
+    - docker:dind
+  script:
+    - "docker pull koalaman/shellcheck:v0.4.6"
+    - "docker run -v \"$PWD:/mnt\" koalaman/shellcheck:v0.4.6 ci/*.sh"
+
+check:commitlint:
+  stage: check
+  image: dr.s.nuecho.com/commitlint
+  script:
+    - lint-commits
+
+build:
+  stage: build
+  script:
+    - ./gradlew -g /cache/.gradle clean assemble
+
+test:
+  stage: test
+  script:
+    - ./gradlew -g /cache/.gradle check --continue --stacktrace
+  artifacts:
+    when: on_failure
+    paths:
+      - build/reports/
+
+publish:
+  stage: publish
+  script:
+    - ./gradlew -g /cache/.gradle -Pversion=${VERSION} publish
+  only:
+    - tags

@@ -1,0 +1,12 @@
+.checkstyle
+.classpath
+.gradle
+.idea
+.project
+.settings
+*.iml
+/bin
+/build
+/config
+/obj
+/out
