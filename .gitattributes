@@ -52,6 +52,7 @@ Vagrantfile textfile
 *.js textfile
 *.json textfile
 *.jsp textfile
+*.kt textfile
 *.launch textfile
 *.lexicon textfile
 *.meta textfile

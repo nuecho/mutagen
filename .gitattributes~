@@ -1,0 +1,98 @@
+# Definition of a custom attribute that reverse binary attribute
+[attr]textfile text diff merge
+
+# Declare files as binary by default preventing potential problematic end-of-line conversion
+* binary
+
+# Declare files that will always have native line endings on checkout.
+.buildpath textfile
+chefignore textfile
+Berksfile textfile
+Berksfile.lock textfile
+Dockerfile textfile
+Gemfile textfile
+Gemfile.lock textfile
+LICENSE textfile
+Makefile textfile
+Rakefile textfile
+Readme textfile
+README textfile
+Thorfile textfile
+Vagrantfile textfile
+*.abnf textfile
+*.ac textfile
+*.accentuated textfile
+*.c textfile
+*.cc textfile
+*.cfxml textfile
+*.checkstyle textfile
+*.classpath textfile
+*.conf textfile
+*.cpp textfile
+*.css textfile
+*.csv textfile
+*.dat textfile
+*.erl textfile
+*.gitattributes textfile
+*.gitignore textfile
+*.gradle textfile
+*.grd textfile
+*.groovy textfile
+*.grxml textfile
+*.gsl textfile
+*.h textfile
+*.hpp textfile
+*.htm textfile
+*.html textfile
+*.in textfile
+*.inf textfile
+*.ini textfile
+*.java textfile
+*.jjt textfile
+*.js textfile
+*.json textfile
+*.jsp textfile
+*.launch textfile
+*.lexicon textfile
+*.meta textfile
+*.MF textfile
+*.md textfile
+*.mk textfile
+*.nuecho textfile
+*.pl textfile
+*.plist textfile
+*.prefs textfile
+*.product textfile
+*.project textfile
+*.properties textfile
+*.psf textfile
+*.py textfile
+*.rb textfile
+*.raml textfile
+*.rxml textfile
+*.rsxml textfile
+*.scm textfile
+*.sed textfile
+*.st textfile
+*.sxml textfile
+*.testset textfile
+*.tdxml textfile
+*.tmpl textfile
+*.translationRules textfile
+*.txt textfile
+*.version textfile
+*.vxml textfile
+*.wsdl textfile
+*.xlsm textfile
+*.xml textfile
+*.xsd textfile
+*.xsl textfile
+*.yml textfile
+*.yaml textfile
+
+# Declare files that will always have LF line endings on checkout.
+*.sh textfile eol=lf
+
+# Declare files that will always have CRLF line endings on checkout.
+*.bat textfile eol=crlf
+*.cmd textfile eol=crlf
