@@ -1,0 +1,12 @@
+default:
+  host: demosrv.nuecho.com
+  user: user
+  password: password
+
+override:
+  host: demosrv.nuecho.com
+  port: 2222
+  tls: true
+  user: user
+  password: password
+  application: myapp

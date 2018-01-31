@@ -2,7 +2,7 @@ package com.nuecho.genesys.cli
 
 import picocli.CommandLine
 
-abstract class BasicCommand {
+abstract class GenesysCliCommand {
     @CommandLine.Option(names = ["-h", "--help"],
         usageHelp = true,
         description = ["display a help message"])

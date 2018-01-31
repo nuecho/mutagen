@@ -12,21 +12,21 @@ import com.genesyslab.platform.commons.protocol.Endpoint
 import com.genesyslab.platform.commons.protocol.ProtocolException
 import com.genesyslab.platform.configuration.protocol.ConfServerProtocol
 import com.genesyslab.platform.configuration.protocol.types.CfgAppType
-import java.net.URI
+import com.nuecho.genesys.cli.preferences.Environment
+import java.util.UUID
 import javax.net.ssl.SSLContext
 
 object GenesysServices {
-    public const val DEFAULT_APPLICATION_NAME = "default"
-    public const val DEFAULT_SERVER_PORT = 2020
-    public const val DEFAULT_SERVER_TIMEOUT = 20
-    public const val DEFAULT_CLIENT_TIMEOUT = 10
+    const val DEFAULT_SERVER_PORT = 2020
+    const val DEFAULT_USE_TLS = false
+    const val DEFAULT_APPLICATION_NAME = "default"
+    private const val DEFAULT_SERVER_TIMEOUT = 20
+    private const val DEFAULT_CLIENT_TIMEOUT = 10
 
     /**
      * Create a Genesys configuration service.
      *
-     * @param username The user name
-     * @param password The password
-     * @param applicationName The application name
+     * @param environment The environment
      * @param applicationType The application type
      * @param endpoint The endpoint
      * @return IConfService
@@ -34,25 +34,17 @@ object GenesysServices {
      */
     @Throws(ConnectionException::class)
     fun createConfigurationService(
-        username: String,
-        password: String,
-        applicationName: String,
-        applicationType: CfgAppType,
-        endpoint: Endpoint): IConfService {
+        environment: Environment,
+        applicationType: CfgAppType): IConfService {
 
+        var endpoint = createEndpoint(environment)
         val protocol = ConfServerProtocol(endpoint)
         protocol.clientApplicationType = applicationType.ordinal()
-        protocol.userName = username
-        protocol.userPassword = password
-        protocol.clientName = applicationName
+        protocol.userName = environment.user
+        protocol.userPassword = environment.password
+        protocol.clientName = environment.application
 
-        try {
-            val configurationService = ConfServiceFactory.createConfService(protocol)
-            configurationService.protocol.open()
-            return configurationService
-        } catch (exception: Exception) {
-            throw ConnectionException("Can't create IConfService", exception)
-        }
+        return ConfServiceFactory.createConfService(protocol)
     }
 
     /**
@@ -78,34 +70,27 @@ object GenesysServices {
     /**
      * Create an endpoint.
      *
-     * @param primaryUri The primary URI
-     * @param id The id
-     * @param addpClientTimeout The client timeout
-     * @param addpServerTimeout The server timeout
-     * @param tlsEnabled Enable/disable TLS
+     * @param endpointName The endpoint name
+     * @param environment The environment
      * @return Endpoint
      * @throws ConnectionException When a connection problem occurs
      */
     @Throws(ConnectionException::class)
-    fun createEndPoint(
-        primaryUri: URI,
-        id: String,
-        addpClientTimeout: Int,
-        addpServerTimeout: Int,
-        tlsEnabled: Boolean): Endpoint {
-
+    private fun createEndpoint(environment: Environment): Endpoint {
         val propertyConfiguration = PropertyConfiguration()
         propertyConfiguration.isUseAddp = true
-        propertyConfiguration.addpClientTimeout = addpClientTimeout
-        propertyConfiguration.addpServerTimeout = addpServerTimeout
-        propertyConfiguration.isTLSEnabled = tlsEnabled
+        propertyConfiguration.addpClientTimeout = DEFAULT_CLIENT_TIMEOUT
+        propertyConfiguration.addpServerTimeout = DEFAULT_SERVER_TIMEOUT
+        propertyConfiguration.isTLSEnabled = environment.tls
+
+        val endpointName = UUID.randomUUID().toString()
 
         return Endpoint(
-            id,
-            primaryUri.host,
-            primaryUri.port,
+            endpointName,
+            environment.host,
+            environment.port,
             propertyConfiguration,
-            tlsEnabled,
+            environment.tls,
             createSslContext(),
             null)
     }

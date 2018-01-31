@@ -1,0 +1,3 @@
+default:
+  host: demosrv2017.s.nuecho.com
+  # missing some properties
