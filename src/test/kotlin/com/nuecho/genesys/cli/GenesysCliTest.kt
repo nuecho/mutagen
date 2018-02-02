@@ -2,12 +2,8 @@ package com.nuecho.genesys.cli
 
 import io.kotlintest.matchers.should
 import io.kotlintest.matchers.startWith
-import io.kotlintest.specs.StringSpec
-import picocli.CommandLine
-import java.io.ByteArrayOutputStream
-import java.io.PrintStream
 
-class GenesysCliTest : StringSpec() {
+class GenesysCliTest : CommandTest() {
     init {
         val usagePrefix = "Usage: mutagen"
 
@@ -29,10 +25,7 @@ class GenesysCliTest : StringSpec() {
         }
     }
 
-    private fun execute(vararg args: String): String {
-        val byteOutput = ByteArrayOutputStream()
-        val output = PrintStream(byteOutput)
-        CommandLine.run(GenesysCli(output), output, *args)
-        return String(byteOutput.toByteArray())
+    override fun createCommand(): Runnable {
+        return GenesysCli()
     }
 }

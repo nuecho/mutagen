@@ -7,9 +7,7 @@ import com.genesyslab.platform.commons.connection.configuration.PropertyConfigur
 import com.genesyslab.platform.commons.connection.tls.KeyManagerHelper
 import com.genesyslab.platform.commons.connection.tls.SSLContextHelper
 import com.genesyslab.platform.commons.connection.tls.TrustManagerHelper
-import com.genesyslab.platform.commons.protocol.ChannelState
 import com.genesyslab.platform.commons.protocol.Endpoint
-import com.genesyslab.platform.commons.protocol.ProtocolException
 import com.genesyslab.platform.configuration.protocol.ConfServerProtocol
 import com.genesyslab.platform.configuration.protocol.types.CfgAppType
 import com.nuecho.genesys.cli.preferences.Environment
@@ -32,7 +30,6 @@ object GenesysServices {
      * @return IConfService
      * @throws ConnectionException When a connection problem occurs
      */
-    @Throws(ConnectionException::class)
     fun createConfigurationService(
         environment: Environment,
         applicationType: CfgAppType): IConfService {
@@ -48,26 +45,6 @@ object GenesysServices {
     }
 
     /**
-     * Release a Genesys configuration service.
-     *
-     * @param service The service
-     * @throws InterruptedException in case the close operation was interrupted.
-     * @throws ProtocolException if there is any problem related to the connection close
-     */
-    @Throws(InterruptedException::class, ProtocolException::class)
-    fun releaseConfigurationService(service: IConfService?) {
-        if (service != null) {
-            val protocol = service.protocol
-
-            if (protocol.state !== ChannelState.Closed) {
-                protocol.close()
-            }
-
-            ConfServiceFactory.releaseConfService(service)
-        }
-    }
-
-    /**
      * Create an endpoint.
      *
      * @param endpointName The endpoint name
@@ -75,7 +52,6 @@ object GenesysServices {
      * @return Endpoint
      * @throws ConnectionException When a connection problem occurs
      */
-    @Throws(ConnectionException::class)
     private fun createEndpoint(environment: Environment): Endpoint {
         val propertyConfiguration = PropertyConfiguration()
         propertyConfiguration.isUseAddp = true
@@ -95,7 +71,6 @@ object GenesysServices {
             null)
     }
 
-    @Throws(ConnectionException::class)
     private fun createSslContext(): SSLContext {
         try {
             val keyManager = KeyManagerHelper.createEmptyKeyManager()

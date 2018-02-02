@@ -3,6 +3,7 @@ package com.nuecho.genesys.cli.preferences
 import com.nuecho.genesys.cli.GenesysServices.DEFAULT_APPLICATION_NAME
 import com.nuecho.genesys.cli.GenesysServices.DEFAULT_SERVER_PORT
 import com.nuecho.genesys.cli.GenesysServices.DEFAULT_USE_TLS
+import com.nuecho.genesys.cli.TestResources.loadEnvironments
 import io.kotlintest.matchers.shouldBe
 import io.kotlintest.matchers.shouldThrowAny
 import io.kotlintest.specs.StringSpec
@@ -10,20 +11,20 @@ import io.kotlintest.specs.StringSpec
 class EnvironmentTest : StringSpec() {
     companion object {
         val defaultTestEnvironment = Environment(
-                host = "demosrv.nuecho.com",
-                port = DEFAULT_SERVER_PORT,
-                tls = DEFAULT_USE_TLS,
-                user = "user",
-                password = "password",
-                application = DEFAULT_APPLICATION_NAME)
+            host = "demosrv.nuecho.com",
+            port = DEFAULT_SERVER_PORT,
+            tls = DEFAULT_USE_TLS,
+            user = "user",
+            password = "password",
+            application = DEFAULT_APPLICATION_NAME)
 
         val overrideTestEnvironment = Environment(
-                host = "demosrv.nuecho.com",
-                port = 2222,
-                tls = true,
-                user = "user",
-                password = "password",
-                application = "myapp")
+            host = "demosrv.nuecho.com",
+            port = 2222,
+            tls = true,
+            user = "user",
+            password = "password",
+            application = "myapp")
     }
 
     init {
@@ -44,9 +45,5 @@ class EnvironmentTest : StringSpec() {
                 loadEnvironments("invalid_connections.yml")
             }
         }
-    }
-
-    private fun loadEnvironments(path: String): Environments {
-        return Environments.load(ClassLoader.getSystemClassLoader().getResource(path).readText())
     }
 }
