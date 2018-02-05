@@ -12,6 +12,7 @@ stages:
   - check
   - build
   - test
+  - release
   - publish
 
 before_script:
@@ -24,8 +25,7 @@ check:shell:
   services:
     - docker:dind
   script:
-    - "docker pull koalaman/shellcheck:v0.4.6"
-    - "docker run -v \"$PWD:/mnt\" koalaman/shellcheck:v0.4.6 ci/*.sh"
+    - "docker run -v \"$PWD:/mnt\" koalaman/shellcheck:v0.4.6 **/*.sh"
 
 check:commitlint:
   stage: check
@@ -46,6 +46,17 @@ test:
     when: on_failure
     paths:
       - build/reports/
+
+release:binaries:
+  stage: release
+  script:
+    - ./gradlew -g /cache/.gradle -Pversion=${VERSION} release
+  artifacts:
+    paths:
+      - build/genesys-cli
+      - build/launch4j/genesys-cli.exe
+  only:
+    - tags
 
 publish:
   stage: publish
