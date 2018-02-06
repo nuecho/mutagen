@@ -53,8 +53,8 @@ release:binaries:
     - ./gradlew -g /cache/.gradle -Pversion=${VERSION} release
   artifacts:
     paths:
-      - build/genesys-cli
-      - build/launch4j/genesys-cli.exe
+      - build/mutagen
+      - build/launch4j/mutagen.exe
   only:
     - tags
 
