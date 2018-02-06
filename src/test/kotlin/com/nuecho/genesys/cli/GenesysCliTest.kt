@@ -9,7 +9,7 @@ import java.io.PrintStream
 
 class GenesysCliTest : StringSpec() {
     init {
-        val usagePrefix = "Usage: gen"
+        val usagePrefix = "Usage: mutagen"
 
         "executing GenesysCli with no argument should print usage" {
             val output = execute()
@@ -19,6 +19,13 @@ class GenesysCliTest : StringSpec() {
         "executing GenesysCli with -h argument should print usage" {
             val output = execute("-h")
             output should startWith(usagePrefix)
+        }
+
+        "executing GenesysCli with -v argument should print version" {
+            val expectedOutput = "mutagen version 0.0.0"
+
+            val output = execute("-v")
+            output should startWith(expectedOutput)
         }
     }
 

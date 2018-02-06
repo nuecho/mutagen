@@ -45,6 +45,12 @@ spotless {
     }
 }
 
+jar {
+    manifest {
+        attributes('Version': version, 'Application-Name': 'mutagen')
+    }
+}
+
 shadowJar {
     baseName = 'mutagen'
     classifier = null

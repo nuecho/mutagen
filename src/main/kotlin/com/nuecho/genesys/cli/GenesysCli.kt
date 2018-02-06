@@ -5,14 +5,14 @@ import com.genesyslab.platform.commons.connection.ConnectionException
 import com.genesyslab.platform.configuration.protocol.types.CfgAppType
 import com.nuecho.genesys.cli.GenesysServices.createConfigurationService
 import com.nuecho.genesys.cli.preferences.Preferences
-import com.nuecho.genesys.cli.preferences.Preferences.loadEnvironments
 import picocli.CommandLine
 import java.io.PrintStream
 import java.net.URISyntaxException
 
 @CommandLine.Command(
-    name = "gen",
-    description = ["Genesys Command Line Interface"])
+        name = "mutagen",
+        description = ["Your Genesys Toolbox"],
+        versionProvider = VersionProvider::class)
 class GenesysCli(private val out: PrintStream) : GenesysCliCommand(), Runnable {
     companion object {
         @JvmStatic
@@ -25,6 +25,11 @@ class GenesysCli(private val out: PrintStream) : GenesysCliCommand(), Runnable {
     override fun run() {
         CommandLine.usage(this, out)
     }
+
+    @CommandLine.Option(names = ["-v", "--version"],
+            versionHelp = true,
+            description = ["print version info"])
+    private var versionRequested = false
 
     @Throws(ConnectionException::class, URISyntaxException::class)
     internal fun connect(): IConfService {
