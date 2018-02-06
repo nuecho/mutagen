@@ -1,12 +1,12 @@
 plugins {
-  id 'com.diffplug.gradle.spotless' version '3.8.0'
-  id 'org.jetbrains.kotlin.jvm' version '1.2.21'
-  id 'com.github.johnrengelman.shadow' version '2.0.2'
-  id 'edu.sc.seis.launch4j' version '2.4.3'
+    id 'com.diffplug.gradle.spotless' version '3.8.0'
+    id 'org.jetbrains.kotlin.jvm' version '1.2.21'
+    id 'com.github.johnrengelman.shadow' version '2.0.2'
+    id 'edu.sc.seis.launch4j' version '2.4.3'
 }
 
 repositories {
-  maven { url 'http://knox.s.nuecho.com/artifactory/repo' }
+    maven { url 'http://knox.s.nuecho.com/artifactory/repo' }
 }
 
 apply plugin: 'jacoco'
@@ -28,58 +28,58 @@ targetCompatibility = '1.8'
 def baseShadowInstallDir = "$buildDir/install/${project.name}-shadow"
 
 test {
-  testLogging {
-    exceptionFormat = 'full'
-  }
+    testLogging {
+        exceptionFormat = 'full'
+    }
 }
 
 jacocoTestReport {
-  reports {
-    html.enabled true
-  }
+    reports {
+        html.enabled true
+    }
 }
 
 spotless {
-  kotlin {
-    ktlint('0.15.0')
-  }
+    kotlin {
+        ktlint('0.15.0')
+    }
 }
 
 shadowJar {
-  baseName = 'gen'
-  classifier = null
-  version = version
+    baseName = 'mutagen'
+    classifier = null
+    version = version
 }
 
 dependencies {
-  compile 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.2.+'
-  compile 'org.jetbrains.kotlin:kotlin-reflect:1.2.+'
+    compile 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.2.+'
+    compile 'org.jetbrains.kotlin:kotlin-reflect:1.2.+'
 
-  compile 'com.fasterxml.jackson.module:jackson-module-kotlin:2.9.+'
-  compile 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.9.+'
+    compile 'com.fasterxml.jackson.module:jackson-module-kotlin:2.9.+'
+    compile 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.9.+'
 
-  compile 'com.googlecode.java-diff-utils:diffutils:1.2.+'
-  compile 'com.typesafe:config:1.3.+'
-  compile 'info.picocli:picocli:2.2.+'
+    compile 'com.googlecode.java-diff-utils:diffutils:1.2.+'
+    compile 'com.typesafe:config:1.3.+'
+    compile 'info.picocli:picocli:2.2.+'
 
-  compile 'com.genesyslab.platform:comappblock:+'
-  compile 'com.genesyslab.platform:commons:+'
-  compile 'com.genesyslab.platform:configurationprotocol:+'
+    compile 'com.genesyslab.platform:comappblock:+'
+    compile 'com.genesyslab.platform:commons:+'
+    compile 'com.genesyslab.platform:configurationprotocol:+'
 
-  testCompile 'io.kotlintest:kotlintest:2.0.+'
+    testCompile 'io.kotlintest:kotlintest:2.0.+'
 }
 
 runShadow {
-  // Allow passing arguments using gradlew runShadow
-  // gradlew runShadow -Dexec.args="..."
-  args System.getProperty("exec.args", "").split()
+    // Allow passing arguments using gradlew runShadow
+    // gradlew runShadow -Dexec.args="..."
+    args System.getProperty("exec.args", "").split()
 }
 
 launch4j {
-  headerType = 'console'
-  mainClassName = project.mainClassName
-  jar = "lib/${project.tasks.shadowJar.archiveName}"
-  copyConfigurable = project.tasks.shadowJar.outputs.files
+    headerType = 'console'
+    mainClassName = project.mainClassName
+    jar = "lib/${project.tasks.shadowJar.archiveName}"
+    copyConfigurable = project.tasks.shadowJar.outputs.files
 }
 
 task shellExecutable(type: Copy, dependsOn: 'installShadowDist') {
@@ -108,11 +108,11 @@ task changeShellExecutablePermission(dependsOn: ':shellExecutableWithJarPayload'
     description 'Change shell executable permission.'
     doLast {
         project.exec {
-            commandLine('chmod',  '+x', "$buildDir/${project.name}")
+            commandLine('chmod', '+x', "$buildDir/${project.name}")
         }
     }
 }
 
 task release(dependsOn: [':installShadowDist', 'createAllExecutables', 'shellExecutable', 'shellExecutableWithJarPayload', 'changeShellExecutablePermission']) {
-  description 'Create release artifacts.'
+    description 'Create release artifacts.'
 }

@@ -1,6 +1,6 @@
 
-> Provide a powerful, enjoyable, yet lightweight, Genesys toolbox for the Service 
-> Delivery team to rely on as part of any troubleshooting, testing, support, management, 
+> Provide a powerful, enjoyable, yet lightweight, Genesys toolbox for the Service
+> Delivery team to rely on as part of any troubleshooting, testing, support, management,
 > development tasks.
 
 ## Getting Started
@@ -38,7 +38,7 @@ To perform all verifications (tests, ktlint)
 
 Creates `shadowJar` jar file as well as associated distribution artifacts including standalone
 Windows executable from [launch4j](http://launch4j.sourceforge.net/).
-Artifacts are then available from `build/launch4j/genesys-cli.exe` and `build/genesys-cli` for 
+Artifacts are then available from `build/launch4j/mutagen.exe` and `build/mutagen` for
 Windows and Uni* respectively.
 
 ## Publish
