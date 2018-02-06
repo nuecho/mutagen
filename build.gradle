@@ -2,15 +2,16 @@ plugins {
   id 'com.diffplug.gradle.spotless' version '3.8.0'
   id 'org.jetbrains.kotlin.jvm' version '1.2.21'
   id 'com.github.johnrengelman.shadow' version '2.0.2'
+  id 'edu.sc.seis.launch4j' version '2.4.3'
 }
 
 repositories {
-  mavenCentral()
   maven { url 'http://knox.s.nuecho.com/artifactory/repo' }
 }
 
 apply plugin: 'jacoco'
 apply plugin: 'com.diffplug.gradle.spotless'
+apply plugin: 'edu.sc.seis.launch4j'
 
 // Workaround for https://github.com/johnrengelman/shadow/issues/336
 // It allows the mainClassName property to be properly set.
@@ -23,6 +24,8 @@ mainClassName = 'com.nuecho.genesys.cli.GenesysCli'
 
 sourceCompatibility = '1.8'
 targetCompatibility = '1.8'
+
+def baseShadowInstallDir = "$buildDir/install/${project.name}-shadow"
 
 test {
   testLogging {
@@ -70,4 +73,46 @@ runShadow {
   // Allow passing arguments using gradlew runShadow
   // gradlew runShadow -Dexec.args="..."
   args System.getProperty("exec.args", "").split()
+}
+
+launch4j {
+  headerType = 'console'
+  mainClassName = project.mainClassName
+  jar = "lib/${project.tasks.shadowJar.archiveName}"
+  copyConfigurable = project.tasks.shadowJar.outputs.files
+}
+
+task shellExecutable(type: Copy, dependsOn: 'installShadowDist') {
+    description 'Copy executable script and replace classpath variable for self location.'
+
+    from(file("${baseShadowInstallDir}/bin/${project.name}"))
+    into(file("${baseShadowInstallDir}/lib/"))
+    filter {
+        line -> line.replaceAll(/^CLASSPATH=.*$/, 'CLASSPATH=\\$(which "\\$0" 2>/dev/null)')
+    }
+}
+
+task shellExecutableWithJarPayload(dependsOn: ':shellExecutable') {
+    description 'Turn executable script into a standalone one with embedded jar file.'
+    doLast {
+        def output = new File("$buildDir/${project.name}")
+        output.write('') // clear-off
+        output << file("${baseShadowInstallDir}/lib/${project.name}").text
+        output << '\nexit 1\n'
+        output << file("${baseShadowInstallDir}/lib/${project.tasks.shadowJar.archiveName}").bytes
+    }
+}
+
+// This obviously won't work on Windows.
+task changeShellExecutablePermission(dependsOn: ':shellExecutableWithJarPayload') {
+    description 'Change shell executable permission.'
+    doLast {
+        project.exec {
+            commandLine('chmod',  '+x', "$buildDir/${project.name}")
+        }
+    }
+}
+
+task release(dependsOn: [':installShadowDist', 'createAllExecutables', 'shellExecutable', 'shellExecutableWithJarPayload', 'changeShellExecutablePermission']) {
+  description 'Create release artifacts.'
 }
