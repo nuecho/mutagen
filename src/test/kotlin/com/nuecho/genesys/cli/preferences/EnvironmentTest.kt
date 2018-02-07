@@ -1,33 +1,42 @@
 package com.nuecho.genesys.cli.preferences
 
-import com.nuecho.genesys.cli.GenesysServices
+import com.nuecho.genesys.cli.GenesysServices.DEFAULT_APPLICATION_NAME
+import com.nuecho.genesys.cli.GenesysServices.DEFAULT_SERVER_PORT
+import com.nuecho.genesys.cli.GenesysServices.DEFAULT_USE_TLS
 import io.kotlintest.matchers.shouldBe
 import io.kotlintest.matchers.shouldThrowAny
 import io.kotlintest.specs.StringSpec
 
 class EnvironmentTest : StringSpec() {
+    companion object {
+        val defaultTestEnvironment = Environment(
+                host = "demosrv.nuecho.com",
+                port = DEFAULT_SERVER_PORT,
+                tls = DEFAULT_USE_TLS,
+                user = "user",
+                password = "password",
+                application = DEFAULT_APPLICATION_NAME)
+
+        val overrideTestEnvironment = Environment(
+                host = "demosrv.nuecho.com",
+                port = 2222,
+                tls = true,
+                user = "user",
+                password = "password",
+                application = "myapp")
+    }
+
     init {
-        "omitting optional environment properties should give default values" {
+        "omitting optional selectedEnvironment properties should give default values" {
             val environments = loadEnvironments("environments.yml")
-            val host = "demosrv.nuecho.com"
-            val user = "user"
-            val password = "password"
 
-            environments["default"] shouldBe Environment(
-                host,
-                GenesysServices.DEFAULT_SERVER_PORT,
-                GenesysServices.DEFAULT_USE_TLS,
-                user,
-                password,
-                GenesysServices.DEFAULT_APPLICATION_NAME)
+            environments["default"] shouldBe defaultTestEnvironment
+        }
 
-            environments["override"] shouldBe Environment(
-                host,
-                2222,
-                true,
-                user,
-                password,
-                "myapp")
+        "providing optional selectedEnvironment properties should override default values" {
+            val environments = loadEnvironments("environments.yml")
+
+            environments["override"] shouldBe overrideTestEnvironment
         }
 
         "invalid connection configuration file should throw an exception" {
