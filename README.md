@@ -42,3 +42,11 @@ Artifacts are then available from `build/launch4j/mutagen.exe` and `build/mutage
 Windows and Uni* respectively.
 
 ## Publish
+
+Publish is performed within the pipeline on tagging where binary releases (and associated sha1 file)
+are pushed over a public readable S3 bucket (`s://nuecho.com-mutagen-releases/`).
+
+For instance:
+
+ 	https://s3.amazonaws.com/nuecho.com-mutagen-releases/0.0.0/windows/mutagen.exe
+ 	https://s3.amazonaws.com/nuecho.com-mutagen-releases/0.0.0/unix/mutagen

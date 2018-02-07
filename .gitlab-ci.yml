@@ -48,19 +48,35 @@ test:
       - build/reports/
 
 release:binaries:
+  variables:
+    RELEASE_PATH: "build/releases/"
   stage: release
   script:
     - ./gradlew -g /cache/.gradle -Pversion=${VERSION} release
+    - mkdir -p ${RELEASE_PATH}/windows ${RELEASE_PATH}/unix
+    - cp build/mutagen ${RELEASE_PATH}/unix/
+    - cp build/launch4j/mutagen.exe ${RELEASE_PATH}/windows/
+    - cd ${RELEASE_PATH}/unix/ && sha1sum mutagen > mutagen.sha1 && cd -
+    - cd ${RELEASE_PATH}/windows/ && sha1sum mutagen.exe > mutagen.exe.sha1 && cd -
   artifacts:
     paths:
-      - build/mutagen
-      - build/launch4j/mutagen.exe
+      - build/releases
   only:
     - tags
 
-publish:
+publish:s3:
+  variables:
+    BUCKET_NAME: "nuecho.com-mutagen-releases"
+    BUCKET_URL: "s3://${BUCKET_NAME}"
+  image: "xueshanf/awscli"
   stage: publish
+  dependencies:
+    - release:binaries
   script:
-    - ./gradlew -g /cache/.gradle -Pversion=${VERSION} publish
+    - export AWS_ACCESS_KEY_ID=${CI_AWS_ACCESS_KEY_ID}
+    - export AWS_SECRET_ACCESS_KEY=${CI_AWS_SECRET_ACCESS_KEY}
+    - export AWS_REGION=us-east-1
+    - echo "${BUCKET_URL}"
+    - aws s3 sync build/releases "${BUCKET_URL}/${VERSION}" --acl public-read
   only:
     - tags

@@ -98,7 +98,7 @@ task shellExecutable(type: Copy, dependsOn: 'installShadowDist') {
     }
 }
 
-task shellExecutableWithJarPayload(dependsOn: ':shellExecutable') {
+task shellExecutableWithJarPayload(dependsOn: 'shellExecutable') {
     description 'Turn executable script into a standalone one with embedded jar file.'
     doLast {
         def output = new File("$buildDir/${project.name}")
@@ -110,7 +110,7 @@ task shellExecutableWithJarPayload(dependsOn: ':shellExecutable') {
 }
 
 // This obviously won't work on Windows.
-task changeShellExecutablePermission(dependsOn: ':shellExecutableWithJarPayload') {
+task changeShellExecutablePermission(dependsOn: 'shellExecutableWithJarPayload') {
     description 'Change shell executable permission.'
     doLast {
         project.exec {
@@ -119,6 +119,6 @@ task changeShellExecutablePermission(dependsOn: ':shellExecutableWithJarPayload'
     }
 }
 
-task release(dependsOn: [':installShadowDist', 'createAllExecutables', 'shellExecutable', 'shellExecutableWithJarPayload', 'changeShellExecutablePermission']) {
+task release(dependsOn: ['createAllExecutables', 'changeShellExecutablePermission']) {
     description 'Create release artifacts.'
 }
