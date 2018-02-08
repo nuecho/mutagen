@@ -7,7 +7,8 @@ import picocli.CommandLine
 @CommandLine.Command(
     name = "config",
     description = ["Genesys Config Server tool"],
-    subcommands = [Export::class])
+    subcommands = [Export::class]
+)
 class Config : GenesysCliCommand(), Runnable {
     override fun run() {
         CommandLine.usage(this, System.out)

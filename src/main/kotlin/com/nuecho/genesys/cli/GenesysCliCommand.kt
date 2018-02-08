@@ -8,14 +8,17 @@ import picocli.CommandLine
 
 abstract class GenesysCliCommand {
     @Suppress("unused")
-    @CommandLine.Option(names = ["-h", "--help"],
+    @CommandLine.Option(
+        names = ["-h", "--help"],
         usageHelp = true,
-        description = ["display a help message"])
+        description = ["display a help message"]
+    )
     private var usageRequested = false
 
     @CommandLine.Option(
         names = ["-e", "--env"],
-        description = ["environment name"])
+        description = ["environment name"]
+    )
     private var environmentName = Preferences.DEFAULT_ENVIRONMENT
 
     internal fun connect(): IConfService {
