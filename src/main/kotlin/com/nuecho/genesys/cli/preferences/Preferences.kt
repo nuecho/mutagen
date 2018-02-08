@@ -4,18 +4,20 @@ import java.io.File
 import java.io.FileNotFoundException
 
 object Preferences {
-    private const val PREFERENCES_DIRECTORY = ".gen-cli"
+    const val DEFAULT_ENVIRONMENT = "default"
+
+    private const val PREFERENCES_DIRECTORY_NAME = ".mutagen"
     private const val ENVIRONMENTS_FILENAME = "environments.yml"
 
-    fun loadEnvironments(): Environments {
-        val userDirectory = File(System.getProperty("user.home"))
-        val preferencesDirectory = File(userDirectory, PREFERENCES_DIRECTORY)
-        val environmentsFile = File(preferencesDirectory, ENVIRONMENTS_FILENAME)
+    private val defaultPreferencesDirectory = File(System.getProperty("user.home"), PREFERENCES_DIRECTORY_NAME)
+    private val defaultEnvironmentsFile = File(defaultPreferencesDirectory, ENVIRONMENTS_FILENAME)
 
-        if (!environmentsFile.exists() || !environmentsFile.isFile) {
-            throw FileNotFoundException("Cannot load environments file ($environmentsFile)")
-        }
+    fun loadEnvironment(environment: String = DEFAULT_ENVIRONMENT, environmentsFile: File = defaultEnvironmentsFile):
+            Environment = loadEnvironments(environmentsFile)[environment]
+            ?: throw IllegalArgumentException("Environment ($environment) does not exists in your environments file")
 
-        return Environments.load(environmentsFile)
-    }
+    private fun loadEnvironments(environmentsFile: File): Environments =
+            if (!environmentsFile.exists() || !environmentsFile.isFile)
+                throw FileNotFoundException("Cannot load environments file ($environmentsFile)")
+            else Environments.load(environmentsFile)
 }
