@@ -10,7 +10,8 @@ import kotlin.reflect.full.createInstance
 
 @CommandLine.Command(
     name = "export",
-    description = ["Genesys Config Server export tool"])
+    description = ["Genesys Config Server export tool"]
+)
 class Export : GenesysCliCommand(), Runnable {
     override fun run() {
         val service = RemoteConfigurationService(connect())

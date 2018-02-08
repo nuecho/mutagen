@@ -19,7 +19,8 @@ class GenesysServicesTest : StringSpec() {
                 host = host,
                 port = port,
                 user = user,
-                password = password)
+                password = password
+            )
 
             val applicationType = CfgAppType.CFGAdvisors
             val configurationService = createConfigurationService(environment, applicationType)

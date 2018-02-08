@@ -22,7 +22,7 @@ class VersionProvider : IVersionProvider {
         }
 
         val name = manifest?.mainAttributes?.getValue("Application-Name")
-            ?: DEFAULT_APPLICATION_NAME
+                ?: DEFAULT_APPLICATION_NAME
         val version = manifest?.mainAttributes?.getValue("Version") ?: DEFAULT_VERSION
 
         return arrayOf("$name version $version")

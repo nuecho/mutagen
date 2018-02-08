@@ -16,7 +16,8 @@ class EnvironmentTest : StringSpec() {
             tls = DEFAULT_USE_TLS,
             user = "user",
             password = "password",
-            application = DEFAULT_APPLICATION_NAME)
+            application = DEFAULT_APPLICATION_NAME
+        )
 
         val overrideTestEnvironment = Environment(
             host = "demosrv.nuecho.com",
@@ -24,7 +25,8 @@ class EnvironmentTest : StringSpec() {
             tls = true,
             user = "user",
             password = "password",
-            application = "myapp")
+            application = "myapp"
+        )
     }
 
     init {

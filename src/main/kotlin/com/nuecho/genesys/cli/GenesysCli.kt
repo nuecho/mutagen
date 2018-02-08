@@ -7,7 +7,8 @@ import picocli.CommandLine
     name = "mutagen",
     description = ["Your Genesys Toolbox"],
     versionProvider = VersionProvider::class,
-    subcommands = [Config::class])
+    subcommands = [Config::class]
+)
 class GenesysCli : GenesysCliCommand(), Runnable {
     companion object {
         @JvmStatic
@@ -21,8 +22,10 @@ class GenesysCli : GenesysCliCommand(), Runnable {
     }
 
     @Suppress("unused")
-    @CommandLine.Option(names = ["-v", "--version"],
+    @CommandLine.Option(
+        names = ["-v", "--version"],
         versionHelp = true,
-        description = ["print version info"])
+        description = ["print version info"]
+    )
     private var versionRequested = false
 }

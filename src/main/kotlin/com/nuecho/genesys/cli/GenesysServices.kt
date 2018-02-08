@@ -32,7 +32,8 @@ object GenesysServices {
      */
     fun createConfigurationService(
         environment: Environment,
-        applicationType: CfgAppType): IConfService {
+        applicationType: CfgAppType
+    ): IConfService {
 
         var endpoint = createEndpoint(environment)
         val protocol = ConfServerProtocol(endpoint)
@@ -68,7 +69,8 @@ object GenesysServices {
             propertyConfiguration,
             environment.tls,
             createSslContext(),
-            null)
+            null
+        )
     }
 
     private fun createSslContext(): SSLContext {
