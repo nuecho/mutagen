@@ -104,7 +104,7 @@ task shellExecutableWithJarPayload(dependsOn: 'shellExecutable') {
         def output = new File("$buildDir/${project.name}")
         output.write('') // clear-off
         output << file("${baseShadowInstallDir}/lib/${project.name}").text
-        output << '\nexit 1\n'
+        output << '\nexit $?\n'
         output << file("${baseShadowInstallDir}/lib/${project.tasks.shadowJar.archiveName}").bytes
     }
 }

@@ -74,12 +74,8 @@ object GenesysServices {
     }
 
     private fun createSslContext(): SSLContext {
-        try {
-            val keyManager = KeyManagerHelper.createEmptyKeyManager()
-            val trustManager = TrustManagerHelper.createDefaultTrustManager()
-            return SSLContextHelper.createSSLContext(keyManager, trustManager)
-        } catch (exception: Exception) {
-            throw ConnectionException("Security configuration error.", exception)
-        }
+        val keyManager = KeyManagerHelper.createEmptyKeyManager()
+        val trustManager = TrustManagerHelper.createDefaultTrustManager()
+        return SSLContextHelper.createSSLContext(keyManager, trustManager)
     }
 }
