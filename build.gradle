@@ -3,6 +3,7 @@ plugins {
     id 'org.jetbrains.kotlin.jvm' version '1.2.21'
     id 'com.github.johnrengelman.shadow' version '2.0.2'
     id 'edu.sc.seis.launch4j' version '2.4.3'
+    id 'io.gitlab.arturbosch.detekt' version '1.0.0.RC6-3'
 }
 
 repositories {
@@ -62,15 +63,14 @@ dependencies {
     compile 'org.jetbrains.kotlin:kotlin-reflect:1.2.+'
 
     compile 'com.fasterxml.jackson.module:jackson-module-kotlin:2.9.+'
+    compile 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.9.+'
     compile 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.9.+'
-
-    compile 'com.googlecode.java-diff-utils:diffutils:1.2.+'
-    compile 'com.typesafe:config:1.3.+'
-    compile 'info.picocli:picocli:2.2.+'
 
     compile 'com.genesyslab.platform:comappblock:+'
     compile 'com.genesyslab.platform:commons:+'
     compile 'com.genesyslab.platform:configurationprotocol:+'
+
+    compile 'info.picocli:picocli:2.2.+'
 
     testCompile 'io.kotlintest:kotlintest:2.0.+'
 }
@@ -122,3 +122,5 @@ task changeShellExecutablePermission(dependsOn: 'shellExecutableWithJarPayload')
 task release(dependsOn: ['createAllExecutables', 'changeShellExecutablePermission']) {
     description 'Create release artifacts.'
 }
+
+check.dependsOn detektCheck

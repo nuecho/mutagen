@@ -18,11 +18,13 @@ To get a list of all available tasks:
 ./gradlew runShadow -Dexec.args="<args>"
 ```
 
-To perform all verifications (tests, ktlint)
+To perform all verifications (tests, ktlint, detekt)
 
 ```bash
 ./gradlew check
 ```
+
+IDEA can be configured to work nice with ktlint using this procedure: https://github.com/shyiko/ktlint#-with-intellij-idea
 
 ## Test
 

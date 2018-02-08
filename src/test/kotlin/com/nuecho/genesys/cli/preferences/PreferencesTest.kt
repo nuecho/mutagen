@@ -7,7 +7,8 @@ import java.io.File
 class PreferencesTest : StringSpec() {
     init {
         "loadEnvironment with no environment specified should return the environment named default" {
-            val environmentFile = File(ClassLoader.getSystemClassLoader().getResource("environments.yml").toURI())
+            val environmentUri = ClassLoader.getSystemClassLoader().getResource("preferences/environments.yml").toURI()
+            val environmentFile = File(environmentUri)
             val environment = Preferences.loadEnvironment(environmentsFile = environmentFile)
 
             environment shouldBe EnvironmentTest.defaultTestEnvironment

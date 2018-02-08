@@ -1,0 +1,18 @@
+{
+  "DN" : [ {
+    "number" : {
+      "value" : "1111"
+    },
+    "userProperties" : null
+  }, {
+    "number" : {
+      "value" : "3333"
+    },
+    "userProperties" : null
+  }, {
+    "number" : {
+      "value" : "5555"
+    },
+    "userProperties" : null
+  } ]
+}

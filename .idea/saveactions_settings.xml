@@ -5,9 +5,15 @@
       <set>
         <option value="activate" />
         <option value="activateOnShortcut" />
+        <option value="organizeImports" />
         <option value="reformat" />
       </set>
     </option>
     <option name="configurationPath" value="" />
+    <option name="exclusions">
+      <set>
+        <option value="test.*\.json" />
+      </set>
+    </option>
   </component>
 </project>

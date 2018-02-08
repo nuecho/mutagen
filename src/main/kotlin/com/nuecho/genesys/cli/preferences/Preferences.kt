@@ -13,11 +13,11 @@ object Preferences {
     private val defaultEnvironmentsFile = File(defaultPreferencesDirectory, ENVIRONMENTS_FILENAME)
 
     fun loadEnvironment(environment: String = DEFAULT_ENVIRONMENT, environmentsFile: File = defaultEnvironmentsFile):
-            Environment = loadEnvironments(environmentsFile)[environment]
-            ?: throw IllegalArgumentException("Environment ($environment) does not exists in your environments file")
+        Environment = loadEnvironments(environmentsFile)[environment]
+        ?: throw IllegalArgumentException("Environment ($environment) does not exists in your environments file")
 
     private fun loadEnvironments(environmentsFile: File): Environments =
-            if (!environmentsFile.exists() || !environmentsFile.isFile)
-                throw FileNotFoundException("Cannot load environments file ($environmentsFile)")
-            else Environments.load(environmentsFile)
+        if (!environmentsFile.exists() || !environmentsFile.isFile)
+            throw FileNotFoundException("Cannot load environments file ($environmentsFile)")
+        else Environments.load(environmentsFile)
 }
