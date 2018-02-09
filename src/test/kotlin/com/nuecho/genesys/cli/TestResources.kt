@@ -1,5 +1,7 @@
 package com.nuecho.genesys.cli
 
+import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.nuecho.genesys.cli.preferences.Environments
 
 object TestResources {
@@ -12,7 +14,8 @@ object TestResources {
         return Environments.load(environments)
     }
 
-    fun loadConfiguration(path: String): String {
-        return ClassLoader.getSystemClassLoader().getResource("configuration/$path").readText()
+    fun loadJsonConfiguration(path: String): JsonNode {
+        val configuration = ClassLoader.getSystemClassLoader().getResource("configuration/$path")
+        return jacksonObjectMapper().readTree(configuration)
     }
 }

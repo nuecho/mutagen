@@ -11,20 +11,22 @@ To get a list of all available tasks:
 ./gradlew tasks --all
 ```
 
-## Development
+## Run
+
+To run the application using Gradle
 
 ```bash
 ./gradlew assemble
 ./gradlew runShadow -Dexec.args="<args>"
 ```
 
+## Check
+
 To perform all verifications (tests, ktlint, detekt)
 
 ```bash
 ./gradlew check
 ```
-
-IDEA can be configured to work nice with ktlint using this procedure: https://github.com/shyiko/ktlint#-with-intellij-idea
 
 ## Test
 
@@ -42,6 +44,11 @@ Creates `shadowJar` jar file as well as associated distribution artifacts includ
 Windows executable from [launch4j](http://launch4j.sourceforge.net/).
 Artifacts are then available from `build/launch4j/mutagen.exe` and `build/mutagen` for
 Windows and Uni* respectively.
+
+## Commit
+
+We use [commitizen](https://github.com/commitizen/cz-cli) to format our commit messages.
+This is enforced at the CI level.
 
 ## Publish
 

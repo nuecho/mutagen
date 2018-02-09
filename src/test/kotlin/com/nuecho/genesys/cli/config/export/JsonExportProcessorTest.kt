@@ -1,10 +1,11 @@
 package com.nuecho.genesys.cli.config.export
 
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.genesyslab.platform.applicationblocks.com.ICfgObject
 import com.genesyslab.platform.applicationblocks.com.objects.CfgDN
 import com.genesyslab.platform.configuration.protocol.types.CfgAppType.CFGConfigServer
 import com.nuecho.genesys.cli.GenesysServices.createConfigurationService
-import com.nuecho.genesys.cli.TestResources.loadConfiguration
+import com.nuecho.genesys.cli.TestResources.loadJsonConfiguration
 import com.nuecho.genesys.cli.config.ConfigurationObjectType
 import com.nuecho.genesys.cli.config.ConfigurationObjectType.DN
 import com.nuecho.genesys.cli.preferences.Environment
@@ -30,7 +31,9 @@ class JsonExportProcessorTest : StringSpec() {
             dn3.number = "1111"
 
             processObjects(processor, DN, dn1, dn2, dn3)
-            String(output.toByteArray()) shouldBe loadConfiguration("sorted_dn.json")
+
+            val result = jacksonObjectMapper().readTree(String(output.toByteArray()))
+            result shouldBe loadJsonConfiguration("sorted_dn.json")
         }
     }
 
