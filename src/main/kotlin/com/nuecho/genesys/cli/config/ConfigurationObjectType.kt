@@ -59,7 +59,7 @@ enum class ConfigurationObjectType(
     APP_PROTOTYPE(CfgAppPrototypeQuery::class),
     CALLING_LIST(CfgCallingListQuery::class),
     CAMPAIGN(CfgCampaignQuery::class),
-    CAMPAIGN_GROUP(CfgCampaignGroupQuery::class, group = true),
+    CAMPAIGN_GROUP(CfgCampaignGroupQuery::class),
     DN(CfgDNQuery::class, "number"),
     DN_GROUP(CfgDNGroupQuery::class, group = true),
     ENUMERATOR(CfgEnumeratorQuery::class),
