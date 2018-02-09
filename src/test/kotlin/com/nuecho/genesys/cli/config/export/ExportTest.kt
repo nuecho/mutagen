@@ -1,7 +1,8 @@
 package com.nuecho.genesys.cli.config.export
 
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.nuecho.genesys.cli.CommandTest
-import com.nuecho.genesys.cli.TestResources.loadConfiguration
+import com.nuecho.genesys.cli.TestResources.loadJsonConfiguration
 import com.nuecho.genesys.cli.config.TestConfigurationService
 import io.kotlintest.matchers.should
 import io.kotlintest.matchers.shouldBe
@@ -23,7 +24,8 @@ class ExportTest : CommandTest() {
             val service = TestConfigurationService(emptyMap())
             Export().exportConfiguration(processor, service)
 
-            String(output.toByteArray()) shouldBe loadConfiguration("empty_configuration.json")
+            val result = jacksonObjectMapper().readTree(String(output.toByteArray()))
+            result shouldBe loadJsonConfiguration("empty_configuration.json")
         }
     }
 
