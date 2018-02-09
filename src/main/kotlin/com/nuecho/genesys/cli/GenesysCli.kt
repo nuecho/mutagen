@@ -9,11 +9,33 @@ import picocli.CommandLine
     versionProvider = VersionProvider::class,
     subcommands = [Config::class]
 )
-class GenesysCli : GenesysCliCommand(), Runnable {
+open class GenesysCli : GenesysCliCommand(), Runnable {
     companion object {
         @JvmStatic
         fun main(args: Array<String>) {
-            CommandLine.run(GenesysCli(), System.out, *args)
+            System.exit(execute(GenesysCli(), *args))
+        }
+
+        fun execute(genesysCli: GenesysCli, vararg args: String): Int {
+            try {
+                CommandLine.run(genesysCli, System.out, *args)
+            } catch (exception: CommandLine.InitializationException) {
+                exception.printStackTrace()
+                return 1
+            } catch (exception: CommandLine.ExecutionException) {
+                val cause = exception.cause!!
+                val command: GenesysCliCommand = exception.commandLine.getCommand()
+
+                if (command.printStackTrace) {
+                    cause.printStackTrace()
+                } else {
+                    System.err.println(cause.message)
+                }
+
+                return 1
+            }
+
+            return 0
         }
     }
 
@@ -25,7 +47,7 @@ class GenesysCli : GenesysCliCommand(), Runnable {
     @CommandLine.Option(
         names = ["-v", "--version"],
         versionHelp = true,
-        description = ["print version info"]
+        description = ["Shows version info."]
     )
     private var versionRequested = false
 }

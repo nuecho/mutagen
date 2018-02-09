@@ -8,17 +8,23 @@ import java.io.PrintStream
 abstract class CommandTest : StringSpec() {
     abstract fun createCommand(): Runnable
 
-    protected fun execute(vararg args: String): String {
+    protected fun <T> captureOutput(command: () -> T): Pair<T, String> {
         val byteOutput = ByteArrayOutputStream()
+        val printStream = PrintStream(byteOutput)
 
-        System.setOut(PrintStream(byteOutput))
-        System.setErr(PrintStream(byteOutput))
+        System.setOut(printStream)
+        System.setErr(printStream)
 
-        CommandLine.run(createCommand(), System.out, *args)
+        val returnValue = command()
 
         System.setOut(System.out)
         System.setErr(System.err)
 
-        return String(byteOutput.toByteArray())
+        return Pair(returnValue, String(byteOutput.toByteArray()))
+    }
+
+    protected fun execute(vararg args: String): String {
+        val (_, output) = captureOutput { CommandLine.run(createCommand(), System.out, *args) }
+        return output
     }
 }
