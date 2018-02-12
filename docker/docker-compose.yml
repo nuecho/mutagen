@@ -1,0 +1,31 @@
+version: '3'
+services:
+  mutagen:
+    build:
+      context: ../
+    depends_on:
+      - configserver 
+    links:
+      - configserver
+    entrypoint: ["/bin/sh"] 
+    command: -c "sleep 10 && /mutagen config export"
+
+  postgres:
+    image: postgres:9.2 
+    environment:
+      - POSTGRES_PASSWORD=mysecretpassword
+    volumes:
+      - $PWD/sql_scripts:/docker-entrypoint-initdb.d
+
+  configserver:
+    image: dr.s.nuecho.com/configserver:latest
+    restart: on-failure
+    environment:
+      - PGPASSWORD=mysecretpassword
+    ports:
+      - 2020:2020
+      - 2021:2021
+    depends_on:
+      - postgres
+    links:
+      - postgres 

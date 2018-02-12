@@ -5,7 +5,7 @@ import picocli.CommandLine
 
 @CommandLine.Command(
     name = "mutagen",
-    description = ["Your Genesys Toolbox"],
+    description = ["Your Genesys Toolbox. (https://sites.google.com/m.nuecho.com/hub/mutagen)"],
     versionProvider = VersionProvider::class,
     subcommands = [Config::class]
 )

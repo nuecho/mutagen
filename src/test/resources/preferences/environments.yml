@@ -1,6 +1,6 @@
 default:
-  host: demosrv.nuecho.com
-  user: user
+  host: localhost
+  user: default
   password: password
 
 override:
