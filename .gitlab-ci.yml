@@ -38,6 +38,17 @@ build:
   script:
     - ./gradlew -g /cache/.gradle clean assemble
 
+build:changelog:
+  stage: build
+  image: dr.s.nuecho.com/conventional-changelog
+  script:
+    - "conventional-changelog -n /preset/index.js -r 2 > generated_changelog.md"
+    - "cat generated_changelog.md"
+  artifacts:
+    paths:
+      - generated_changelog.md
+    expire_in: 1 week
+
 test:
   stage: test
   script:
@@ -78,5 +89,18 @@ publish:s3:
     - export AWS_REGION=us-east-1
     - echo "${BUCKET_URL}"
     - aws s3 sync build/releases "${BUCKET_URL}/${VERSION}" --acl public-read
+  only:
+    - tags
+
+publish:changelog:
+  stage: publish
+  dependencies:
+    - build:changelog
+  variables:
+    URL: "http://gl.s.nuecho.com/api/v3/projects/${CI_PROJECT_ID}/repository/tags/${CI_COMMIT_TAG}/release?private_token=${CI_TOKEN}"
+  image: governmentpaas/curl-ssl
+  script:
+    - "echo ${URL}"
+    - "curl -X POST --silent --data-urlencode description@generated_changelog.md ${URL}"      
   only:
     - tags
