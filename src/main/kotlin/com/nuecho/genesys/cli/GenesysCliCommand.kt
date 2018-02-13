@@ -1,11 +1,11 @@
 package com.nuecho.genesys.cli
 
-import com.genesyslab.platform.applicationblocks.com.IConfService
-import com.genesyslab.platform.configuration.protocol.types.CfgAppType
-import com.nuecho.genesys.cli.preferences.Preferences
+import mu.KotlinLogging
 import picocli.CommandLine
 
-abstract class GenesysCliCommand {
+private val logger = KotlinLogging.logger {}
+
+abstract class GenesysCliCommand : Runnable {
     @Suppress("unused")
     @CommandLine.Option(
         names = ["-?", "-h", "--help"],
@@ -14,22 +14,28 @@ abstract class GenesysCliCommand {
     )
     private var usageRequested = false
 
-    @CommandLine.Option(
-        names = ["-s", "--stacktrace"],
-        description = ["Print out the stacktrace for all exceptions."]
-    )
-    var printStackTrace = false
+    abstract fun execute()
 
-    @CommandLine.Option(
-        names = ["-e", "--env"],
-        description = ["Environment name used for the execution."]
-    )
-    private var environmentName = Preferences.DEFAULT_ENVIRONMENT
+    abstract fun getGenesysCli(): GenesysCli
 
-    internal fun connect(): IConfService {
-        val environment = Preferences.loadEnvironment(environmentName)
-        val configurationService = GenesysServices.createConfigurationService(environment, CfgAppType.CFGSCE)
-        configurationService.protocol.open()
-        return configurationService
+    override fun run() {
+        val genesysCli = getGenesysCli()
+
+        if (genesysCli.debug) {
+            Logging.setToDebug()
+        } else if (genesysCli.info) {
+            Logging.setToInfo()
+        }
+
+        execute()
+    }
+
+    // Logging
+    internal fun info(message: () -> Any?) {
+        logger.info(message)
+    }
+
+    internal fun debug(message: () -> Any?) {
+        logger.debug(message)
     }
 }

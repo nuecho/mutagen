@@ -1,17 +1,22 @@
 package com.nuecho.genesys.cli
 
+import io.kotlintest.matchers.contain
+import io.kotlintest.matchers.containsAll
 import io.kotlintest.matchers.should
 import io.kotlintest.matchers.shouldBe
+import io.kotlintest.matchers.shouldNot
 import io.kotlintest.matchers.startWith
-import io.kotlintest.mock.mock
-import org.mockito.BDDMockito.given
+import io.mockk.every
+import io.mockk.spyk
+import mu.KotlinLogging
 
-class GenesysCliTest : CommandTest() {
+class GenesysCliTest : GenesysCliCommandTest() {
+    private val DEBUG_LOG_ENTRY = "This is a debug log entry."
+    private val INFO_LOG_ENTRY = "This is an info log entry."
+
     private var command = GenesysCli()
 
     init {
-        val usagePrefix = "Usage: mutagen"
-
         "executing GenesysCli with no argument should print usage" {
             val output = execute()
             output should startWith(usagePrefix)
@@ -40,19 +45,49 @@ class GenesysCliTest : CommandTest() {
             val output = testException(message, "--stacktrace")
             output should startWith("java.lang.RuntimeException: $message")
         }
+
+        "executing GenesysCli with --info should print info traces" {
+            val output = testLogging("--info")
+            output should contain(INFO_LOG_ENTRY)
+            output shouldNot contain(DEBUG_LOG_ENTRY)
+        }
+
+        "executing GenesysCli with --debug should print info and debug traces" {
+            val output = testLogging("--debug")
+            output should containsAll(DEBUG_LOG_ENTRY, INFO_LOG_ENTRY)
+        }
+
+        "executing GenesysCli with --debug and --info should print info and debug traces" {
+            val output = testLogging("--debug", "--info")
+            output should containsAll(DEBUG_LOG_ENTRY, INFO_LOG_ENTRY)
+        }
     }
 
     private fun testException(message: String, vararg args: String): String {
-        command = mock()
-        given(command.run()).willThrow(RuntimeException(message))
+        val mock = spyk(command)
 
-        val (returnCode, output) = captureOutput { GenesysCli.execute(command, *args) }
+        every {
+            mock.run()
+        } throws RuntimeException(message)
 
+        val (returnCode, output) = captureOutput { GenesysCli.execute(mock, *args) }
         returnCode shouldBe 1
         return output
     }
 
-    override fun createCommand(): Runnable {
-        return command
+    private fun testLogging(vararg args: String): List<String> {
+        val mock = spyk(command)
+
+        every {
+            mock.execute()
+        } answers {
+            val logger = KotlinLogging.logger {}
+            logger.debug { DEBUG_LOG_ENTRY }
+            logger.info { INFO_LOG_ENTRY }
+        }
+
+        val (returnCode, output) = captureOutput { GenesysCli.execute(mock, *args) }
+        returnCode shouldBe 0
+        return output.split(System.lineSeparator())
     }
 }

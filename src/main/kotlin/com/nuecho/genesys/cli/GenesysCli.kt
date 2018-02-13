@@ -1,6 +1,9 @@
 package com.nuecho.genesys.cli
 
+import com.genesyslab.platform.applicationblocks.com.IConfService
+import com.genesyslab.platform.configuration.protocol.types.CfgAppType
 import com.nuecho.genesys.cli.config.Config
+import com.nuecho.genesys.cli.preferences.Preferences
 import picocli.CommandLine
 
 @CommandLine.Command(
@@ -9,7 +12,7 @@ import picocli.CommandLine
     versionProvider = VersionProvider::class,
     subcommands = [Config::class]
 )
-open class GenesysCli : GenesysCliCommand(), Runnable {
+class GenesysCli : GenesysCliCommand() {
     companion object {
         @JvmStatic
         fun main(args: Array<String>) {
@@ -24,9 +27,8 @@ open class GenesysCli : GenesysCliCommand(), Runnable {
                 return 1
             } catch (exception: CommandLine.ExecutionException) {
                 val cause = exception.cause!!
-                val command: GenesysCliCommand = exception.commandLine.getCommand()
 
-                if (command.printStackTrace) {
+                if (genesysCli.printStackTrace) {
                     cause.printStackTrace()
                 } else {
                     System.err.println(cause.message)
@@ -39,9 +41,29 @@ open class GenesysCli : GenesysCliCommand(), Runnable {
         }
     }
 
-    override fun run() {
-        CommandLine.usage(this, System.out)
-    }
+    @CommandLine.Option(
+        names = ["-s", "--stacktrace"],
+        description = ["Print out the stacktrace for all exceptions."]
+    )
+    var printStackTrace = false
+
+    @CommandLine.Option(
+        names = ["-i", "--info"],
+        description = ["Set log level to info."]
+    )
+    var info = false
+
+    @CommandLine.Option(
+        names = ["-d", "--debug"],
+        description = ["Set log level to debug."]
+    )
+    var debug = false
+
+    @CommandLine.Option(
+        names = ["-e", "--env"],
+        description = ["Environment name used for the execution."]
+    )
+    var environmentName = Preferences.DEFAULT_ENVIRONMENT
 
     @Suppress("unused")
     @CommandLine.Option(
@@ -50,4 +72,19 @@ open class GenesysCli : GenesysCliCommand(), Runnable {
         description = ["Shows version info."]
     )
     private var versionRequested = false
+
+    override fun execute() {
+        CommandLine.usage(this, System.out)
+    }
+
+    override fun getGenesysCli(): GenesysCli {
+        return this
+    }
+
+    internal fun connect(): IConfService {
+        val environment = Preferences.loadEnvironment(environmentName)
+        val configurationService = GenesysServices.createConfigurationService(environment, CfgAppType.CFGSCE)
+        configurationService.protocol.open()
+        return configurationService
+    }
 }
