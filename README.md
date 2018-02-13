@@ -34,6 +34,26 @@ To perform all verifications (tests, ktlint, detekt)
 ./gradlew test
 ```
 
+### Integration
+
+For integration testing purposes, a `docker/docker-compose.yml` file is available to spin
+your very own config server. The following will launch both a config server and a PostgreSQL
+RDBMS:
+
+```bash
+cd docker
+docker-compose run configserver
+``` 
+
+To use mutagen docker image as part of compose, build args needs to be used to override binary
+location:
+
+```bash
+cd docker
+docker-compose build --build-arg MUTAGEN=./build/mutagen mutagen
+docker-compose run mutagen
+```
+
 ## Release
 
 ```bash
@@ -43,7 +63,7 @@ To perform all verifications (tests, ktlint, detekt)
 Creates `shadowJar` jar file as well as associated distribution artifacts including standalone
 Windows executable from [launch4j](http://launch4j.sourceforge.net/).
 Artifacts are then available from `build/launch4j/mutagen.exe` and `build/mutagen` for
-Windows and Uni* respectively.
+Windows and Unix respectively.
 
 ## Commit
 

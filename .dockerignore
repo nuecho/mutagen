@@ -1,0 +1,5 @@
+.git
+gradle*
+src
+test
+

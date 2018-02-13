@@ -11,10 +11,10 @@ import io.kotlintest.specs.StringSpec
 class EnvironmentTest : StringSpec() {
     companion object {
         val defaultTestEnvironment = Environment(
-            host = "demosrv.nuecho.com",
+            host = "localhost",
             port = DEFAULT_SERVER_PORT,
             tls = DEFAULT_USE_TLS,
-            user = "user",
+            user = "default",
             password = "password",
             application = DEFAULT_APPLICATION_NAME
         )

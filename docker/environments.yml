@@ -1,0 +1,4 @@
+default:
+  host: configserver
+  user: default
+  password: password

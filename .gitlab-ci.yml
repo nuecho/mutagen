@@ -13,19 +13,17 @@ stages:
   - build
   - test
   - release
+  - acceptance
   - publish
 
 before_script:
   - "TAG=$CI_BUILD_TAG source ./ci/version.sh"
 
 check:shell:
-  tags:
-    - dind
+  image: "rdeavila/docker-shellcheck"
   stage: check
-  services:
-    - docker:dind
   script:
-    - "docker run -v \"$PWD:/mnt\" koalaman/shellcheck:v0.4.6 **/*.sh"
+    - "shellcheck **/*.sh"
 
 check:commitlint:
   stage: check
@@ -60,7 +58,7 @@ test:
 
 release:binaries:
   variables:
-    RELEASE_PATH: "build/releases/"
+    RELEASE_PATH: "build/releases"
   stage: release
   script:
     - ./gradlew -g /cache/.gradle -Pversion=${VERSION} release
@@ -72,6 +70,23 @@ release:binaries:
   artifacts:
     paths:
       - build/releases
+  only:
+    - tags
+
+acceptance:test:
+  variables:
+    RELEASE_PATH: "build/releases"
+  image: tmaier/docker-compose:latest
+  stage: acceptance
+  tags:
+    - dind
+  services:
+    - docker:dind
+  dependencies:
+    - release:binaries
+  script:
+    - docker-compose --version
+    - cd docker && docker-compose run mutagen 
   only:
     - tags
 
