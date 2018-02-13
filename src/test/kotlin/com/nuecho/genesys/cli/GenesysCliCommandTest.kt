@@ -5,8 +5,8 @@ import picocli.CommandLine
 import java.io.ByteArrayOutputStream
 import java.io.PrintStream
 
-abstract class CommandTest : StringSpec() {
-    abstract fun createCommand(): Runnable
+abstract class GenesysCliCommandTest : StringSpec() {
+    internal val usagePrefix = "Usage: mutagen [-?disv] [-e=<environmentName>]"
 
     protected fun <T> captureOutput(command: () -> T): Pair<T, String> {
         val byteOutput = ByteArrayOutputStream()
@@ -24,7 +24,7 @@ abstract class CommandTest : StringSpec() {
     }
 
     protected fun execute(vararg args: String): String {
-        val (_, output) = captureOutput { CommandLine.run(createCommand(), System.out, *args) }
+        val (_, output) = captureOutput { CommandLine.run(GenesysCli(), System.out, *args) }
         return output
     }
 }

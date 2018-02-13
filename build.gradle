@@ -71,8 +71,11 @@ dependencies {
     compile 'com.genesyslab.platform:configurationprotocol:+'
 
     compile 'info.picocli:picocli:2.2.+'
+    compile 'io.github.microutils:kotlin-logging:1.5.+'
+    compile 'ch.qos.logback:logback-classic:1.2.+'
 
     testCompile 'io.kotlintest:kotlintest:2.0.+'
+    testCompile "io.mockk:mockk:1.7.+"
 }
 
 runShadow {
