@@ -1,22 +1,22 @@
 {
-  "DN": [
+  "CfgDN": [
     {
       "number": {
-        "value": "1111"
+        "value": 1111
       },
-      "userProperties": null
+      "userProperties": ""
     },
     {
       "number": {
-        "value": "3333"
+        "value": 3333
       },
-      "userProperties": null
+      "userProperties": ""
     },
     {
       "number": {
-        "value": "5555"
+        "value": 5555
       },
-      "userProperties": null
+      "userProperties": ""
     }
   ]
 }

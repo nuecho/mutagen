@@ -5,9 +5,10 @@ import com.fasterxml.jackson.core.JsonFactory
 import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.dataformat.xml.XmlMapper
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.genesyslab.platform.applicationblocks.com.ICfgObject
 import com.nuecho.genesys.cli.config.ConfigurationObjectType
+import org.json.XML.toJSONObject
 import java.io.OutputStream
 import java.io.StringWriter
 import java.util.SortedMap
@@ -17,11 +18,13 @@ import javax.xml.transform.TransformerFactory
 import javax.xml.transform.dom.DOMSource
 import javax.xml.transform.stream.StreamResult
 
+private const val XMLNS = "xmlns"
+
 class JsonExportProcessor(output: OutputStream) : ExportProcessor {
-    val xmlMapper = XmlMapper()
-    val xmlTransformer = TransformerFactory.newInstance().newTransformer()
-    var jsonGenerator: JsonGenerator
-    var configurationObjects: SortedMap<String, ICfgObject> = TreeMap()
+    private val xmlTransformer = TransformerFactory.newInstance().newTransformer()
+    private val objectMapper = jacksonObjectMapper()
+    private var jsonGenerator: JsonGenerator
+    private var configurationObjects: SortedMap<String, ICfgObject> = TreeMap()
 
     init {
         jsonGenerator = JsonFactory().createGenerator(output, JsonEncoding.UTF8)
@@ -43,10 +46,16 @@ class JsonExportProcessor(output: OutputStream) : ExportProcessor {
     }
 
     override fun endType(type: ConfigurationObjectType) {
-        jsonGenerator.writeArrayFieldStart(type.getObjectType())
+        val configurationObjectTypeProperty = type.getObjectType()
+        jsonGenerator.writeArrayFieldStart(configurationObjectTypeProperty)
 
         configurationObjects.values.forEach {
-            val jsonNode = xmlMapper.readTree(toXml(it))
+            val xml = toXml(it)
+
+            val jsonObject = toJSONObject(xml).getJSONObject(configurationObjectTypeProperty)!!
+            jsonObject.remove(XMLNS)
+
+            val jsonNode = objectMapper.readTree(jsonObject.toString(0))
             jsonGenerator.writeObject(jsonNode)
         }
 
@@ -58,7 +67,7 @@ class JsonExportProcessor(output: OutputStream) : ExportProcessor {
         jsonGenerator.close()
     }
 
-    fun toXml(configurationObject: ICfgObject): String {
+    private fun toXml(configurationObject: ICfgObject): String {
         val writer = StringWriter()
         var node = configurationObject.toXml()
         xmlTransformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8")
