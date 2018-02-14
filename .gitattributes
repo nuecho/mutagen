@@ -74,6 +74,7 @@ Vagrantfile textfile
 *.rsxml textfile
 *.scm textfile
 *.sed textfile
+*.sql textfile
 *.st textfile
 *.sxml textfile
 *.testset textfile

@@ -16,9 +16,6 @@ stages:
   - acceptance
   - publish
 
-before_script:
-  - "TAG=$CI_BUILD_TAG source ./ci/version.sh"
-
 check:shell:
   image: "rdeavila/docker-shellcheck"
   stage: check
@@ -32,11 +29,15 @@ check:commitlint:
     - lint-commits
 
 build:
+  before_script:
+    - "TAG=$CI_BUILD_TAG source ./ci/version.sh"
   stage: build
   script:
     - ./gradlew -g /cache/.gradle clean assemble
 
 build:changelog:
+  before_script:
+    - "TAG=$CI_BUILD_TAG source ./ci/version.sh"
   stage: build
   image: dr.s.nuecho.com/conventional-changelog
   script:
@@ -57,6 +58,8 @@ test:
       - build/reports/
 
 release:binaries:
+  before_script:
+    - "TAG=$CI_BUILD_TAG source ./ci/version.sh"
   variables:
     RELEASE_PATH: "build/releases"
   stage: release
@@ -70,6 +73,17 @@ release:binaries:
   artifacts:
     paths:
       - build/releases
+  only:
+    - tags
+
+acceptance:windows:
+  variables:
+    RELEASE_PATH: "build\\releases"
+  stage: acceptance
+  tags:
+    - windows
+  script:
+    - "%RELEASE_PATH%\\windows\\mutagen.exe -h"
   only:
     - tags
 
@@ -91,6 +105,8 @@ acceptance:test:
     - tags
 
 publish:s3:
+  before_script:
+    - "TAG=$CI_BUILD_TAG source ./ci/version.sh"
   variables:
     BUCKET_NAME: "nuecho.com-mutagen-releases"
     BUCKET_URL: "s3://${BUCKET_NAME}"
@@ -108,6 +124,8 @@ publish:s3:
     - tags
 
 publish:changelog:
+  before_script:
+    - "TAG=$CI_BUILD_TAG source ./ci/version.sh"
   stage: publish
   dependencies:
     - build:changelog
