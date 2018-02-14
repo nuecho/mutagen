@@ -6,13 +6,25 @@ import com.nuecho.genesys.cli.config.Config
 import com.nuecho.genesys.cli.preferences.Preferences
 import picocli.CommandLine
 
+const val BANNER = """
+_   .-')                .-') _      ('-.                   ('-.       .-') _
+( '.( OO )_             (  OO) )    ( OO ).-.             _(  OO)     ( OO ) )
+ ,--.   ,--.),--. ,--.  /     '._   / . --. /  ,----.    (,------.,--./ ,--,'
+ |   `.'   | |  | |  |  |'--...__)  | \-.  \  '  .-./-')  |  .---'|   \ |  |\
+ |         | |  | | .-')'--.  .--'.-'-'  |  | |  |_( O- ) |  |    |    \|  | )
+ |  |'.'|  | |  |_|( OO )  |  |    \| |_.'  | |  | .--, \(|  '--. |  .     |/
+ |  |   |  | |  | | `-' /  |  |     |  .-.  |(|  | '. (_/ |  .--' |  |\    |
+ |  |   |  |('  '-'(_.-'   |  |     |  | |  | |  '--'  |  |  `---.|  | \   |
+ `--'   `--'  `-----'      `--'     `--' `--'  `------'   `------'`--'  `--'
+"""
+
 @CommandLine.Command(
     name = "mutagen",
     description = ["Your Genesys Toolbox. (https://sites.google.com/m.nuecho.com/hub/mutagen)"],
     versionProvider = VersionProvider::class,
     subcommands = [Config::class]
 )
-class GenesysCli : GenesysCliCommand() {
+open class GenesysCli : GenesysCliCommand() {
     companion object {
         @JvmStatic
         fun main(args: Array<String>) {
@@ -74,7 +86,7 @@ class GenesysCli : GenesysCliCommand() {
     private var versionRequested = false
 
     override fun execute() {
-        CommandLine.usage(this, System.out)
+        CommandLine.usage(GenesysCliWithBanner(), System.out)
     }
 
     override fun getGenesysCli(): GenesysCli {
@@ -88,3 +100,6 @@ class GenesysCli : GenesysCliCommand() {
         return configurationService
     }
 }
+
+@CommandLine.Command(headerHeading = "@|fg(green) $BANNER |@\n")
+class GenesysCliWithBanner : GenesysCli()

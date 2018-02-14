@@ -2,6 +2,7 @@ package com.nuecho.genesys.cli
 
 import io.kotlintest.matchers.contain
 import io.kotlintest.matchers.containsAll
+import io.kotlintest.matchers.include
 import io.kotlintest.matchers.should
 import io.kotlintest.matchers.shouldBe
 import io.kotlintest.matchers.shouldNot
@@ -18,7 +19,8 @@ class GenesysCliTest : GenesysCliCommandTest() {
     init {
         "executing GenesysCli with no argument should print usage" {
             val output = execute()
-            output should startWith(USAGE_PREFIX)
+            output should include(BANNER)
+            output should include(USAGE_PREFIX)
         }
 
         "executing GenesysCli with -h argument should print usage" {
