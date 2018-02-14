@@ -10,21 +10,20 @@ import io.mockk.every
 import io.mockk.spyk
 import mu.KotlinLogging
 
+private const val DEBUG_LOG_ENTRY = "This is a debug log entry."
+private const val INFO_LOG_ENTRY = "This is an info log entry."
+private const val USAGE_PREFIX = "Usage: mutagen [-?disv] [-e=<environmentName>]"
+
 class GenesysCliTest : GenesysCliCommandTest() {
-    private val DEBUG_LOG_ENTRY = "This is a debug log entry."
-    private val INFO_LOG_ENTRY = "This is an info log entry."
-
-    private var command = GenesysCli()
-
     init {
         "executing GenesysCli with no argument should print usage" {
             val output = execute()
-            output should startWith(usagePrefix)
+            output should startWith(USAGE_PREFIX)
         }
 
         "executing GenesysCli with -h argument should print usage" {
             val output = execute("-h")
-            output should startWith(usagePrefix)
+            output should startWith(USAGE_PREFIX)
         }
 
         "executing GenesysCli with -v argument should print version" {
@@ -64,29 +63,29 @@ class GenesysCliTest : GenesysCliCommandTest() {
     }
 
     private fun testException(message: String, vararg args: String): String {
-        val mock = spyk(command)
+        val command = spyk(GenesysCli())
 
         every {
-            mock.run()
+            command.run()
         } throws RuntimeException(message)
 
-        val (returnCode, output) = captureOutput { GenesysCli.execute(mock, *args) }
+        val (returnCode, output) = captureOutput { GenesysCli.execute(command, *args) }
         returnCode shouldBe 1
         return output
     }
 
     private fun testLogging(vararg args: String): List<String> {
-        val mock = spyk(command)
+        val command = spyk(GenesysCli())
 
         every {
-            mock.execute()
+            command.execute()
         } answers {
             val logger = KotlinLogging.logger {}
             logger.debug { DEBUG_LOG_ENTRY }
             logger.info { INFO_LOG_ENTRY }
         }
 
-        val (returnCode, output) = captureOutput { GenesysCli.execute(mock, *args) }
+        val (returnCode, output) = captureOutput { GenesysCli.execute(command, *args) }
         returnCode shouldBe 0
         return output.split(System.lineSeparator())
     }
