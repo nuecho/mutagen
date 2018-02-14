@@ -6,8 +6,6 @@ import java.io.ByteArrayOutputStream
 import java.io.PrintStream
 
 abstract class GenesysCliCommandTest : StringSpec() {
-    internal val usagePrefix = "Usage: mutagen [-?disv] [-e=<environmentName>]"
-
     protected fun <T> captureOutput(command: () -> T): Pair<T, String> {
         val byteOutput = ByteArrayOutputStream()
         val printStream = PrintStream(byteOutput)

@@ -9,11 +9,13 @@ import io.kotlintest.matchers.shouldBe
 import io.kotlintest.matchers.startWith
 import java.io.ByteArrayOutputStream
 
+private const val USAGE_PREFIX = "Usage: export [-?]"
+
 class ExportTest : GenesysCliCommandTest() {
     init {
         "executing Export with -h argument should print usage" {
-            val output = execute("-h")
-            output should startWith(usagePrefix)
+            val output = execute("config", "export", "-h")
+            output should startWith(USAGE_PREFIX)
         }
 
         "exporting empty configuration should generate an empty JSON array for each object type" {
