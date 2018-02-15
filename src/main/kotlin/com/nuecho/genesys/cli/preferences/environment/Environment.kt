@@ -1,4 +1,4 @@
-package com.nuecho.genesys.cli.preferences
+package com.nuecho.genesys.cli.preferences.environment
 
 import com.nuecho.genesys.cli.GenesysServices
 

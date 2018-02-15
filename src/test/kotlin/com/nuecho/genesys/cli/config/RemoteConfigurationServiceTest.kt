@@ -3,9 +3,7 @@ package com.nuecho.genesys.cli.config
 import com.genesyslab.platform.applicationblocks.com.CfgQuery
 import com.genesyslab.platform.applicationblocks.com.ConfigException
 import com.genesyslab.platform.applicationblocks.com.ICfgObject
-import com.genesyslab.platform.configuration.protocol.types.CfgAppType
-import com.nuecho.genesys.cli.GenesysServices
-import com.nuecho.genesys.cli.preferences.Environment
+import com.nuecho.genesys.cli.preferences.environment.Environment
 import io.kotlintest.matchers.shouldThrow
 import io.kotlintest.specs.StringSpec
 
@@ -21,13 +19,12 @@ class RemoteConfigurationServiceTest : StringSpec() {
 
         "releasing an unconnected RemoteConfigurationService should not fail" {
             val service = createRemoteConfigurationService()
-            service.release()
+            service.disconnect()
         }
     }
 
-    fun createRemoteConfigurationService(): RemoteConfigurationService {
+    private fun createRemoteConfigurationService(): RemoteConfigurationService {
         val environment = Environment(host = "test", user = "test", password = "test")
-        val service = GenesysServices.createConfigurationService(environment, CfgAppType.CFGConfigServer)
-        return RemoteConfigurationService(service)
+        return RemoteConfigurationService(environment)
     }
 }

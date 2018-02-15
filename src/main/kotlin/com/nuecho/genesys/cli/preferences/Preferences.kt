@@ -1,5 +1,7 @@
 package com.nuecho.genesys.cli.preferences
 
+import com.nuecho.genesys.cli.preferences.environment.Environment
+import com.nuecho.genesys.cli.preferences.environment.Environments
 import java.io.File
 import java.io.FileNotFoundException
 
@@ -18,6 +20,6 @@ object Preferences {
 
     private fun loadEnvironments(environmentsFile: File): Environments =
         if (!environmentsFile.exists() || !environmentsFile.isFile)
-            throw FileNotFoundException("Cannot load environments file ($environmentsFile)")
+            throw FileNotFoundException("Cannot find environments file ($environmentsFile)")
         else Environments.load(environmentsFile)
 }

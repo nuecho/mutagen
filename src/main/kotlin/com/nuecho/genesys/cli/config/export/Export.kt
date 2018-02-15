@@ -19,12 +19,12 @@ class Export : GenesysCliCommand() {
     private var config: Config? = null
 
     override fun execute() {
-        val service = RemoteConfigurationService(getGenesysCli().connect())
+        val service = RemoteConfigurationService(getGenesysCli().loadEnvironment())
 
         try {
             exportConfiguration(JsonExportProcessor(System.out), service)
         } finally {
-            service.release()
+            service.disconnect()
         }
     }
 
@@ -33,23 +33,34 @@ class Export : GenesysCliCommand() {
     }
 
     fun exportConfiguration(processor: ExportProcessor, service: ConfigurationService) {
-        processor.begin()
+        try {
+            processor.begin()
 
-        ConfigurationObjectType.values().forEach {
-            val type = it
-            info { "Exporting '${type.getObjectType()}'..." }
-            processor.beginType(type)
+            ConfigurationObjectType.values().forEach {
+                val type = it
+                info { "Exporting '${type.getObjectType()}' objects" }
 
-            service.retrieveMultipleObjects(
-                CfgObject::class.java,
-                it.queryType.createInstance()
-            ).forEach {
-                processor.processObject(type, it)
+                processor.beginType(type)
+
+                val configurationObjects = service.retrieveMultipleObjects(
+                    CfgObject::class.java,
+                    it.queryType.createInstance()
+                )
+
+                debug { "Found ${configurationObjects.size} ${type.getObjectType()} objects." }
+
+                configurationObjects.forEach {
+                    processor.processObject(type, it)
+                }
+
+                processor.endType(type)
             }
 
-            processor.endType(type)
+            processor.end()
+        } catch (exception: Exception) {
+            throw ExportException("Error occured while exporting configuration.", exception)
         }
-
-        processor.end()
     }
 }
+
+class ExportException(message: String, cause: Throwable) : Exception(message, cause)

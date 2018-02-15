@@ -4,7 +4,7 @@ import com.genesyslab.platform.commons.protocol.ChannelState
 import com.genesyslab.platform.configuration.protocol.ConfServerProtocol
 import com.genesyslab.platform.configuration.protocol.types.CfgAppType
 import com.nuecho.genesys.cli.GenesysServices.createConfigurationService
-import com.nuecho.genesys.cli.preferences.Environment
+import com.nuecho.genesys.cli.preferences.environment.Environment
 import io.kotlintest.matchers.shouldBe
 import io.kotlintest.specs.StringSpec
 
