@@ -92,7 +92,7 @@ enum class ConfigurationObjectType(
     TREATMENT(CfgTreatmentQuery::class),
     VOICE_PROMPT(CfgVoicePromptQuery::class);
 
-    fun getObjectType() = queryType.simpleName!!.replace(Regex("Cfg|Query"), "")
+    fun getObjectType() = queryType.simpleName!!.replace(Regex("Query"), "")
 
     fun getObjectId(configurationObject: ICfgObject): String {
         if (group) {

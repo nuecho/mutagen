@@ -73,6 +73,7 @@ dependencies {
     compile 'info.picocli:picocli:2.2.+'
     compile 'io.github.microutils:kotlin-logging:1.5.+'
     compile 'ch.qos.logback:logback-classic:1.2.+'
+    compile 'org.json:json:20180130'
 
     testCompile 'io.kotlintest:kotlintest:2.0.+'
     testCompile "io.mockk:mockk:1.7.+"

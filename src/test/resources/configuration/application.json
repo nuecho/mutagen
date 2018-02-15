@@ -1,0 +1,26 @@
+{
+  "CfgApplication": [
+    {
+      "appServerDBIDs": {
+        "CfgConnectionInfo": [
+          {
+            "id": {
+              "value": "appServer1"
+            }
+          },
+          {
+            "id": {
+              "value": "appServer2"
+            }
+          }
+        ]
+      },
+      "flexibleProperties": "",
+      "name": {
+        "value": "Application"
+      },
+      "options": "",
+      "userProperties": ""
+    }
+  ]
+}
