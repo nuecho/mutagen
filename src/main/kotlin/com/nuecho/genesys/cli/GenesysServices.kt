@@ -17,8 +17,8 @@ object GenesysServices {
     const val DEFAULT_SERVER_PORT = 2020
     const val DEFAULT_USE_TLS = false
     const val DEFAULT_APPLICATION_NAME = "default"
+    const val DEFAULT_CLIENT_TIMEOUT = 10
     private const val DEFAULT_SERVER_TIMEOUT = 20
-    private const val DEFAULT_CLIENT_TIMEOUT = 10
 
     fun createConfigurationService(
         environment: Environment,

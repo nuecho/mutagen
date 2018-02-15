@@ -13,11 +13,8 @@ import com.nuecho.genesys.cli.Logging.info
 import com.nuecho.genesys.cli.preferences.environment.Environment
 
 class RemoteConfigurationService(private val environment: Environment) : ConfigurationService {
-    private val configurationService: IConfService
-
-    init {
-        configurationService = GenesysServices.createConfigurationService(environment, CfgAppType.CFGSCE)
-    }
+    private val configurationService: IConfService =
+        GenesysServices.createConfigurationService(environment, CfgAppType.CFGSCE)
 
     override fun connect() {
         info { "Connecting to Config Server [${environment.user}@${environment.host}:${environment.port}]" }
@@ -35,6 +32,9 @@ class RemoteConfigurationService(private val environment: Environment) : Configu
 
     override fun <T : ICfgObject> retrieveMultipleObjects(objectType: Class<T>, query: CfgQuery): Collection<T> =
         configurationService.retrieveMultipleObjects(objectType, query) ?: emptyList()
+
+    override fun <T : ICfgObject> retrieveObject(objectType: Class<T>, query: CfgQuery): T =
+        configurationService.retrieveObject(objectType, query)
 
     override fun disconnect() {
         debug { "Disconnecting from Config Server" }

@@ -19,6 +19,12 @@ class TestConfigurationService(private val configuration: Map<ICfgQuery, Collect
         return result as Collection<T>
     }
 
+    override fun <T : ICfgObject> retrieveObject(objectType: Class<T>, query: CfgQuery): T {
+        val result = configuration[query] ?: emptyList()
+        @Suppress("UNCHECKED_CAST")
+        return result.first() as T
+    }
+
     override fun disconnect() {
         disconnectCalled = true
     }
