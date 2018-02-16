@@ -2,7 +2,7 @@ package com.nuecho.genesys.cli
 
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import com.nuecho.genesys.cli.preferences.Environments
+import com.nuecho.genesys.cli.preferences.environment.Environments
 
 object TestResources {
     fun loadEnvironments(path: String): Environments {

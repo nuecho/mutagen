@@ -12,7 +12,7 @@ import com.nuecho.genesys.cli.TestResources.loadJsonConfiguration
 import com.nuecho.genesys.cli.config.ConfigurationObjectType
 import com.nuecho.genesys.cli.config.ConfigurationObjectType.APPLICATION
 import com.nuecho.genesys.cli.config.ConfigurationObjectType.DN
-import com.nuecho.genesys.cli.preferences.Environment
+import com.nuecho.genesys.cli.preferences.environment.Environment
 import io.kotlintest.matchers.shouldBe
 import io.kotlintest.specs.StringSpec
 import java.io.ByteArrayOutputStream

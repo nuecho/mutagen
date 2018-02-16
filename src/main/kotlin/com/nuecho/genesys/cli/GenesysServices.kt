@@ -10,7 +10,7 @@ import com.genesyslab.platform.commons.connection.tls.TrustManagerHelper
 import com.genesyslab.platform.commons.protocol.Endpoint
 import com.genesyslab.platform.configuration.protocol.ConfServerProtocol
 import com.genesyslab.platform.configuration.protocol.types.CfgAppType
-import com.nuecho.genesys.cli.preferences.Environment
+import com.nuecho.genesys.cli.preferences.environment.Environment
 import java.util.UUID
 import javax.net.ssl.SSLContext
 

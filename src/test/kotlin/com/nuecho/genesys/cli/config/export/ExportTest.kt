@@ -6,7 +6,10 @@ import com.nuecho.genesys.cli.TestResources.loadJsonConfiguration
 import com.nuecho.genesys.cli.config.TestConfigurationService
 import io.kotlintest.matchers.should
 import io.kotlintest.matchers.shouldBe
+import io.kotlintest.matchers.shouldThrow
 import io.kotlintest.matchers.startWith
+import io.mockk.every
+import io.mockk.mockk
 import java.io.ByteArrayOutputStream
 
 private const val USAGE_PREFIX = "Usage: export [-?]"
@@ -26,6 +29,19 @@ class ExportTest : GenesysCliCommandTest() {
 
             val result = jacksonObjectMapper().readTree(String(output.toByteArray()))
             result shouldBe loadJsonConfiguration("empty_configuration.json")
+        }
+
+        "failing while exporting should result in an ExportException" {
+            val processor = mockk<ExportProcessor>()
+            every {
+                processor.begin()
+            } throws RuntimeException()
+
+            val service = TestConfigurationService(emptyMap())
+
+            shouldThrow<ExportException> {
+                Export().exportConfiguration(processor, service)
+            }
         }
     }
 }
