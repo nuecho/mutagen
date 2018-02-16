@@ -6,7 +6,12 @@ import com.genesyslab.platform.applicationblocks.com.ICfgQuery
 
 class TestConfigurationService(private val configuration: Map<ICfgQuery, Collection<ICfgObject>>) :
     ConfigurationService {
-    override fun connect() {}
+    var connectCalled: Boolean = false
+    var disconnectCalled: Boolean = false
+
+    override fun connect() {
+        connectCalled = true
+    }
 
     override fun <T : ICfgObject> retrieveMultipleObjects(objectType: Class<T>, query: CfgQuery): Collection<T> {
         val result = configuration[query] ?: emptyList()
@@ -14,5 +19,7 @@ class TestConfigurationService(private val configuration: Map<ICfgQuery, Collect
         return result as Collection<T>
     }
 
-    override fun disconnect() {}
+    override fun disconnect() {
+        disconnectCalled = true
+    }
 }

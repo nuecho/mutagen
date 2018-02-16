@@ -3,6 +3,8 @@ package com.nuecho.genesys.cli.config.export
 import com.genesyslab.platform.applicationblocks.com.CfgObject
 import com.nuecho.genesys.cli.GenesysCli
 import com.nuecho.genesys.cli.GenesysCliCommand
+import com.nuecho.genesys.cli.Logging.debug
+import com.nuecho.genesys.cli.Logging.info
 import com.nuecho.genesys.cli.config.Config
 import com.nuecho.genesys.cli.config.ConfigurationObjectType
 import com.nuecho.genesys.cli.config.ConfigurationService
@@ -19,13 +21,10 @@ class Export : GenesysCliCommand() {
     private var config: Config? = null
 
     override fun execute() {
-        val service = RemoteConfigurationService(getGenesysCli().loadEnvironment())
-
-        try {
-            exportConfiguration(JsonExportProcessor(System.out), service)
-        } finally {
-            service.disconnect()
-        }
+        exportConfiguration(
+            JsonExportProcessor(System.out),
+            RemoteConfigurationService(getGenesysCli().loadEnvironment())
+        )
     }
 
     override fun getGenesysCli(): GenesysCli {
@@ -34,6 +33,7 @@ class Export : GenesysCliCommand() {
 
     fun exportConfiguration(processor: ExportProcessor, service: ConfigurationService) {
         try {
+            service.connect()
             processor.begin()
 
             ConfigurationObjectType.values().forEach {
@@ -59,6 +59,8 @@ class Export : GenesysCliCommand() {
             processor.end()
         } catch (exception: Exception) {
             throw ExportException("Error occured while exporting configuration.", exception)
+        } finally {
+            service.disconnect()
         }
     }
 }

@@ -1,9 +1,6 @@
 package com.nuecho.genesys.cli
 
-import mu.KotlinLogging
 import picocli.CommandLine
-
-private val logger = KotlinLogging.logger {}
 
 abstract class GenesysCliCommand : Runnable {
     @Suppress("unused")
@@ -28,14 +25,5 @@ abstract class GenesysCliCommand : Runnable {
         }
 
         execute()
-    }
-
-    // Logging
-    internal fun info(message: () -> Any?) {
-        logger.info(message)
-    }
-
-    internal fun debug(message: () -> Any?) {
-        logger.debug(message)
     }
 }

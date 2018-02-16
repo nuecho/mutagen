@@ -29,6 +29,8 @@ class ExportTest : GenesysCliCommandTest() {
 
             val result = jacksonObjectMapper().readTree(String(output.toByteArray()))
             result shouldBe loadJsonConfiguration("empty_configuration.json")
+            service.connectCalled shouldBe true
+            service.disconnectCalled shouldBe true
         }
 
         "failing while exporting should result in an ExportException" {
