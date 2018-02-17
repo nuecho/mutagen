@@ -1,5 +1,7 @@
 package com.nuecho.genesys.cli
 
+import com.nuecho.genesys.cli.Logging.debug
+import com.nuecho.genesys.cli.Logging.info
 import io.kotlintest.matchers.contain
 import io.kotlintest.matchers.containsAll
 import io.kotlintest.matchers.include
@@ -9,7 +11,6 @@ import io.kotlintest.matchers.shouldNot
 import io.kotlintest.matchers.startWith
 import io.mockk.every
 import io.mockk.spyk
-import mu.KotlinLogging
 
 private const val DEBUG_LOG_ENTRY = "This is a debug log entry."
 private const val INFO_LOG_ENTRY = "This is an info log entry."
@@ -82,9 +83,8 @@ class GenesysCliTest : GenesysCliCommandTest() {
         every {
             command.execute()
         } answers {
-            val logger = KotlinLogging.logger {}
-            logger.debug { DEBUG_LOG_ENTRY }
-            logger.info { INFO_LOG_ENTRY }
+            debug { DEBUG_LOG_ENTRY }
+            info { INFO_LOG_ENTRY }
         }
 
         val (returnCode, output) = captureOutput { GenesysCli.execute(command, *args) }
