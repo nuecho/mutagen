@@ -15,12 +15,19 @@ _   .-')                .-') _      ('-.                   ('-.       .-') _
  |  |   |  | |  | | `-' /  |  |     |  .-.  |(|  | '. (_/ |  .--' |  |\    |
  |  |   |  |('  '-'(_.-'   |  |     |  | |  | |  '--'  |  |  `---.|  | \   |
  `--'   `--'  `-----'      `--'     `--' `--'  `------'   `------'`--'  `--'
+ Your Genesys Toolbox. (https://sites.google.com/m.nuecho.com/hub/mutagen)
 """
+
+const val SYNOPSIS = "mutagen [OPTIONS] <command>"
+const val FOOTER = "See 'mutagen <command> --help' to read about a specific command."
+const val EXTRA_FOOTER = "Please specify a command."
 
 @CommandLine.Command(
     name = "mutagen",
-    description = ["Your Genesys Toolbox. (https://sites.google.com/m.nuecho.com/hub/mutagen)"],
+    customSynopsis = ["$SYNOPSIS%n"],
     versionProvider = VersionProvider::class,
+    footer = ["%n$FOOTER"],
+    commandListHeading = "%nCommands:%n%n",
     subcommands = [Config::class]
 )
 open class GenesysCli : GenesysCliCommand() {
@@ -80,7 +87,7 @@ open class GenesysCli : GenesysCliCommand() {
     @CommandLine.Option(
         names = ["-v", "--version"],
         versionHelp = true,
-        description = ["Shows version info."]
+        description = ["Show version info."]
     )
     private var versionRequested = false
 
@@ -97,5 +104,11 @@ open class GenesysCli : GenesysCliCommand() {
     }
 }
 
-@CommandLine.Command(headerHeading = "@|fg(green) $BANNER |@\n")
+@CommandLine.Command(
+    headerHeading = "@|fg(green) $BANNER|@%n",
+    footer = [
+        "%n$FOOTER",
+        "%n@|fg(red) $EXTRA_FOOTER|@"
+    ]
+)
 class GenesysCliWithBanner : GenesysCli()
