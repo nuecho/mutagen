@@ -1,5 +1,7 @@
 package com.nuecho.genesys.cli
 
+import com.nuecho.genesys.cli.CliOutputCaptureWrapper.captureOutput
+import com.nuecho.genesys.cli.CliOutputCaptureWrapper.execute
 import com.nuecho.genesys.cli.Logging.debug
 import com.nuecho.genesys.cli.Logging.info
 import io.kotlintest.matchers.contain
@@ -9,6 +11,7 @@ import io.kotlintest.matchers.should
 import io.kotlintest.matchers.shouldBe
 import io.kotlintest.matchers.shouldNot
 import io.kotlintest.matchers.startWith
+import io.kotlintest.specs.StringSpec
 import io.mockk.every
 import io.mockk.spyk
 
@@ -16,7 +19,7 @@ private const val DEBUG_LOG_ENTRY = "This is a debug log entry."
 private const val INFO_LOG_ENTRY = "This is an info log entry."
 private const val USAGE_PREFIX = "Usage: mutagen [-?disv] [-e=<environmentName>]"
 
-class GenesysCliTest : GenesysCliCommandTest() {
+class GenesysCliTest : StringSpec() {
     init {
         "executing GenesysCli with no argument should print usage" {
             val output = execute()

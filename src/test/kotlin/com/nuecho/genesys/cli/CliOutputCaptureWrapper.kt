@@ -1,12 +1,11 @@
 package com.nuecho.genesys.cli
 
-import io.kotlintest.specs.StringSpec
 import picocli.CommandLine
 import java.io.ByteArrayOutputStream
 import java.io.PrintStream
 
-abstract class GenesysCliCommandTest : StringSpec() {
-    protected fun <T> captureOutput(command: () -> T): Pair<T, String> {
+object CliOutputCaptureWrapper {
+    fun <T> captureOutput(command: () -> T): Pair<T, String> {
         val byteOutput = ByteArrayOutputStream()
         val printStream = PrintStream(byteOutput)
 
@@ -21,7 +20,7 @@ abstract class GenesysCliCommandTest : StringSpec() {
         return Pair(returnValue, String(byteOutput.toByteArray()))
     }
 
-    protected fun execute(vararg args: String): String {
+    fun execute(vararg args: String): String {
         val (_, output) = captureOutput { CommandLine.run(GenesysCli(), System.out, *args) }
         return output
     }

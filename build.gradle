@@ -40,6 +40,13 @@ jacocoTestReport {
     }
 }
 
+detekt {
+    profile("main") {
+        input = "$projectDir/src/main/kotlin,$projectDir/src/test/kotlin"
+        config = "$projectDir/detekt.yml"
+    }
+}
+
 spotless {
     kotlin {
         ktlint('0.15.0')

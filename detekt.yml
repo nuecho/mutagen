@@ -1,0 +1,27 @@
+failFast: true
+
+comments:
+  UndocumentedPublicClass:
+    active: false
+  UndocumentedPublicFunction:
+    active: false
+
+exceptions:
+  TooGenericExceptionCaught:
+    active: false
+
+performance:
+  SpreadOperator:
+    active: false
+
+potential-bugs:
+  UnsafeCallOnNullableType:
+    active: false
+  UnsafeCast:
+    active: false
+
+style:
+  ReturnCount:
+    active: false
+  UtilityClassWithPublicConstructor:
+    active: false

@@ -3,7 +3,6 @@ package com.nuecho.genesys.cli.preferences
 import com.nuecho.genesys.cli.Logging.debug
 import com.nuecho.genesys.cli.preferences.environment.Environment
 import com.nuecho.genesys.cli.preferences.environment.Environments
-import mu.KotlinLogging
 import java.io.Console
 import java.io.File
 import java.io.FileNotFoundException
@@ -36,13 +35,12 @@ object Preferences {
         else Environments.load(environmentsFile)
 
     fun promptForPassword(): String {
-        val logger = KotlinLogging.logger {}
         debug { "Password not found in environment. Prompting." }
         val console: Console? = System.console()
         when (console) {
             null ->
                 //In this case, the JVM is not attached to the console so we need to bail out
-                throw NullPointerException("Process not attached to console.")
+                throw IllegalStateException("Process not attached to console.")
             else ->
                 return String(console.readPassword("Password: "))
         }

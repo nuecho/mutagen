@@ -2,7 +2,6 @@ package com.nuecho.genesys.cli
 
 import com.genesyslab.platform.applicationblocks.com.ConfServiceFactory
 import com.genesyslab.platform.applicationblocks.com.IConfService
-import com.genesyslab.platform.commons.connection.ConnectionException
 import com.genesyslab.platform.commons.connection.configuration.PropertyConfiguration
 import com.genesyslab.platform.commons.connection.tls.KeyManagerHelper
 import com.genesyslab.platform.commons.connection.tls.SSLContextHelper
@@ -21,20 +20,10 @@ object GenesysServices {
     private const val DEFAULT_SERVER_TIMEOUT = 20
     private const val DEFAULT_CLIENT_TIMEOUT = 10
 
-    /**
-     * Create a Genesys configuration service.
-     *
-     * @param environment The environment
-     * @param applicationType The application type
-     * @param endpoint The endpoint
-     * @return IConfService
-     * @throws ConnectionException When a connection problem occurs
-     */
     fun createConfigurationService(
         environment: Environment,
         applicationType: CfgAppType
     ): IConfService {
-
         var endpoint = createEndpoint(environment)
         val protocol = ConfServerProtocol(endpoint)
         protocol.clientApplicationType = applicationType.ordinal()
@@ -45,14 +34,6 @@ object GenesysServices {
         return ConfServiceFactory.createConfService(protocol)
     }
 
-    /**
-     * Create an endpoint.
-     *
-     * @param endpointName The endpoint name
-     * @param environment The environment
-     * @return Endpoint
-     * @throws ConnectionException When a connection problem occurs
-     */
     private fun createEndpoint(environment: Environment): Endpoint {
         val propertyConfiguration = PropertyConfiguration()
         propertyConfiguration.isUseAddp = true

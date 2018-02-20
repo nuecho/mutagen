@@ -1,12 +1,13 @@
 package com.nuecho.genesys.cli.config
 
-import com.nuecho.genesys.cli.GenesysCliCommandTest
+import com.nuecho.genesys.cli.CliOutputCaptureWrapper.execute
 import io.kotlintest.matchers.should
 import io.kotlintest.matchers.startWith
+import io.kotlintest.specs.StringSpec
 
 private const val USAGE_PREFIX = "Usage: config [-?]"
 
-class ConfigTest : GenesysCliCommandTest() {
+class ConfigTest : StringSpec() {
     init {
         "executing Config with no argument should print usage" {
             val output = execute("config")
