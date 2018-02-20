@@ -16,6 +16,9 @@ stages:
   - acceptance
   - publish
 
+variables:
+  RELEASE_PATH: "build/releases"
+
 check:shell:
   image: "rdeavila/docker-shellcheck"
   stage: check
@@ -41,11 +44,12 @@ build:changelog:
   stage: build
   image: dr.s.nuecho.com/conventional-changelog
   script:
-    - "conventional-changelog -n /preset/index.js -r 2 > generated_changelog.md"
-    - "cat generated_changelog.md"
+    - mkdir -p $RELEASE_PATH
+    - conventional-changelog -n /preset/index.js -r 2 > $RELEASE_PATH/changelog.md
+    - cat $RELEASE_PATH/changelog.md
   artifacts:
     paths:
-      - generated_changelog.md
+      - $RELEASE_PATH/changelog.md
     expire_in: 1 week
 
 test:
@@ -60,8 +64,6 @@ test:
 release:binaries:
   before_script:
     - "TAG=$CI_BUILD_TAG source ./ci/version.sh"
-  variables:
-    RELEASE_PATH: "build/releases"
   stage: release
   script:
     - ./gradlew -g /cache/.gradle -Pversion=${VERSION} release
@@ -119,7 +121,8 @@ publish:s3:
     - export AWS_SECRET_ACCESS_KEY=${CI_AWS_SECRET_ACCESS_KEY}
     - export AWS_REGION=us-east-1
     - echo "${BUCKET_URL}"
-    - aws s3 sync build/releases "${BUCKET_URL}/${VERSION}" --acl public-read
+    - aws s3 sync build/releases "${BUCKET_URL}/${VERSION}" --acl public-read --metadata version=${VERSION}
+    - aws s3 sync build/releases "${BUCKET_URL}/latest" --acl public-read --metadata version=${VERSION}
   only:
     - tags
 
@@ -133,7 +136,6 @@ publish:changelog:
     URL: "http://gl.s.nuecho.com/api/v3/projects/${CI_PROJECT_ID}/repository/tags/${CI_COMMIT_TAG}/release?private_token=${CI_TOKEN}"
   image: governmentpaas/curl-ssl
   script:
-    - "echo ${URL}"
-    - "curl -X POST --silent --data-urlencode description@generated_changelog.md ${URL}"      
+    - "curl -X POST --silent --data-urlencode description@$RELEASE_PATH/changelog.md ${URL}"
   only:
     - tags
