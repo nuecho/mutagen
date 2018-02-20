@@ -77,6 +77,7 @@ release:binaries:
       - build/releases
   only:
     - master
+    - tags
 
 acceptance:windows:
   variables:
@@ -88,6 +89,7 @@ acceptance:windows:
     - "%RELEASE_PATH%\\windows\\mutagen.exe -h"
   only:
     - master
+    - tags
 
 acceptance:test:
   variables:
@@ -105,6 +107,7 @@ acceptance:test:
     - cd docker && docker-compose run mutagen 
   only:
     - master
+    - tags
 
 publish:s3:
   before_script:
