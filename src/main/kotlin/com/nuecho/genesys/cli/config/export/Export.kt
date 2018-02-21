@@ -1,7 +1,6 @@
 package com.nuecho.genesys.cli.config.export
 
 import com.genesyslab.platform.applicationblocks.com.CfgObject
-import com.nuecho.genesys.cli.GenesysCli
 import com.nuecho.genesys.cli.GenesysCliCommand
 import com.nuecho.genesys.cli.Logging.debug
 import com.nuecho.genesys.cli.Logging.info
@@ -27,9 +26,7 @@ class Export : GenesysCliCommand() {
         )
     }
 
-    override fun getGenesysCli(): GenesysCli {
-        return config!!.getGenesysCli()
-    }
+    override fun getGenesysCli() = config!!.getGenesysCli()
 
     fun exportConfiguration(processor: ExportProcessor, service: ConfigurationService) {
         try {

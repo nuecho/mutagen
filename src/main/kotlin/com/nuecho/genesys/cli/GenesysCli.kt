@@ -2,7 +2,6 @@ package com.nuecho.genesys.cli
 
 import com.nuecho.genesys.cli.config.Config
 import com.nuecho.genesys.cli.preferences.Preferences
-import com.nuecho.genesys.cli.preferences.environment.Environment
 import picocli.CommandLine
 
 const val BANNER = """
@@ -37,6 +36,7 @@ open class GenesysCli : GenesysCliCommand() {
             System.exit(execute(GenesysCli(), *args))
         }
 
+        @Suppress("PrintStackTrace")
         fun execute(genesysCli: GenesysCli, vararg args: String): Int {
             try {
                 CommandLine.run(genesysCli, System.out, *args)
@@ -47,6 +47,7 @@ open class GenesysCli : GenesysCliCommand() {
                 val cause = exception.cause!!
 
                 if (genesysCli.printStackTrace) {
+                    // The only acceptable place to print the stack trace
                     cause.printStackTrace()
                 } else {
                     System.err.println(cause.message)
@@ -95,13 +96,9 @@ open class GenesysCli : GenesysCliCommand() {
         CommandLine.usage(GenesysCliWithBanner(), System.out)
     }
 
-    override fun getGenesysCli(): GenesysCli {
-        return this
-    }
+    override fun getGenesysCli() = this
 
-    internal fun loadEnvironment(): Environment {
-        return Preferences.loadEnvironment(environmentName)
-    }
+    internal fun loadEnvironment() = Preferences.loadEnvironment(environmentName)
 }
 
 @CommandLine.Command(

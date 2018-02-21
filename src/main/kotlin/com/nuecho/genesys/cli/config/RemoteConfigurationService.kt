@@ -33,9 +33,8 @@ class RemoteConfigurationService(private val environment: Environment) : Configu
         debug { "Connected to Config Server." }
     }
 
-    override fun <T : ICfgObject> retrieveMultipleObjects(objectType: Class<T>, query: CfgQuery): Collection<T> {
-        return configurationService.retrieveMultipleObjects(objectType, query) ?: emptyList()
-    }
+    override fun <T : ICfgObject> retrieveMultipleObjects(objectType: Class<T>, query: CfgQuery): Collection<T> =
+        configurationService.retrieveMultipleObjects(objectType, query) ?: emptyList()
 
     override fun disconnect() {
         debug { "Disconnecting from Config Server" }

@@ -1,20 +1,21 @@
 package com.nuecho.genesys.cli.config.export
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import com.nuecho.genesys.cli.GenesysCliCommandTest
+import com.nuecho.genesys.cli.CliOutputCaptureWrapper.execute
 import com.nuecho.genesys.cli.TestResources.loadJsonConfiguration
 import com.nuecho.genesys.cli.config.TestConfigurationService
 import io.kotlintest.matchers.should
 import io.kotlintest.matchers.shouldBe
 import io.kotlintest.matchers.shouldThrow
 import io.kotlintest.matchers.startWith
+import io.kotlintest.specs.StringSpec
 import io.mockk.every
 import io.mockk.mockk
 import java.io.ByteArrayOutputStream
 
 private const val USAGE_PREFIX = "Usage: export [-?]"
 
-class ExportTest : GenesysCliCommandTest() {
+class ExportTest : StringSpec() {
     init {
         "executing Export with -h argument should print usage" {
             val output = execute("config", "export", "-h")

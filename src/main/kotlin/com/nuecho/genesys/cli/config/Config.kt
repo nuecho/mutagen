@@ -18,7 +18,5 @@ class Config : GenesysCliCommand() {
         CommandLine.usage(this, System.out)
     }
 
-    override fun getGenesysCli(): GenesysCli {
-        return genesysCli!!
-    }
+    override fun getGenesysCli() = genesysCli!!
 }
