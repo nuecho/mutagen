@@ -7,7 +7,7 @@ abstract class GenesysCliCommand : Runnable {
     @CommandLine.Option(
         names = ["-?", "-h", "--help"],
         usageHelp = true,
-        description = ["Shows this help message."]
+        description = ["Show this help message."]
     )
     private var usageRequested = false
 

@@ -70,7 +70,7 @@ dependencies {
     compile 'com.genesyslab.platform:commons:+'
     compile 'com.genesyslab.platform:configurationprotocol:+'
 
-    compile 'info.picocli:picocli:2.2.+'
+    compile 'info.picocli:picocli:2.3.+'
     compile 'io.github.microutils:kotlin-logging:1.5.+'
     compile 'ch.qos.logback:logback-classic:1.2.+'
     compile 'org.json:json:20180130'

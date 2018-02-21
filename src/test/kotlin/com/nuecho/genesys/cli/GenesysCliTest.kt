@@ -14,19 +14,23 @@ import io.mockk.spyk
 
 private const val DEBUG_LOG_ENTRY = "This is a debug log entry."
 private const val INFO_LOG_ENTRY = "This is an info log entry."
-private const val USAGE_PREFIX = "Usage: mutagen [-?disv] [-e=<environmentName>]"
 
 class GenesysCliTest : GenesysCliCommandTest() {
     init {
         "executing GenesysCli with no argument should print usage" {
             val output = execute()
+            output should include(SYNOPSIS)
+            output should include(FOOTER)
+            output should include(EXTRA_FOOTER)
             output should include(BANNER)
-            output should include(USAGE_PREFIX)
         }
 
         "executing GenesysCli with -h argument should print usage" {
             val output = execute("-h")
-            output should startWith(USAGE_PREFIX)
+            output should include(SYNOPSIS)
+            output should include(FOOTER)
+            output shouldNot include(EXTRA_FOOTER)
+            output shouldNot include(BANNER)
         }
 
         "executing GenesysCli with -v argument should print version" {
