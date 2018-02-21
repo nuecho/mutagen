@@ -25,7 +25,7 @@ class GenesysCliTest : StringSpec() {
             output should include(SYNOPSIS)
             output should include(FOOTER)
             output should include(EXTRA_FOOTER)
-            output should include(BANNER)
+            output should include(BANNER.lfToPlatformEol())
         }
 
         "executing GenesysCli with -h argument should print usage" {
@@ -33,7 +33,7 @@ class GenesysCliTest : StringSpec() {
             output should include(SYNOPSIS)
             output should include(FOOTER)
             output shouldNot include(EXTRA_FOOTER)
-            output shouldNot include(BANNER)
+            output shouldNot include(BANNER.lfToPlatformEol())
         }
 
         "executing GenesysCli with -v argument should print version" {
@@ -98,4 +98,6 @@ class GenesysCliTest : StringSpec() {
         returnCode shouldBe 0
         return output.split(System.lineSeparator())
     }
+
+    private fun String.lfToPlatformEol(): String = this.replace("\n", System.lineSeparator())
 }
