@@ -1,7 +1,6 @@
 package com.nuecho.genesys.cli.services
 
 import com.genesyslab.platform.commons.protocol.ChannelState
-import com.genesyslab.platform.commons.protocol.Endpoint
 import com.genesyslab.platform.voice.protocol.TServerProtocol
 import com.genesyslab.platform.voice.protocol.tserver.events.EventAgentLogout
 import com.genesyslab.platform.voice.protocol.tserver.events.EventError
@@ -12,9 +11,7 @@ import com.genesyslab.platform.voice.protocol.tserver.requests.dn.RequestRegiste
 import com.genesyslab.platform.voice.protocol.tserver.requests.dn.RequestUnregisterAddress
 import io.kotlintest.matchers.shouldThrow
 import io.kotlintest.specs.StringSpec
-import io.mockk.Runs
 import io.mockk.every
-import io.mockk.just
 import io.mockk.mockk
 import io.mockk.verify
 
@@ -22,6 +19,7 @@ class TServiceTest : StringSpec() {
     init {
         "opening TService should open protocol" {
             val protocol = mockTServerProtocol()
+            every { protocol.state } returns ChannelState.Closed
 
             TService(protocol).open()
 
@@ -39,6 +37,7 @@ class TServiceTest : StringSpec() {
 
         "closing a connected TService should close protocol" {
             val protocol = mockTServerProtocol()
+            every { protocol.state } returns ChannelState.Opened
 
             TService(protocol).close()
 
@@ -86,11 +85,7 @@ class TServiceTest : StringSpec() {
 }
 
 private fun mockTServerProtocol(): TServerProtocol {
-    val protocol = mockk<TServerProtocol>()
-    every { protocol.endpoint } returns Endpoint("testEndpoint", 1234)
-    every { protocol.state } returns ChannelState.Opened
-    every { protocol.open() } just Runs
-    every { protocol.close() } just Runs
+    val protocol = mockk<TServerProtocol>(relaxed = true)
     every { protocol.request(ofType(RequestRegisterAddress::class)) } returns EventRegistered.create()
     every { protocol.request(ofType(RequestAgentLogout::class)) } returns EventAgentLogout.create()
     every { protocol.request(ofType(RequestUnregisterAddress::class)) } returns EventUnregistered.create()

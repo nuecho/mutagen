@@ -8,10 +8,16 @@ import com.genesyslab.platform.reporting.protocol.statserver.PlaceStatus
 import io.mockk.every
 import io.mockk.mockk
 
-internal fun mockAgentStatus(agentId: String = "test", status: DnActions = DnActions.WaitForNextCall): AgentStatus {
+internal fun mockAgentStatus(
+    agentId: String = "test",
+    placeId: String = "testPlace",
+    switchId: String = "testSwitch",
+    dnId: String = "1234",
+    status: DnActions = DnActions.WaitForNextCall
+): AgentStatus {
     val dnStatus = mockk<DnStatus>()
-    every { dnStatus.switchId } returns "testSwitch"
-    every { dnStatus.dnId } returns "1234"
+    every { dnStatus.switchId } returns switchId
+    every { dnStatus.dnId } returns dnId
 
     val dnStatusesCollection = mockk<DnStatusesCollection>()
     every { dnStatusesCollection.count } returns 1
@@ -19,7 +25,7 @@ internal fun mockAgentStatus(agentId: String = "test", status: DnActions = DnAct
 
     val placeStatus = mockk<PlaceStatus>()
     every { placeStatus.dnStatuses } returns dnStatusesCollection
-    every { placeStatus.placeId } returns "testPlace"
+    every { placeStatus.placeId } returns placeId
 
     val agentStatus = mockk<AgentStatus>()
     every { agentStatus.agentId } returns agentId

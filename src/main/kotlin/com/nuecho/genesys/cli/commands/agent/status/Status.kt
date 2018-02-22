@@ -29,10 +29,10 @@ import com.genesyslab.platform.reporting.protocol.statserver.events.EventStatist
 import com.genesyslab.platform.reporting.protocol.statserver.requests.RequestOpenStatisticEx
 import com.nuecho.genesys.cli.GenesysCli
 import com.nuecho.genesys.cli.GenesysCliCommand
-import com.nuecho.genesys.cli.services.GenesysServices
 import com.nuecho.genesys.cli.Logging
 import com.nuecho.genesys.cli.Logging.info
 import com.nuecho.genesys.cli.commands.agent.Agent
+import com.nuecho.genesys.cli.services.GenesysServices
 import com.nuecho.genesys.cli.services.StatService
 import com.nuecho.genesys.cli.services.StatServiceException
 import com.nuecho.genesys.cli.setBits

@@ -1,10 +1,9 @@
 package com.nuecho.genesys.cli.services
 
 import com.genesyslab.platform.commons.protocol.ChannelState
-import com.genesyslab.platform.configuration.protocol.ConfServerProtocol
 import com.genesyslab.platform.configuration.protocol.types.CfgAppType
-import com.nuecho.genesys.cli.services.GenesysServices.createConfigurationService
 import com.nuecho.genesys.cli.preferences.environment.Environment
+import com.nuecho.genesys.cli.services.GenesysServices.createConfServerProtocol
 import io.kotlintest.matchers.shouldBe
 import io.kotlintest.specs.StringSpec
 
@@ -22,9 +21,7 @@ class GenesysServicesTest : StringSpec() {
                 password = password
             )
 
-            val applicationType = CfgAppType.CFGAdvisors
-            val configurationService = createConfigurationService(environment, applicationType)
-            val protocol = configurationService.protocol as ConfServerProtocol
+            val protocol = createConfServerProtocol(environment)
             val endpoint = protocol.endpoint
 
             endpoint.host shouldBe host
@@ -32,7 +29,7 @@ class GenesysServicesTest : StringSpec() {
 
             protocol.userName shouldBe user
             protocol.userPassword shouldBe password
-            protocol.clientApplicationType shouldBe applicationType.asInteger()
+            protocol.clientApplicationType shouldBe CfgAppType.CFGSCE.asInteger()
             protocol.state shouldBe ChannelState.Closed
         }
     }

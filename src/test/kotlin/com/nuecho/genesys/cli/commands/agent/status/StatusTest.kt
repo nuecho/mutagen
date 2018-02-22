@@ -43,7 +43,7 @@ class StatusTest : StringSpec() {
             val agentId = "test"
             val agentStatus = DnActions.WaitForNextCall
 
-            val statServiceMock = mockStatService(mockAgentStatus(agentId, agentStatus))
+            val statServiceMock = mockStatService(mockAgentStatus(agentId, status = agentStatus))
             val output = Status().getAgentStatus(agentId, statServiceMock, TEST_TIMEOUT)
 
             output.agentId shouldBe agentId

@@ -2,26 +2,25 @@ package com.nuecho.genesys.cli.commands.config.export
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.genesyslab.platform.applicationblocks.com.ICfgObject
-import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgApplication
 import com.genesyslab.platform.applicationblocks.com.objects.CfgConnInfo
 import com.genesyslab.platform.applicationblocks.com.objects.CfgDN
-import com.genesyslab.platform.configuration.protocol.types.CfgAppType.CFGConfigServer
 import com.nuecho.genesys.cli.TestResources.loadJsonConfiguration
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectType
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectType.APPLICATION
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectType.DN
 import com.nuecho.genesys.cli.preferences.environment.Environment
-import com.nuecho.genesys.cli.services.GenesysServices.createConfigurationService
+import com.nuecho.genesys.cli.services.ConfService
 import io.kotlintest.matchers.shouldBe
 import io.kotlintest.specs.StringSpec
 import java.io.ByteArrayOutputStream
 
 class JsonExportProcessorTest : StringSpec() {
+
+    private val service = ConfService(Environment(host = "test", user = "test", password = "test"))
+
     init {
         "exporting multiple objects of the same type should generate an ordered result" {
-            val service = createConfigurationService()
-
             val dn1 = CfgDN(service)
             val dn2 = CfgDN(service)
             val dn3 = CfgDN(service)
@@ -34,8 +33,6 @@ class JsonExportProcessorTest : StringSpec() {
         }
 
         "exporting an object with array properties should properly serialize all array elements" {
-            val service = createConfigurationService()
-
             val application = CfgApplication(service)
             application.name = "Application"
 
@@ -49,11 +46,6 @@ class JsonExportProcessorTest : StringSpec() {
 
             checkExportOutput("application.json", APPLICATION, application)
         }
-    }
-
-    private fun createConfigurationService(): IConfService {
-        val environment = Environment(host = "test", user = "test", password = "test")
-        return createConfigurationService(environment, CFGConfigServer)
     }
 
     private fun checkExportOutput(

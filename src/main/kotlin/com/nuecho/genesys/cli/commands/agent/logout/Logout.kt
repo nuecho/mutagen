@@ -11,8 +11,7 @@ import com.nuecho.genesys.cli.commands.agent.Agent
 import com.nuecho.genesys.cli.commands.agent.status.Status
 import com.nuecho.genesys.cli.getDefaultEndpoint
 import com.nuecho.genesys.cli.isLoggedOut
-import com.nuecho.genesys.cli.services.ConfigurationService
-import com.nuecho.genesys.cli.services.RemoteConfigurationService
+import com.nuecho.genesys.cli.services.ConfService
 import com.nuecho.genesys.cli.services.StatService
 import com.nuecho.genesys.cli.services.TService
 import com.nuecho.genesys.cli.toConsoleString
@@ -51,13 +50,13 @@ class Logout : GenesysCliCommand() {
 
     override fun execute() {
         val statService = StatService(Endpoint(statHost!!, statPort!!))
-        val configService = RemoteConfigurationService(getGenesysCli().loadEnvironment())
+        val configService = ConfService(getGenesysCli().loadEnvironment())
 
-        configService.connect()
+        configService.open()
         try {
             logoutAgent(username!!, agentStatusProvider(statService), tServiceProvider(configService))
         } finally {
-            configService.disconnect()
+            configService.close()
         }
     }
 
@@ -89,9 +88,9 @@ class Logout : GenesysCliCommand() {
     private fun agentStatusProvider(statService: StatService): (username: String) -> AgentStatus =
         { Status().getAgentStatus(it, statService) }
 
-    private fun tServiceProvider(configService: ConfigurationService): (switchId: String) -> TService =
+    private fun tServiceProvider(configService: ConfService): (switchId: String) -> TService =
         { TService(configService.getSwitchCfg(it).tServer.getDefaultEndpoint()) }
 
-    private fun ConfigurationService.getSwitchCfg(name: String): CfgSwitch =
+    private fun ConfService.getSwitchCfg(name: String): CfgSwitch =
         this.retrieveObject(CfgSwitch::class.java, CfgSwitchQuery(name))
 }
