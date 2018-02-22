@@ -1,7 +1,7 @@
 package com.nuecho.genesys.cli
 
-import com.nuecho.genesys.cli.agent.Agent
-import com.nuecho.genesys.cli.config.Config
+import com.nuecho.genesys.cli.commands.agent.Agent
+import com.nuecho.genesys.cli.commands.config.Config
 import com.nuecho.genesys.cli.preferences.Preferences
 import picocli.CommandLine
 
