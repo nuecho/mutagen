@@ -6,6 +6,12 @@ comments:
   UndocumentedPublicFunction:
     active: false
 
+complexity:
+  LabeledExpression:
+    active: false
+  StringLiteralDuplication:
+    active: false
+
 exceptions:
   TooGenericExceptionCaught:
     active: false
