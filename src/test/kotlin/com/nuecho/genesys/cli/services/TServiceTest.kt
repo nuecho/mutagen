@@ -44,41 +44,41 @@ class TServiceTest : StringSpec() {
             verify { protocol.close() }
         }
 
-        "logoutAdress should work" {
-            TService(mockTServerProtocol()).logoutAdress("123")
+        "logoutAddress should work" {
+            TService(mockTServerProtocol()).logoutAddress("123")
             // TODO we should verify the mock has been called, but it doesn't work
         }
 
-        "logoutAdress should throw if registerAddress fail" {
+        "logoutAddress should throw if registerAddress fail" {
             val protocol = mockTServerProtocol()
             val service = TService(protocol)
 
             every { protocol.request(ofType(RequestRegisterAddress::class)) } returns EventError.create()
 
             shouldThrow<TServiceException> {
-                service.logoutAdress("123")
+                service.logoutAddress("123")
             }
         }
 
-        "logoutAdress should throw if agentLogout fail" {
+        "logoutAddress should throw if agentLogout fail" {
             val protocol = mockTServerProtocol()
             val service = TService(protocol)
 
             every { protocol.request(ofType(RequestAgentLogout::class)) } returns EventError.create()
 
             shouldThrow<TServiceException> {
-                service.logoutAdress("123")
+                service.logoutAddress("123")
             }
         }
 
-        "logoutAdress should throw if unregisterAddress fail" {
+        "logoutAddress should throw if unregisterAddress fail" {
             val protocol = mockTServerProtocol()
             val service = TService(protocol)
 
             every { protocol.request(ofType(RequestUnregisterAddress::class)) } returns EventError.create()
 
             shouldThrow<TServiceException> {
-                service.logoutAdress("123")
+                service.logoutAddress("123")
             }
         }
     }

@@ -1,5 +1,6 @@
 package com.nuecho.genesys.cli.commands.agent.status
 
+import com.genesyslab.platform.applicationblocks.com.objects.CfgPerson
 import com.genesyslab.platform.commons.protocol.Endpoint
 import com.genesyslab.platform.commons.protocol.MessageHandler
 import com.genesyslab.platform.reporting.protocol.statserver.AgentStatus
@@ -29,12 +30,14 @@ import com.genesyslab.platform.reporting.protocol.statserver.events.EventStatist
 import com.genesyslab.platform.reporting.protocol.statserver.requests.RequestOpenStatisticEx
 import com.nuecho.genesys.cli.GenesysCli
 import com.nuecho.genesys.cli.GenesysCliCommand
-import com.nuecho.genesys.cli.Logging
+import com.nuecho.genesys.cli.Logging.debug
 import com.nuecho.genesys.cli.Logging.info
 import com.nuecho.genesys.cli.commands.agent.Agent
+import com.nuecho.genesys.cli.services.ConfService
 import com.nuecho.genesys.cli.services.GenesysServices
 import com.nuecho.genesys.cli.services.StatService
 import com.nuecho.genesys.cli.services.StatServiceException
+import com.nuecho.genesys.cli.services.withService
 import com.nuecho.genesys.cli.setBits
 import com.nuecho.genesys.cli.toConsoleString
 import picocli.CommandLine
@@ -43,7 +46,6 @@ import java.util.concurrent.TimeUnit
 
 // TODO we should review those default values
 private const val REFERENCE_ID = 1
-private const val DEFAULT_TENANT_NAME = "Resources"
 private const val DEFAULT_TENANT_PASSWORD = ""
 private const val DEFAULT_STAT_TIME_PROFILE = "Default"
 
@@ -51,7 +53,7 @@ private const val DEFAULT_STAT_TIME_PROFILE = "Default"
     name = "status",
     description = ["Get Agent Status"]
 )
-class Status : GenesysCliCommand() {
+class StatusCommand : GenesysCliCommand() {
     @CommandLine.ParentCommand
     private var agent: Agent? = null
 
@@ -72,64 +74,69 @@ class Status : GenesysCliCommand() {
     @CommandLine.Parameters(
         arity = "1",
         index = "0",
-        paramLabel = "username",
-        description = ["Username of the agent to disconnect."]
+        paramLabel = "employeeId",
+        description = ["EmployeeID of the agent to disconnect."]
     )
-    private var username: String? = null
+    private var employeeId: String? = null
 
     override fun execute() {
         val statService = StatService(Endpoint(statHost!!, statPort!!))
-        val agentStatus = getAgentStatus(username!!, statService)
-        println(agentStatus.toConsoleString())
+        withEnvironmentConfService { println(Status.getAgentStatus(it, statService, employeeId!!).toConsoleString()) }
     }
 
     override fun getGenesysCli(): GenesysCli = agent!!.getGenesysCli()
+}
 
-    fun getAgentStatus(
-        username: String,
+object Status {
+    fun getAgentStatus(confService: ConfService, statService: StatService, employeeId: String) =
+        getAgentStatus(statService, confService.getPerson(employeeId))
+
+    internal fun getAgentStatus(
         statService: StatService,
+        agent: CfgPerson,
         timeout: Long = GenesysServices.DEFAULT_CLIENT_TIMEOUT.toLong()
     ): AgentStatus {
+        val employeeId = agent.employeeID
+
         var agentStatus: AgentStatus? = null
         val latch = CountDownLatch(1)
 
         statService.setMessageHandler(MessageHandler { message ->
             val value = if (message is EventInfo) message.stateValue else return@MessageHandler
-            agentStatus = if (value is AgentStatus && value.agentId == username) value else return@MessageHandler
+            agentStatus = if (value is AgentStatus && value.agentId == employeeId) value else return@MessageHandler
 
             latch.countDown()
         })
 
         val referenceId = REFERENCE_ID
-        val request = agentStatusRequest(username, referenceId)
+        val request = agentStatusRequest(agent, referenceId)
 
-        info { "Retrieving agent ($username) status." }
+        info { "Retrieving agent ($employeeId) status." }
 
-        statService.open()
-        try {
+        withService(statService) {
             val response = statService.request(request)
             if (response.messageId() != EventStatisticOpened.ID) {
-                Logging.debug { "Unexpected response for RequestOpenStatisticEx:\n" + response }
+                debug { "Unexpected response for RequestOpenStatisticEx:${System.lineSeparator()}response" }
                 throw StatServiceException("Error creating statistic. Response: (${response.messageName()}).")
             }
 
             latch.await(timeout, TimeUnit.SECONDS)
 
             statService.closeStatistic(referenceId)
-        } finally {
-            statService.close()
         }
 
-        return agentStatus ?: throw StatServiceException("Failed to get agent status.")
+        debug { "AgentStatus:${System.lineSeparator()}$agentStatus" }
+
+        return agentStatus ?: throw StatServiceException("Error retrieving AgentStatus for agent ($employeeId).")
     }
 
     @Suppress("LongMethod")
-    private fun agentStatusRequest(username: String, referenceId: Int): RequestOpenStatisticEx {
+    private fun agentStatusRequest(agent: CfgPerson, referenceId: Int): RequestOpenStatisticEx {
         val stat = StatisticObject.create()
-        stat.objectId = username
+        stat.objectId = agent.employeeID
         stat.objectType = StatisticObjectType.Agent
-        stat.tenantName = DEFAULT_TENANT_NAME
-        stat.tenantPassword = DEFAULT_TENANT_PASSWORD
+        stat.tenantName = agent.tenant.name
+        stat.tenantPassword = DEFAULT_TENANT_PASSWORD // TODO should this be agent.tenant.password ?
 
         val mainMask = DnActionsMask()
         mainMask.setBits(

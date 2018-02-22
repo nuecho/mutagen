@@ -8,7 +8,7 @@ import com.genesyslab.platform.reporting.protocol.statserver.requests.RequestClo
 import com.nuecho.genesys.cli.Logging.debug
 import com.nuecho.genesys.cli.Logging.info
 
-class StatService internal constructor(private val protocol: StatServerProtocol) : Protocol by protocol {
+class StatService internal constructor(private val protocol: StatServerProtocol) : Service, Protocol by protocol {
     constructor(endpoint: Endpoint) : this(StatServerProtocol(endpoint))
 
     override fun open() {

@@ -41,8 +41,7 @@ object Preferences {
             CUSTOM_HOME_VARIABLE to false,
             HOME_VARIABLE to true,
             USER_PROFILE_VARIABLE to true
-        ).forEach {
-            val (environmentPathVariable, appendPreferenceDirectory) = it
+        ).forEach { (environmentPathVariable, appendPreferenceDirectory) ->
             val environmentPath = environmentVariables[environmentPathVariable]
 
             if (environmentPath == null) {
