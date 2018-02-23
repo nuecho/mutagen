@@ -1,8 +1,8 @@
 package com.nuecho.genesys.cli.preferences.environment
 
-import com.nuecho.genesys.cli.GenesysServices.DEFAULT_APPLICATION_NAME
-import com.nuecho.genesys.cli.GenesysServices.DEFAULT_SERVER_PORT
-import com.nuecho.genesys.cli.GenesysServices.DEFAULT_USE_TLS
+import com.nuecho.genesys.cli.services.GenesysServices.DEFAULT_APPLICATION_NAME
+import com.nuecho.genesys.cli.services.GenesysServices.DEFAULT_SERVER_PORT
+import com.nuecho.genesys.cli.services.GenesysServices.DEFAULT_USE_TLS
 import com.nuecho.genesys.cli.TestResources.loadEnvironments
 import io.kotlintest.matchers.shouldBe
 import io.kotlintest.matchers.shouldThrow

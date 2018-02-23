@@ -1,6 +1,6 @@
 package com.nuecho.genesys.cli.preferences.environment
 
-import com.nuecho.genesys.cli.GenesysServices
+import com.nuecho.genesys.cli.services.GenesysServices
 
 data class Environment(
     val host: String,
