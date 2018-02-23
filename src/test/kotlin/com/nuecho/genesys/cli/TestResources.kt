@@ -7,12 +7,13 @@ import java.io.File
 
 object TestResources {
     fun loadEnvironments(path: String): Environments {
-        val environments = toFile(path).readText()
+        val environments = toPreferenceFile(path).readText()
 
         return Environments.load(environments)
     }
 
-    fun toFile(path: String): File = File(ClassLoader.getSystemClassLoader().getResource("preferences/$path").toURI())
+    fun toPreferenceFile(path: String): File =
+        File(ClassLoader.getSystemClassLoader().getResource(".mutagen/$path").toURI())
 
     fun loadJsonConfiguration(path: String): JsonNode {
         val configuration = ClassLoader.getSystemClassLoader().getResource("configuration/$path")
