@@ -2,8 +2,8 @@
 # accept an env variable for the actual tag, in the semver form of vX.Y.Z
 # defaults to v0.0.0
 
-VERSION="0.0.0"
-SOURCE_TAG=${TAG:-v$VERSION}
+VERSION=$(git describe)
+SOURCE_TAG=${TAG:-$VERSION}
 # shellcheck disable=SC2143
 if [ "$(echo "$SOURCE_TAG" | grep -E 'v[0-9]+\.[0-9]+\.[0-9]+')" ] ; then
   VERSION=$(echo "$SOURCE_TAG" | grep -E 'v[0-9]+\.[0-9]+\.[0-9]+');
@@ -16,4 +16,3 @@ export MINOR
 export MICRO
 export VERSION=$MAJOR.$MINOR.$MICRO
 echo "$SOURCE_TAG -> $VERSION"
-export RELEASE_NOTES="Nice work dude!"
