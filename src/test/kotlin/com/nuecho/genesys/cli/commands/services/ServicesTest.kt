@@ -22,8 +22,8 @@ import java.net.URI
 
 private const val USAGE_PREFIX = "Usage: services [-?]"
 
-private val VERSION = "8.5"
-private val TYPE = "tserver"
+private const val VERSION = "8.5"
+private const val TYPE = "tserver"
 private val ENDPOINT_URI = URI.create("tcp://foo.example.com:1234")
 
 class ServicesTest : StringSpec() {
@@ -136,6 +136,12 @@ class ServicesTest : StringSpec() {
 
                 result shouldBe jacksonObjectMapper().readTree(javaClass.getResourceAsStream("services.json"))
             }
+        }
+
+        "given an unreachable endpoint should return status as DOWN" {
+            val result = Services.status(Endpoint(ENDPOINT_URI), true)
+
+            result shouldBe Status.DOWN
         }
     }
 }
