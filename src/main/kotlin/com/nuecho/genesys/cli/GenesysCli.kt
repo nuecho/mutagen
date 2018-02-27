@@ -2,6 +2,7 @@ package com.nuecho.genesys.cli
 
 import com.nuecho.genesys.cli.commands.agent.Agent
 import com.nuecho.genesys.cli.commands.config.Config
+import com.nuecho.genesys.cli.commands.services.Services
 import com.nuecho.genesys.cli.preferences.Preferences
 import picocli.CommandLine
 
@@ -28,7 +29,7 @@ const val EXTRA_FOOTER = "Please specify a command."
     versionProvider = VersionProvider::class,
     footer = ["%n$FOOTER"],
     commandListHeading = "%nCommands:%n%n",
-    subcommands = [Agent::class, Config::class]
+    subcommands = [Agent::class, Config::class, Services::class]
 )
 open class GenesysCli : GenesysCliCommand() {
     companion object {

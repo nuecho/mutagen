@@ -2,7 +2,7 @@
 # accept an env variable for the actual tag, in the semver form of vX.Y.Z
 # defaults to v0.0.0
 
-VERSION=$(git describe)
+VERSION=$(git describe) # note that this assumes git is present on the image
 SOURCE_TAG=${TAG:-$VERSION}
 # shellcheck disable=SC2143
 if [ "$(echo "$SOURCE_TAG" | grep -E 'v[0-9]+\.[0-9]+\.[0-9]+')" ] ; then

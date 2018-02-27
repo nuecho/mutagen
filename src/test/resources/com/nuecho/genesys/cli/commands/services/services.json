@@ -1,0 +1,9 @@
+[
+  {
+    "name": "foo",
+    "type": "tserver",
+    "version": "8.5",
+    "endpoint": "tcp://foo.example.com:1234",
+    "primary": true
+  }
+]

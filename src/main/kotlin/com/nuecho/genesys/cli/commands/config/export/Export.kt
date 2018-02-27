@@ -12,7 +12,7 @@ import kotlin.reflect.full.createInstance
 
 @CommandLine.Command(
     name = "export",
-    description = ["Genesys Config Server export tool"]
+    description = ["Export configuration objects."]
 )
 class Export : GenesysCliCommand() {
     @CommandLine.ParentCommand

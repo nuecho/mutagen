@@ -28,6 +28,13 @@ To perform all verifications (tests, ktlint, detekt)
 ./gradlew check
 ```
 
+## Code Coverage
+
+Since []JaCoCo does not work that well with kotlin code base](https://youtrack.jetbrains.com/issue/KT-18383), 
+we rely on IntelliJ to perform code coverage. To do so, click on the `test` then `Run All Tests with Coverage`.
+
+We are aiming for 80% line code coverage.
+
 ## Test
 
 ```bash

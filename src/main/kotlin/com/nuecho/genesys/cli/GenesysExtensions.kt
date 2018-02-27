@@ -22,8 +22,9 @@ fun AgentStatus.toConsoleString(): String = """
         |  DNs   : ${this.place.dnStatuses.toConsoleString()}
     """.trimMargin()
 
-fun CfgApplication.getDefaultEndpoint(): Endpoint =
-    Endpoint(this.serverInfo.host.name, this.getDefaultPort()!!)
+fun CfgApplication.getDefaultEndpoint(): Endpoint? =
+    if (this.serverInfo.host == null) null
+    else Endpoint(this.serverInfo.host.name, this.getDefaultPort()!!)
 
 fun CfgApplication.getDefaultPort(): Int? =
     this.portInfos.find { it.id == "default" }?.port?.toInt()
@@ -36,3 +37,6 @@ fun DnStatusesCollection.toConsoleString(): String =
 
 fun DnActionsMask.setBits(vararg dnActions: DnActions) =
     dnActions.forEach { setBit(it) }
+
+fun GEnum.toShortName(): String =
+    this.name().replace("CFG", "").toLowerCase()
