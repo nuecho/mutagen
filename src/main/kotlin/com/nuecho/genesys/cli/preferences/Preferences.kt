@@ -1,6 +1,7 @@
 package com.nuecho.genesys.cli.preferences
 
 import com.nuecho.genesys.cli.Logging.debug
+import com.nuecho.genesys.cli.Logging.info
 import com.nuecho.genesys.cli.preferences.environment.Environment
 import com.nuecho.genesys.cli.preferences.environment.Environments
 import java.io.Console
@@ -10,29 +11,57 @@ import java.io.FileNotFoundException
 object Preferences {
     const val DEFAULT_ENVIRONMENT = "default"
 
-    private const val PREFERENCES_DIRECTORY_NAME = ".mutagen"
+    const val WORKING_DIRECTORY_VARIABLE = "user.dir"
+    const val CUSTOM_HOME_VARIABLE = "MUTAGEN_HOME"
+    const val USER_PROFILE_VARIABLE = "USERPROFILE"
+    const val HOME_VARIABLE = "HOME"
+    const val PREFERENCES_DIRECTORY_NAME = ".mutagen"
     private const val ENVIRONMENTS_FILENAME = "environments.yml"
 
-    private val defaultPreferencesDirectory = File(System.getProperty("user.home"), PREFERENCES_DIRECTORY_NAME)
-    private val defaultEnvironmentsFile = File(defaultPreferencesDirectory, ENVIRONMENTS_FILENAME)
-
     fun loadEnvironment(
-        environment: String = DEFAULT_ENVIRONMENT,
-        environmentsFile: File = defaultEnvironmentsFile
+        environmentName: String = DEFAULT_ENVIRONMENT,
+        environmentsFile: File? = null
     ): Environment {
+        val environmentVariables = System.getenv().toMutableMap()
+        environmentVariables[WORKING_DIRECTORY_VARIABLE] = System.getProperty(WORKING_DIRECTORY_VARIABLE)
 
-        val env = loadEnvironments(environmentsFile)[environment]
-                ?: throw IllegalArgumentException("Environment ($environment) does not exists")
+        val effectiveEnvironmentsFile = environmentsFile ?: findEnvironmentFile(environmentVariables)
+        info { "Loading environment file ($effectiveEnvironmentsFile)" }
 
-        env.password = env.password ?: promptForPassword()
+        val environment = Environments.load(effectiveEnvironmentsFile)[environmentName]
+                ?: throw IllegalArgumentException("Environment ($environmentName) does not exists")
+        environment.password = environment.password ?: promptForPassword()
 
-        return env
+        return environment
     }
 
-    private fun loadEnvironments(environmentsFile: File): Environments =
-        if (!environmentsFile.exists() || !environmentsFile.isFile)
-            throw FileNotFoundException("Cannot find environments file ($environmentsFile)")
-        else Environments.load(environmentsFile)
+    internal fun findEnvironmentFile(environmentVariables: Map<String?, String?>): File {
+        mapOf(
+            WORKING_DIRECTORY_VARIABLE to false,
+            CUSTOM_HOME_VARIABLE to false,
+            HOME_VARIABLE to true,
+            USER_PROFILE_VARIABLE to true
+        ).forEach {
+            val (environmentPathVariable, appendPreferenceDirectory) = it
+            val environmentPath = environmentVariables[environmentPathVariable]
+
+            if (environmentPath == null) {
+                debug { "$environmentPathVariable is not defined." }
+                return@forEach
+            }
+
+            val environmentDirectory =
+                if (appendPreferenceDirectory) File(environmentPath, PREFERENCES_DIRECTORY_NAME)
+                else File(environmentPath)
+
+            val environmentFile = File(environmentDirectory, ENVIRONMENTS_FILENAME)
+
+            if (environmentFile.exists()) return environmentFile
+            debug { "No environment file found in $environmentPathVariable (${environmentFile.parent})" }
+        }
+
+        throw FileNotFoundException("Cannot find environment file.")
+    }
 
     fun promptForPassword(): String {
         debug { "Password not found in environment. Prompting." }
