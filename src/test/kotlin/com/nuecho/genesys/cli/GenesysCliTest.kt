@@ -4,6 +4,7 @@ import com.nuecho.genesys.cli.CliOutputCaptureWrapper.captureOutput
 import com.nuecho.genesys.cli.CliOutputCaptureWrapper.execute
 import com.nuecho.genesys.cli.Logging.debug
 import com.nuecho.genesys.cli.Logging.info
+import io.kotlintest.TestCaseContext
 import io.kotlintest.matchers.contain
 import io.kotlintest.matchers.containsAll
 import io.kotlintest.matchers.include
@@ -70,6 +71,13 @@ class GenesysCliTest : StringSpec() {
             val output = testLogging("--debug", "--info")
             output should containsAll(DEBUG_LOG_ENTRY, INFO_LOG_ENTRY)
         }
+    }
+
+    // Reset log level between tests
+    override fun interceptTestCase(context: TestCaseContext, test: () -> Unit) {
+        Logging.setToDefault()
+        test()
+        Logging.setToDefault()
     }
 
     private fun testException(message: String, vararg args: String): String {

@@ -69,7 +69,7 @@ class JsonExportProcessor(output: OutputStream) : ExportProcessor {
 
     private fun toXml(configurationObject: ICfgObject): String {
         val writer = StringWriter()
-        var node = configurationObject.toXml()
+        val node = configurationObject.toXml()
         xmlTransformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8")
         xmlTransformer.transform(DOMSource(node), StreamResult(writer))
         writer.flush()

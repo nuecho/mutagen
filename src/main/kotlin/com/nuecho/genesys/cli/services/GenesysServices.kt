@@ -1,7 +1,5 @@
 package com.nuecho.genesys.cli.services
 
-import com.genesyslab.platform.applicationblocks.com.ConfServiceFactory
-import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.commons.connection.configuration.PropertyConfiguration
 import com.genesyslab.platform.commons.connection.tls.KeyManagerHelper
 import com.genesyslab.platform.commons.connection.tls.SSLContextHelper
@@ -20,21 +18,18 @@ object GenesysServices {
     const val DEFAULT_CLIENT_TIMEOUT = 10
     private const val DEFAULT_SERVER_TIMEOUT = 20
 
-    fun createConfigurationService(
-        environment: Environment,
-        applicationType: CfgAppType
-    ): IConfService {
-        var endpoint = createEndpoint(environment)
+    fun createConfServerProtocol(environment: Environment): ConfServerProtocol {
+        val endpoint = GenesysServices.createConfServerEndpoint(environment)
         val protocol = ConfServerProtocol(endpoint)
-        protocol.clientApplicationType = applicationType.ordinal()
+        protocol.clientApplicationType = CfgAppType.CFGSCE.ordinal()
         protocol.userName = environment.user
         protocol.userPassword = environment.password
         protocol.clientName = environment.application
 
-        return ConfServiceFactory.createConfService(protocol)
+        return protocol
     }
 
-    private fun createEndpoint(environment: Environment): Endpoint {
+    private fun createConfServerEndpoint(environment: Environment): Endpoint {
         val propertyConfiguration = PropertyConfiguration()
         propertyConfiguration.isUseAddp = true
         propertyConfiguration.addpClientTimeout = DEFAULT_CLIENT_TIMEOUT
