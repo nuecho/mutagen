@@ -26,6 +26,10 @@ object Logging {
     }
 
     // Logging
+    fun warn(message: () -> Any?) {
+        logger.warn(message)
+    }
+
     fun info(message: () -> Any?) {
         logger.info(message)
     }

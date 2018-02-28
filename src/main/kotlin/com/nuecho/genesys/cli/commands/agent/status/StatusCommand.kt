@@ -1,5 +1,6 @@
 package com.nuecho.genesys.cli.commands.agent.status
 
+import com.genesyslab.platform.applicationblocks.com.ConfigServerException
 import com.genesyslab.platform.applicationblocks.com.objects.CfgPerson
 import com.genesyslab.platform.commons.protocol.Endpoint
 import com.genesyslab.platform.commons.protocol.MessageHandler
@@ -37,6 +38,7 @@ import com.nuecho.genesys.cli.services.ConfService
 import com.nuecho.genesys.cli.services.GenesysServices
 import com.nuecho.genesys.cli.services.StatService
 import com.nuecho.genesys.cli.services.StatServiceException
+import com.nuecho.genesys.cli.services.retrievePerson
 import com.nuecho.genesys.cli.services.withService
 import com.nuecho.genesys.cli.setBits
 import com.nuecho.genesys.cli.toConsoleString
@@ -89,7 +91,11 @@ class StatusCommand : GenesysCliCommand() {
 
 object Status {
     fun getAgentStatus(confService: ConfService, statService: StatService, employeeId: String) =
-        getAgentStatus(statService, confService.getPerson(employeeId))
+        getAgentStatus(
+            statService,
+            confService.retrievePerson(employeeId)
+                    ?: throw ConfigServerException("Error while retrieving CfgPerson ($employeeId).")
+        )
 
     internal fun getAgentStatus(
         statService: StatService,

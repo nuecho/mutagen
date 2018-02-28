@@ -1,0 +1,18 @@
+{
+  "employeeId": "employedId",
+  "userName": "userName",
+  "externalId": null,
+  "firstName": null,
+  "lastName": null,
+  "password": null,
+  "passwordHashAlgorithm": null,
+  "passwordUpdatingDate": null,
+  "changePasswordOnNextLogin": null,
+  "emailAddress": null,
+  "state": null,
+  "agent": null,
+  "externalAuth": null,
+  "appRanks": null,
+  "userProperties": null,
+  "agentInfo": null
+}

@@ -2,6 +2,7 @@ package com.nuecho.genesys.cli.commands.services
 
 import com.fasterxml.jackson.core.JsonGenerator
 import com.genesyslab.platform.applicationblocks.com.objects.CfgApplication
+import com.genesyslab.platform.applicationblocks.com.queries.CfgApplicationQuery
 import com.genesyslab.platform.commons.protocol.Endpoint
 import com.genesyslab.platform.configuration.protocol.types.CfgFlag
 import com.nuecho.genesys.cli.GenesysCli
@@ -10,14 +11,12 @@ import com.nuecho.genesys.cli.Logging.debug
 import com.nuecho.genesys.cli.Logging.info
 import com.nuecho.genesys.cli.core.defaultGenerator
 import com.nuecho.genesys.cli.getDefaultEndpoint
-import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectType
 import com.nuecho.genesys.cli.services.ConfService
 import com.nuecho.genesys.cli.toShortName
 import picocli.CommandLine
 import java.net.InetSocketAddress
 import java.net.Socket
 import java.net.URI
-import kotlin.reflect.full.createInstance
 
 const val DEFAULT_SOCKET_TIMEOUT = 200
 
@@ -58,7 +57,7 @@ class Services : GenesysCliCommand() {
         service.open()
         val applications = service.retrieveMultipleObjects(
             CfgApplication::class.java,
-            ConfigurationObjectType.APPLICATION.queryType.createInstance()
+            CfgApplicationQuery()
         ) ?: emptyList()
 
         writeServices(applications)

@@ -10,6 +10,7 @@ import com.nuecho.genesys.cli.commands.agent.status.Status
 import com.nuecho.genesys.cli.getDefaultEndpoint
 import com.nuecho.genesys.cli.services.ConfService
 import com.nuecho.genesys.cli.services.TService
+import com.nuecho.genesys.cli.services.retrieveSwitch
 import io.kotlintest.matchers.should
 import io.kotlintest.matchers.shouldEqual
 import io.kotlintest.matchers.startWith
@@ -59,17 +60,20 @@ class LogoutCommandTest : StringSpec() {
             val switch = mockk<CfgSwitch>()
 
             val confService = mockk<ConfService>()
-            every { confService.getSwitch(switchId) } returns switch
 
-            val tService = mockTService()
+            staticMockk("com.nuecho.genesys.cli.services.ConfServiceExtensionsKt").use {
+                every { confService.retrieveSwitch(switchId) } returns switch
 
-            staticMockk("com.nuecho.genesys.cli.commands.agent.logout.LogoutCommandKt").use {
-                every { switch.getTService() } returns tService
-                every { agentStatus.toSwitchIdDnMap() } returns hashMapOf(switchId to dns)
+                val tService = mockTService()
 
-                Logout.logoutAgent(confService, agentStatus)
+                staticMockk("com.nuecho.genesys.cli.commands.agent.logout.LogoutCommandKt").use {
+                    every { switch.getTService() } returns tService
+                    every { agentStatus.toSwitchIdDnMap() } returns hashMapOf(switchId to dns)
 
-                verify { tService.logoutAddresses(dns) }
+                    Logout.logoutAgent(confService, agentStatus)
+
+                    verify { tService.logoutAddresses(dns) }
+                }
             }
         }
 

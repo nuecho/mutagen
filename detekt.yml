@@ -34,3 +34,5 @@ style:
     active: false
   UtilityClassWithPublicConstructor:
     active: false
+  ForbiddenComment:
+    active: false
