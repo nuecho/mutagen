@@ -14,14 +14,17 @@ import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectType
 import com.nuecho.genesys.cli.services.ConfService
 import com.nuecho.genesys.cli.toShortName
 import picocli.CommandLine
-import java.io.IOException
+import java.net.InetSocketAddress
 import java.net.Socket
 import java.net.URI
 import kotlin.reflect.full.createInstance
 
+const val DEFAULT_SOCKET_TIMEOUT = 200
+
 @CommandLine.Command(
     name = "services",
-    description = ["Discover services."]
+    description = ["%nDiscover services"],
+    showDefaultValues = true
 )
 class Services : GenesysCliCommand() {
 
@@ -31,18 +34,23 @@ class Services : GenesysCliCommand() {
     @CommandLine.Option(
         names = ["--types"],
         split = ",",
-        description = ["Comma separated list of server application types (TServer,StatServer,OrchestrationServer,...)."]
+        description = ["Comma separated list of server application types to filter on " +
+                "(TServer,StatServer,OrchestrationServer,...)."]
     )
     private var types: List<String>? = null
-        get() {
-            return field?.map { it -> it.toLowerCase() }
-        }
+        get() = field?.map { it.toLowerCase() }
 
     @CommandLine.Option(
         names = ["--show-status"],
         description = ["Show service status."]
     )
     private var showStatus: Boolean = false
+
+    @CommandLine.Option(
+        names = ["--timeout"],
+        description = ["Set socket connection timeout (ms)."]
+    )
+    private var socketTimeout: Int = DEFAULT_SOCKET_TIMEOUT
 
     override fun execute() {
         info { "Discovering services" }
@@ -66,13 +74,10 @@ class Services : GenesysCliCommand() {
         jsonGenerator.use {
             jsonGenerator.writeStartArray()
             applications
-                //.filter { application -> accept(application, types) }
-                .forEach { application ->
-                    debug { "processing ${application.type}" }
-                    if (accept(application, types)) {
-                        val service = toService(application, showStatus)
-                        jsonGenerator.writeObject(service)
-                    }
+                .filter { application -> accept(application, types) }
+                .map { application -> toServiceDefinition(application, showStatus, socketTimeout) }
+                .forEach { service ->
+                    jsonGenerator.writeObject(service)
                 }
             jsonGenerator.writeEndArray()
         }
@@ -84,55 +89,50 @@ class Services : GenesysCliCommand() {
 
         internal fun accept(application: CfgApplication, types: List<String>? = null): Boolean {
 
-            debug { "${application.type} ${application.getDefaultEndpoint()}" }
-            if (!application.isServer.equals(CfgFlag.CFGTrue)) {
-                debug { "Not a server" }
-                return false
-            }
+            if (application.isServer != CfgFlag.CFGTrue) return false
 
-            if (types != null && !types.contains(toShortName(application))) {
-                debug { "Not part of filter" }
-                return false
-            }
+            if (application.getDefaultEndpoint() == null) return false
 
-            if (application.getDefaultEndpoint() == null) {
-                debug { "No default endpoint" }
-                return false
-            }
-            debug { "Accepting ${application.type}" }
-            return true
+            if (types == null) return true // no filter applied
+
+            return types.contains(application.type.toShortName())
         }
 
-        internal fun toShortName(application: CfgApplication) = application.type.toShortName()
-
-        internal fun toService(application: CfgApplication, showStatus: Boolean = false) =
-            Service(
+        internal fun toServiceDefinition(
+            application: CfgApplication,
+            showStatus: Boolean = false, socketTimeout: Int = DEFAULT_SOCKET_TIMEOUT
+        ) =
+            ServiceDefinition(
                 name = application.name,
-                type = toShortName(application),
+                type = application.type.toShortName(),
                 version = application.version.toString(),
-                endpoint = application.getDefaultEndpoint()!!.uri,
+                endpoint = application.getDefaultEndpoint()?.uri,
                 isPrimary = application.isPrimary == CfgFlag.CFGTrue,
-                status = status(application.getDefaultEndpoint()!!, showStatus)
+                status = status(application.getDefaultEndpoint(), showStatus, socketTimeout)
             )
 
-        internal fun status(endpoint: Endpoint, showStatus: Boolean = false): Status {
-            if (!showStatus) return Status.UNAVAILABLE
+        internal fun status(
+            endpoint: Endpoint?,
+            showStatus: Boolean = false, socketTimeout: Int = DEFAULT_SOCKET_TIMEOUT
+        ): Status? {
+            if (endpoint == null) return null
+            if (!showStatus) return null
 
             info { "Trying TCP connection to ${endpoint.host}:${endpoint.port}." }
-
             return try {
-                Socket(endpoint.host, endpoint.port)
+                Socket().connect(InetSocketAddress(endpoint.host, endpoint.port), socketTimeout)
                 Status.UP
-            } catch (e: IOException) {
+            } catch (e: Throwable) {
+                debug { e.message }
                 Status.DOWN
             }
         }
     }
 }
 
-data class Service(
+data class ServiceDefinition(
     val name: String, val type: String, val version: String,
-    val endpoint: URI, val isPrimary: Boolean = true, val status: Status = Status.UNAVAILABLE
+    val endpoint: URI?, val isPrimary: Boolean = true, val status: Status? = null
 )
 
-enum class Status { UNAVAILABLE, DOWN, UP }
+enum class Status { DOWN, UP }
