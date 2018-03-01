@@ -17,7 +17,7 @@ import com.nuecho.genesys.cli.Logging.debug
 import com.nuecho.genesys.cli.Logging.info
 
 class TService internal constructor(private val protocol: TServerProtocol) : Protocol by protocol {
-    constructor(endpoint: Endpoint) : this(TServerProtocol(endpoint))
+    constructor(endpoint: Endpoint?) : this(TServerProtocol(endpoint))
 
     override fun open() {
         info { "Connecting to T-Server ($endpoint)" }

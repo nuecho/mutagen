@@ -1,12 +1,9 @@
 package com.nuecho.genesys.cli.commands.config.export
 
-import com.fasterxml.jackson.core.JsonEncoding
-import com.fasterxml.jackson.core.JsonFactory
 import com.fasterxml.jackson.core.JsonGenerator
-import com.fasterxml.jackson.core.util.DefaultPrettyPrinter
-import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.genesyslab.platform.applicationblocks.com.ICfgObject
+import com.nuecho.genesys.cli.core.defaultGenerator
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectType
 import org.json.XML.toJSONObject
 import java.io.OutputStream
@@ -23,14 +20,8 @@ private const val XMLNS = "xmlns"
 class JsonExportProcessor(output: OutputStream) : ExportProcessor {
     private val xmlTransformer = TransformerFactory.newInstance().newTransformer()
     private val objectMapper = jacksonObjectMapper()
-    private var jsonGenerator: JsonGenerator
+    private val jsonGenerator: JsonGenerator = defaultGenerator(output)
     private var configurationObjects: SortedMap<String, ICfgObject> = TreeMap()
-
-    init {
-        jsonGenerator = JsonFactory().createGenerator(output, JsonEncoding.UTF8)
-        jsonGenerator.codec = ObjectMapper()
-        jsonGenerator.prettyPrinter = DefaultPrettyPrinter()
-    }
 
     override fun begin() {
         jsonGenerator.writeStartObject()
