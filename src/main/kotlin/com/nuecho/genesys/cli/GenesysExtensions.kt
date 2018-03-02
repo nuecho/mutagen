@@ -22,12 +22,14 @@ fun AgentStatus.toConsoleString(): String = """
         |  DNs   : ${this.place.dnStatuses.toConsoleString()}
     """.trimMargin()
 
-fun CfgApplication.getDefaultEndpoint(): Endpoint? =
-    if (this.serverInfo.host == null) null
-    else Endpoint(this.serverInfo.host.name, this.getDefaultPort()!!)
+fun CfgApplication.getDefaultEndpoint(): Endpoint? {
+    val port = getDefaultPort() ?: return null
+    val hostname = this.serverInfo?.host?.name ?: return null
+    return Endpoint(hostname, port)
+}
 
 fun CfgApplication.getDefaultPort(): Int? =
-    this.portInfos.find { it.id == "default" }?.port?.toInt()
+    this.portInfos?.find { it.id == "default" }?.port?.toInt()
 
 fun DnStatusesCollection.toList(): List<DnStatus> =
     (0 until this.count).map { this.getItem(it) }

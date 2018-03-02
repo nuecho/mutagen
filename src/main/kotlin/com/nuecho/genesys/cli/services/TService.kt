@@ -16,8 +16,8 @@ import com.genesyslab.platform.voice.protocol.tserver.requests.dn.RequestUnregis
 import com.nuecho.genesys.cli.Logging.debug
 import com.nuecho.genesys.cli.Logging.info
 
-class TService internal constructor(private val protocol: TServerProtocol) : Protocol by protocol {
-    constructor(endpoint: Endpoint?) : this(TServerProtocol(endpoint))
+class TService internal constructor(private val protocol: TServerProtocol) : Service, Protocol by protocol {
+    constructor(endpoint: Endpoint) : this(TServerProtocol(endpoint))
 
     override fun open() {
         info { "Connecting to T-Server ($endpoint)" }
@@ -45,8 +45,10 @@ class TService internal constructor(private val protocol: TServerProtocol) : Pro
         debug { "Disconnected from T-Server." }
     }
 
-    fun logoutAdress(dn: String) {
-        registerAdress(dn)
+    fun logoutAddresses(dns: List<String>) = dns.forEach { logoutAddress(it) }
+
+    fun logoutAddress(dn: String) {
+        registerAddress(dn)
 
         debug { "Logging out address ($dn) from TServer ($endpoint)" }
 
@@ -62,7 +64,7 @@ class TService internal constructor(private val protocol: TServerProtocol) : Pro
         unregisterAddress(dn)
     }
 
-    private fun registerAdress(dn: String) {
+    private fun registerAddress(dn: String) {
         debug { "Registering address ($dn)" }
 
         val request = RequestRegisterAddress.create()

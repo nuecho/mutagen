@@ -1,5 +1,6 @@
 package com.nuecho.genesys.cli.commands.agent.status
 
+import com.genesyslab.platform.applicationblocks.com.objects.CfgPerson
 import com.genesyslab.platform.commons.protocol.MessageHandler
 import com.genesyslab.platform.reporting.protocol.statserver.AgentStatus
 import com.genesyslab.platform.reporting.protocol.statserver.DnActions
@@ -23,15 +24,15 @@ import io.mockk.mockk
 import io.mockk.slot
 import kotlinx.coroutines.experimental.launch
 
-private const val MISSING_USERNAME = "Missing required parameter: username"
-private const val USAGE_PREFIX = "Usage: status [-?] [--stat-host=<statHost>] [--stat-port=<statPort>] username"
+private const val MISSING_EMPLOYEE_ID = "Missing required parameter: employeeId"
+private const val USAGE_PREFIX = "Usage: status [-?] [--stat-host=<statHost>] [--stat-port=<statPort>] employeeId"
 private const val TEST_TIMEOUT = 1L
 
-class StatusTest : StringSpec() {
+class StatusCommandTest : StringSpec() {
     init {
         "executing Status with no arguments should print an error message" {
             val output = execute("agent", "status")
-            output should startWith(MISSING_USERNAME)
+            output should startWith(MISSING_EMPLOYEE_ID)
         }
 
         "executing Status with -h argument should print usage" {
@@ -41,10 +42,12 @@ class StatusTest : StringSpec() {
 
         "executing getAgentStatus should return AgentStatus" {
             val agentId = "test"
+            val agent = mockAgent(agentId)
             val agentStatus = DnActions.WaitForNextCall
 
             val statServiceMock = mockStatService(mockAgentStatus(agentId, status = agentStatus))
-            val output = Status().getAgentStatus(agentId, statServiceMock, TEST_TIMEOUT)
+
+            val output = Status.getAgentStatus(statServiceMock, agent, TEST_TIMEOUT)
 
             output.agentId shouldBe agentId
             output.status shouldBe agentStatus.asInteger()
@@ -52,6 +55,7 @@ class StatusTest : StringSpec() {
 
         "executing getAgentStatus should throw if statistic fails" {
             val agentId = "test"
+            val agent = mockAgent(agentId)
 
             val statServiceMock = mockStatService(mockAgentStatus(agentId))
 
@@ -59,12 +63,13 @@ class StatusTest : StringSpec() {
             every { statServiceMock.request(ofType(RequestOpenStatisticEx::class)) } returns EventStatisticInvalid.create()
 
             shouldThrow<StatServiceException> {
-                Status().getAgentStatus(agentId, statServiceMock, TEST_TIMEOUT)
+                Status.getAgentStatus(statServiceMock, agent, TEST_TIMEOUT)
             }
         }
 
         "executing getAgentStatus should throw if AgentStatus is never received" {
             val agentId = "test"
+            val agent = mockAgent(agentId)
 
             val statServiceMock = mockStatService(mockAgentStatus(agentId))
 
@@ -72,10 +77,30 @@ class StatusTest : StringSpec() {
             every { statServiceMock.request(ofType(RequestOpenStatisticEx::class)) } returns EventStatisticOpened.create()
 
             shouldThrow<StatServiceException> {
-                Status().getAgentStatus(agentId, statServiceMock, TEST_TIMEOUT)
+                Status.getAgentStatus(statServiceMock, agent, TEST_TIMEOUT)
             }
         }
+
+        "executing getAgentStatus should return AgentStatus" {
+            val agentId = "test"
+            val agent = mockAgent(agentId)
+            val agentStatus = DnActions.WaitForNextCall
+
+            val statServiceMock = mockStatService(mockAgentStatus(agentId, status = agentStatus))
+
+            val output = Status.getAgentStatus(statServiceMock, agent, TEST_TIMEOUT)
+
+            output.agentId shouldBe agentId
+            output.status shouldBe agentStatus.asInteger()
+        }
     }
+}
+
+private fun mockAgent(employeeId: String): CfgPerson {
+    val agent = mockk<CfgPerson>()
+    every { agent.employeeID } returns employeeId
+    every { agent.tenant.name } returns "testTenant"
+    return agent
 }
 
 private fun mockStatService(agentStatus: AgentStatus): StatService {
