@@ -1,5 +1,6 @@
 package com.nuecho.genesys.cli.core
 
+import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.core.JsonEncoding
 import com.fasterxml.jackson.core.JsonFactory
 import com.fasterxml.jackson.core.JsonGenerator
@@ -11,5 +12,5 @@ private val objectMapper = jacksonObjectMapper()
 
 fun defaultGenerator(outputStream: OutputStream = System.out): JsonGenerator = JsonFactory()
     .createGenerator(outputStream, JsonEncoding.UTF8)
-    .setCodec(objectMapper)
+    .setCodec(objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL)) // do not serialize null
     .setPrettyPrinter(DefaultPrettyPrinter())

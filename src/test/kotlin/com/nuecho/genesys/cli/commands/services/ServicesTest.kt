@@ -22,9 +22,10 @@ import java.net.URI
 
 private const val USAGE_PREFIX = "Usage: services [-?]"
 
-private val VERSION = "8.5"
-private val TYPE = "tserver"
+private const val VERSION = "8.5"
+private const val TYPE = "tserver"
 private val ENDPOINT_URI = URI.create("tcp://foo.example.com:1234")
+private const val SOCKET_TIMEOUT = 200
 
 class ServicesTest : StringSpec() {
     init {
@@ -39,7 +40,7 @@ class ServicesTest : StringSpec() {
             val application = mockk<CfgApplication>()
             every { application.type } returns CfgAppType.CFGTServer
 
-            val shortName = Services.toShortName(application)
+            val shortName = application.type.toShortName()
             shortName shouldBe TYPE
         }
 
@@ -109,9 +110,9 @@ class ServicesTest : StringSpec() {
                 every { application.getDefaultEndpoint()!!.uri } returns ENDPOINT_URI
                 every { application.type.toShortName() } returns "tserver"
 
-                val service = Services.toService(application)
+                val service = Services.toServiceDefinition(application)
 
-                service shouldBe Service("foo", TYPE, VERSION, ENDPOINT_URI, true)
+                service shouldBe ServiceDefinition("foo", TYPE, VERSION, ENDPOINT_URI, true)
             }
         }
 
@@ -136,6 +137,12 @@ class ServicesTest : StringSpec() {
 
                 result shouldBe jacksonObjectMapper().readTree(javaClass.getResourceAsStream("services.json"))
             }
+        }
+
+        "given an unreachable endpoint should return status as DOWN" {
+            val result = Services.status(Endpoint(ENDPOINT_URI), true, SOCKET_TIMEOUT)
+
+            result shouldBe Status.DOWN
         }
     }
 }
