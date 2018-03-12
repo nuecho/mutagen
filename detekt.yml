@@ -12,6 +12,8 @@ complexity:
     active: false
   StringLiteralDuplication:
     active: false
+  TooManyFunctions:
+    active: false
 
 exceptions:
   TooGenericExceptionCaught:

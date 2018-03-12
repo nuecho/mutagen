@@ -58,8 +58,8 @@ class PreferencesTest : StringSpec() {
 
         "missing password should prompt for one" {
 
-            objectMockk(Preferences).use {
-                every { Preferences.promptForPassword() } returns PASSWORD
+            objectMockk(Password).use {
+                every { Password.promptForPassword() } returns PASSWORD
 
                 val environment = loadEnvironment(
                     environmentsFile = toPreferenceFile("environments_nopassword.yml")

@@ -7,19 +7,19 @@ import java.io.File
 
 class Environments : LinkedHashMap<String, Environment>() {
     companion object {
-        fun load(string: String): Environments {
-            try {
-                return mapper().readValue(string, Environments::class.java)
-            } catch (exception: Exception) {
-                throw EnvironmentException("Cannot load environments.", exception)
-            }
-        }
-
         fun load(environmentsFile: File): Environments {
             try {
                 return mapper().readValue(environmentsFile, Environments::class.java)
             } catch (exception: Exception) {
                 throw EnvironmentException("Cannot load environments file ($environmentsFile).", exception)
+            }
+        }
+
+        internal fun load(serializedEnvironments: String): Environments {
+            try {
+                return mapper().readValue(serializedEnvironments, Environments::class.java)
+            } catch (exception: Exception) {
+                throw EnvironmentException("Cannot load environments.", exception)
             }
         }
 
@@ -29,6 +29,8 @@ class Environments : LinkedHashMap<String, Environment>() {
             return mapper
         }
     }
+
+    fun saveToFile(file: File) = mapper().writeValue(file, this)
 }
 
 class EnvironmentException(message: String, cause: Throwable) : Exception(message, cause)
