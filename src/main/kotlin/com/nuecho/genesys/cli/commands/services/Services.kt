@@ -23,7 +23,7 @@ const val DEFAULT_SOCKET_TIMEOUT = 200
 
 @CommandLine.Command(
     name = "services",
-    description = ["%nDiscover services"],
+    description = ["Discover services"],
     showDefaultValues = true
 )
 class Services : GenesysCliCommand() {

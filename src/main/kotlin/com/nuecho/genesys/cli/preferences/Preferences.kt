@@ -4,7 +4,6 @@ import com.nuecho.genesys.cli.Logging.debug
 import com.nuecho.genesys.cli.Logging.info
 import com.nuecho.genesys.cli.preferences.environment.Environment
 import com.nuecho.genesys.cli.preferences.environment.Environments
-import java.io.Console
 import java.io.File
 import java.io.FileNotFoundException
 
@@ -29,10 +28,19 @@ object Preferences {
         info { "Loading environment file ($effectiveEnvironmentsFile)" }
 
         val environment = Environments.load(effectiveEnvironmentsFile)[environmentName]
-                ?: throw IllegalArgumentException("Environment ($environmentName) does not exists")
-        environment.password = environment.password ?: promptForPassword()
+                ?: throw IllegalArgumentException("Environment ($environmentName) does not exist")
+
+        if (environment.password == null)
+            environment.password = Password.promptForPassword()
 
         return environment
+    }
+
+    fun findEnvironmentFile(): File {
+        val environmentVariables = System.getenv().toMutableMap()
+        environmentVariables[WORKING_DIRECTORY_VARIABLE] = System.getProperty(WORKING_DIRECTORY_VARIABLE)
+
+        return findEnvironmentFile(environmentVariables)
     }
 
     internal fun findEnvironmentFile(environmentVariables: Map<String?, String?>): File {
@@ -60,17 +68,5 @@ object Preferences {
         }
 
         throw FileNotFoundException("Cannot find environment file.")
-    }
-
-    fun promptForPassword(): String {
-        debug { "Password not found in environment. Prompting." }
-        val console: Console? = System.console()
-        when (console) {
-            null ->
-                //In this case, the JVM is not attached to the console so we need to bail out
-                throw IllegalStateException("Process not attached to console.")
-            else ->
-                return String(console.readPassword("Password: "))
-        }
     }
 }

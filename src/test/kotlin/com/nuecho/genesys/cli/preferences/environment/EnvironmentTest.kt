@@ -16,7 +16,7 @@ class EnvironmentTest : StringSpec() {
             port = DEFAULT_SERVER_PORT,
             tls = DEFAULT_USE_TLS,
             user = "default",
-            password = "password",
+            rawPassword = "password",
             application = DEFAULT_APPLICATION_NAME
         )
 
@@ -25,7 +25,7 @@ class EnvironmentTest : StringSpec() {
             port = 2222,
             tls = true,
             user = "user",
-            password = "password",
+            rawPassword = "password",
             application = "myapp"
         )
     }

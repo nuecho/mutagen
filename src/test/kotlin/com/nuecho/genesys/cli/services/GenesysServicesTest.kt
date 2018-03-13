@@ -18,7 +18,7 @@ class GenesysServicesTest : StringSpec() {
                 host = host,
                 port = port,
                 user = user,
-                password = password
+                rawPassword = password
             )
 
             val protocol = createConfServerProtocol(environment)

@@ -17,7 +17,7 @@ import java.io.ByteArrayOutputStream
 
 class JsonExportProcessorTest : StringSpec() {
 
-    private val service = ConfService(Environment(host = "test", user = "test", password = "test"))
+    private val service = ConfService(Environment(host = "test", user = "test", rawPassword = "test"))
 
     init {
         "exporting multiple objects of the same type should generate an ordered result" {

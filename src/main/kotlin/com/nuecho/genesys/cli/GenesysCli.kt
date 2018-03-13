@@ -2,6 +2,7 @@ package com.nuecho.genesys.cli
 
 import com.nuecho.genesys.cli.commands.agent.Agent
 import com.nuecho.genesys.cli.commands.config.Config
+import com.nuecho.genesys.cli.commands.password.SetPasswordCommand
 import com.nuecho.genesys.cli.commands.services.Services
 import com.nuecho.genesys.cli.preferences.Preferences
 import picocli.CommandLine
@@ -29,7 +30,7 @@ const val EXTRA_FOOTER = "Please specify a command."
     versionProvider = VersionProvider::class,
     footer = ["%n$FOOTER"],
     commandListHeading = "%nCommands:%n%n",
-    subcommands = [Agent::class, Config::class, Services::class]
+    subcommands = [Agent::class, Config::class, SetPasswordCommand::class, Services::class]
 )
 open class GenesysCli : GenesysCliCommand() {
     companion object {
@@ -84,7 +85,7 @@ open class GenesysCli : GenesysCliCommand() {
         names = ["-e", "--env"],
         description = ["Environment name used for the execution."]
     )
-    private var environmentName = Preferences.DEFAULT_ENVIRONMENT
+    var environmentName = Preferences.DEFAULT_ENVIRONMENT
 
     @Suppress("unused")
     @CommandLine.Option(
