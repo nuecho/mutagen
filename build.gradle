@@ -4,6 +4,7 @@ plugins {
     id 'com.github.johnrengelman.shadow' version '2.0.2'
     id 'edu.sc.seis.launch4j' version '2.4.3'
     id 'io.gitlab.arturbosch.detekt' version '1.0.0.RC6-3'
+    id 'com.github.hierynomus.license' version '0.14.0'
 }
 
 repositories {
@@ -47,6 +48,8 @@ jacocoTestReport {
 }
 
 detekt {
+    version = '1.0.0.RC6-3'
+
     profile("main") {
         input = "$projectDir/src/main/kotlin,$projectDir/src/test/kotlin"
         config = "$projectDir/detekt.yml"
@@ -69,6 +72,32 @@ shadowJar {
     baseName = 'mutagen'
     classifier = null
     version = version
+}
+
+license {
+    strictCheck = false
+    ignoreFailures = true
+    skipExistingHeaders = true
+}
+
+downloadLicenses {
+    ext.apacheTwo = license('Apache License, Version 2.0', 'http://opensource.org/licenses/Apache-2.0')
+
+    includeProjectDependencies = true
+    reportByDependency = false
+    reportByLicenseType = true
+    dependencyConfiguration = "compile"
+    aliases = [
+            (apacheTwo): [
+                    'The Apache Software License, Version 2.0',
+                    'The Apache Software License, version 2.0',
+                    'The Apache License, Version 2.0',
+                    'Apache License Version 2.0',
+                    'Apache License, Version 2.0',
+                    'Apache License 2.0',
+                    'Apache 2'
+            ]
+    ]
 }
 
 dependencies {
