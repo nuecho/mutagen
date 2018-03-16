@@ -1,5 +1,6 @@
 package com.nuecho.genesys.cli.commands.agent.logout
 
+import com.genesyslab.platform.applicationblocks.com.ConfigServerException
 import com.genesyslab.platform.applicationblocks.com.objects.CfgSwitch
 import com.genesyslab.platform.commons.protocol.Endpoint
 import com.genesyslab.platform.reporting.protocol.statserver.AgentStatus
@@ -14,6 +15,7 @@ import com.nuecho.genesys.cli.isLoggedOut
 import com.nuecho.genesys.cli.services.ConfService
 import com.nuecho.genesys.cli.services.StatService
 import com.nuecho.genesys.cli.services.TService
+import com.nuecho.genesys.cli.services.retrieveSwitch
 import com.nuecho.genesys.cli.services.withService
 import com.nuecho.genesys.cli.toConsoleString
 import com.nuecho.genesys.cli.toList
@@ -68,7 +70,12 @@ object Logout {
 
         agentStatus
             .toSwitchIdDnMap()
-            .mapKeys { confService.getSwitch(it.key).getTService() }
+            .mapKeys {
+                val name = it.key
+                val switch = confService.retrieveSwitch(name)
+                        ?: throw ConfigServerException("Error while retrieving CfgSwitch ($name)")
+                switch.getTService()
+            }
             .filterKeys { it != null }
             .mapKeys { it.key as TService }
             .forEach { (tService, dns) ->

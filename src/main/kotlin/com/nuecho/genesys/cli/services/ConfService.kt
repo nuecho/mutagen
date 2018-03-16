@@ -4,10 +4,6 @@ import com.genesyslab.platform.applicationblocks.com.ConfService
 import com.genesyslab.platform.applicationblocks.com.ConfServiceFactory
 import com.genesyslab.platform.applicationblocks.com.ConfigServerException
 import com.genesyslab.platform.applicationblocks.com.IConfService
-import com.genesyslab.platform.applicationblocks.com.objects.CfgPerson
-import com.genesyslab.platform.applicationblocks.com.objects.CfgSwitch
-import com.genesyslab.platform.applicationblocks.com.queries.CfgPersonQuery
-import com.genesyslab.platform.applicationblocks.com.queries.CfgSwitchQuery
 import com.genesyslab.platform.commons.protocol.ChannelState
 import com.genesyslab.platform.configuration.protocol.ConfServerProtocol
 import com.nuecho.genesys.cli.Logging
@@ -21,22 +17,11 @@ class ConfService private constructor(
     constructor(environment: Environment) : this(createConfServerProtocol(environment))
     internal constructor(protocol: ConfServerProtocol) : this(
         protocol,
-        ConfServiceFactory.createConfService(protocol) as ConfService
+        ConfServiceFactory.createConfService(protocol, true) as ConfService
     )
 
     internal val isDisposed: Boolean
         get() = confService.isDisposed
-
-    fun getPerson(employeeId: String): CfgPerson {
-        val query = CfgPersonQuery()
-        query.employeeId = employeeId
-        return retrieveObject(CfgPerson::class.java, query)
-                ?: throw ConfigServerException("Error while retrieving CfgPerson ($employeeId).")
-    }
-
-    fun getSwitch(name: String): CfgSwitch =
-        retrieveObject(CfgSwitch::class.java, CfgSwitchQuery(name))
-                ?: throw ConfigServerException("Error while retrieving CfgSwitch ($name)")
 
     override fun open() {
         Logging.info {

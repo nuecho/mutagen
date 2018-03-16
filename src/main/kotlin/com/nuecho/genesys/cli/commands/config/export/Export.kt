@@ -1,14 +1,17 @@
 package com.nuecho.genesys.cli.commands.config.export
 
+import com.genesyslab.platform.applicationblocks.com.CfgFilterBasedQuery
 import com.genesyslab.platform.applicationblocks.com.CfgObject
+import com.genesyslab.platform.configuration.protocol.types.CfgObjectType
+import com.genesyslab.platform.configuration.protocol.types.CfgObjectType.CFGPersonLastLogin
 import com.nuecho.genesys.cli.GenesysCliCommand
 import com.nuecho.genesys.cli.Logging.debug
 import com.nuecho.genesys.cli.Logging.info
 import com.nuecho.genesys.cli.commands.config.Config
-import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectType
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects
 import com.nuecho.genesys.cli.services.ConfService
 import picocli.CommandLine
-import kotlin.reflect.full.createInstance
+import java.io.OutputStream
 
 @CommandLine.Command(
     name = "export",
@@ -18,9 +21,15 @@ class Export : GenesysCliCommand() {
     @CommandLine.ParentCommand
     private var config: Config? = null
 
+    @CommandLine.Option(
+        names = ["-f", "--format"],
+        description = ["Export format [RAW|JSON]."]
+    )
+    private var format: ExportProcessorType? = ExportProcessorType.RAW
+
     override fun execute() {
         exportConfiguration(
-            JsonExportProcessor(System.out),
+            createExportProcessor(System.out),
             ConfService(getGenesysCli().loadEnvironment())
         )
     }
@@ -32,25 +41,13 @@ class Export : GenesysCliCommand() {
             service.open()
             processor.begin()
 
-            ConfigurationObjectType.values().forEach {
-                val type = it
-                info { "Exporting '${type.getObjectType()}' objects" }
+            val types = ConfigurationObjects.getCfgObjectTypes()
+            val excludedTypes = listOf(CFGPersonLastLogin)
 
-                processor.beginType(type)
-
-                val configurationObjects = service.retrieveMultipleObjects(
-                    CfgObject::class.java,
-                    it.queryType.createInstance()
-                ) ?: emptyList()
-
-                debug { "Found ${configurationObjects.size} ${type.getObjectType()} objects." }
-
-                configurationObjects.forEach {
-                    processor.processObject(type, it)
-                }
-
-                processor.endType(type)
-            }
+            types
+                .filter { !excludedTypes.contains(it) }
+                .sortedBy { it.name() }
+                .forEach { processObjectType(it, processor, service) }
 
             processor.end()
         } catch (exception: Exception) {
@@ -58,6 +55,32 @@ class Export : GenesysCliCommand() {
         } finally {
             service.close()
         }
+    }
+
+    private fun createExportProcessor(output: OutputStream) =
+        when (format) {
+            ExportProcessorType.RAW -> RawExportProcessor(output)
+            ExportProcessorType.JSON -> JsonExportProcessor(output)
+            else -> throw IllegalArgumentException("Illegal export format value: '$format'")
+        }
+
+    private fun processObjectType(type: CfgObjectType, processor: ExportProcessor, service: ConfService) {
+        info { "Exporting '$type' objects" }
+
+        processor.beginType(type)
+
+        val configurationObjects = service.retrieveMultipleObjects(
+            CfgObject::class.java,
+            CfgFilterBasedQuery(type)
+        ) ?: emptyList()
+
+        debug { "Found ${configurationObjects.size} $type objects." }
+
+        configurationObjects.forEach {
+            processor.processObject(it)
+        }
+
+        processor.endType(type)
     }
 }
 

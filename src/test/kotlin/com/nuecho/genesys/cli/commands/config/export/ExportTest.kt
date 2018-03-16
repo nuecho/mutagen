@@ -4,7 +4,7 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.genesyslab.platform.applicationblocks.com.ICfgObject
 import com.genesyslab.platform.applicationblocks.com.ICfgQuery
 import com.nuecho.genesys.cli.CliOutputCaptureWrapper.execute
-import com.nuecho.genesys.cli.TestResources.loadJsonConfiguration
+import com.nuecho.genesys.cli.TestResources.loadRawConfiguration
 import com.nuecho.genesys.cli.services.ConfService
 import io.kotlintest.matchers.should
 import io.kotlintest.matchers.shouldBe
@@ -28,15 +28,15 @@ class ExportTest : StringSpec() {
             output should startWith(USAGE_PREFIX)
         }
 
-        "exporting empty configuration should generate an empty JSON array for each object type" {
+        "exporting raw empty configuration should generate an empty JSON array for each object type" {
             val output = ByteArrayOutputStream()
-            val processor = JsonExportProcessor(output)
+            val processor = RawExportProcessor(output)
             val service = mockConfService()
 
             Export().exportConfiguration(processor, service)
 
             val result = jacksonObjectMapper().readTree(String(output.toByteArray()))
-            result shouldBe loadJsonConfiguration("empty_configuration.json")
+            result shouldBe loadRawConfiguration("commands/config/export/raw/empty_configuration.json")
         }
 
         "failing while exporting should result in an ExportException" {
