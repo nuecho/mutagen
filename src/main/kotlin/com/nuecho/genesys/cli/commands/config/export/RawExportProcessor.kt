@@ -6,6 +6,8 @@ import com.genesyslab.platform.applicationblocks.com.ICfgObject
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectType
 import com.nuecho.genesys.cli.core.defaultGenerator
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects
+import org.json.JSONArray
+import org.json.JSONObject
 import org.json.XML.toJSONObject
 import java.io.OutputStream
 import java.io.StringWriter
@@ -17,6 +19,7 @@ import javax.xml.transform.dom.DOMSource
 import javax.xml.transform.stream.StreamResult
 
 private const val XMLNS = "xmlns"
+private const val VALUE_KEY = "value"
 
 class RawExportProcessor(output: OutputStream) : ExportProcessor {
     private val xmlTransformer = TransformerFactory.newInstance().newTransformer()
@@ -46,6 +49,7 @@ class RawExportProcessor(output: OutputStream) : ExportProcessor {
 
             val jsonObject = toJSONObject(xml).getJSONObject(typeName.replace("CFG", "Cfg"))!!
             jsonObject.remove(XMLNS)
+            prettifyObject(jsonObject)
 
             val jsonNode = objectMapper.readTree(jsonObject.toString(0))
             jsonGenerator.writeObject(jsonNode)
@@ -67,4 +71,29 @@ class RawExportProcessor(output: OutputStream) : ExportProcessor {
         writer.flush()
         return writer.toString()
     }
+
+    private fun prettifyObject(json: JSONObject): Any? {
+        if (json.length() == 1 && json.has(VALUE_KEY)) {
+            return json.get(VALUE_KEY)
+        }
+
+        json.keys().forEach {
+            when (json[it]) {
+                is JSONObject -> json.put(it, prettifyObject(json.getJSONObject(it)))
+                is JSONArray -> json.put(it, prettifyArray(json.getJSONArray(it)))
+                else -> return@forEach
+            }
+        }
+
+        return json
+    }
+
+    private fun prettifyArray(json: JSONArray): Any? =
+        json.map {
+            when (it) {
+                is JSONObject -> prettifyObject(it)
+                is JSONArray -> prettifyArray(it)
+                else -> it
+            }
+        }
 }

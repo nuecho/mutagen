@@ -1,21 +1,15 @@
 {
   "CFGDN": [
     {
-      "number": {
-        "value": 1111
-      },
+      "number": 1111,
       "userProperties": ""
     },
     {
-      "number": {
-        "value": 3333
-      },
+      "number": 3333,
       "userProperties": ""
     },
     {
-      "number": {
-        "value": 5555
-      },
+      "number": 5555,
       "userProperties": ""
     }
   ]

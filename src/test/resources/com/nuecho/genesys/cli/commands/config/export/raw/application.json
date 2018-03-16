@@ -4,21 +4,15 @@
       "appServerDBIDs": {
         "CfgConnectionInfo": [
           {
-            "id": {
-              "value": "appServer1"
-            }
+            "id": "appServer1"
           },
           {
-            "id": {
-              "value": "appServer2"
-            }
+            "id": "appServer2"
           }
         ]
       },
       "flexibleProperties": "",
-      "name": {
-        "value": "Application"
-      },
+      "name": "Application",
       "options": "",
       "userProperties": ""
     }
