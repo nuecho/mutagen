@@ -89,6 +89,22 @@ class PersonTest : StringSpec() {
             checkSerialization(person, "person")
         }
 
+        "Person should properly deserialize" {
+            val deserializedPerson = TestResources.loadJsonConfiguration(
+                "models/configuration/person.json",
+                Person::class.java
+            )
+
+            // Normally we should simply check that 'deserialized shouldBe person' but since Person.equals is broken
+            // because of ByteArray.equals, this should do the trick for now.
+            checkSerialization(deserializedPerson, "person")
+
+            // Ensure that byte arrays are properly deserialized (GC-60)
+            val actualByteArray = deserializedPerson.userProperties!!["bytes"] as ByteArray
+            val expectedByteArray = person.userProperties!!["bytes"] as ByteArray
+            actualByteArray.contentEquals(expectedByteArray) shouldBe true
+        }
+
         "CfgPerson initialized Person should properly serialize" {
             val person = Person(mockCfgPerson())
             checkSerialization(person, "person")
@@ -108,29 +124,32 @@ class PersonTest : StringSpec() {
                 importedPerson.import(person)
             }
 
-            importedPerson.employeeID shouldBe person.employeeId
-            importedPerson.externalID shouldBe person.externalId
-            importedPerson.firstName shouldBe person.firstName
-            importedPerson.lastName shouldBe person.lastName
-            importedPerson.userName shouldBe person.userName
-            importedPerson.password shouldBe person.password
-            importedPerson.passwordHashAlgorithm shouldBe person.passwordHashAlgorithm
-            importedPerson.passwordUpdatingDate shouldBe person.passwordUpdatingDate
-            importedPerson.changePasswordOnNextLogin shouldBe toCfgFlag(person.changePasswordOnNextLogin)
-            importedPerson.emailAddress shouldBe person.emailAddress
-            importedPerson.state shouldBe toCfgObjectState(person.state)
-            importedPerson.isAgent shouldBe toCfgFlag(person.agent)
-            importedPerson.isExternalAuth shouldBe toCfgFlag(person.externalAuth)
-            importedPerson.appRanks.size shouldBe 2
-            importedPerson.userProperties.size shouldBe 4
+            with(importedPerson) {
+                employeeID shouldBe person.employeeId
+                externalID shouldBe person.externalId
+                firstName shouldBe person.firstName
+                lastName shouldBe person.lastName
+                userName shouldBe person.userName
+                password shouldBe person.password
+                passwordHashAlgorithm shouldBe person.passwordHashAlgorithm
+                passwordUpdatingDate shouldBe person.passwordUpdatingDate
+                changePasswordOnNextLogin shouldBe toCfgFlag(person.changePasswordOnNextLogin)
+                emailAddress shouldBe person.emailAddress
+                state shouldBe toCfgObjectState(person.state)
+                isAgent shouldBe toCfgFlag(person.agent)
+                isExternalAuth shouldBe toCfgFlag(person.externalAuth)
+                appRanks.size shouldBe 2
+                userProperties.size shouldBe 4
+            }
 
-            val agentInfo = importedPerson.agentInfo
-            agentInfo.siteDBID shouldBe dbid
-            agentInfo.placeDBID shouldBe dbid
-            agentInfo.contractDBID shouldBe dbid
-            agentInfo.capacityRuleDBID shouldBe dbid
-            agentInfo.skillLevels.size shouldBe 3
-            agentInfo.agentLogins.size shouldBe 0
+            with(importedPerson.agentInfo) {
+                siteDBID shouldBe dbid
+                placeDBID shouldBe dbid
+                contractDBID shouldBe dbid
+                capacityRuleDBID shouldBe dbid
+                skillLevels.size shouldBe 3
+                agentLogins.size shouldBe 0
+            }
         }
     }
 
@@ -159,6 +178,7 @@ class PersonTest : StringSpec() {
         every { cfgPerson.appRanks } returns appRanks
         every { cfgPerson.userProperties } returns mockKeyValueCollection()
         every { cfgPerson.agentInfo } returns agentInfo
+
         return cfgPerson
     }
 
@@ -171,15 +191,19 @@ class PersonTest : StringSpec() {
 
     private fun mockKeyValueCollection(): KeyValueCollection {
         val subKeyValueCollection = KeyValueCollection()
-        subKeyValueCollection.addPair(KeyValuePair("subNumber", 456))
-        subKeyValueCollection.addPair(KeyValuePair("subString", "def"))
-        subKeyValueCollection.addPair(KeyValuePair("subBytes", "def".toByteArray()))
+        with(subKeyValueCollection) {
+            addPair(KeyValuePair("subNumber", 456))
+            addPair(KeyValuePair("subString", "def"))
+            addPair(KeyValuePair("subBytes", "def".toByteArray()))
+        }
 
         val keyValueCollection = KeyValueCollection()
-        keyValueCollection.addPair(KeyValuePair("number", 123))
-        keyValueCollection.addPair(KeyValuePair("string", "abc"))
-        keyValueCollection.addPair(KeyValuePair("bytes", "abc".toByteArray()))
-        keyValueCollection.addPair(KeyValuePair("subProperties", subKeyValueCollection))
+        with(keyValueCollection) {
+            addPair(KeyValuePair("number", 123))
+            addPair(KeyValuePair("string", "abc"))
+            addPair(KeyValuePair("bytes", "abc".toByteArray()))
+            addPair(KeyValuePair("subProperties", subKeyValueCollection))
+        }
 
         return keyValueCollection
     }
@@ -216,6 +240,7 @@ class PersonTest : StringSpec() {
         every { agentInfo.site } returns site
         every { agentInfo.skillLevels } returns skillLevels
         every { agentInfo.agentLogins } returns agentLogins
+
         return agentInfo
     }
 
