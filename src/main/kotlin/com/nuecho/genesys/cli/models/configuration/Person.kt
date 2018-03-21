@@ -1,6 +1,8 @@
 package com.nuecho.genesys.cli.models.configuration
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize
+import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.genesyslab.platform.applicationblocks.com.objects.CfgAppRank
 import com.genesyslab.platform.applicationblocks.com.objects.CfgPerson
 import com.nuecho.genesys.cli.asBoolean
@@ -33,6 +35,8 @@ data class Person(
     val agent: Boolean? = null,
     val externalAuth: Boolean? = null,
     val appRanks: Map<String, String>? = null,
+    @JsonSerialize(using = KeyValueCollectionSerializer::class)
+    @JsonDeserialize(using = KeyValueCollectionDeserializer::class)
     val userProperties: Map<String, Any>? = null,
     val agentInfo: AgentInfo? = null
 ) : ConfigurationObject {

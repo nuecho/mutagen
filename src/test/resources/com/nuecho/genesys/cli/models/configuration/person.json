@@ -19,11 +19,15 @@
   "userProperties": {
     "number": 123,
     "string": "abc",
-    "bytes": "YWJj",
+    "bytes": [
+      "YWJj"
+    ],
     "subProperties": {
       "subNumber": 456,
       "subString": "def",
-      "subBytes": "ZGVm"
+      "subBytes": [
+        "ZGVm"
+      ]
     }
   },
   "agentInfo": {

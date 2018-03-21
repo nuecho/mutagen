@@ -41,7 +41,9 @@ class Import : GenesysCliCommand() {
 
     companion object {
         internal fun importConfiguration(configuration: Configuration, service: ConfService) {
+            Logging.info { "Beginning import." }
             importPersons(configuration.persons, service)
+            Logging.info { "Import completed." }
         }
 
         internal fun importPersons(persons: Collection<Person>, service: ConfService) {
