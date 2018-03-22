@@ -1,12 +1,12 @@
 package com.nuecho.genesys.cli.commands.config.export
 
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.genesyslab.platform.applicationblocks.com.ICfgObject
 import com.genesyslab.platform.applicationblocks.com.objects.CfgApplication
 import com.genesyslab.platform.applicationblocks.com.objects.CfgConnInfo
 import com.genesyslab.platform.applicationblocks.com.objects.CfgDN
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectType
 import com.nuecho.genesys.cli.TestResources.loadRawConfiguration
+import com.nuecho.genesys.cli.core.defaultJsonObjectMapper
 import com.nuecho.genesys.cli.preferences.environment.Environment
 import com.nuecho.genesys.cli.services.ConfService
 import io.kotlintest.matchers.shouldBe
@@ -59,7 +59,7 @@ class RawExportProcessorTest : StringSpec() {
         processor.endType(type)
         processor.end()
 
-        val result = jacksonObjectMapper().readTree(String(output.toByteArray()))
+        val result = defaultJsonObjectMapper().readTree(String(output.toByteArray()))
         result shouldBe loadRawConfiguration("commands/config/export/raw/$expectedOutputFile")
     }
 }

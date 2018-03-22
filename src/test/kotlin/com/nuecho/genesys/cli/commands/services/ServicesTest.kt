@@ -1,12 +1,12 @@
 package com.nuecho.genesys.cli.commands.services
 
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.genesyslab.platform.applicationblocks.com.objects.CfgApplication
 import com.genesyslab.platform.commons.protocol.Endpoint
 import com.genesyslab.platform.configuration.protocol.types.CfgAppType
 import com.genesyslab.platform.configuration.protocol.types.CfgFlag
 import com.nuecho.genesys.cli.CliOutputCaptureWrapper
-import com.nuecho.genesys.cli.core.defaultGenerator
+import com.nuecho.genesys.cli.core.defaultJsonGenerator
+import com.nuecho.genesys.cli.core.defaultJsonObjectMapper
 import com.nuecho.genesys.cli.getDefaultEndpoint
 import com.nuecho.genesys.cli.toShortName
 import io.kotlintest.matchers.should
@@ -131,11 +131,11 @@ class ServicesTest : StringSpec() {
 
                 val output = ByteArrayOutputStream()
 
-                Services().writeServices(listOf(application), defaultGenerator(output))
+                Services().writeServices(listOf(application), defaultJsonGenerator(output))
 
-                val result = jacksonObjectMapper().readTree(String(output.toByteArray()))
+                val result = defaultJsonObjectMapper().readTree(String(output.toByteArray()))
 
-                result shouldBe jacksonObjectMapper().readTree(javaClass.getResourceAsStream("services.json"))
+                result shouldBe defaultJsonObjectMapper().readTree(javaClass.getResourceAsStream("services.json"))
             }
         }
 

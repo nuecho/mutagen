@@ -9,7 +9,7 @@ import com.nuecho.genesys.cli.GenesysCli
 import com.nuecho.genesys.cli.GenesysCliCommand
 import com.nuecho.genesys.cli.Logging.debug
 import com.nuecho.genesys.cli.Logging.info
-import com.nuecho.genesys.cli.core.defaultGenerator
+import com.nuecho.genesys.cli.core.defaultJsonGenerator
 import com.nuecho.genesys.cli.getDefaultEndpoint
 import com.nuecho.genesys.cli.services.ConfService
 import com.nuecho.genesys.cli.toShortName
@@ -65,7 +65,7 @@ class Services : GenesysCliCommand() {
 
     internal fun writeServices(
         applications: Collection<CfgApplication>,
-        jsonGenerator: JsonGenerator = defaultGenerator()
+        jsonGenerator: JsonGenerator = defaultJsonGenerator()
     ) {
 
         info { "Filtering over ${applications.size} potential service candidate(s)." }
