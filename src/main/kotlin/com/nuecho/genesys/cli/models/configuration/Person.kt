@@ -3,16 +3,20 @@ package com.nuecho.genesys.cli.models.configuration
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
+import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgAppRank
 import com.genesyslab.platform.applicationblocks.com.objects.CfgPerson
 import com.nuecho.genesys.cli.asBoolean
 import com.nuecho.genesys.cli.asMap
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectUpdateStatus.CREATED
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectUpdateStatus.UNCHANGED
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setProperty
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgAppType
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgFlag
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgObjectState
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgRank
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toKeyValueCollection
+import com.nuecho.genesys.cli.services.retrievePerson
 import com.nuecho.genesys.cli.toShortName
 
 /**
@@ -61,26 +65,32 @@ data class Person(
         userProperties = person.userProperties?.asMap(),
         agentInfo = if (person.agentInfo != null) AgentInfo(person.agentInfo) else null
     )
-}
 
-fun CfgPerson.import(person: Person) {
+    override fun updateCfgObject(service: IConfService): ConfigurationObjectUpdateResult {
+        service.retrievePerson(employeeId)?.let {
+            return ConfigurationObjectUpdateResult(UNCHANGED, it)
+        }
 
-    setProperty("employeeID", person.employeeId, this)
-    setProperty("userName", person.userName, this)
-    setProperty("externalID", person.externalId, this)
-    setProperty("firstName", person.firstName, this)
-    setProperty("lastName", person.lastName, this)
-    setProperty("password", person.password, this)
-    setProperty("passwordHashAlgorithm", person.passwordHashAlgorithm, this)
-    setProperty("PasswordUpdatingDate", person.passwordUpdatingDate, this)
-    setProperty("changePasswordOnNextLogin", toCfgFlag(person.changePasswordOnNextLogin), this)
-    setProperty("emailAddress", person.emailAddress, this)
-    setProperty("state", toCfgObjectState(person.state), this)
-    setProperty("isAgent", toCfgFlag(person.agent), this)
-    setProperty("isExternalAuth", toCfgFlag(person.externalAuth), this)
-    setProperty("appRanks", toCfgAppRankList(person.appRanks, this), this)
-    setProperty("userProperties", toKeyValueCollection(person.userProperties), this)
-    setProperty("agentInfo", person.agentInfo?.toCfgAgentInfo(this), this)
+        CfgPerson(service).let {
+            setProperty("employeeID", employeeId, it)
+            setProperty("userName", userName, it)
+            setProperty("externalID", externalId, it)
+            setProperty("firstName", firstName, it)
+            setProperty("lastName", lastName, it)
+            setProperty("password", password, it)
+            setProperty("passwordHashAlgorithm", passwordHashAlgorithm, it)
+            setProperty("PasswordUpdatingDate", passwordUpdatingDate, it)
+            setProperty("changePasswordOnNextLogin", toCfgFlag(changePasswordOnNextLogin), it)
+            setProperty("emailAddress", emailAddress, it)
+            setProperty("state", toCfgObjectState(state), it)
+            setProperty("isAgent", toCfgFlag(agent), it)
+            setProperty("isExternalAuth", toCfgFlag(externalAuth), it)
+            setProperty("appRanks", toCfgAppRankList(appRanks, it), it)
+            setProperty("userProperties", toKeyValueCollection(userProperties), it)
+            setProperty("agentInfo", agentInfo?.toCfgAgentInfo(it), it)
+            return ConfigurationObjectUpdateResult(CREATED, it)
+        }
+    }
 }
 
 private fun toCfgAppRankList(appRankMap: Map<String, String>?, person: CfgPerson) =

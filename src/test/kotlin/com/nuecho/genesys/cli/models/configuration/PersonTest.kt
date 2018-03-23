@@ -12,17 +12,18 @@ import com.genesyslab.platform.configuration.protocol.types.CfgFlag
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectState
 import com.genesyslab.platform.configuration.protocol.types.CfgRank
 import com.nuecho.genesys.cli.TestResources
-import com.nuecho.genesys.cli.core.defaultJsonObjectMapper
 import com.nuecho.genesys.cli.models.configuration.ConfigurationAsserts.checkSerialization
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgAgentLoginInfo
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgSkillLevel
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockKeyValueCollection
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectUpdateStatus.CREATED
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgFlag
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgObjectState
 import com.nuecho.genesys.cli.models.configuration.ConfigurationTestData.defaultProperties
 import com.nuecho.genesys.cli.preferences.environment.Environment
 import com.nuecho.genesys.cli.services.ConfService
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks
+import com.nuecho.genesys.cli.services.retrievePerson
 import com.nuecho.genesys.cli.toShortName
 import io.kotlintest.matchers.shouldBe
 import io.kotlintest.specs.StringSpec
@@ -33,7 +34,6 @@ import io.mockk.use
 
 class PersonTest : StringSpec() {
     private val service = ConfService(Environment(host = "test", user = "test", rawPassword = "test"))
-    private val mapper = defaultJsonObjectMapper()
 
     private val person = Person(
         employeeId = "employeeId",
@@ -102,45 +102,49 @@ class PersonTest : StringSpec() {
             checkSerialization(person, "person")
         }
 
-        "CfgPerson.import should properly update CfgPerson" {
-            val importedPerson = CfgPerson(service)
-            val dbid = 101
-
+        "Person.updateCfgObject should properly create CfgPerson" {
             staticMockk("com.nuecho.genesys.cli.services.ConfServiceExtensionsKt").use {
+                val dbid = 101
+
+                every { service.retrievePerson(any()) } returns null
                 ConfServiceExtensionMocks.mockRetrieveAgentLogin(service, dbid)
                 ConfServiceExtensionMocks.mockRetrieveFolder(service, dbid)
                 ConfServiceExtensionMocks.mockRetrieveObjectiveTable(service, dbid)
                 ConfServiceExtensionMocks.mockRetrievePlace(service, dbid)
                 ConfServiceExtensionMocks.mockRetrieveScript(service, dbid)
                 ConfServiceExtensionMocks.mockRetrieveSkill(service, dbid)
-                importedPerson.import(person)
-            }
 
-            with(importedPerson) {
-                employeeID shouldBe person.employeeId
-                externalID shouldBe person.externalId
-                firstName shouldBe person.firstName
-                lastName shouldBe person.lastName
-                userName shouldBe person.userName
-                password shouldBe person.password
-                passwordHashAlgorithm shouldBe person.passwordHashAlgorithm
-                passwordUpdatingDate shouldBe person.passwordUpdatingDate
-                changePasswordOnNextLogin shouldBe toCfgFlag(person.changePasswordOnNextLogin)
-                emailAddress shouldBe person.emailAddress
-                state shouldBe toCfgObjectState(person.state)
-                isAgent shouldBe toCfgFlag(person.agent)
-                isExternalAuth shouldBe toCfgFlag(person.externalAuth)
-                appRanks.size shouldBe 2
-                userProperties.size shouldBe 4
-            }
+                val (status, cfgObject) = person.updateCfgObject(service)
+                val cfgPerson = cfgObject as CfgPerson
 
-            with(importedPerson.agentInfo) {
-                siteDBID shouldBe dbid
-                placeDBID shouldBe dbid
-                contractDBID shouldBe dbid
-                capacityRuleDBID shouldBe dbid
-                skillLevels.size shouldBe 3
-                agentLogins.size shouldBe 0
+                status shouldBe CREATED
+
+                with(cfgPerson) {
+                    employeeID shouldBe person.employeeId
+                    externalID shouldBe person.externalId
+                    firstName shouldBe person.firstName
+                    lastName shouldBe person.lastName
+                    userName shouldBe person.userName
+                    password shouldBe person.password
+                    passwordHashAlgorithm shouldBe person.passwordHashAlgorithm
+                    passwordUpdatingDate shouldBe person.passwordUpdatingDate
+                    changePasswordOnNextLogin shouldBe toCfgFlag(person.changePasswordOnNextLogin)
+                    emailAddress shouldBe person.emailAddress
+                    state shouldBe toCfgObjectState(person.state)
+                    isAgent shouldBe toCfgFlag(person.agent)
+                    isExternalAuth shouldBe toCfgFlag(person.externalAuth)
+                    appRanks.size shouldBe 2
+                    userProperties.size shouldBe 4
+                }
+
+                with(cfgPerson.agentInfo) {
+                    siteDBID shouldBe dbid
+                    placeDBID shouldBe dbid
+                    contractDBID shouldBe dbid
+                    capacityRuleDBID shouldBe dbid
+                    skillLevels.size shouldBe 3
+                    agentLogins.size shouldBe 0
+                }
             }
         }
     }

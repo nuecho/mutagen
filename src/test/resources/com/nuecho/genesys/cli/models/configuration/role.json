@@ -1,0 +1,24 @@
+{
+  "name": "name",
+  "description": "description",
+  "state": "enabled",
+  "members": [
+    "person/dmorand",
+    "person/fparga",
+    "person/pdeschen"
+  ],
+  "userProperties": {
+    "number": 123,
+    "string": "abc",
+    "bytes": [
+      "YWJj"
+    ],
+    "subProperties": {
+      "subNumber": 456,
+      "subString": "def",
+      "subBytes": [
+        "ZGVm"
+      ]
+    }
+  }
+}

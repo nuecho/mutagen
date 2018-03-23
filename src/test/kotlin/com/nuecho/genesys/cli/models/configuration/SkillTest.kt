@@ -6,8 +6,6 @@ import com.nuecho.genesys.cli.TestResources
 import com.nuecho.genesys.cli.models.configuration.ConfigurationAsserts.checkSerialization
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockKeyValueCollection
 import com.nuecho.genesys.cli.models.configuration.ConfigurationTestData.defaultProperties
-import com.nuecho.genesys.cli.preferences.environment.Environment
-import com.nuecho.genesys.cli.services.ConfService
 import com.nuecho.genesys.cli.toShortName
 import io.kotlintest.matchers.shouldBe
 import io.kotlintest.specs.StringSpec
@@ -15,8 +13,6 @@ import io.mockk.every
 import io.mockk.mockk
 
 class SkillTest : StringSpec() {
-    private val service = ConfService(Environment(host = "test", user = "test", rawPassword = "test"))
-
     private val skill = Skill(
         name = "foo",
         state = CfgObjectState.CFGEnabled.toShortName(),
