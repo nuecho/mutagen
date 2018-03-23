@@ -13,8 +13,9 @@ stages:
   - build
   - test
   - release
+  - canary
   - acceptance
-  - publish
+  - prod
 
 variables:
   RELEASE_PATH: "build/releases"
@@ -110,30 +111,47 @@ acceptance:test:
     - master
     - tags
 
-publish:s3:
+canary:publish:release:
   before_script:
     - "TAG=$CI_BUILD_TAG source ./ci/version.sh"
   variables:
     BUCKET_NAME: "nuecho.com-mutagen-releases"
     BUCKET_URL: "s3://${BUCKET_NAME}"
   image: "xueshanf/awscli"
-  stage: publish
+  stage: canary
   dependencies:
     - release:binaries
   script:
     - export AWS_ACCESS_KEY_ID=${CI_AWS_ACCESS_KEY_ID}
     - export AWS_SECRET_ACCESS_KEY=${CI_AWS_SECRET_ACCESS_KEY}
     - export AWS_REGION=us-east-1
-    - echo "${BUCKET_URL}"
+    - aws s3 sync build/releases "${BUCKET_URL}/canary" --acl public-read --metadata version=${VERSION}
+  only:
+    - master
+
+prod:publish:release:
+  before_script:
+    - "TAG=$CI_BUILD_TAG source ./ci/version.sh"
+  variables:
+    BUCKET_NAME: "nuecho.com-mutagen-releases"
+    BUCKET_URL: "s3://${BUCKET_NAME}"
+  image: "xueshanf/awscli"
+  stage: prod
+  dependencies:
+    - release:binaries
+  script:
+    - export AWS_ACCESS_KEY_ID=${CI_AWS_ACCESS_KEY_ID}
+    - export AWS_SECRET_ACCESS_KEY=${CI_AWS_SECRET_ACCESS_KEY}
+    - export AWS_REGION=us-east-1
     - aws s3 sync build/releases "${BUCKET_URL}/${VERSION}" --acl public-read --metadata version=${VERSION}
     - aws s3 sync build/releases "${BUCKET_URL}/latest" --acl public-read --metadata version=${VERSION}
   only:
     - tags
 
-publish:changelog:
+prod:publish:changelog:
   before_script:
     - "TAG=$CI_BUILD_TAG source ./ci/version.sh"
-  stage: publish
+  stage: prod
   dependencies:
     - build:changelog
   variables:
