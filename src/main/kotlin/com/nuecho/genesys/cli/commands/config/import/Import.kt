@@ -1,11 +1,11 @@
 package com.nuecho.genesys.cli.commands.config.import
 
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.genesyslab.platform.applicationblocks.com.CfgObject
 import com.genesyslab.platform.applicationblocks.com.objects.CfgPerson
 import com.nuecho.genesys.cli.GenesysCliCommand
 import com.nuecho.genesys.cli.Logging
 import com.nuecho.genesys.cli.commands.config.Config
+import com.nuecho.genesys.cli.core.defaultJsonObjectMapper
 import com.nuecho.genesys.cli.models.configuration.Configuration
 import com.nuecho.genesys.cli.models.configuration.Person
 import com.nuecho.genesys.cli.models.configuration.import
@@ -34,7 +34,7 @@ class Import : GenesysCliCommand() {
 
     override fun execute() {
         withEnvironmentConfService {
-            val configuration = jacksonObjectMapper().readValue(inputFile, Configuration::class.java)
+            val configuration = defaultJsonObjectMapper().readValue(inputFile, Configuration::class.java)
             importConfiguration(configuration, it)
         }
     }

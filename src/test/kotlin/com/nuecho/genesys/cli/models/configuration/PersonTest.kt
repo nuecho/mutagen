@@ -1,6 +1,5 @@
 package com.nuecho.genesys.cli.models.configuration
 
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.genesyslab.platform.applicationblocks.com.objects.CfgAgentInfo
 import com.genesyslab.platform.applicationblocks.com.objects.CfgAppRank
 import com.genesyslab.platform.applicationblocks.com.objects.CfgFolder
@@ -15,6 +14,7 @@ import com.genesyslab.platform.configuration.protocol.types.CfgFlag
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectState
 import com.genesyslab.platform.configuration.protocol.types.CfgRank
 import com.nuecho.genesys.cli.TestResources
+import com.nuecho.genesys.cli.core.defaultJsonObjectMapper
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgAgentLoginInfo
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgSkillLevel
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgFlag
@@ -32,7 +32,7 @@ import io.mockk.use
 
 class PersonTest : StringSpec() {
     private val service = ConfService(Environment(host = "test", user = "test", rawPassword = "test"))
-    private val mapper = jacksonObjectMapper()
+    private val mapper = defaultJsonObjectMapper()
 
     private val person = Person(
         employeeId = "employeeId",

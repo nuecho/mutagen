@@ -1,10 +1,10 @@
 package com.nuecho.genesys.cli.commands.config.export
 
 import com.fasterxml.jackson.core.JsonGenerator
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.genesyslab.platform.applicationblocks.com.ICfgObject
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectType
-import com.nuecho.genesys.cli.core.defaultGenerator
+import com.nuecho.genesys.cli.core.defaultJsonGenerator
+import com.nuecho.genesys.cli.core.defaultJsonObjectMapper
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects
 import org.json.JSONArray
 import org.json.JSONObject
@@ -23,8 +23,8 @@ private const val VALUE_KEY = "value"
 
 class RawExportProcessor(output: OutputStream) : ExportProcessor {
     private val xmlTransformer = TransformerFactory.newInstance().newTransformer()
-    private val objectMapper = jacksonObjectMapper()
-    private val jsonGenerator: JsonGenerator = defaultGenerator(output)
+    private val objectMapper = defaultJsonObjectMapper()
+    private val jsonGenerator: JsonGenerator = defaultJsonGenerator(output)
     private val configurationObjects: SortedMap<String, ICfgObject> = TreeMap()
 
     override fun begin() {

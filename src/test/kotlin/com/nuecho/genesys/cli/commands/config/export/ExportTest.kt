@@ -1,10 +1,10 @@
 package com.nuecho.genesys.cli.commands.config.export
 
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.genesyslab.platform.applicationblocks.com.ICfgObject
 import com.genesyslab.platform.applicationblocks.com.ICfgQuery
 import com.nuecho.genesys.cli.CliOutputCaptureWrapper.execute
 import com.nuecho.genesys.cli.TestResources.loadRawConfiguration
+import com.nuecho.genesys.cli.core.defaultJsonObjectMapper
 import com.nuecho.genesys.cli.services.ConfService
 import io.kotlintest.matchers.should
 import io.kotlintest.matchers.shouldBe
@@ -35,7 +35,7 @@ class ExportTest : StringSpec() {
 
             Export().exportConfiguration(processor, service)
 
-            val result = jacksonObjectMapper().readTree(String(output.toByteArray()))
+            val result = defaultJsonObjectMapper().readTree(String(output.toByteArray()))
             result shouldBe loadRawConfiguration("commands/config/export/raw/empty_configuration.json")
         }
 

@@ -1,11 +1,11 @@
 package com.nuecho.genesys.cli.commands.config.export
 
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.genesyslab.platform.applicationblocks.com.ICfgObject
 import com.genesyslab.platform.applicationblocks.com.objects.CfgPerson
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectType
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectType.CFGPerson
 import com.nuecho.genesys.cli.TestResources
+import com.nuecho.genesys.cli.core.defaultJsonObjectMapper
 import com.nuecho.genesys.cli.models.configuration.Configuration
 import com.nuecho.genesys.cli.preferences.environment.Environment
 import com.nuecho.genesys.cli.services.ConfService
@@ -52,7 +52,7 @@ class JsonExportProcessorTest : StringSpec() {
         processor.endType(type)
         processor.end()
 
-        val result = jacksonObjectMapper().readValue(String(output.toByteArray()), Configuration::class.java)
+        val result = defaultJsonObjectMapper().readValue(String(output.toByteArray()), Configuration::class.java)
         result shouldBe TestResources.loadJsonConfiguration("commands/config/export/json/$expectedOutputFile")
     }
 }
