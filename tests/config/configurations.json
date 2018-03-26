@@ -1,0 +1,82 @@
+{
+  "skills": [],
+  "persons": [
+    {
+      "employeeId": "00001",
+      "externalId": "externalId",
+      "firstName": "firstName",
+      "lastName": "lastName",
+      "userName": "00001",
+      "password": "password",
+      "passwordHashAlgorithm": 1,
+      "passwordUpdatingDate": 20180314,
+      "changePasswordOnNextLogin": false,
+      "emailAddress": "emailAddress",
+      "state": "disabled",
+      "agent": false,
+      "externalAuth": false,
+      "appRanks": {
+        "advisors": "user",
+        "agentdesktop": "designer"
+      }
+    },
+    {
+      "employeeId": "00002",
+      "externalId": "externalId",
+      "firstName": "firstName",
+      "lastName": "lastName",
+      "userName": "00002",
+      "password": "password",
+      "passwordHashAlgorithm": 1,
+      "passwordUpdatingDate": 20180314,
+      "changePasswordOnNextLogin": false,
+      "emailAddress": "emailAddress",
+      "state": "enabled",
+      "agent": true,
+      "externalAuth": false,
+      "appRanks": {
+        "advisors": "user",
+        "agentdesktop": "designer"
+      },
+      "userProperties": {
+        "number": 123,
+        "string": "abc",
+        "bytes": [
+          "YWJj"
+        ],
+        "subProperties": {
+          "subNumber": 456,
+          "subString": "def",
+          "subBytes": [
+            "ZGVm"
+          ]
+        }
+      },
+      "agentInfo": {
+        "capacityRule": "capacityRule",
+        "contract": "contract",
+        "place": "place",
+        "site": "site",
+        "skillLevels": {
+          "skill_1": 10,
+          "skill_2": 20,
+          "skill_3": 30
+        },
+        "agentLogins": [
+          {
+            "agentLogin": "agent_1",
+            "wrapupTime": 1000
+          },
+          {
+            "agentLogin": "agent_2",
+            "wrapupTime": 2000
+          },
+          {
+            "agentLogin": "agent_3",
+            "wrapupTime": 3000
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -61,6 +61,22 @@ docker-compose build --build-arg MUTAGEN=./build/mutagen mutagen
 docker-compose run mutagen
 ```
 
+### Functional
+
+A [bats](https://github.com/bats-core/bats-core) functional test suite exists. Assuming you have `bats`
+installed and a config server up & running (see above), then, one can execute the following:
+
+```bash
+VERSION=unspecified MUTAGEN=$PWD/build/mutagen bats tests
+```
+
+or from docker
+```bash
+docker-compose run --rm -e VERSION=unspecified -e MUTAGEN=/app/build/mutagen test
+```
+
+Where in both case, `VERSION` is the actual mutagen version and `MUTAGENT` the binary location.
+
 ## Release
 
 ```bash

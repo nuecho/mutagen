@@ -10,6 +10,21 @@ services:
     entrypoint: ["/bin/sh"] 
     command: -c "sleep 10 && /mutagen config export"
 
+  test:
+    image: dr.s.nuecho.com/bats
+    depends_on:
+      - configserver 
+    links:
+      - configserver
+    environment:
+      - VERSION=0.0.0
+      - MUTAGEN=/app/build/releases/unix/mutagen
+    working_dir: /app/tests
+    volumes:
+      - $PWD/..:/app
+    entrypoint: ["/bin/sh"] 
+    command: -c "sleep 30 && MUTAGEN=$${MUTAGEN} VERSION=$${VERSION} bats ."
+
   postgres:
     image: postgres:9.2 
     environment:
@@ -18,7 +33,7 @@ services:
       - $PWD/sql_scripts:/docker-entrypoint-initdb.d
 
   configserver:
-    image: dr.s.nuecho.com/configserver:latest
+    image: dr.s.nuecho.com/configserver:d6f87b568191880e9970e67db382db12b1399878
     restart: on-failure
     environment:
       - PGPASSWORD=mysecretpassword

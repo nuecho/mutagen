@@ -1,0 +1,75 @@
+{
+  "CfgGroup": {
+    "capacityRuleDBID": 0,
+    "DBID": 102,
+    "siteDBID": 0,
+    "name": "Administrators",
+    "quotaTableDBID": 0,
+    "userProperties": "",
+    "contractDBID": 0,
+    "state": 1,
+    "capacityTableDBID": 0,
+    "tenantDBID": 1
+  },
+  "type": 3
+}
+{
+  "CfgGroup": {
+    "capacityRuleDBID": 0,
+    "DBID": 97,
+    "siteDBID": 0,
+    "name": "EVERYONE",
+    "quotaTableDBID": 0,
+    "userProperties": "",
+    "contractDBID": 0,
+    "state": 1,
+    "capacityTableDBID": 0,
+    "tenantDBID": 1
+  },
+  "type": 6
+}
+{
+  "CfgGroup": {
+    "capacityRuleDBID": 0,
+    "DBID": 98,
+    "siteDBID": 0,
+    "name": "SYSTEM",
+    "quotaTableDBID": 0,
+    "userProperties": "",
+    "contractDBID": 0,
+    "state": 1,
+    "capacityTableDBID": 0,
+    "tenantDBID": 1
+  },
+  "type": 5
+}
+{
+  "CfgGroup": {
+    "capacityRuleDBID": 0,
+    "DBID": 101,
+    "siteDBID": 0,
+    "name": "Super Administrators",
+    "quotaTableDBID": 0,
+    "userProperties": "",
+    "contractDBID": 0,
+    "state": 1,
+    "capacityTableDBID": 0,
+    "tenantDBID": 1
+  },
+  "type": 4
+}
+{
+  "CfgGroup": {
+    "capacityRuleDBID": 0,
+    "DBID": 103,
+    "siteDBID": 0,
+    "name": "Users",
+    "quotaTableDBID": 0,
+    "userProperties": "",
+    "contractDBID": 0,
+    "state": 1,
+    "capacityTableDBID": 0,
+    "tenantDBID": 1
+  },
+  "type": 2
+}
