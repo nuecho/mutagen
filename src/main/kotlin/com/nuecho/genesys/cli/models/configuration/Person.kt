@@ -66,7 +66,7 @@ data class Person(
 }
 
 fun CfgPerson.import(person: Person) {
-    setProperty("tenantDBID", DEFAULT_TENANT_DBID) // TODO: Proper tenant management
+
     setProperty("employeeID", person.employeeId, this)
     setProperty("userName", person.userName, this)
     setProperty("externalID", person.externalId, this)

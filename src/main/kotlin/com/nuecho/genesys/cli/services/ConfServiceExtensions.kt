@@ -9,6 +9,7 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgPlace
 import com.genesyslab.platform.applicationblocks.com.objects.CfgScript
 import com.genesyslab.platform.applicationblocks.com.objects.CfgSkill
 import com.genesyslab.platform.applicationblocks.com.objects.CfgSwitch
+import com.genesyslab.platform.applicationblocks.com.objects.CfgTenant
 import com.genesyslab.platform.applicationblocks.com.queries.CfgAgentLoginQuery
 import com.genesyslab.platform.applicationblocks.com.queries.CfgFolderQuery
 import com.genesyslab.platform.applicationblocks.com.queries.CfgObjectiveTableQuery
@@ -17,6 +18,7 @@ import com.genesyslab.platform.applicationblocks.com.queries.CfgPlaceQuery
 import com.genesyslab.platform.applicationblocks.com.queries.CfgScriptQuery
 import com.genesyslab.platform.applicationblocks.com.queries.CfgSkillQuery
 import com.genesyslab.platform.applicationblocks.com.queries.CfgSwitchQuery
+import com.genesyslab.platform.applicationblocks.com.queries.CfgTenantQuery
 
 fun IConfService.retrievePerson(employeeId: String): CfgPerson? {
     val query = CfgPersonQuery()
@@ -37,3 +39,15 @@ fun IConfService.retrieveSkill(name: String): CfgSkill? = retrieveObject(CfgSkil
 fun IConfService.retrieveSwitch(name: String): CfgSwitch? = retrieveObject(CfgSwitch::class.java, CfgSwitchQuery(name))
 fun IConfService.retrieveObjectiveTable(name: String): CfgObjectiveTable? =
     retrieveObject(CfgObjectiveTable::class.java, CfgObjectiveTableQuery(name))
+
+fun IConfService.retrieveTenants(): Collection<CfgTenant> =
+    retrieveMultipleObjects(CfgTenant::class.java, CfgTenantQuery().apply { allTenants = 1 })
+
+val IConfService.tenants: Collection<CfgTenant> by TenantCacheDelegate()
+
+val IConfService.defaultTenantDbid: Int
+    get() {
+        if (tenants.isEmpty()) throw IllegalStateException("No tenant found.")
+        if (tenants.size > 1) throw IllegalStateException("Unsupported multi-tenancy.")
+        return tenants.first().dbid
+    }
