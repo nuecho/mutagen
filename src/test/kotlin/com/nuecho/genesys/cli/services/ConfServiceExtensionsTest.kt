@@ -10,6 +10,7 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgPlace
 import com.genesyslab.platform.applicationblocks.com.objects.CfgScript
 import com.genesyslab.platform.applicationblocks.com.objects.CfgSkill
 import com.genesyslab.platform.applicationblocks.com.objects.CfgSwitch
+import com.genesyslab.platform.applicationblocks.com.objects.CfgTenant
 import com.genesyslab.platform.applicationblocks.com.queries.CfgAgentLoginQuery
 import com.genesyslab.platform.applicationblocks.com.queries.CfgFolderQuery
 import com.genesyslab.platform.applicationblocks.com.queries.CfgObjectiveTableQuery
@@ -18,15 +19,21 @@ import com.genesyslab.platform.applicationblocks.com.queries.CfgPlaceQuery
 import com.genesyslab.platform.applicationblocks.com.queries.CfgScriptQuery
 import com.genesyslab.platform.applicationblocks.com.queries.CfgSkillQuery
 import com.genesyslab.platform.applicationblocks.com.queries.CfgSwitchQuery
+import com.nuecho.genesys.cli.preferences.environment.Environment
 import io.kotlintest.matchers.shouldBe
+import io.kotlintest.matchers.shouldThrow
 import io.kotlintest.specs.StringSpec
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
+import io.mockk.spyk
+import io.mockk.staticMockk
+import io.mockk.use
+import io.mockk.verify
 
 class ConfServiceExtensionsTest : StringSpec() {
     init {
-        val service = mockk<ConfService>()
+        val service = mockConfService()
         val type = slot<Class<out ICfgObject>>()
         val query = slot<ICfgQuery>()
 
@@ -97,5 +104,47 @@ class ConfServiceExtensionsTest : StringSpec() {
             query.captured.javaClass shouldBe CfgSwitchQuery::class.java
             (query.captured as CfgSwitchQuery).name shouldBe switchName
         }
+        "default tenant should fail on no tenant" {
+            staticMockk("com.nuecho.genesys.cli.services.ConfServiceExtensionsKt").use {
+                every { service.tenants } returns listOf()
+                shouldThrow<IllegalStateException> {
+                    service.defaultTenantDbid
+                }
+            }
+        }
+        "default tenant should fail on multi tenant" {
+            var tenants = listOf(CfgTenant(service), CfgTenant(service))
+
+            staticMockk("com.nuecho.genesys.cli.services.ConfServiceExtensionsKt").use {
+                every { service.tenants } returns tenants
+
+                shouldThrow<IllegalStateException> {
+                    service.defaultTenantDbid
+                }
+            }
+        }
+        "default tenant should return single tenant" {
+            val tenant = mockk<CfgTenant>()
+            every { tenant.getDBID() } returns 1
+
+            staticMockk("com.nuecho.genesys.cli.services.ConfServiceExtensionsKt").use {
+                every { service.tenants } returns listOf(tenant)
+                val actual = service.defaultTenantDbid
+                actual shouldBe 1
+            }
+        }
+        "tenant retrieval should be cached" {
+            val tenant = mockk<CfgTenant>()
+            every { tenant.getDBID() } returns 1
+
+            staticMockk("com.nuecho.genesys.cli.services.ConfServiceExtensionsKt").use {
+                every { service.retrieveTenants() } returns listOf(tenant)
+                service.defaultTenantDbid
+                service.defaultTenantDbid
+                verify(exactly = 1) { service.retrieveTenants() }
+            }
+        }
     }
+
+    private fun mockConfService() = spyk(ConfService(Environment(host = "test", user = "test", rawPassword = "test")))
 }

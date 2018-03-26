@@ -10,6 +10,7 @@ import com.nuecho.genesys.cli.models.configuration.Configuration
 import com.nuecho.genesys.cli.models.configuration.Person
 import com.nuecho.genesys.cli.models.configuration.import
 import com.nuecho.genesys.cli.services.ConfService
+import com.nuecho.genesys.cli.services.defaultTenantDbid
 import com.nuecho.genesys.cli.services.retrievePerson
 import picocli.CommandLine
 import java.io.File
@@ -40,7 +41,9 @@ class Import : GenesysCliCommand() {
     }
 
     companion object {
-        internal fun importConfiguration(configuration: Configuration, service: ConfService) {
+
+        fun importConfiguration(configuration: Configuration, service: ConfService) {
+
             Logging.info { "Beginning import." }
             importPersons(configuration.persons, service)
             Logging.info { "Import completed." }
@@ -59,10 +62,13 @@ class Import : GenesysCliCommand() {
                 Logging.info { "Creating CfgPerson '$employeeId'." }
                 person = CfgPerson(service)
                 person.import(it)
-                save(person)
+                save(applyTenant(person))
             }
         }
 
-        internal fun save(cfgObject: CfgObject) = cfgObject.save()
+        internal fun save(cfgObject: CfgObject) = applyTenant(cfgObject).save()
+
+        internal fun applyTenant(cfgObject: CfgObject): CfgObject =
+            cfgObject.apply { setProperty("tenantDBID", cfgObject.configurationService.defaultTenantDbid) }
     }
 }
