@@ -22,6 +22,8 @@ Vagrantfile textfile
 *.abnf textfile
 *.ac textfile
 *.accentuated textfile
+*.bash textfile
+*.bats textfile
 *.c textfile
 *.cc textfile
 *.cfxml textfile
