@@ -2,15 +2,18 @@ package com.nuecho.genesys.cli.commands.config.import
 
 import com.genesyslab.platform.applicationblocks.com.CfgObject
 import com.genesyslab.platform.applicationblocks.com.objects.CfgPerson
+import com.genesyslab.platform.applicationblocks.com.objects.CfgSkill
 import com.nuecho.genesys.cli.CliOutputCaptureWrapper.execute
 import com.nuecho.genesys.cli.commands.config.import.Import.Companion.applyTenant
 import com.nuecho.genesys.cli.commands.config.import.Import.Companion.importPersons
 import com.nuecho.genesys.cli.models.configuration.ConfigurationBuilder
 import com.nuecho.genesys.cli.models.configuration.Person
+import com.nuecho.genesys.cli.models.configuration.Skill
 import com.nuecho.genesys.cli.preferences.environment.Environment
 import com.nuecho.genesys.cli.services.ConfService
 import com.nuecho.genesys.cli.services.defaultTenantDbid
 import io.kotlintest.matchers.should
+import io.kotlintest.matchers.shouldBe
 import io.kotlintest.matchers.startWith
 import io.kotlintest.specs.StringSpec
 import io.mockk.Runs
@@ -52,7 +55,8 @@ class ImportTest : StringSpec() {
             val persons = listOf(Person("employeeId", "userName"))
 
             objectMockk(Import.Companion).use {
-                Import.importPersons(persons, service)
+                val count = Import.importPersons(persons, service)
+                count shouldBe 0
                 verify(exactly = 0) { Import.Companion.save(any()) }
             }
         }
@@ -69,8 +73,81 @@ class ImportTest : StringSpec() {
                     every { service.defaultTenantDbid } returns 1
                     every { Import.Companion.save(any()) } just Runs
 
-                    importPersons(listOf(Person("employeeId", "userName")), service)
+                    val count = importPersons(listOf(Person("employeeId", "userName")), service)
+                    count shouldBe 1
                     verify(exactly = 1) { Import.Companion.save(ofType(CfgPerson::class)) }
+                }
+            }
+        }
+
+        "importing multiple persons should try to save all of them" {
+
+            val service = mockConfService()
+            every { service.retrieveObject(CfgPerson::class.java, any()) } returns null
+
+            objectMockk(Import.Companion).use {
+
+                staticMockk("com.nuecho.genesys.cli.services.ConfServiceExtensionsKt").use {
+
+                    every { service.defaultTenantDbid } returns 1
+                    every { Import.Companion.save(any()) } just Runs
+
+                    val count = importPersons(listOf(Person("0001"), Person("0002")), service)
+                    count shouldBe 2
+                    verify(exactly = 2) { Import.Companion.save(ofType(CfgPerson::class)) }
+                }
+            }
+        }
+
+        "importing an existing skill should do nothing" {
+            val service = mockConfService()
+            val cfgSkill = CfgSkill(service)
+
+            every { service.retrieveObject(CfgSkill::class.java, any()) } returns cfgSkill
+
+            val skills = listOf(Skill("foo"))
+
+            objectMockk(Import.Companion).use {
+                val count = Import.importSkills(skills, service)
+                count shouldBe 0
+                verify(exactly = 0) { Import.Companion.save(any()) }
+            }
+        }
+
+        "importing a new skill should try to save it" {
+
+            val service = mockConfService()
+            every { service.retrieveObject(CfgSkill::class.java, any()) } returns null
+
+            objectMockk(Import.Companion).use {
+
+                staticMockk("com.nuecho.genesys.cli.services.ConfServiceExtensionsKt").use {
+
+                    every { service.defaultTenantDbid } returns 1
+                    every { Import.Companion.save(any()) } just Runs
+
+                    val count = Import.importSkills(listOf(Skill("foo")), service)
+                    count shouldBe 1
+                    verify(exactly = 1) { Import.Companion.save(ofType(CfgSkill::class)) }
+                }
+            }
+        }
+
+        "importing multiple skills should try to save all of them" {
+
+            val service = mockConfService()
+            every { service.retrieveObject(CfgSkill::class.java, any()) } returns null
+
+            objectMockk(Import.Companion).use {
+
+                staticMockk("com.nuecho.genesys.cli.services.ConfServiceExtensionsKt").use {
+
+                    every { service.defaultTenantDbid } returns 1
+                    every { Import.Companion.save(any()) } just Runs
+
+                    val count = Import.importSkills(listOf(Skill("foo"), Skill("bar")), service)
+                    count shouldBe 2
+                    verify(exactly = 2) { Import.Companion.save(ofType(CfgSkill::class)) }
                 }
             }
         }

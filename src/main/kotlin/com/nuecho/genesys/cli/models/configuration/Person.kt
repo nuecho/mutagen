@@ -15,14 +15,12 @@ import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgRan
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toKeyValueCollection
 import com.nuecho.genesys.cli.toShortName
 
-private const val DEFAULT_TENANT_DBID = 101
-
 /**
  * Unused address and phones properties are not defined.
  */
 data class Person(
     val employeeId: String,
-    val userName: String,
+    var userName: String = employeeId,
     val externalId: String? = null,
     val firstName: String? = null,
     val lastName: String? = null,

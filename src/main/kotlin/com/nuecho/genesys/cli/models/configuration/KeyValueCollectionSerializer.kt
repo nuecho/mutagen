@@ -10,6 +10,7 @@ class KeyValueCollectionSerializer @JvmOverloads constructor(type: Class<Map<Str
 
     @Suppress("UNCHECKED_CAST")
     override fun serialize(map: Map<String, Any>, generator: JsonGenerator, provider: SerializerProvider) {
+
         with(generator) {
             writeStartObject()
 

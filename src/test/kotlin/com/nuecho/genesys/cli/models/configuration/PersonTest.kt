@@ -7,18 +7,19 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgObjectiveTable
 import com.genesyslab.platform.applicationblocks.com.objects.CfgPerson
 import com.genesyslab.platform.applicationblocks.com.objects.CfgPlace
 import com.genesyslab.platform.applicationblocks.com.objects.CfgScript
-import com.genesyslab.platform.commons.collections.KeyValueCollection
-import com.genesyslab.platform.commons.collections.KeyValuePair
 import com.genesyslab.platform.configuration.protocol.types.CfgAppType
 import com.genesyslab.platform.configuration.protocol.types.CfgFlag
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectState
 import com.genesyslab.platform.configuration.protocol.types.CfgRank
 import com.nuecho.genesys.cli.TestResources
 import com.nuecho.genesys.cli.core.defaultJsonObjectMapper
+import com.nuecho.genesys.cli.models.configuration.ConfigurationAsserts.checkSerialization
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgAgentLoginInfo
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgSkillLevel
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockKeyValueCollection
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgFlag
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgObjectState
+import com.nuecho.genesys.cli.models.configuration.ConfigurationTestData.defaultProperties
 import com.nuecho.genesys.cli.preferences.environment.Environment
 import com.nuecho.genesys.cli.services.ConfService
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks
@@ -52,16 +53,7 @@ class PersonTest : StringSpec() {
             CfgAppType.CFGAdvisors.toShortName() to CfgRank.CFGUser.toShortName(),
             CfgAppType.CFGAgentDesktop.toShortName() to CfgRank.CFGDesigner.toShortName()
         ),
-        userProperties = mapOf(
-            "number" to 123,
-            "string" to "abc",
-            "bytes" to "abc".toByteArray(),
-            "subProperties" to mapOf(
-                "subNumber" to 456,
-                "subString" to "def",
-                "subBytes" to "def".toByteArray()
-            )
-        ),
+        userProperties = defaultProperties(),
         agentInfo = AgentInfo(
             capacityRule = "capacityRule",
             contract = "contract",
@@ -189,25 +181,6 @@ class PersonTest : StringSpec() {
         return cfgAppRank
     }
 
-    private fun mockKeyValueCollection(): KeyValueCollection {
-        val subKeyValueCollection = KeyValueCollection()
-        with(subKeyValueCollection) {
-            addPair(KeyValuePair("subNumber", 456))
-            addPair(KeyValuePair("subString", "def"))
-            addPair(KeyValuePair("subBytes", "def".toByteArray()))
-        }
-
-        val keyValueCollection = KeyValueCollection()
-        with(keyValueCollection) {
-            addPair(KeyValuePair("number", 123))
-            addPair(KeyValuePair("string", "abc"))
-            addPair(KeyValuePair("bytes", "abc".toByteArray()))
-            addPair(KeyValuePair("subProperties", subKeyValueCollection))
-        }
-
-        return keyValueCollection
-    }
-
     private fun mockCfgAgentInfo(): CfgAgentInfo {
         val capacityRule = mockk<CfgScript>()
         every { capacityRule.name } returns "capacityRule"
@@ -242,11 +215,5 @@ class PersonTest : StringSpec() {
         every { agentInfo.agentLogins } returns agentLogins
 
         return agentInfo
-    }
-
-    private fun checkSerialization(configurationObject: ConfigurationObject, expectedFile: String) {
-        val stringResult = mapper.writeValueAsString(configurationObject)
-        val jsonResult = mapper.readTree(stringResult)
-        jsonResult shouldBe TestResources.loadRawConfiguration("models/configuration/$expectedFile.json")
     }
 }
