@@ -73,9 +73,11 @@ release:binaries:
     - cp build/launch4j/mutagen.exe ${RELEASE_PATH}/windows/
     - cd ${RELEASE_PATH}/unix/ && sha1sum mutagen > mutagen.sha1 && cd -
     - cd ${RELEASE_PATH}/windows/ && sha1sum mutagen.exe > mutagen.exe.sha1 && cd -
+    - echo -n "${VERSION}" > .version
   artifacts:
     paths:
       - build/releases
+      - .version
   only:
     - master
     - tags
@@ -104,9 +106,21 @@ acceptance:test:
   dependencies:
     - release:binaries
   script:
-    - docker-compose --version
+    - VERSION=$(cat .version)
     - export COMPOSE_HTTP_TIMEOUT=300 # 5m. This is sort of slow to execute on a gitlab-runner
-    - cd docker && docker-compose run mutagen 
+    - cd docker && docker-compose down && docker-compose run --rm -e VERSION=${VERSION} test && docker-compose down
+  only:
+    - master
+    - tags
+
+acceptance:manual:
+  stage: acceptance
+  dependencies:
+    - release:binaries
+  script:
+    - echo "manual testing time!"
+  when: manual
+  allow_failure: false
   only:
     - master
     - tags
