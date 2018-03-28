@@ -54,9 +54,10 @@ fun CfgFlag.asBoolean(): Boolean? =
         else -> throw IllegalArgumentException("Illegal CfgFlag value: '$this'")
     }
 
-fun KeyValueCollection.asMap(): Map<String, Any> =
-    this.map {
+fun KeyValueCollection.asMap(): Map<String, Any>? =
+    if (this.isEmpty()) null // so we don't turn out serializing empty map, we return null, which is not serialized
+    else this.map {
         val keyValuePair = it as KeyValuePair
         val value = keyValuePair.value!!
-        keyValuePair.stringKey!! to if (value is KeyValueCollection) value.asMap() else value
+        keyValuePair.stringKey!! to if (value is KeyValueCollection) value.asMap()!! else value
     }.toMap()

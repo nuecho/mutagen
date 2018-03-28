@@ -4,10 +4,15 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgAgentLogin
 import com.genesyslab.platform.applicationblocks.com.objects.CfgAgentLoginInfo
 import com.genesyslab.platform.applicationblocks.com.objects.CfgSkill
 import com.genesyslab.platform.applicationblocks.com.objects.CfgSkillLevel
+import com.genesyslab.platform.commons.collections.KeyValueCollection
+import com.genesyslab.platform.commons.collections.KeyValuePair
 import io.mockk.every
 import io.mockk.mockk
 
 object ConfigurationObjectMocks {
+    const val SUB_NUMBER = 456
+    const val NUMBER = 123
+
     fun mockCfgSkillLevel(skillName: String, skillLevel: Int): CfgSkillLevel {
         val cfgSkill = mockk<CfgSkill>()
         every { cfgSkill.name } returns skillName
@@ -32,5 +37,24 @@ object ConfigurationObjectMocks {
         val cfgAgentLogin = mockk<CfgAgentLogin>()
         every { cfgAgentLogin.loginCode } returns loginCode
         return cfgAgentLogin
+    }
+
+    fun mockKeyValueCollection(): KeyValueCollection {
+        val subKeyValueCollection = KeyValueCollection()
+        with(subKeyValueCollection) {
+            addPair(KeyValuePair("subNumber", SUB_NUMBER))
+            addPair(KeyValuePair("subString", "def"))
+            addPair(KeyValuePair("subBytes", "def".toByteArray()))
+        }
+
+        val keyValueCollection = KeyValueCollection()
+        with(keyValueCollection) {
+            addPair(KeyValuePair("number", NUMBER))
+            addPair(KeyValuePair("string", "abc"))
+            addPair(KeyValuePair("bytes", "abc".toByteArray()))
+            addPair(KeyValuePair("subProperties", subKeyValueCollection))
+        }
+
+        return keyValueCollection
     }
 }

@@ -14,6 +14,7 @@ import java.io.OutputStream
 
 private val jsonObjectMapper = jacksonObjectMapper()
     .setSerializationInclusion(JsonInclude.Include.NON_NULL) // do not serialize null
+    .setSerializationInclusion(JsonInclude.Include.NON_EMPTY) // both empty arrays and object won't be serialized
     .configure(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY, true) // consistent output
 
 private val yamlObjectMapper = ObjectMapper(YAMLFactory()).registerModule(KotlinModule())
