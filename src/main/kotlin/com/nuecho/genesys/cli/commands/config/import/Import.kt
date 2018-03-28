@@ -18,6 +18,9 @@ import com.nuecho.genesys.cli.services.retrieveSkill
 import picocli.CommandLine
 import java.io.File
 
+private const val PERSONS = "persons"
+private const val SKILLS = "skills"
+
 @CommandLine.Command(
     name = "import",
     description = ["[INCUBATION] Import configuration objects."]
@@ -44,16 +47,12 @@ class Import : GenesysCliCommand() {
     }
 
     companion object {
-
-        private val PERSONS = "persons"
-        private val SKILLS = "skills"
-
         fun importConfiguration(configuration: Configuration, service: ConfService) {
 
             Logging.info { "Beginning import." }
 
-            val count = importSkills(configuration.skills, service) +
-                    importPersons(configuration.persons, service)
+            val count = importSkills(configuration.skills.values, service) +
+                    importPersons(configuration.persons.values, service)
 
             println("Completed. $count object(s) imported.")
         }
@@ -61,7 +60,7 @@ class Import : GenesysCliCommand() {
         internal fun importPersons(persons: Collection<Person>, service: ConfService): Int {
             var count = 0
             persons.forEach {
-                var employeeId = it.employeeId
+                val employeeId = it.employeeId
                 var person = service.retrievePerson(employeeId)
 
                 if (person != null) {
@@ -85,7 +84,7 @@ class Import : GenesysCliCommand() {
             var count = 0
 
             skills.forEach {
-                var name = it.name
+                val name = it.name
                 var skill = service.retrieveSkill(name)
 
                 if (skill != null) {

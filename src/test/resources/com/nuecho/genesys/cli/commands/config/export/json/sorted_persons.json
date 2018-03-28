@@ -1,16 +1,16 @@
 {
-  "persons": [
-    {
+  "persons": {
+    "111": {
       "employeeId": "111",
       "userName": "dmorand"
     },
-    {
+    "222": {
       "employeeId": "222",
       "userName": "fparga"
     },
-    {
+    "333": {
       "employeeId": "333",
       "userName": "pdeschen"
     }
-  ]
+  }
 }
