@@ -42,20 +42,23 @@ class RawExportProcessor(output: OutputStream) : ExportProcessor {
 
     override fun endType(type: CfgObjectType) {
         val typeName = type.name()
-        jsonGenerator.writeArrayFieldStart(typeName)
+        jsonGenerator.writeObjectFieldStart(typeName)
 
-        configurationObjects.values.forEach {
-            val xml = toXml(it)
+        configurationObjects.forEach {
+            val (primaryKey, configurationObject) = it
+            val xml = toXml(configurationObject)
 
             val jsonObject = toJSONObject(xml).getJSONObject(typeName.replace("CFG", "Cfg"))!!
             jsonObject.remove(XMLNS)
             prettifyObject(jsonObject)
 
             val jsonNode = objectMapper.readTree(jsonObject.toString(0))
+
+            jsonGenerator.writeFieldName(primaryKey)
             jsonGenerator.writeObject(jsonNode)
         }
 
-        jsonGenerator.writeEndArray()
+        jsonGenerator.writeEndObject()
     }
 
     override fun end() {

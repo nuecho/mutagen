@@ -3,16 +3,16 @@ package com.nuecho.genesys.cli.models.configuration
 import com.genesyslab.platform.applicationblocks.com.ICfgObject
 import com.genesyslab.platform.applicationblocks.com.objects.CfgPerson
 import com.genesyslab.platform.applicationblocks.com.objects.CfgSkill
-import java.util.TreeSet
+import java.util.TreeMap
 
 class ConfigurationBuilder {
-    private val persons = TreeSet<Person>()
-    private val skills = TreeSet<Skill>()
+    private val persons = TreeMap<String, Person>()
+    private val skills = TreeMap<String, Skill>()
 
     fun add(cfgObject: ICfgObject) =
         when (cfgObject) {
-            is CfgPerson -> persons.add(Person(cfgObject))
-            is CfgSkill -> skills.add(Skill(cfgObject))
+            is CfgPerson -> Person(cfgObject).let { persons.put(it.primaryKey, it) }
+            is CfgSkill -> Skill(cfgObject).let { skills.put(it.primaryKey, it) }
             else -> false
         }
 
