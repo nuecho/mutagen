@@ -13,6 +13,7 @@ import com.genesyslab.platform.configuration.protocol.types.CfgObjectState
 import com.genesyslab.platform.configuration.protocol.types.CfgRank
 import com.nuecho.genesys.cli.TestResources
 import com.nuecho.genesys.cli.models.configuration.ConfigurationAsserts.checkSerialization
+import com.nuecho.genesys.cli.models.configuration.ConfigurationAsserts.checkUserProperties
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgAgentLoginInfo
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgSkillLevel
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockKeyValueCollection
@@ -32,11 +33,13 @@ import io.mockk.mockk
 import io.mockk.staticMockk
 import io.mockk.use
 
+private const val EMPLOYEE_ID = "employeeId"
+
 class PersonTest : StringSpec() {
     private val service = ConfService(Environment(host = "test", user = "test", rawPassword = "test"))
 
     private val person = Person(
-        employeeId = "employeeId",
+        employeeId = EMPLOYEE_ID,
         externalId = "externalId",
         firstName = "firstName",
         lastName = "lastName",
@@ -74,7 +77,7 @@ class PersonTest : StringSpec() {
 
     init {
         "empty Person should properly serialize" {
-            checkSerialization(Person("employedId", "userName"), "empty_person")
+            checkSerialization(Person(EMPLOYEE_ID), "empty_person")
         }
 
         "fully initialized Person should properly serialize" {
@@ -90,11 +93,7 @@ class PersonTest : StringSpec() {
             // Normally we should simply check that 'deserialized shouldBe person' but since Person.equals is broken
             // because of ByteArray.equals, this should do the trick for now.
             checkSerialization(deserializedPerson, "person")
-
-            // Ensure that byte arrays are properly deserialized (GC-60)
-            val actualByteArray = deserializedPerson.userProperties!!["bytes"] as ByteArray
-            val expectedByteArray = person.userProperties!!["bytes"] as ByteArray
-            actualByteArray.contentEquals(expectedByteArray) shouldBe true
+            checkUserProperties(person.userProperties!!, deserializedPerson.userProperties!!)
         }
 
         "CfgPerson initialized Person should properly serialize" {
@@ -147,6 +146,20 @@ class PersonTest : StringSpec() {
                 }
             }
         }
+
+        "Person.updateCfgObject should use employeeId when username is not specified" {
+            staticMockk("com.nuecho.genesys.cli.services.ConfServiceExtensionsKt").use {
+                every { service.retrievePerson(any()) } returns null
+
+                val (_, cfgObject) = Person(EMPLOYEE_ID).updateCfgObject(service)
+                val cfgPerson = cfgObject as CfgPerson
+
+                with(cfgPerson) {
+                    employeeID shouldBe EMPLOYEE_ID
+                    userName shouldBe EMPLOYEE_ID
+                }
+            }
+        }
     }
 
     private fun mockCfgPerson(): CfgPerson {
@@ -168,7 +181,7 @@ class PersonTest : StringSpec() {
         every { cfgPerson.passwordUpdatingDate } returns person.passwordUpdatingDate
         every { cfgPerson.changePasswordOnNextLogin } returns CfgFlag.CFGFalse
         every { cfgPerson.emailAddress } returns person.emailAddress
-        every { cfgPerson.state } returns CfgObjectState.CFGEnabled
+        every { cfgPerson.state } returns toCfgObjectState(person.state)
         every { cfgPerson.isAgent } returns CfgFlag.CFGTrue
         every { cfgPerson.isExternalAuth } returns CfgFlag.CFGFalse
         every { cfgPerson.appRanks } returns appRanks

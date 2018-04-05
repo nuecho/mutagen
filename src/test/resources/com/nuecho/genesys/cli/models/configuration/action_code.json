@@ -1,0 +1,23 @@
+{
+  "name": "name",
+  "type": "transfer",
+  "code": "code",
+  "subcodes": {
+    "subname": "subcode"
+  },
+  "state": "enabled",
+  "userProperties": {
+    "number": 123,
+    "string": "abc",
+    "bytes": [
+      "YWJj"
+    ],
+    "subProperties": {
+      "subNumber": 456,
+      "subString": "def",
+      "subBytes": [
+        "ZGVm"
+      ]
+    }
+  }
+}

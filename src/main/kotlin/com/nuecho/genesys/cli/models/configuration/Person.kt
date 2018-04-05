@@ -24,7 +24,7 @@ import com.nuecho.genesys.cli.toShortName
  */
 data class Person(
     val employeeId: String,
-    var userName: String = employeeId,
+    var userName: String? = null,
     val externalId: String? = null,
     val firstName: String? = null,
     val lastName: String? = null,
@@ -73,7 +73,7 @@ data class Person(
 
         CfgPerson(service).let {
             setProperty("employeeID", employeeId, it)
-            setProperty("userName", userName, it)
+            setProperty("userName", userName ?: employeeId, it)
             setProperty("externalID", externalId, it)
             setProperty("firstName", firstName, it)
             setProperty("lastName", lastName, it)

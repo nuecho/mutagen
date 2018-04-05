@@ -1,23 +1,25 @@
 package com.nuecho.genesys.cli.models.configuration
 
 import com.genesyslab.platform.applicationblocks.com.ICfgObject
+import com.genesyslab.platform.applicationblocks.com.objects.CfgActionCode
 import com.genesyslab.platform.applicationblocks.com.objects.CfgPerson
 import com.genesyslab.platform.applicationblocks.com.objects.CfgRole
 import com.genesyslab.platform.applicationblocks.com.objects.CfgSkill
-import java.util.TreeMap
 
 class ConfigurationBuilder {
-    private val persons = TreeMap<String, Person>()
-    private val roles = TreeMap<String, Role>()
-    private val skills = TreeMap<String, Skill>()
+    private val actionCodes = HashMap<String, ActionCode>()
+    private val persons = HashMap<String, Person>()
+    private val roles = HashMap<String, Role>()
+    private val skills = HashMap<String, Skill>()
 
     fun add(cfgObject: ICfgObject) =
         when (cfgObject) {
-            is CfgPerson -> Person(cfgObject).let { persons.put(it.primaryKey, it) }
-            is CfgRole -> Role(cfgObject).let { roles.put(it.primaryKey, it) }
-            is CfgSkill -> Skill(cfgObject).let { skills.put(it.primaryKey, it) }
+            is CfgActionCode -> ActionCode(cfgObject).run { actionCodes.put(primaryKey, this) }
+            is CfgPerson -> Person(cfgObject).run { persons.put(primaryKey, this) }
+            is CfgRole -> Role(cfgObject).run { roles.put(primaryKey, this) }
+            is CfgSkill -> Skill(cfgObject).run { skills.put(primaryKey, this) }
             else -> false
         }
 
-    fun build() = Configuration(persons, roles, skills)
+    fun build() = Configuration(actionCodes, persons, roles, skills)
 }

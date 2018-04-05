@@ -12,4 +12,11 @@ object ConfigurationAsserts {
         val jsonResult = mapper.readTree(stringResult)
         jsonResult shouldBe TestResources.loadRawConfiguration("models/configuration/$expectedFile.json")
     }
+
+    fun checkUserProperties(expectedUserProperties: Map<String, Any>, actualUserProperties: Map<String, Any>) {
+        // Ensure that byte arrays are properly deserialized (GC-60)
+        val actualByteArray = actualUserProperties["bytes"] as ByteArray
+        val expectedByteArray = expectedUserProperties["bytes"] as ByteArray
+        actualByteArray.contentEquals(expectedByteArray) shouldBe true
+    }
 }

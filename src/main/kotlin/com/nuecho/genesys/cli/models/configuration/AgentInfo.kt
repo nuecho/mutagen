@@ -4,7 +4,7 @@ import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgAgentInfo
 import com.genesyslab.platform.applicationblocks.com.objects.CfgPerson
 import com.genesyslab.platform.applicationblocks.com.objects.CfgSkillLevel
-import com.nuecho.genesys.cli.Logging
+import com.nuecho.genesys.cli.Logging.warn
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.getPrimaryKey
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setProperty
 import com.nuecho.genesys.cli.services.retrieveFolder
@@ -51,7 +51,7 @@ private fun getScriptDbid(name: String?, service: IConfService) =
         val cfgScript = service.retrieveScript(name)
 
         if (cfgScript == null) {
-            Logging.warn { "Cannot find script '$name'" }
+            warn { "Cannot find script '$name'" }
             null
         } else cfgScript.dbid
     }
@@ -62,7 +62,7 @@ private fun getObjectiveTableDbid(name: String?, service: IConfService) =
         val cfgObjectiveTable = service.retrieveObjectiveTable(name)
 
         if (cfgObjectiveTable == null) {
-            Logging.warn { "Cannot find objective table '$name'" }
+            warn { "Cannot find objective table '$name'" }
             null
         } else cfgObjectiveTable.dbid
     }
@@ -73,7 +73,7 @@ private fun getPlaceDbid(name: String?, service: IConfService) =
         val cfgPlace = service.retrievePlace(name)
 
         if (cfgPlace == null) {
-            Logging.warn { "Cannot find place '$name'" }
+            warn { "Cannot find place '$name'" }
             null
         } else cfgPlace.dbid
     }
@@ -84,7 +84,7 @@ private fun getFolderDbid(name: String?, service: IConfService) =
         val cfgFolder = service.retrieveFolder(name)
 
         if (cfgFolder == null) {
-            Logging.warn { "Cannot find folder '$name'" }
+            warn { "Cannot find folder '$name'" }
             null
         } else cfgFolder.dbid
     }
@@ -97,7 +97,7 @@ private fun toCfgSkillLevel(skillLevels: Map<String, Int>?, person: CfgPerson): 
     return skillLevels.map { (name, level) ->
         val cfgSkill = service.retrieveSkill(name)
         if (cfgSkill == null) {
-            Logging.warn { "Cannot find skill '$name'" }
+            warn { "Cannot find skill '$name'" }
             null
         } else {
             val cfgSkillLevel = CfgSkillLevel(service, person)
