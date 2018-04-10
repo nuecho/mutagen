@@ -1,7 +1,9 @@
 package com.nuecho.genesys.cli.models.configuration
 
+import com.genesyslab.platform.applicationblocks.com.ConfigException
 import com.genesyslab.platform.applicationblocks.com.ICfgBase
 import com.genesyslab.platform.applicationblocks.com.ICfgObject
+import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgAgentLogin
 import com.genesyslab.platform.applicationblocks.com.objects.CfgDN
 import com.genesyslab.platform.applicationblocks.com.objects.CfgIVRPort
@@ -43,6 +45,10 @@ object ConfigurationObjects {
             getStringProperty(configurationObject, getPrimaryKeyProperty(configurationObject))
         }
     }
+
+    fun dbidToPrimaryKey(dbid: Int, type: CfgObjectType, service: IConfService) =
+        getPrimaryKey(service.retrieveObject(type, dbid))
+                ?: throw ConfigException("Cannot find $type object with DBID $dbid.")
 
     @Suppress("UNCHECKED_CAST")
     fun toKeyValueCollection(map: Map<String, Any>?): KeyValueCollection? =

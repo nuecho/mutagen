@@ -5,7 +5,8 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgPerson
 import com.genesyslab.platform.applicationblocks.com.objects.CfgSkill
 import com.nuecho.genesys.cli.CliOutputCaptureWrapper.execute
 import com.nuecho.genesys.cli.commands.config.import.Import.Companion.applyTenant
-import com.nuecho.genesys.cli.commands.config.import.Import.Companion.importPersons
+import com.nuecho.genesys.cli.commands.config.import.Import.Companion.importConfiguration
+import com.nuecho.genesys.cli.commands.config.import.Import.Companion.importConfigurationObjects
 import com.nuecho.genesys.cli.models.configuration.ConfigurationBuilder
 import com.nuecho.genesys.cli.models.configuration.Person
 import com.nuecho.genesys.cli.models.configuration.Skill
@@ -41,7 +42,7 @@ class ImportTest : StringSpec() {
             val service = mockConfService()
 
             objectMockk(Import.Companion).use {
-                Import.importConfiguration(configuration, service)
+                importConfiguration(configuration, service)
                 verify(exactly = 0) { Import.Companion.save(any()) }
             }
         }
@@ -55,7 +56,7 @@ class ImportTest : StringSpec() {
             val persons = listOf(Person("employeeId", "userName"))
 
             objectMockk(Import.Companion).use {
-                val count = Import.importPersons(persons, service)
+                val count = importConfigurationObjects(persons, service)
                 count shouldBe 0
                 verify(exactly = 0) { Import.Companion.save(any()) }
             }
@@ -73,7 +74,7 @@ class ImportTest : StringSpec() {
                     every { service.defaultTenantDbid } returns 1
                     every { Import.Companion.save(any()) } just Runs
 
-                    val count = importPersons(listOf(Person("employeeId", "userName")), service)
+                    val count = importConfigurationObjects(listOf(Person("employeeId", "userName")), service)
                     count shouldBe 1
                     verify(exactly = 1) { Import.Companion.save(ofType(CfgPerson::class)) }
                 }
@@ -92,7 +93,7 @@ class ImportTest : StringSpec() {
                     every { service.defaultTenantDbid } returns 1
                     every { Import.Companion.save(any()) } just Runs
 
-                    val count = importPersons(listOf(Person("0001"), Person("0002")), service)
+                    val count = importConfigurationObjects(listOf(Person("0001"), Person("0002")), service)
                     count shouldBe 2
                     verify(exactly = 2) { Import.Companion.save(ofType(CfgPerson::class)) }
                 }
@@ -108,7 +109,7 @@ class ImportTest : StringSpec() {
             val skills = listOf(Skill("foo"))
 
             objectMockk(Import.Companion).use {
-                val count = Import.importSkills(skills, service)
+                val count = importConfigurationObjects(skills, service)
                 count shouldBe 0
                 verify(exactly = 0) { Import.Companion.save(any()) }
             }
@@ -126,7 +127,7 @@ class ImportTest : StringSpec() {
                     every { service.defaultTenantDbid } returns 1
                     every { Import.Companion.save(any()) } just Runs
 
-                    val count = Import.importSkills(listOf(Skill("foo")), service)
+                    val count = importConfigurationObjects(listOf(Skill("foo")), service)
                     count shouldBe 1
                     verify(exactly = 1) { Import.Companion.save(ofType(CfgSkill::class)) }
                 }
@@ -145,7 +146,7 @@ class ImportTest : StringSpec() {
                     every { service.defaultTenantDbid } returns 1
                     every { Import.Companion.save(any()) } just Runs
 
-                    val count = Import.importSkills(listOf(Skill("foo"), Skill("bar")), service)
+                    val count = importConfigurationObjects(listOf(Skill("foo"), Skill("bar")), service)
                     count shouldBe 2
                     verify(exactly = 2) { Import.Companion.save(ofType(CfgSkill::class)) }
                 }

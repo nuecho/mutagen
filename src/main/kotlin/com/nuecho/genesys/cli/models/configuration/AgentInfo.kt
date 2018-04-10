@@ -34,6 +34,7 @@ data class AgentInfo(
         val service = person.configurationService
         val agentInfo = CfgAgentInfo(person.configurationService, person)
 
+        // agentLogins are not exported
         setProperty("capacityRuleDBID", getScriptDbid(capacityRule, service), agentInfo)
         setProperty("contractDBID", getObjectiveTableDbid(contract, service), agentInfo)
         setProperty("placeDBID", getPlaceDbid(contract, service), agentInfo)

@@ -49,8 +49,17 @@ RDBMS:
 
 ```bash
 cd docker
-docker-compose run configserver
-``` 
+docker-compose run --rm -p 2020:2020 configserver
+```
+
+Here is a sample `environments.yml` configuration:
+
+```yaml
+default:
+  host: localhost
+  user: default
+  password: password
+```
 
 To use mutagen docker image as part of compose, build args needs to be used to override binary
 location:
@@ -58,8 +67,9 @@ location:
 ```bash
 cd docker
 docker-compose build --build-arg MUTAGEN=./build/mutagen mutagen
-docker-compose run mutagen
+docker-compose run --rm mutagen
 ```
+
 
 ### Functional
 

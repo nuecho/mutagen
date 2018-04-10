@@ -6,6 +6,7 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgFolder
 import com.genesyslab.platform.applicationblocks.com.objects.CfgObjectiveTable
 import com.genesyslab.platform.applicationblocks.com.objects.CfgPerson
 import com.genesyslab.platform.applicationblocks.com.objects.CfgPlace
+import com.genesyslab.platform.applicationblocks.com.objects.CfgRole
 import com.genesyslab.platform.applicationblocks.com.objects.CfgScript
 import com.genesyslab.platform.applicationblocks.com.objects.CfgSkill
 import com.genesyslab.platform.applicationblocks.com.objects.CfgSwitch
@@ -15,6 +16,7 @@ import com.genesyslab.platform.applicationblocks.com.queries.CfgFolderQuery
 import com.genesyslab.platform.applicationblocks.com.queries.CfgObjectiveTableQuery
 import com.genesyslab.platform.applicationblocks.com.queries.CfgPersonQuery
 import com.genesyslab.platform.applicationblocks.com.queries.CfgPlaceQuery
+import com.genesyslab.platform.applicationblocks.com.queries.CfgRoleQuery
 import com.genesyslab.platform.applicationblocks.com.queries.CfgScriptQuery
 import com.genesyslab.platform.applicationblocks.com.queries.CfgSkillQuery
 import com.genesyslab.platform.applicationblocks.com.queries.CfgSwitchQuery
@@ -32,14 +34,15 @@ fun IConfService.retrieveAgentLogin(loginCode: String): CfgAgentLogin? {
     return retrieveObject(CfgAgentLogin::class.java, query)
 }
 
-fun IConfService.retrieveScript(name: String): CfgScript? = retrieveObject(CfgScript::class.java, CfgScriptQuery(name))
 fun IConfService.retrieveFolder(name: String): CfgFolder? = retrieveObject(CfgFolder::class.java, CfgFolderQuery(name))
-fun IConfService.retrievePlace(name: String): CfgPlace? = retrieveObject(CfgPlace::class.java, CfgPlaceQuery(name))
-fun IConfService.retrieveSkill(name: String): CfgSkill? = retrieveObject(CfgSkill::class.java, CfgSkillQuery(name))
-fun IConfService.retrieveSwitch(name: String): CfgSwitch? = retrieveObject(CfgSwitch::class.java, CfgSwitchQuery(name))
 fun IConfService.retrieveObjectiveTable(name: String): CfgObjectiveTable? =
     retrieveObject(CfgObjectiveTable::class.java, CfgObjectiveTableQuery(name))
 
+fun IConfService.retrievePlace(name: String): CfgPlace? = retrieveObject(CfgPlace::class.java, CfgPlaceQuery(name))
+fun IConfService.retrieveRole(name: String): CfgRole? = retrieveObject(CfgRole::class.java, CfgRoleQuery(name))
+fun IConfService.retrieveScript(name: String): CfgScript? = retrieveObject(CfgScript::class.java, CfgScriptQuery(name))
+fun IConfService.retrieveSkill(name: String): CfgSkill? = retrieveObject(CfgSkill::class.java, CfgSkillQuery(name))
+fun IConfService.retrieveSwitch(name: String): CfgSwitch? = retrieveObject(CfgSwitch::class.java, CfgSwitchQuery(name))
 fun IConfService.retrieveTenants(): Collection<CfgTenant> =
     retrieveMultipleObjects(CfgTenant::class.java, CfgTenantQuery().apply { allTenants = 1 })
 

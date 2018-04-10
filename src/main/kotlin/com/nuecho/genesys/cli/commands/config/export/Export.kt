@@ -23,7 +23,7 @@ class Export : GenesysCliCommand() {
     private var config: Config? = null
 
     @CommandLine.Option(
-        names = ["-f", "--format"],
+        names = ["--format"],
         description = ["Export format [RAW|JSON]."]
     )
     private var format: ExportProcessorType? = ExportProcessorType.RAW
