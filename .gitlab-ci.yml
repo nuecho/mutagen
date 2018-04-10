@@ -12,10 +12,9 @@ stages:
   - check
   - build
   - test
-  - release
-  - canary
+  - package
   - acceptance
-  - prod
+  - publish
 
 variables:
   RELEASE_PATH: "build/releases"
@@ -39,20 +38,6 @@ build:
   script:
     - ./gradlew -g /cache/.gradle clean assemble
 
-build:changelog:
-  before_script:
-    - "TAG=$CI_BUILD_TAG source ./ci/version.sh"
-  stage: build
-  image: dr.s.nuecho.com/conventional-changelog
-  script:
-    - mkdir -p $RELEASE_PATH
-    - conventional-changelog -n /preset/index.js -r 2 > $RELEASE_PATH/changelog.md
-    - cat $RELEASE_PATH/changelog.md
-  artifacts:
-    paths:
-      - $RELEASE_PATH/changelog.md
-    expire_in: 1 week
-
 test:
   stage: test
   script:
@@ -62,10 +47,10 @@ test:
     paths:
       - build/reports/
 
-release:binaries:
+package:binaries:
   before_script:
     - "TAG=$CI_BUILD_TAG source ./ci/version.sh"
-  stage: release
+  stage: package
   script:
     - ./gradlew -g /cache/.gradle -Pversion=${VERSION} release
     - mkdir -p ${RELEASE_PATH}/windows ${RELEASE_PATH}/unix
@@ -78,6 +63,23 @@ release:binaries:
     paths:
       - build/releases
       - .version
+  only:
+    - master
+    - tags
+
+package:changelog:
+  before_script:
+    - "TAG=$CI_BUILD_TAG source ./ci/version.sh"
+  stage: package
+  image: dr.s.nuecho.com/conventional-changelog
+  script:
+    - mkdir -p $RELEASE_PATH
+    - conventional-changelog -n /preset/index.js -r 2 > $RELEASE_PATH/changelog.md
+    - cat $RELEASE_PATH/changelog.md
+  artifacts:
+    paths:
+      - $RELEASE_PATH/changelog.md
+    expire_in: 1 week
   only:
     - master
     - tags
@@ -104,7 +106,7 @@ acceptance:test:
   services:
     - docker:dind
   dependencies:
-    - release:binaries
+    - package:binaries
   script:
     - VERSION=$(cat .version)
     - export COMPOSE_HTTP_TIMEOUT=300 # 5m. This is sort of slow to execute on a gitlab-runner
@@ -116,25 +118,24 @@ acceptance:test:
 acceptance:manual:
   stage: acceptance
   dependencies:
-    - release:binaries
+    - package:binaries
   script:
     - echo "manual testing time!"
   when: manual
   allow_failure: false
   only:
-    - master
     - tags
 
-canary:publish:release:
+publish:canary:
   before_script:
     - "TAG=$CI_BUILD_TAG source ./ci/version.sh"
   variables:
     BUCKET_NAME: "nuecho.com-mutagen-releases"
     BUCKET_URL: "s3://${BUCKET_NAME}"
   image: "xueshanf/awscli"
-  stage: canary
+  stage: publish
   dependencies:
-    - release:binaries
+    - package:binaries
   script:
     - export AWS_ACCESS_KEY_ID=${CI_AWS_ACCESS_KEY_ID}
     - export AWS_SECRET_ACCESS_KEY=${CI_AWS_SECRET_ACCESS_KEY}
@@ -143,16 +144,16 @@ canary:publish:release:
   only:
     - master
 
-prod:publish:release:
+publish:stable:
   before_script:
     - "TAG=$CI_BUILD_TAG source ./ci/version.sh"
   variables:
     BUCKET_NAME: "nuecho.com-mutagen-releases"
     BUCKET_URL: "s3://${BUCKET_NAME}"
   image: "xueshanf/awscli"
-  stage: prod
+  stage: publish
   dependencies:
-    - release:binaries
+    - package:binaries
   script:
     - export AWS_ACCESS_KEY_ID=${CI_AWS_ACCESS_KEY_ID}
     - export AWS_SECRET_ACCESS_KEY=${CI_AWS_SECRET_ACCESS_KEY}
@@ -162,12 +163,12 @@ prod:publish:release:
   only:
     - tags
 
-prod:publish:changelog:
+publish:changelog:
   before_script:
     - "TAG=$CI_BUILD_TAG source ./ci/version.sh"
-  stage: prod
+  stage: publish
   dependencies:
-    - build:changelog
+    - package:changelog
   variables:
     URL: "http://gl.s.nuecho.com/api/v3/projects/${CI_PROJECT_ID}/repository/tags/${CI_COMMIT_TAG}/release?private_token=${CI_TOKEN}"
   image: governmentpaas/curl-ssl
