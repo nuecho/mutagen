@@ -3,6 +3,7 @@ package com.nuecho.genesys.cli.services
 import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgActionCode
 import com.genesyslab.platform.applicationblocks.com.objects.CfgAgentLogin
+import com.genesyslab.platform.applicationblocks.com.objects.CfgEnumerator
 import com.genesyslab.platform.applicationblocks.com.objects.CfgFolder
 import com.genesyslab.platform.applicationblocks.com.objects.CfgObjectiveTable
 import com.genesyslab.platform.applicationblocks.com.objects.CfgPerson
@@ -14,6 +15,7 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgSwitch
 import com.genesyslab.platform.applicationblocks.com.objects.CfgTenant
 import com.genesyslab.platform.applicationblocks.com.queries.CfgActionCodeQuery
 import com.genesyslab.platform.applicationblocks.com.queries.CfgAgentLoginQuery
+import com.genesyslab.platform.applicationblocks.com.queries.CfgEnumeratorQuery
 import com.genesyslab.platform.applicationblocks.com.queries.CfgFolderQuery
 import com.genesyslab.platform.applicationblocks.com.queries.CfgObjectiveTableQuery
 import com.genesyslab.platform.applicationblocks.com.queries.CfgPersonQuery
@@ -33,6 +35,9 @@ fun IConfService.retrieveAgentLogin(loginCode: String): CfgAgentLogin? {
     query.loginCode = loginCode
     return retrieveObject(CfgAgentLogin::class.java, query)
 }
+
+fun IConfService.retrieveEnumerator(name: String): CfgEnumerator? =
+    retrieveObject(CfgEnumerator::class.java, CfgEnumeratorQuery(name))
 
 fun IConfService.retrieveFolder(name: String): CfgFolder? = retrieveObject(CfgFolder::class.java, CfgFolderQuery(name))
 

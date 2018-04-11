@@ -31,7 +31,7 @@ data class Tenant(
     val state: String? = null,
     @JsonSerialize(using = KeyValueCollectionSerializer::class)
     @JsonDeserialize(using = KeyValueCollectionDeserializer::class)
-    val userProperties: Map<String, Any>? = null
+    override val userProperties: Map<String, Any>? = null
 
 ) : ConfigurationObject {
     override val primaryKey: String

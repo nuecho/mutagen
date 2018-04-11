@@ -12,6 +12,7 @@ import com.genesyslab.platform.commons.collections.KeyValueCollection
 import com.genesyslab.platform.commons.collections.KeyValuePair
 import com.genesyslab.platform.configuration.protocol.types.CfgActionCodeType
 import com.genesyslab.platform.configuration.protocol.types.CfgAppType
+import com.genesyslab.platform.configuration.protocol.types.CfgEnumeratorType
 import com.genesyslab.platform.configuration.protocol.types.CfgFlag
 import com.genesyslab.platform.configuration.protocol.types.CfgFlag.CFGFalse
 import com.genesyslab.platform.configuration.protocol.types.CfgFlag.CFGNoFlag
@@ -75,9 +76,10 @@ object ConfigurationObjects {
     }
 
     fun toCfgActionCodeType(state: String?) = toGEnum(state, CfgActionCodeType::class.java) as CfgActionCodeType?
+    fun toCfgAppType(type: String?) = toGEnum(type, CfgAppType::class.java) as CfgAppType?
+    fun toCfgEnumeratorType(type: String?) = toGEnum(type, CfgEnumeratorType::class.java) as CfgEnumeratorType?
     fun toCfgObjectState(state: String?) = toGEnum(state, CfgObjectState::class.java) as CfgObjectState?
-    fun toCfgAppType(appType: String?) = toGEnum(appType, CfgAppType::class.java) as CfgAppType?
-    fun toCfgRank(appRank: String?) = toGEnum(appRank, CfgRank::class.java) as CfgRank?
+    fun toCfgRank(rank: String?) = toGEnum(rank, CfgRank::class.java) as CfgRank?
 
     private fun toGEnum(shortName: String?, enumType: Class<out GEnum>) =
         if (shortName == null) null

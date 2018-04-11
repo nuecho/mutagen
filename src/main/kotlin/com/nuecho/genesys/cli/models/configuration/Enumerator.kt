@@ -4,24 +4,22 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.genesyslab.platform.applicationblocks.com.IConfService
-import com.genesyslab.platform.applicationblocks.com.objects.CfgRole
-import com.nuecho.genesys.cli.Logging.warn
+import com.genesyslab.platform.applicationblocks.com.objects.CfgEnumerator
 import com.nuecho.genesys.cli.asMap
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectUpdateStatus.CREATED
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectUpdateStatus.UNCHANGED
-import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.dbidToPrimaryKey
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setProperty
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgEnumeratorType
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgObjectState
-import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toKeyValueCollection
-import com.nuecho.genesys.cli.services.retrieveRole
+import com.nuecho.genesys.cli.services.retrieveEnumerator
 import com.nuecho.genesys.cli.toShortName
-import java.util.SortedSet
 
-data class Role(
+data class Enumerator(
     val name: String,
+    val displayName: String? = null,
     val description: String? = null,
+    val type: String? = null,
     val state: String? = null,
-    val members: SortedSet<String>? = null,
     @JsonSerialize(using = KeyValueCollectionSerializer::class)
     @JsonDeserialize(using = KeyValueCollectionDeserializer::class)
     override val userProperties: Map<String, Any>? = null
@@ -30,36 +28,27 @@ data class Role(
         @JsonIgnore
         get() = name
 
-    constructor(role: CfgRole) : this(
-        name = role.name,
-        description = role.description,
-        state = role.state?.toShortName(),
-        userProperties = role.userProperties?.asMap(),
-        members = role.members?.map {
-            val type = it.objectType.toShortName()
-            val key = dbidToPrimaryKey(it.objectDBID, it.objectType, role.configurationService) ?: it.objectDBID
-
-            if (key == it.objectDBID) {
-                warn {
-                    "Cannot find ${it.objectType} object with DBID ${it.objectDBID} referred by role '${role.name}'."
-                }
-            }
-
-            "$type/$key"
-        }?.toSortedSet()
+    constructor(enumerator: CfgEnumerator) : this(
+        name = enumerator.name,
+        displayName = enumerator.displayName,
+        description = enumerator.description,
+        type = enumerator.type?.toShortName(),
+        state = enumerator.state?.toShortName(),
+        userProperties = enumerator.userProperties?.asMap()
     )
 
     override fun updateCfgObject(service: IConfService): ConfigurationObjectUpdateResult {
-        service.retrieveRole(name)?.let {
+        service.retrieveEnumerator(name)?.let {
             return ConfigurationObjectUpdateResult(UNCHANGED, it)
         }
 
-        // members are not exported
-        CfgRole(service).let {
+        CfgEnumerator(service).let {
             setProperty("name", name, it)
+            setProperty("displayName", displayName ?: name, it)
             setProperty("description", description, it)
+            setProperty("type", toCfgEnumeratorType(type), it)
             setProperty("state", toCfgObjectState(state), it)
-            setProperty("userProperties", toKeyValueCollection(userProperties), it)
+            setProperty("userProperties", ConfigurationObjects.toKeyValueCollection(userProperties), it)
             return ConfigurationObjectUpdateResult(CREATED, it)
         }
     }
