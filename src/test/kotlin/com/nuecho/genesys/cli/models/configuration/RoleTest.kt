@@ -4,8 +4,14 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgRole
 import com.genesyslab.platform.applicationblocks.com.objects.CfgRoleMember
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectState
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectType.CFGPerson
-import com.nuecho.genesys.cli.TestResources
+import com.nuecho.genesys.cli.TestResources.loadJsonConfiguration
+import com.nuecho.genesys.cli.models.configuration.ConfigurationAsserts.checkSerialization
+import com.nuecho.genesys.cli.models.configuration.ConfigurationAsserts.checkUserProperties
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockKeyValueCollection
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectUpdateStatus.CREATED
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.dbidToPrimaryKey
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgObjectState
+import com.nuecho.genesys.cli.models.configuration.ConfigurationTestData.defaultProperties
 import com.nuecho.genesys.cli.preferences.environment.Environment
 import com.nuecho.genesys.cli.services.ConfService
 import com.nuecho.genesys.cli.services.retrieveRole
@@ -30,42 +36,38 @@ class RoleTest : StringSpec() {
         description = "description",
         state = CfgObjectState.CFGEnabled.toShortName(),
         members = sortedSetOf("person/$PERSON3", "person/$PERSON2", "person/$PERSON1"),
-        userProperties = ConfigurationTestData.defaultProperties()
+        userProperties = defaultProperties()
     )
 
     init {
         "empty Role should properly serialize" {
-            ConfigurationAsserts.checkSerialization(Role("name"), "empty_role")
+            checkSerialization(Role("name"), "empty_role")
         }
 
         "fully initialized Role should properly serialize" {
-            ConfigurationAsserts.checkSerialization(role, "role")
+            checkSerialization(role, "role")
         }
 
         "Role should properly deserialize" {
-            val deserializedRole = TestResources.loadJsonConfiguration(
+            val deserializedRole = loadJsonConfiguration(
                 "models/configuration/role.json",
                 Role::class.java
             )
 
-            // Normally we should simply check that 'deserialized shouldBe person' but since Role.equals is broken
+            // Normally we should simply check that 'deserialized shouldBe role' but since Role.equals is broken
             // because of ByteArray.equals, this should do the trick for now.
-            ConfigurationAsserts.checkSerialization(deserializedRole, "role")
-
-            // Ensure that byte arrays are properly deserialized (GC-60)
-            val actualByteArray = deserializedRole.userProperties!!["bytes"] as ByteArray
-            val expectedByteArray = role.userProperties!!["bytes"] as ByteArray
-            actualByteArray.contentEquals(expectedByteArray) shouldBe true
+            checkSerialization(deserializedRole, "role")
+            checkUserProperties(role.userProperties!!, deserializedRole.userProperties!!)
         }
 
         "CfgRole initialized Role should properly serialize" {
             objectMockk(ConfigurationObjects).use {
                 every {
-                    ConfigurationObjects.dbidToPrimaryKey(any(), any(), any())
+                    dbidToPrimaryKey(any(), any(), any())
                 } returns PERSON3 andThen PERSON2 andThen PERSON1
 
                 val role = Role(mockCfgRole())
-                ConfigurationAsserts.checkSerialization(role, "role")
+                checkSerialization(role, "role")
             }
         }
 
@@ -82,7 +84,7 @@ class RoleTest : StringSpec() {
                 with(cfgRole) {
                     name shouldBe role.name
                     description shouldBe role.description
-                    state shouldBe ConfigurationObjects.toCfgObjectState(role.state)
+                    state shouldBe toCfgObjectState(role.state)
                     members.size shouldBe 0
                     userProperties.size shouldBe 4
                 }
@@ -98,12 +100,13 @@ class RoleTest : StringSpec() {
         member.objectType = CFGPerson
 
         val members = listOf(member, member, member)
+        val state = toCfgObjectState(role.state)
 
         every { cfgRole.name } returns role.name
         every { cfgRole.description } returns role.description
-        every { cfgRole.state } returns CfgObjectState.CFGEnabled
+        every { cfgRole.state } returns state
         every { cfgRole.members } returns members
-        every { cfgRole.userProperties } returns ConfigurationObjectMocks.mockKeyValueCollection()
+        every { cfgRole.userProperties } returns mockKeyValueCollection()
         every { cfgRole.configurationService } returns service
 
         return cfgRole

@@ -1,6 +1,5 @@
 package com.nuecho.genesys.cli.models.configuration
 
-import com.genesyslab.platform.applicationblocks.com.ConfigException
 import com.genesyslab.platform.applicationblocks.com.ICfgBase
 import com.genesyslab.platform.applicationblocks.com.ICfgObject
 import com.genesyslab.platform.applicationblocks.com.IConfService
@@ -11,6 +10,7 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgPerson
 import com.genesyslab.platform.commons.GEnum
 import com.genesyslab.platform.commons.collections.KeyValueCollection
 import com.genesyslab.platform.commons.collections.KeyValuePair
+import com.genesyslab.platform.configuration.protocol.types.CfgActionCodeType
 import com.genesyslab.platform.configuration.protocol.types.CfgAppType
 import com.genesyslab.platform.configuration.protocol.types.CfgFlag
 import com.genesyslab.platform.configuration.protocol.types.CfgFlag.CFGFalse
@@ -48,7 +48,6 @@ object ConfigurationObjects {
 
     fun dbidToPrimaryKey(dbid: Int, type: CfgObjectType, service: IConfService) =
         getPrimaryKey(service.retrieveObject(type, dbid))
-                ?: throw ConfigException("Cannot find $type object with DBID $dbid.")
 
     @Suppress("UNCHECKED_CAST")
     fun toKeyValueCollection(map: Map<String, Any>?): KeyValueCollection? =
@@ -75,6 +74,7 @@ object ConfigurationObjects {
         else -> CFGNoFlag
     }
 
+    fun toCfgActionCodeType(state: String?) = toGEnum(state, CfgActionCodeType::class.java) as CfgActionCodeType?
     fun toCfgObjectState(state: String?) = toGEnum(state, CfgObjectState::class.java) as CfgObjectState?
     fun toCfgAppType(appType: String?) = toGEnum(appType, CfgAppType::class.java) as CfgAppType?
     fun toCfgRank(appRank: String?) = toGEnum(appRank, CfgRank::class.java) as CfgRank?

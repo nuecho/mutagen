@@ -55,9 +55,14 @@ fun CfgFlag.asBoolean(): Boolean? =
     }
 
 fun KeyValueCollection.asMap(): Map<String, Any>? =
-    if (this.isEmpty()) null // so we don't turn out serializing empty map, we return null, which is not serialized
+    if (this.isEmpty()) null // so we don't turn out serializing top level empty map
     else this.map {
         val keyValuePair = it as KeyValuePair
-        val value = keyValuePair.value!!
-        keyValuePair.stringKey!! to if (value is KeyValueCollection) value.asMap()!! else value
+        var value = keyValuePair.value!!
+
+        if (value is KeyValueCollection) {
+            value = value.asMap() ?: emptyMap<String, String>()
+        }
+
+        keyValuePair.stringKey!! to value
     }.toMap()

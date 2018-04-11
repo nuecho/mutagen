@@ -2,16 +2,15 @@ package com.nuecho.genesys.cli
 
 import ch.qos.logback.classic.Level
 import ch.qos.logback.classic.Level.DEBUG
-import ch.qos.logback.classic.Level.ERROR
 import ch.qos.logback.classic.Level.INFO
+import ch.qos.logback.classic.Level.WARN
 import ch.qos.logback.classic.Logger
 import mu.KotlinLogging
 import org.slf4j.LoggerFactory.getLogger
 
 object Logging {
-    private val defaultLogLevel = ERROR
-
-    val logger = KotlinLogging.logger {}
+    private val defaultLogLevel = WARN
+    private val logger = KotlinLogging.logger {}
 
     // Log Level
     fun setToDefault() = setLogLevel(defaultLogLevel)
