@@ -1,3 +1,10 @@
 + person.00001
+Cannot find script 'capacityRule'
+Cannot find objective table 'contract'
+Cannot find place 'contract'
+Cannot find folder 'site'
+Cannot find skill 'skill_1'
+Cannot find skill 'skill_2'
+Cannot find skill 'skill_3'
 + person.00002
 Completed. 2 object(s) imported.
