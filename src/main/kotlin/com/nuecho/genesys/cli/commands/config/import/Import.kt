@@ -1,6 +1,7 @@
 package com.nuecho.genesys.cli.commands.config.import
 
 import com.genesyslab.platform.applicationblocks.com.CfgObject
+import com.genesyslab.platform.applicationblocks.com.objects.CfgTenant
 import com.nuecho.genesys.cli.GenesysCliCommand
 import com.nuecho.genesys.cli.Logging
 import com.nuecho.genesys.cli.commands.config.Config
@@ -48,7 +49,8 @@ class Import : GenesysCliCommand() {
                 importConfigurationObjects(configuration.actionCodes.values, service),
                 importConfigurationObjects(configuration.skills.values, service),
                 importConfigurationObjects(configuration.roles.values, service),
-                importConfigurationObjects(configuration.persons.values, service)
+                importConfigurationObjects(configuration.persons.values, service),
+                importConfigurationObjects(configuration.tenants.values, service)
             ).sum()
 
             println("Completed. $count object(s) imported.")
@@ -86,7 +88,10 @@ class Import : GenesysCliCommand() {
 
         internal fun save(cfgObject: CfgObject) = applyTenant(cfgObject).save()
 
-        internal fun applyTenant(cfgObject: CfgObject): CfgObject =
-            cfgObject.apply { setProperty("tenantDBID", cfgObject.configurationService.defaultTenantDbid) }
+        internal fun applyTenant(cfgObject: CfgObject): CfgObject {
+            if (cfgObject is CfgTenant) return cfgObject
+
+            return cfgObject.apply { setProperty("tenantDBID", cfgObject.configurationService.defaultTenantDbid) }
+        }
     }
 }

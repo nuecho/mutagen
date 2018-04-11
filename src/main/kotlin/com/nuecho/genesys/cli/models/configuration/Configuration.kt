@@ -4,5 +4,6 @@ data class Configuration(
     val actionCodes: Map<String, ActionCode> = emptyMap(),
     val persons: Map<String, Person> = emptyMap(),
     val roles: Map<String, Role> = emptyMap(),
-    val skills: Map<String, Skill> = emptyMap()
+    val skills: Map<String, Skill> = emptyMap(),
+    val tenants: Map<String, Tenant> = emptyMap()
 )

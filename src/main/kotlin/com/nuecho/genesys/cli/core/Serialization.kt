@@ -16,6 +16,7 @@ import java.io.OutputStream
 private val jsonObjectMapper = jacksonObjectMapper()
     .setSerializationInclusion(JsonInclude.Include.NON_NULL) // do not serialize null
     .setSerializationInclusion(JsonInclude.Include.NON_EMPTY) // both empty arrays and object won't be serialized
+    .setSerializationInclusion(JsonInclude.Include.NON_DEFAULT) // do not serialize false, 0,
     .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
     .configure(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY, true) // consistent output
 

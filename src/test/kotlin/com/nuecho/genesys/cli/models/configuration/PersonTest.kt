@@ -162,6 +162,7 @@ class PersonTest : StringSpec() {
         }
     }
 
+    @Suppress("LongMethod")
     private fun mockCfgPerson(): CfgPerson {
         val appRanks = listOf(
             mockCfgAppRank(CfgAppType.CFGAdvisors, CfgRank.CFGUser),
