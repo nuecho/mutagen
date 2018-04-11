@@ -63,9 +63,6 @@ package:binaries:
     paths:
       - build/releases
       - .version
-  only:
-    - master
-    - tags
 
 package:changelog:
   before_script:
@@ -111,9 +108,6 @@ acceptance:test:
     - VERSION=$(cat .version)
     - export COMPOSE_HTTP_TIMEOUT=300 # 5m. This is sort of slow to execute on a gitlab-runner
     - cd docker && docker-compose down && docker-compose run --rm -e VERSION=${VERSION} test && docker-compose down
-  only:
-    - master
-    - tags
 
 acceptance:manual:
   stage: acceptance
