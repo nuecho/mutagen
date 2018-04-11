@@ -13,6 +13,7 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgScript
 import com.genesyslab.platform.applicationblocks.com.objects.CfgSkill
 import com.genesyslab.platform.applicationblocks.com.objects.CfgSwitch
 import com.genesyslab.platform.applicationblocks.com.objects.CfgTenant
+import com.genesyslab.platform.applicationblocks.com.objects.CfgTransaction
 import com.genesyslab.platform.applicationblocks.com.queries.CfgActionCodeQuery
 import com.genesyslab.platform.applicationblocks.com.queries.CfgAgentLoginQuery
 import com.genesyslab.platform.applicationblocks.com.queries.CfgEnumeratorQuery
@@ -25,6 +26,7 @@ import com.genesyslab.platform.applicationblocks.com.queries.CfgScriptQuery
 import com.genesyslab.platform.applicationblocks.com.queries.CfgSkillQuery
 import com.genesyslab.platform.applicationblocks.com.queries.CfgSwitchQuery
 import com.genesyslab.platform.applicationblocks.com.queries.CfgTenantQuery
+import com.genesyslab.platform.applicationblocks.com.queries.CfgTransactionQuery
 import com.nuecho.genesys.cli.Logging
 
 fun IConfService.retrieveActionCode(name: String): CfgActionCode? =
@@ -57,6 +59,9 @@ fun IConfService.retrieveRole(name: String): CfgRole? = retrieveObject(CfgRole::
 fun IConfService.retrieveScript(name: String): CfgScript? = retrieveObject(CfgScript::class.java, CfgScriptQuery(name))
 
 fun IConfService.retrieveSkill(name: String): CfgSkill? = retrieveObject(CfgSkill::class.java, CfgSkillQuery(name))
+
+fun IConfService.retrieveTransaction(name: String): CfgTransaction? =
+    retrieveObject(CfgTransaction::class.java, CfgTransactionQuery(name))
 
 fun IConfService.retrieveSwitch(name: String): CfgSwitch? = retrieveObject(CfgSwitch::class.java, CfgSwitchQuery(name))
 fun IConfService.retrieveTenant(name: String): CfgTenant? = retrieveObject(CfgTenant::class.java, CfgTenantQuery(name))
