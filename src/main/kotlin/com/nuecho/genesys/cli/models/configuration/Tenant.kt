@@ -57,11 +57,11 @@ data class Tenant(
 
         CfgTenant(service).let {
             setProperty("chargeableNumber", chargeableNumber, it)
-            setProperty("defaultCapacityRule", service.getScriptDbid(defaultCapacityRule), it)
-            setProperty("defaultContract", service.getObjectiveTableDbid(defaultContract), it)
+            setProperty("defaultCapacityRuleDBID", service.getScriptDbid(defaultCapacityRule), it)
+            setProperty("defaultContractDBID", service.getObjectiveTableDbid(defaultContract), it)
             setProperty("isServiceProvider", toCfgFlag(isServiceProvider), it)
             setProperty("name", name, it)
-            setProperty("parentTenant", service.getTenantDbid(parentTenant), it)
+            setProperty("parentTenantDBID", service.getTenantDbid(parentTenant), it)
             setProperty("password", password, it)
 
             setProperty("state", toCfgObjectState(state), it)
