@@ -1,11 +1,11 @@
 {
-  "name": "name",
-  "type": "transfer",
   "code": "code",
+  "name": "name",
+  "state": "enabled",
   "subcodes": {
     "subname": "subcode"
   },
-  "state": "enabled",
+  "type": "transfer",
   "userProperties": {
     "number": 123,
     "string": "abc",

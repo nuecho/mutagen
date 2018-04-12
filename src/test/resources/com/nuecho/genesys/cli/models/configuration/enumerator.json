@@ -1,0 +1,21 @@
+{
+  "description": "description",
+  "displayName": "displayName",
+  "name": "name",
+  "state": "enabled",
+  "type": "entrole",
+  "userProperties": {
+    "number": 123,
+    "string": "abc",
+    "bytes": [
+      "YWJj"
+    ],
+    "subProperties": {
+      "subNumber": 456,
+      "subString": "def",
+      "subBytes": [
+        "ZGVm"
+      ]
+    }
+  }
+}

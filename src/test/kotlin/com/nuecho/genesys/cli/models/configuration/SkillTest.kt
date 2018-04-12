@@ -2,56 +2,56 @@ package com.nuecho.genesys.cli.models.configuration
 
 import com.genesyslab.platform.applicationblocks.com.objects.CfgSkill
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectState
-import com.nuecho.genesys.cli.TestResources
 import com.nuecho.genesys.cli.models.configuration.ConfigurationAsserts.checkSerialization
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockKeyValueCollection
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectUpdateStatus.CREATED
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgObjectState
 import com.nuecho.genesys.cli.models.configuration.ConfigurationTestData.defaultProperties
+import com.nuecho.genesys.cli.services.retrieveSkill
 import com.nuecho.genesys.cli.toShortName
 import io.kotlintest.matchers.shouldBe
-import io.kotlintest.specs.StringSpec
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.staticMockk
+import io.mockk.use
 
-class SkillTest : StringSpec() {
-    private val skill = Skill(
-        name = "foo",
-        state = CfgObjectState.CFGEnabled.toShortName(),
-        userProperties = defaultProperties()
-    )
+private val skill = Skill(
+    name = "foo",
+    state = CfgObjectState.CFGEnabled.toShortName(),
+    userProperties = defaultProperties()
+)
 
+class SkillTest : ConfigurationObjectTest(skill, Skill("foo")) {
     init {
-        "empty Skill should properly serialize" {
-            checkSerialization(Skill(name = "foo"), "empty_skill")
-        }
-
-        "fully initialized Skill should properly serialize" {
-            checkSerialization(skill, "skill")
-        }
-
-        "Skill should properly deserialize" {
-            val skill = TestResources.loadJsonConfiguration(
-                "models/configuration/skill.json",
-                Skill::class.java
-            )
-
-            checkSerialization(skill, "skill")
-
-            val actualByteArray = skill.userProperties!!["bytes"] as ByteArray
-            val expectedByteArray = skill.userProperties!!["bytes"] as ByteArray
-            actualByteArray.contentEquals(expectedByteArray) shouldBe true
-        }
-
         "CfgSkill initialized Skill should properly serialize" {
             val skill = Skill(mockCfgSkill())
             checkSerialization(skill, "skill")
         }
+
+        "Skill.updateCfgObject should properly create CfgSkill" {
+            staticMockk("com.nuecho.genesys.cli.services.ConfServiceExtensionsKt").use {
+                every { service.retrieveSkill(any()) } returns null
+
+                val (status, cfgObject) = skill.updateCfgObject(service)
+                val cfgSkill = cfgObject as CfgSkill
+
+                status shouldBe CREATED
+
+                with(cfgSkill) {
+                    name shouldBe skill.name
+                    state shouldBe ConfigurationObjects.toCfgObjectState(skill.state)
+                    userProperties.size shouldBe 4
+                }
+            }
+        }
     }
 
     private fun mockCfgSkill(): CfgSkill {
+        val state = toCfgObjectState(skill.state)
 
         val cfgSkill = mockk<CfgSkill>()
         every { cfgSkill.name } returns skill.name
-        every { cfgSkill.state } returns CfgObjectState.CFGEnabled
+        every { cfgSkill.state } returns state
         every { cfgSkill.userProperties } returns mockKeyValueCollection()
 
         return cfgSkill

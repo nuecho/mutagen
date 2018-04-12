@@ -11,9 +11,7 @@ import com.genesyslab.platform.configuration.protocol.types.CfgAppType
 import com.genesyslab.platform.configuration.protocol.types.CfgFlag
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectState
 import com.genesyslab.platform.configuration.protocol.types.CfgRank
-import com.nuecho.genesys.cli.TestResources
 import com.nuecho.genesys.cli.models.configuration.ConfigurationAsserts.checkSerialization
-import com.nuecho.genesys.cli.models.configuration.ConfigurationAsserts.checkUserProperties
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgAgentLoginInfo
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgSkillLevel
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockKeyValueCollection
@@ -21,81 +19,55 @@ import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectUpdateStat
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgFlag
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgObjectState
 import com.nuecho.genesys.cli.models.configuration.ConfigurationTestData.defaultProperties
-import com.nuecho.genesys.cli.preferences.environment.Environment
-import com.nuecho.genesys.cli.services.ConfService
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks
 import com.nuecho.genesys.cli.services.retrievePerson
 import com.nuecho.genesys.cli.toShortName
 import io.kotlintest.matchers.shouldBe
-import io.kotlintest.specs.StringSpec
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.staticMockk
 import io.mockk.use
 
 private const val EMPLOYEE_ID = "employeeId"
-
-class PersonTest : StringSpec() {
-    private val service = ConfService(Environment(host = "test", user = "test", rawPassword = "test"))
-
-    private val person = Person(
-        employeeId = EMPLOYEE_ID,
-        externalId = "externalId",
-        firstName = "firstName",
-        lastName = "lastName",
-        userName = "userName",
-        password = "password",
-        passwordHashAlgorithm = 1,
-        passwordUpdatingDate = 20180314,
-        changePasswordOnNextLogin = false,
-        emailAddress = "emailAddress",
-        state = CfgObjectState.CFGEnabled.toShortName(),
-        agent = true,
-        externalAuth = false,
-        appRanks = mapOf(
-            CfgAppType.CFGAdvisors.toShortName() to CfgRank.CFGUser.toShortName(),
-            CfgAppType.CFGAgentDesktop.toShortName() to CfgRank.CFGDesigner.toShortName()
+private val person = Person(
+    employeeId = EMPLOYEE_ID,
+    externalId = "externalId",
+    firstName = "firstName",
+    lastName = "lastName",
+    userName = "userName",
+    password = "password",
+    passwordHashAlgorithm = 1,
+    passwordUpdatingDate = 20180314,
+    changePasswordOnNextLogin = false,
+    emailAddress = "emailAddress",
+    state = CfgObjectState.CFGEnabled.toShortName(),
+    agent = true,
+    externalAuth = false,
+    appRanks = mapOf(
+        CfgAppType.CFGAdvisors.toShortName() to CfgRank.CFGUser.toShortName(),
+        CfgAppType.CFGAgentDesktop.toShortName() to CfgRank.CFGDesigner.toShortName()
+    ),
+    userProperties = defaultProperties(),
+    agentInfo = AgentInfo(
+        capacityRule = "capacityRule",
+        contract = "contract",
+        place = "place",
+        site = "site",
+        skillLevels = mapOf(
+            "skill_1" to 10,
+            "skill_2" to 20,
+            "skill_3" to 30
         ),
-        userProperties = defaultProperties(),
-        agentInfo = AgentInfo(
-            capacityRule = "capacityRule",
-            contract = "contract",
-            place = "place",
-            site = "site",
-            skillLevels = mapOf(
-                "skill_1" to 10,
-                "skill_2" to 20,
-                "skill_3" to 30
-            ),
-            agentLogins = listOf(
-                AgentLoginInfo("agent_1", 1000),
-                AgentLoginInfo("agent_2", 2000),
-                AgentLoginInfo("agent_3", 3000)
-            )
+        agentLogins = listOf(
+            AgentLoginInfo("agent_1", 1000),
+            AgentLoginInfo("agent_2", 2000),
+            AgentLoginInfo("agent_3", 3000)
         )
     )
+)
 
+class PersonTest : ConfigurationObjectTest(person, Person(EMPLOYEE_ID)) {
     init {
-        "empty Person should properly serialize" {
-            checkSerialization(Person(EMPLOYEE_ID), "empty_person")
-        }
-
-        "fully initialized Person should properly serialize" {
-            checkSerialization(person, "person")
-        }
-
-        "Person should properly deserialize" {
-            val deserializedPerson = TestResources.loadJsonConfiguration(
-                "models/configuration/person.json",
-                Person::class.java
-            )
-
-            // Normally we should simply check that 'deserialized shouldBe person' but since Person.equals is broken
-            // because of ByteArray.equals, this should do the trick for now.
-            checkSerialization(deserializedPerson, "person")
-            checkUserProperties(person.userProperties!!, deserializedPerson.userProperties!!)
-        }
-
         "CfgPerson initialized Person should properly serialize" {
             val person = Person(mockCfgPerson())
             checkSerialization(person, "person")

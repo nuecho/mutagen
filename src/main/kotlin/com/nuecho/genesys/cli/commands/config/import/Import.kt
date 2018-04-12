@@ -47,6 +47,7 @@ class Import : GenesysCliCommand() {
 
             val count = intArrayOf(
                 importConfigurationObjects(configuration.actionCodes.values, service),
+                importConfigurationObjects(configuration.enumerators.values, service),
                 importConfigurationObjects(configuration.skills.values, service),
                 importConfigurationObjects(configuration.roles.values, service),
                 importConfigurationObjects(configuration.persons.values, service),

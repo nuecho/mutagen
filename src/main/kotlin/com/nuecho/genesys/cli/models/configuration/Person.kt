@@ -37,10 +37,10 @@ data class Person(
     val agent: Boolean? = null,
     val externalAuth: Boolean? = null,
     val appRanks: Map<String, String>? = null,
+    val agentInfo: AgentInfo? = null,
     @JsonSerialize(using = KeyValueCollectionSerializer::class)
     @JsonDeserialize(using = KeyValueCollectionDeserializer::class)
-    val userProperties: Map<String, Any>? = null,
-    val agentInfo: AgentInfo? = null
+    override val userProperties: Map<String, Any>? = null
 ) : ConfigurationObject {
 
     override val primaryKey: String
