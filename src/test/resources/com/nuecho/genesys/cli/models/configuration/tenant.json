@@ -1,0 +1,23 @@
+{
+  "chargeableNumber": "123",
+  "defaultCapacityRule": "capacityRule",
+  "defaultContract": "contract",
+  "name": "foo",
+  "parentTenant": "parent",
+  "password": "password",
+  "state": "enabled",
+  "userProperties": {
+    "number": 123,
+    "string": "abc",
+    "bytes": [
+      "YWJj"
+    ],
+    "subProperties": {
+      "subNumber": 456,
+      "subString": "def",
+      "subBytes": [
+        "ZGVm"
+      ]
+    }
+  }
+}

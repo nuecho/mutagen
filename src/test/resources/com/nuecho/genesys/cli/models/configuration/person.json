@@ -1,45 +1,6 @@
 {
-  "employeeId": "employeeId",
-  "externalId": "externalId",
-  "firstName": "firstName",
-  "lastName": "lastName",
-  "userName": "userName",
-  "password": "password",
-  "passwordHashAlgorithm": 1,
-  "passwordUpdatingDate": 20180314,
-  "changePasswordOnNextLogin": false,
-  "emailAddress": "emailAddress",
-  "state": "enabled",
   "agent": true,
-  "externalAuth": false,
-  "appRanks": {
-    "advisors": "user",
-    "agentdesktop": "designer"
-  },
-  "userProperties": {
-    "number": 123,
-    "string": "abc",
-    "bytes": [
-      "YWJj"
-    ],
-    "subProperties": {
-      "subNumber": 456,
-      "subString": "def",
-      "subBytes": [
-        "ZGVm"
-      ]
-    }
-  },
   "agentInfo": {
-    "capacityRule": "capacityRule",
-    "contract": "contract",
-    "place": "place",
-    "site": "site",
-    "skillLevels": {
-      "skill_1": 10,
-      "skill_2": 20,
-      "skill_3": 30
-    },
     "agentLogins": [
       {
         "agentLogin": "agent_1",
@@ -53,6 +14,43 @@
         "agentLogin": "agent_3",
         "wrapupTime": 3000
       }
-    ]
+    ],
+    "capacityRule": "capacityRule",
+    "contract": "contract",
+    "place": "place",
+    "site": "site",
+    "skillLevels": {
+      "skill_1": 10,
+      "skill_2": 20,
+      "skill_3": 30
+    }
+  },
+  "appRanks": {
+    "advisors": "user",
+    "agentdesktop": "designer"
+  },
+  "emailAddress": "emailAddress",
+  "employeeId": "employeeId",
+  "externalId": "externalId",
+  "firstName": "firstName",
+  "lastName": "lastName",
+  "password": "password",
+  "passwordHashAlgorithm": 1,
+  "passwordUpdatingDate": 20180314,
+  "state": "enabled",
+  "userName": "userName",
+  "userProperties": {
+    "number": 123,
+    "string": "abc",
+    "bytes": [
+      "YWJj"
+    ],
+    "subProperties": {
+      "subNumber": 456,
+      "subString": "def",
+      "subBytes": [
+        "ZGVm"
+      ]
+    }
   }
 }

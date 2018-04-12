@@ -7,10 +7,10 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgSkillLevel
 import com.nuecho.genesys.cli.Logging.warn
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.getPrimaryKey
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setProperty
+import com.nuecho.genesys.cli.services.getObjectiveTableDbid
+import com.nuecho.genesys.cli.services.getScriptDbid
 import com.nuecho.genesys.cli.services.retrieveFolder
-import com.nuecho.genesys.cli.services.retrieveObjectiveTable
 import com.nuecho.genesys.cli.services.retrievePlace
-import com.nuecho.genesys.cli.services.retrieveScript
 import com.nuecho.genesys.cli.services.retrieveSkill
 
 data class AgentInfo(
@@ -35,8 +35,8 @@ data class AgentInfo(
         val agentInfo = CfgAgentInfo(person.configurationService, person)
 
         // agentLogins are not exported
-        setProperty("capacityRuleDBID", getScriptDbid(capacityRule, service), agentInfo)
-        setProperty("contractDBID", getObjectiveTableDbid(contract, service), agentInfo)
+        setProperty("capacityRuleDBID", service.getScriptDbid(capacityRule), agentInfo)
+        setProperty("contractDBID", service.getObjectiveTableDbid(contract), agentInfo)
         setProperty("placeDBID", getPlaceDbid(contract, service), agentInfo)
         setProperty("siteDBID", getFolderDbid(site, service), agentInfo)
         setProperty("skillLevels", toCfgSkillLevel(skillLevels, person), agentInfo)
@@ -44,28 +44,6 @@ data class AgentInfo(
         return agentInfo
     }
 }
-
-private fun getScriptDbid(name: String?, service: IConfService) =
-    if (name == null) null
-    else {
-        val cfgScript = service.retrieveScript(name)
-
-        if (cfgScript == null) {
-            warn { "Cannot find script '$name'" }
-            null
-        } else cfgScript.dbid
-    }
-
-private fun getObjectiveTableDbid(name: String?, service: IConfService) =
-    if (name == null) null
-    else {
-        val cfgObjectiveTable = service.retrieveObjectiveTable(name)
-
-        if (cfgObjectiveTable == null) {
-            warn { "Cannot find objective table '$name'" }
-            null
-        } else cfgObjectiveTable.dbid
-    }
 
 private fun getPlaceDbid(name: String?, service: IConfService) =
     if (name == null) null

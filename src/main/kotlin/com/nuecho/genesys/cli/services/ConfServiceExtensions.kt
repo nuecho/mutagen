@@ -23,6 +23,7 @@ import com.genesyslab.platform.applicationblocks.com.queries.CfgScriptQuery
 import com.genesyslab.platform.applicationblocks.com.queries.CfgSkillQuery
 import com.genesyslab.platform.applicationblocks.com.queries.CfgSwitchQuery
 import com.genesyslab.platform.applicationblocks.com.queries.CfgTenantQuery
+import com.nuecho.genesys.cli.Logging
 
 fun IConfService.retrieveActionCode(name: String): CfgActionCode? =
     retrieveObject(CfgActionCode::class.java, CfgActionCodeQuery(name))
@@ -53,7 +54,7 @@ fun IConfService.retrieveScript(name: String): CfgScript? = retrieveObject(CfgSc
 fun IConfService.retrieveSkill(name: String): CfgSkill? = retrieveObject(CfgSkill::class.java, CfgSkillQuery(name))
 
 fun IConfService.retrieveSwitch(name: String): CfgSwitch? = retrieveObject(CfgSwitch::class.java, CfgSwitchQuery(name))
-
+fun IConfService.retrieveTenant(name: String): CfgTenant? = retrieveObject(CfgTenant::class.java, CfgTenantQuery(name))
 fun IConfService.retrieveTenants(): Collection<CfgTenant> =
     retrieveMultipleObjects(CfgTenant::class.java, CfgTenantQuery().apply { allTenants = 1 })
 
@@ -64,4 +65,37 @@ val IConfService.defaultTenantDbid: Int
         if (tenants.isEmpty()) throw IllegalStateException("No tenant found.")
         if (tenants.size > 1) throw IllegalStateException("Unsupported multi-tenancy.")
         return tenants.first().dbid
+    }
+
+fun IConfService.getTenantDbid(name: String?) =
+    if (name == null) null
+    else {
+        val cfgTenant = retrieveTenant(name)
+
+        if (cfgTenant == null) {
+            Logging.warn { "Cannot find tenant '$name'" }
+            null
+        } else cfgTenant.dbid
+    }
+
+fun IConfService.getScriptDbid(name: String?) =
+    if (name == null) null
+    else {
+        val cfgScript = retrieveScript(name)
+
+        if (cfgScript == null) {
+            Logging.warn { "Cannot find script '$name'" }
+            null
+        } else cfgScript.dbid
+    }
+
+fun IConfService.getObjectiveTableDbid(name: String?) =
+    if (name == null) null
+    else {
+        val cfgObjectiveTable = retrieveObjectiveTable(name)
+
+        if (cfgObjectiveTable == null) {
+            Logging.warn { "Cannot find objective table '$name'" }
+            null
+        } else cfgObjectiveTable.dbid
     }
