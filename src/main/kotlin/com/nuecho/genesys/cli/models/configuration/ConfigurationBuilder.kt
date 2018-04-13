@@ -3,6 +3,7 @@ package com.nuecho.genesys.cli.models.configuration
 import com.genesyslab.platform.applicationblocks.com.ICfgObject
 import com.genesyslab.platform.applicationblocks.com.objects.CfgActionCode
 import com.genesyslab.platform.applicationblocks.com.objects.CfgAgentGroup
+import com.genesyslab.platform.applicationblocks.com.objects.CfgDN
 import com.genesyslab.platform.applicationblocks.com.objects.CfgEnumerator
 import com.genesyslab.platform.applicationblocks.com.objects.CfgPerson
 import com.genesyslab.platform.applicationblocks.com.objects.CfgPhysicalSwitch
@@ -16,6 +17,7 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgTransaction
 class ConfigurationBuilder {
     private val actionCodes = HashMap<String, ActionCode>()
     private val agentGroups = HashMap<String, AgentGroup>()
+    private val dns = HashMap<String, DN>()
     private val enumerators = HashMap<String, Enumerator>()
     private val persons = HashMap<String, Person>()
     private val physicalSwitches = HashMap<String, PhysicalSwitch>()
@@ -30,6 +32,7 @@ class ConfigurationBuilder {
         when (cfgObject) {
             is CfgActionCode -> ActionCode(cfgObject).run { actionCodes.put(primaryKey, this) }
             is CfgAgentGroup -> AgentGroup(cfgObject).run { agentGroups.put(primaryKey, this) }
+            is CfgDN -> DN(cfgObject).run { dns.put(primaryKey, this) }
             is CfgEnumerator -> Enumerator(cfgObject).run { enumerators.put(primaryKey, this) }
             is CfgPerson -> Person(cfgObject).run { persons.put(primaryKey, this) }
             is CfgPhysicalSwitch -> PhysicalSwitch(cfgObject).run { physicalSwitches.put(primaryKey, this) }
@@ -45,6 +48,7 @@ class ConfigurationBuilder {
     fun build() = Configuration(
         actionCodes,
         agentGroups,
+        dns,
         enumerators,
         persons,
         physicalSwitches,

@@ -3,7 +3,7 @@ package com.nuecho.genesys.cli.models.configuration
 import com.genesyslab.platform.applicationblocks.com.objects.CfgAgentGroup
 import com.genesyslab.platform.applicationblocks.com.objects.CfgGroup
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectState
-import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgDn
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgDN
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgFolder
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgObjectiveTable
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgPerson
@@ -11,6 +11,7 @@ import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mock
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgStatTable
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgObjectState
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks
+import com.nuecho.genesys.cli.services.ServiceMocks
 import com.nuecho.genesys.cli.services.retrieveAgentGroup
 import com.nuecho.genesys.cli.toShortName
 import io.kotlintest.matchers.shouldBe
@@ -36,13 +37,9 @@ private val agentGroup = AgentGroup(
     )
 )
 
-class AgentGroupTest : ConfigurationObjectTest(agentGroup, AgentGroup(name)) {
-
+class AgentGroupTest : ConfigurationObjectTest(agentGroup, AgentGroup(name), AgentGroup(mockCfgAgentGroup())) {
     init {
-        "CfgAgentGroup initialized AgentGroup should properly serialize" {
-            val agentGroup = AgentGroup(mockCfgAgentGroup())
-            ConfigurationAsserts.checkSerialization(agentGroup, "agentgroup")
-        }
+        val service = ServiceMocks.mockConfService()
 
         "AgentGroup.updateCfgObject should properly create CfgAgentGroup" {
             staticMockk("com.nuecho.genesys.cli.services.ConfServiceExtensionsKt").use {
@@ -86,7 +83,7 @@ class AgentGroupTest : ConfigurationObjectTest(agentGroup, AgentGroup(name)) {
 private fun mockCfgAgentGroup(): CfgAgentGroup {
     val agentsMock = agentGroup.agents?.map { employeeID -> mockCfgPerson(employeeID) }
     val managersMock = agentGroup.group.managers?.map { employeeID -> mockCfgPerson(employeeID) }
-    val routeDNsMock = agentGroup.group.routeDNs?.map { dn -> mockCfgDn(dn) }
+    val routeDNsMock = agentGroup.group.routeDNs?.map { dn -> mockCfgDN(dn) }
 
     val capacityTableMock = mockCfgStatTable(agentGroup.group.capacityTable)
     val quotaTableMock = mockCfgStatTable(agentGroup.group.quotaTable)

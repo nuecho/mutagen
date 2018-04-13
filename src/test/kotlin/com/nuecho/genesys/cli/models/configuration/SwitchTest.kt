@@ -5,7 +5,6 @@ import com.genesyslab.platform.configuration.protocol.types.CfgLinkType
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectState.CFGEnabled
 import com.genesyslab.platform.configuration.protocol.types.CfgRouteType
 import com.genesyslab.platform.configuration.protocol.types.CfgTargetType
-import com.nuecho.genesys.cli.models.configuration.ConfigurationAsserts.checkSerialization
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgApplication
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgPhysicalSwitch
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgSwitch
@@ -17,6 +16,7 @@ import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgRou
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgTargetType
 import com.nuecho.genesys.cli.models.configuration.ConfigurationTestData.defaultProperties
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks
+import com.nuecho.genesys.cli.services.ServiceMocks.mockConfService
 import com.nuecho.genesys.cli.services.retrieveSwitch
 import com.nuecho.genesys.cli.toShortName
 import io.kotlintest.matchers.shouldBe
@@ -61,17 +61,9 @@ private val mainSwitch = Switch(
     )
 )
 
-class SwitchTest : ConfigurationObjectTest(mainSwitch, Switch("switch")) {
+class SwitchTest : ConfigurationObjectTest(mainSwitch, Switch("switch"), Switch(mockMainCfgSwitch())) {
     init {
-        "CfgSwitch initialized Switch should properly serialize" {
-            staticMockk("com.nuecho.genesys.cli.services.ConfServiceExtensionsKt").use {
-                val otherCfgSwitch = mockOtherCfgSwitch()
-                every { service.retrieveSwitch("other-switch") } returns otherCfgSwitch
-
-                val mainSwitch = Switch(mockMainCfgSwitch())
-                checkSerialization(mainSwitch, "switch")
-            }
-        }
+        val service = mockConfService()
 
         "Switch.updateCfgObject should properly create CfgSwitch" {
             staticMockk("com.nuecho.genesys.cli.services.ConfServiceExtensionsKt").use {
@@ -117,10 +109,15 @@ class SwitchTest : ConfigurationObjectTest(mainSwitch, Switch("switch")) {
             }
         }
     }
+}
 
-    private fun mockMainCfgSwitch(): CfgSwitch {
-        val mainCfgSwitch = mockCfgSwitch(mainSwitch.name)
+private fun mockMainCfgSwitch(): CfgSwitch {
+    val service = mockConfService()
+    staticMockk("com.nuecho.genesys.cli.services.ConfServiceExtensionsKt").use {
         val otherCfgSwitch = mockOtherCfgSwitch()
+        every { service.retrieveSwitch("other-switch") } returns otherCfgSwitch
+
+        val mainCfgSwitch = mockCfgSwitch(mainSwitch.name)
         val accessCodes = mainSwitch.switchAccessCodes?.map { accessCode ->
             spyk(accessCode.toCfgSwitchAccessCode(service, mainCfgSwitch)).apply {
                 every { switch } returns otherCfgSwitch
@@ -143,9 +140,9 @@ class SwitchTest : ConfigurationObjectTest(mainSwitch, Switch("switch")) {
             every { it.tServer } returns tServer
         }
     }
+}
 
-    private fun mockOtherCfgSwitch() = mockCfgSwitch("other-switch").also {
-        every { it.dbid } returns 103
-        every { it.objectDbid } returns 103
-    }
+private fun mockOtherCfgSwitch() = mockCfgSwitch("other-switch").also {
+    every { it.dbid } returns 103
+    every { it.objectDbid } returns 103
 }

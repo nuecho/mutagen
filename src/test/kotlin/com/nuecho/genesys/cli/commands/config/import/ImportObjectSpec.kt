@@ -3,7 +3,6 @@ package com.nuecho.genesys.cli.commands.config.import
 import com.genesyslab.platform.applicationblocks.com.CfgObject
 import com.nuecho.genesys.cli.commands.config.import.Import.Companion.importConfigurationObjects
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObject
-import com.nuecho.genesys.cli.services.ServiceMocks.mockConfService
 import com.nuecho.genesys.cli.services.defaultTenantDbid
 import io.kotlintest.matchers.shouldBe
 import io.kotlintest.specs.StringSpec
@@ -22,7 +21,7 @@ abstract class ImportObjectSpec(cfgObject: CfgObject, objects: List<Configuratio
         assert(objects.size > 1)
 
         "importing an existing $type should do nothing" {
-            val service = mockConfService()
+            val service = cfgObject.configurationService
 
             every { service.retrieveObject(cfgObject.javaClass, any()) } returns cfgObject
 
@@ -35,7 +34,7 @@ abstract class ImportObjectSpec(cfgObject: CfgObject, objects: List<Configuratio
 
         "importing a new $type should try to save it" {
 
-            val service = mockConfService()
+            val service = cfgObject.configurationService
             every { service.retrieveObject(cfgObject.javaClass, any()) } returns null
 
             objectMockk(Import.Companion).use {
@@ -54,7 +53,7 @@ abstract class ImportObjectSpec(cfgObject: CfgObject, objects: List<Configuratio
 
         "importing multiple $type should try to save all of them" {
 
-            val service = mockConfService()
+            val service = cfgObject.configurationService
             every { service.retrieveObject(cfgObject.javaClass, any()) } returns null
 
             objectMockk(Import.Companion).use {

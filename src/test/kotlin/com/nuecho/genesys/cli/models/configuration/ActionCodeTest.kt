@@ -4,12 +4,12 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgActionCode
 import com.genesyslab.platform.applicationblocks.com.objects.CfgSubcode
 import com.genesyslab.platform.configuration.protocol.types.CfgActionCodeType.CFGTransfer
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectState.CFGEnabled
-import com.nuecho.genesys.cli.models.configuration.ConfigurationAsserts.checkSerialization
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgActionCode
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockKeyValueCollection
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgActionCodeType
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgObjectState
 import com.nuecho.genesys.cli.models.configuration.ConfigurationTestData.defaultProperties
+import com.nuecho.genesys.cli.services.ServiceMocks.mockConfService
 import com.nuecho.genesys.cli.services.retrieveActionCode
 import com.nuecho.genesys.cli.toShortName
 import io.kotlintest.matchers.shouldBe
@@ -30,12 +30,9 @@ private val actionCode = ActionCode(
     userProperties = defaultProperties()
 )
 
-class ActionCodeTest : ConfigurationObjectTest(actionCode, ActionCode("name")) {
+class ActionCodeTest : ConfigurationObjectTest(actionCode, ActionCode("name"), ActionCode(mockCfgActionCode())) {
     init {
-        "CfgActionCode initialized ActionCode should properly serialize" {
-            val actionCode = ActionCode(mockCfgActionCode())
-            checkSerialization(actionCode, "actioncode")
-        }
+        val service = mockConfService()
 
         "ActionCode.updateCfgObject should properly create CfgActionCode" {
             staticMockk("com.nuecho.genesys.cli.services.ConfServiceExtensionsKt").use {
@@ -65,21 +62,22 @@ class ActionCodeTest : ConfigurationObjectTest(actionCode, ActionCode("name")) {
             }
         }
     }
+}
 
-    private fun mockCfgActionCode(): CfgActionCode {
-        val cfgActionCode = mockCfgActionCode(actionCode.name)
-        val subcode = CfgSubcode(service, cfgActionCode).apply {
-            name = SUBNAME
-            code = SUBCODE
-        }
+private fun mockCfgActionCode(): CfgActionCode {
+    val service = mockConfService()
+    val cfgActionCode = mockCfgActionCode(actionCode.name)
+    val subcode = CfgSubcode(service, cfgActionCode).apply {
+        name = SUBNAME
+        code = SUBCODE
+    }
 
-        return cfgActionCode.apply {
-            every { type } returns toCfgActionCodeType(actionCode.type)
-            every { code } returns actionCode.code
-            every { subcodes } returns listOf(subcode)
-            every { state } returns toCfgObjectState(actionCode.state)
-            every { userProperties } returns mockKeyValueCollection()
-            every { configurationService } returns service
-        }
+    return cfgActionCode.apply {
+        every { type } returns toCfgActionCodeType(actionCode.type)
+        every { code } returns actionCode.code
+        every { subcodes } returns listOf(subcode)
+        every { state } returns toCfgObjectState(actionCode.state)
+        every { userProperties } returns mockKeyValueCollection()
+        every { configurationService } returns service
     }
 }

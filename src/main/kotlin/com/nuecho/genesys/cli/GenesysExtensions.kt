@@ -1,16 +1,20 @@
 package com.nuecho.genesys.cli
 
 import com.genesyslab.platform.applicationblocks.com.ICfgObject
+import com.genesyslab.platform.applicationblocks.com.objects.CfgAccessGroup
+import com.genesyslab.platform.applicationblocks.com.objects.CfgAgentGroup
 import com.genesyslab.platform.applicationblocks.com.objects.CfgAgentLogin
 import com.genesyslab.platform.applicationblocks.com.objects.CfgApplication
 import com.genesyslab.platform.applicationblocks.com.objects.CfgDN
-import com.genesyslab.platform.applicationblocks.com.objects.CfgGroup
+import com.genesyslab.platform.applicationblocks.com.objects.CfgDNGroup
 import com.genesyslab.platform.applicationblocks.com.objects.CfgIVRPort
 import com.genesyslab.platform.applicationblocks.com.objects.CfgPerson
+import com.genesyslab.platform.applicationblocks.com.objects.CfgPlaceGroup
 import com.genesyslab.platform.commons.GEnum
 import com.genesyslab.platform.commons.collections.KeyValueCollection
 import com.genesyslab.platform.commons.collections.KeyValuePair
 import com.genesyslab.platform.commons.protocol.Endpoint
+import com.genesyslab.platform.configuration.protocol.types.CfgDNRegisterFlag
 import com.genesyslab.platform.configuration.protocol.types.CfgFlag
 import com.genesyslab.platform.configuration.protocol.types.CfgTransactionType
 import com.genesyslab.platform.reporting.protocol.statserver.AgentStatus
@@ -57,6 +61,9 @@ fun GEnum.toShortName(): String =
 fun CfgTransactionType.toShortName(): String =
     this.name().replace(ConfigurationObjects.CFG_TRANSACTION_PREFIX, "").toLowerCase()
 
+fun CfgDNRegisterFlag.toShortName(): String =
+    this.name().replace(ConfigurationObjects.CFG_DN_REGISTER_FLAG_PREFIX, "").toLowerCase()
+
 fun CfgFlag.asBoolean(): Boolean? =
     when (this) {
         CfgFlag.CFGNoFlag -> null
@@ -78,13 +85,12 @@ fun KeyValueCollection.asMap(): Map<String, Any>? =
         keyValuePair.stringKey!! to value
     }.toMap()
 
-fun ICfgObject.getPrimaryKey(): String = try {
-    val groupInfoGetter = this.javaClass.getMethod("getGroupInfo")
-    val groupInfo = groupInfoGetter.invoke(this) as CfgGroup
-    groupInfo.name
-} catch (exception: Exception) {
-    // Not a group
-    getStringProperty(this, getPrimaryKeyProperty(this))
+fun ICfgObject.getPrimaryKey(): String = when (this) {
+    is CfgAccessGroup -> groupInfo.name
+    is CfgAgentGroup -> groupInfo.name
+    is CfgDNGroup -> groupInfo.name
+    is CfgPlaceGroup -> groupInfo.name
+    else -> getStringProperty(this, getPrimaryKeyProperty(this))
 }
 
 fun Collection<ICfgObject?>.toPrimaryKeyList() =

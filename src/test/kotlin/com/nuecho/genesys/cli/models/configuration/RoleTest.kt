@@ -11,6 +11,7 @@ import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectUpdateStat
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.dbidToPrimaryKey
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgObjectState
 import com.nuecho.genesys.cli.models.configuration.ConfigurationTestData.defaultProperties
+import com.nuecho.genesys.cli.services.ServiceMocks.mockConfService
 import com.nuecho.genesys.cli.services.retrieveRole
 import com.nuecho.genesys.cli.toShortName
 import io.kotlintest.matchers.shouldBe
@@ -32,6 +33,8 @@ private val role = Role(
 
 class RoleTest : ConfigurationObjectTest(role, Role("name")) {
     init {
+        val service = mockConfService()
+
         "CfgRole initialized Role should properly serialize" {
             objectMockk(ConfigurationObjects).use {
                 every {
@@ -63,21 +66,22 @@ class RoleTest : ConfigurationObjectTest(role, Role("name")) {
             }
         }
     }
+}
 
-    private fun mockCfgRole(): CfgRole {
-        val cfgRole = mockCfgRole(role.name)
+private fun mockCfgRole(): CfgRole {
+    val service = mockConfService()
+    val cfgRole = mockCfgRole(role.name)
 
-        val state = toCfgObjectState(role.state)
-        val member = CfgRoleMember(service, cfgRole)
-        member.objectDBID = 101
-        member.objectType = CFGPerson
+    val state = toCfgObjectState(role.state)
+    val member = CfgRoleMember(service, cfgRole)
+    member.objectDBID = 101
+    member.objectType = CFGPerson
 
-        return cfgRole.also {
-            every { it.description } returns role.description
-            every { it.state } returns state
-            every { it.members } returns listOf(member, member, member)
-            every { it.userProperties } returns mockKeyValueCollection()
-            every { it.configurationService } returns service
-        }
+    return cfgRole.also {
+        every { it.description } returns role.description
+        every { it.state } returns state
+        every { it.members } returns listOf(member, member, member)
+        every { it.userProperties } returns mockKeyValueCollection()
+        every { it.configurationService } returns service
     }
 }

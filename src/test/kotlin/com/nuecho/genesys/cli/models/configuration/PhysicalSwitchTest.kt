@@ -3,13 +3,13 @@ package com.nuecho.genesys.cli.models.configuration
 import com.genesyslab.platform.applicationblocks.com.objects.CfgPhysicalSwitch
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectState.CFGEnabled
 import com.genesyslab.platform.configuration.protocol.types.CfgSwitchType.CFGFujitsu
-import com.nuecho.genesys.cli.models.configuration.ConfigurationAsserts.checkSerialization
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgPhysicalSwitch
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockKeyValueCollection
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectUpdateStatus.CREATED
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgObjectState
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgSwitchType
 import com.nuecho.genesys.cli.models.configuration.ConfigurationTestData.defaultProperties
+import com.nuecho.genesys.cli.services.ServiceMocks.mockConfService
 import com.nuecho.genesys.cli.services.retrievePhysicalSwitch
 import com.nuecho.genesys.cli.toShortName
 import io.kotlintest.matchers.shouldBe
@@ -24,12 +24,13 @@ private val physicalSwitch = PhysicalSwitch(
     userProperties = defaultProperties()
 )
 
-class PhysicalSwitchTest : ConfigurationObjectTest(physicalSwitch, PhysicalSwitch("foo")) {
+class PhysicalSwitchTest : ConfigurationObjectTest(
+    physicalSwitch,
+    PhysicalSwitch("foo"),
+    PhysicalSwitch(mockPhysicalSwitch())
+) {
     init {
-        "CfgPhysicalSwitch initialized PhysicalSwitch should properly serialize" {
-            val physicalSwitch = PhysicalSwitch(mockPhysicalSwitch())
-            checkSerialization(physicalSwitch, "physicalswitch")
-        }
+        val service = mockConfService()
 
         "PhysicalSwitch.updateCfgObject should properly create CfgPhysicalSwitch" {
             staticMockk("com.nuecho.genesys.cli.services.ConfServiceExtensionsKt").use {
@@ -49,10 +50,10 @@ class PhysicalSwitchTest : ConfigurationObjectTest(physicalSwitch, PhysicalSwitc
             }
         }
     }
+}
 
-    private fun mockPhysicalSwitch() = mockCfgPhysicalSwitch(physicalSwitch.name).also {
-        every { it.type } returns toCfgSwitchType(physicalSwitch.type)
-        every { it.state } returns toCfgObjectState(physicalSwitch.state)
-        every { it.userProperties } returns mockKeyValueCollection()
-    }
+private fun mockPhysicalSwitch() = mockCfgPhysicalSwitch(physicalSwitch.name).also {
+    every { it.type } returns toCfgSwitchType(physicalSwitch.type)
+    every { it.state } returns toCfgObjectState(physicalSwitch.state)
+    every { it.userProperties } returns mockKeyValueCollection()
 }

@@ -1,0 +1,39 @@
+{
+  "association": "anassociation",
+  "contract": "acontract",
+  "group": "dnGroup",
+  "name": "aname",
+  "number": "123",
+  "override": "anoverride",
+  "routing": {
+    "destinationDNs": [
+      "1234"
+    ],
+    "type": "direct"
+  },
+  "site": "abc",
+  "state": "enabled",
+  "switch": {
+    "name": "aswitch",
+    "registerAll": "true",
+    "switchSpecificType": 1
+  },
+  "trunks": 1,
+  "type": "nodn",
+  "useOverride": true,
+  "userProperties": {
+    "number": 123,
+    "string": "abc",
+    "bytes": [
+      "YWJj"
+    ],
+    "subProperties": {
+      "subNumber": 456,
+      "subString": "def",
+      "subBytes": [
+        "ZGVm"
+      ]
+    }
+  },
+  "dnLoginID": "anId"
+}

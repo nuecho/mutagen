@@ -2,12 +2,12 @@ package com.nuecho.genesys.cli.models.configuration
 
 import com.genesyslab.platform.applicationblocks.com.objects.CfgSkill
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectState
-import com.nuecho.genesys.cli.models.configuration.ConfigurationAsserts.checkSerialization
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgSkill
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockKeyValueCollection
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectUpdateStatus.CREATED
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgObjectState
 import com.nuecho.genesys.cli.models.configuration.ConfigurationTestData.defaultProperties
+import com.nuecho.genesys.cli.services.ServiceMocks.mockConfService
 import com.nuecho.genesys.cli.services.retrieveSkill
 import com.nuecho.genesys.cli.toShortName
 import io.kotlintest.matchers.shouldBe
@@ -21,12 +21,13 @@ private val skill = Skill(
     userProperties = defaultProperties()
 )
 
-class SkillTest : ConfigurationObjectTest(skill, Skill("foo")) {
+class SkillTest : ConfigurationObjectTest(
+    configurationObject = skill,
+    emptyConfigurationObject = Skill("foo"),
+    importedConfigurationObject = Skill(mockCfgSkill())
+) {
     init {
-        "CfgSkill initialized Skill should properly serialize" {
-            val skill = Skill(mockCfgSkill())
-            checkSerialization(skill, "skill")
-        }
+        val service = mockConfService()
 
         "Skill.updateCfgObject should properly create CfgSkill" {
             staticMockk("com.nuecho.genesys.cli.services.ConfServiceExtensionsKt").use {
@@ -45,9 +46,9 @@ class SkillTest : ConfigurationObjectTest(skill, Skill("foo")) {
             }
         }
     }
+}
 
-    private fun mockCfgSkill() = mockCfgSkill(skill.name).also {
-        every { it.state } returns toCfgObjectState(skill.state)
-        every { it.userProperties } returns mockKeyValueCollection()
-    }
+private fun mockCfgSkill() = mockCfgSkill(skill.name).also {
+    every { it.state } returns toCfgObjectState(skill.state)
+    every { it.userProperties } returns mockKeyValueCollection()
 }

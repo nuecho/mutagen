@@ -3,10 +3,10 @@ package com.nuecho.genesys.cli.models.configuration
 import com.genesyslab.platform.applicationblocks.com.objects.CfgTransaction
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectState
 import com.genesyslab.platform.configuration.protocol.types.CfgTransactionType
-import com.nuecho.genesys.cli.models.configuration.ConfigurationAsserts.checkSerialization
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgTransaction
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockKeyValueCollection
 import com.nuecho.genesys.cli.models.configuration.ConfigurationTestData.defaultProperties
+import com.nuecho.genesys.cli.services.ServiceMocks.mockConfService
 import com.nuecho.genesys.cli.services.retrieveTransaction
 import com.nuecho.genesys.cli.toShortName
 import io.kotlintest.matchers.shouldBe
@@ -23,16 +23,13 @@ private val transaction = Transaction(
     userProperties = defaultProperties()
 )
 
-class TransactionTest : ConfigurationObjectTest(transaction, Transaction("foo")) {
+class TransactionTest : ConfigurationObjectTest(transaction, Transaction("foo"), Transaction(mockCfgTransaction())) {
 
     init {
-        "CfgTransaction initialized Transaction should properly serialize" {
-            val transaction = Transaction(mockCfgTransaction())
-            checkSerialization(transaction, "transaction")
-        }
+        val service = mockConfService()
+
         "Transaction.updateCfgObject should properly create CfgTransaction" {
             staticMockk("com.nuecho.genesys.cli.services.ConfServiceExtensionsKt").use {
-
                 every { service.retrieveTransaction(any()) } returns null
 
                 val (status, cfgObject) = transaction.updateCfgObject(service)
@@ -52,13 +49,13 @@ class TransactionTest : ConfigurationObjectTest(transaction, Transaction("foo"))
             }
         }
     }
+}
 
-    private fun mockCfgTransaction() = mockCfgTransaction(transaction.name).also {
-        every { it.alias } returns transaction.alias
-        every { it.description } returns transaction.description
-        every { it.recordPeriod } returns transaction.recordPeriod
-        every { it.type } returns CfgTransactionType.CFGTRTNoTransactionType
-        every { it.state } returns CfgObjectState.CFGEnabled
-        every { it.userProperties } returns mockKeyValueCollection()
-    }
+private fun mockCfgTransaction() = mockCfgTransaction(transaction.name).also {
+    every { it.alias } returns transaction.alias
+    every { it.description } returns transaction.description
+    every { it.recordPeriod } returns transaction.recordPeriod
+    every { it.type } returns CfgTransactionType.CFGTRTNoTransactionType
+    every { it.state } returns CfgObjectState.CFGEnabled
+    every { it.userProperties } returns mockKeyValueCollection()
 }

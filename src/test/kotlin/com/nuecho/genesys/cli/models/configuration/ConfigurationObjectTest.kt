@@ -3,22 +3,29 @@ package com.nuecho.genesys.cli.models.configuration
 import com.nuecho.genesys.cli.TestResources.loadJsonConfiguration
 import com.nuecho.genesys.cli.models.configuration.ConfigurationAsserts.checkSerialization
 import com.nuecho.genesys.cli.models.configuration.ConfigurationAsserts.checkUserProperties
-import com.nuecho.genesys.cli.preferences.environment.Environment
-import com.nuecho.genesys.cli.services.ConfService
 import io.kotlintest.specs.StringSpec
 
 @Suppress("UnnecessaryAbstractClass")
 abstract class ConfigurationObjectTest(
     configurationObject: ConfigurationObject,
-    emptyConfigurationObject: ConfigurationObject
+    emptyConfigurationObject: ConfigurationObject,
+    importedConfigurationObject: ConfigurationObject?
 ) : StringSpec() {
-    val service = ConfService(Environment(host = "test", user = "test", rawPassword = "test"))
+
+    constructor(configurationObject: ConfigurationObject, emptyConfigurationObject: ConfigurationObject) :
+            this(configurationObject, emptyConfigurationObject, null)
 
     init {
         val configurationObjectType = configurationObject::class.simpleName!!.toLowerCase()
 
         "empty $configurationObjectType should properly serialize" {
             checkSerialization(emptyConfigurationObject, "empty_$configurationObjectType")
+        }
+
+        importedConfigurationObject?.let {
+            "CfgObject initialized $configurationObjectType should properly serialize" {
+                checkSerialization(importedConfigurationObject, configurationObjectType)
+            }
         }
 
         "fully initialized $configurationObjectType should properly serialize" {

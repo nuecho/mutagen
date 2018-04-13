@@ -7,6 +7,8 @@ import com.genesyslab.platform.commons.collections.KeyValueCollection
 import com.genesyslab.platform.commons.collections.KeyValuePair
 import com.genesyslab.platform.configuration.protocol.types.CfgActionCodeType
 import com.genesyslab.platform.configuration.protocol.types.CfgAppType
+import com.genesyslab.platform.configuration.protocol.types.CfgDNRegisterFlag
+import com.genesyslab.platform.configuration.protocol.types.CfgDNType
 import com.genesyslab.platform.configuration.protocol.types.CfgEnumeratorType
 import com.genesyslab.platform.configuration.protocol.types.CfgFlag
 import com.genesyslab.platform.configuration.protocol.types.CfgFlag.CFGFalse
@@ -29,6 +31,7 @@ object ConfigurationObjects {
 
     const val CFG_PREFIX = "CFG"
     const val CFG_TRANSACTION_PREFIX = "${CFG_PREFIX}TRT"
+    const val CFG_DN_REGISTER_FLAG_PREFIX = "${CFG_PREFIX}DR"
 
     fun getCfgObjectTypes(): Set<CfgObjectType> {
         val types = GEnum.valuesBy(CfgObjectType::class.java).toMutableSet()
@@ -68,8 +71,13 @@ object ConfigurationObjects {
         else -> CFGNoFlag
     }
 
+    fun toCfgDNRegisterFlag(flag: String?) =
+        if (flag == null) null
+        else GEnum.getValue(CfgDNRegisterFlag::class.java, "$CFG_DN_REGISTER_FLAG_PREFIX$flag") as CfgDNRegisterFlag
+
     fun toCfgActionCodeType(state: String?) = toGEnum(state, CfgActionCodeType::class.java) as CfgActionCodeType?
     fun toCfgAppType(type: String?) = toGEnum(type, CfgAppType::class.java) as CfgAppType?
+    fun toCfgDNType(type: String?) = toGEnum(type, CfgDNType::class.java) as CfgDNType?
     fun toCfgEnumeratorType(type: String?) = toGEnum(type, CfgEnumeratorType::class.java) as CfgEnumeratorType?
     fun toCfgLinkType(type: String?) = toGEnum(type, CfgLinkType::class.java) as CfgLinkType?
     fun toCfgObjectState(state: String?) = toGEnum(state, CfgObjectState::class.java) as CfgObjectState?
@@ -82,6 +90,7 @@ object ConfigurationObjects {
     fun toCfgTransactionType(transactionType: String?) =
         if (transactionType == null) null
         else GEnum.getValue(CfgTransactionType::class.java, "$CFG_TRANSACTION_PREFIX$transactionType")
+                as CfgTransactionType
 
     private fun toGEnum(shortName: String?, enumType: Class<out GEnum>) =
         if (shortName == null) null
