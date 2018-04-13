@@ -8,9 +8,14 @@ import com.genesyslab.platform.configuration.protocol.types.CfgObjectState.CFGEn
 import com.nuecho.genesys.cli.models.configuration.ConfigurationAsserts.checkSerialization
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockKeyValueCollection
 import com.nuecho.genesys.cli.models.configuration.ConfigurationTestData.defaultProperties
+import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks
+import com.nuecho.genesys.cli.services.retrieveTenant
 import com.nuecho.genesys.cli.toShortName
+import io.kotlintest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.staticMockk
+import io.mockk.use
 
 private val tenant = Tenant(
     defaultCapacityRule = "capacityRule",
@@ -28,6 +33,32 @@ class TenantTest : ConfigurationObjectTest(tenant, Tenant("foo")) {
         "CfgTenant initialized Tenant should properly serialize" {
             val tenant = Tenant(mockCfgTenant())
             checkSerialization(tenant, "tenant")
+        }
+        "Tenant.updateCfgObject should properly create CfgTenant" {
+            staticMockk("com.nuecho.genesys.cli.services.ConfServiceExtensionsKt").use {
+
+                val dbid = 101
+
+                every { service.retrieveTenant(any()) } returns null
+                ConfServiceExtensionMocks.mockRetrieveObjectiveTable(service, dbid)
+                ConfServiceExtensionMocks.mockRetrieveScript(service, dbid)
+
+                val (status, cfgObject) = tenant.updateCfgObject(service)
+                val cfgTenant = cfgObject as CfgTenant
+
+                status shouldBe ConfigurationObjectUpdateStatus.CREATED
+
+                with(cfgTenant) {
+                    name shouldBe tenant.name
+                    defaultCapacityRuleDBID shouldBe dbid
+                    defaultContractDBID shouldBe dbid
+                    chargeableNumber shouldBe tenant.chargeableNumber
+                    parentTenant shouldBe null
+                    password shouldBe tenant.password
+                    state shouldBe ConfigurationObjects.toCfgObjectState(tenant.state)
+                    userProperties.size shouldBe 4
+                }
+            }
         }
     }
 

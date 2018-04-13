@@ -51,7 +51,8 @@ class Import : GenesysCliCommand() {
                 importConfigurationObjects(configuration.skills.values, service),
                 importConfigurationObjects(configuration.roles.values, service),
                 importConfigurationObjects(configuration.persons.values, service),
-                importConfigurationObjects(configuration.tenants.values, service)
+                importConfigurationObjects(configuration.tenants.values, service),
+                importConfigurationObjects(configuration.scripts.values, service)
             ).sum()
 
             println("Completed. $count object(s) imported.")

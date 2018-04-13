@@ -20,6 +20,7 @@ import com.genesyslab.platform.configuration.protocol.types.CfgFlag.CFGTrue
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectState
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectType
 import com.genesyslab.platform.configuration.protocol.types.CfgRank
+import com.genesyslab.platform.configuration.protocol.types.CfgScriptType
 
 private const val CFG_PREFIX = "CFG"
 
@@ -80,6 +81,7 @@ object ConfigurationObjects {
     fun toCfgEnumeratorType(type: String?) = toGEnum(type, CfgEnumeratorType::class.java) as CfgEnumeratorType?
     fun toCfgObjectState(state: String?) = toGEnum(state, CfgObjectState::class.java) as CfgObjectState?
     fun toCfgRank(rank: String?) = toGEnum(rank, CfgRank::class.java) as CfgRank?
+    fun toCfgScriptType(type: String?) = toGEnum(type, CfgScriptType::class.java) as CfgScriptType?
 
     private fun toGEnum(shortName: String?, enumType: Class<out GEnum>) =
         if (shortName == null) null

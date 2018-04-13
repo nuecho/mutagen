@@ -5,6 +5,7 @@ data class Configuration(
     val enumerators: Map<String, Enumerator> = emptyMap(),
     val persons: Map<String, Person> = emptyMap(),
     val roles: Map<String, Role> = emptyMap(),
+    val scripts: Map<String, Script> = emptyMap(),
     val skills: Map<String, Skill> = emptyMap(),
     val tenants: Map<String, Tenant> = emptyMap()
 )
