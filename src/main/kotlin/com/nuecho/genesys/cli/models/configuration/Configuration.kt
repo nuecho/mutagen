@@ -7,5 +7,6 @@ data class Configuration(
     val roles: Map<String, Role> = emptyMap(),
     val scripts: Map<String, Script> = emptyMap(),
     val skills: Map<String, Skill> = emptyMap(),
-    val tenants: Map<String, Tenant> = emptyMap()
+    val tenants: Map<String, Tenant> = emptyMap(),
+    val transactions: Map<String, Transaction> = emptyMap()
 )

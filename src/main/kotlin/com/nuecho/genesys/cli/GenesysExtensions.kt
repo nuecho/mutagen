@@ -6,11 +6,13 @@ import com.genesyslab.platform.commons.collections.KeyValueCollection
 import com.genesyslab.platform.commons.collections.KeyValuePair
 import com.genesyslab.platform.commons.protocol.Endpoint
 import com.genesyslab.platform.configuration.protocol.types.CfgFlag
+import com.genesyslab.platform.configuration.protocol.types.CfgTransactionType
 import com.genesyslab.platform.reporting.protocol.statserver.AgentStatus
 import com.genesyslab.platform.reporting.protocol.statserver.DnActions
 import com.genesyslab.platform.reporting.protocol.statserver.DnActionsMask
 import com.genesyslab.platform.reporting.protocol.statserver.DnStatus
 import com.genesyslab.platform.reporting.protocol.statserver.DnStatusesCollection
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects
 
 fun AgentStatus.getStatusAsDnAction(): DnActions =
     GEnum.getValue(DnActions::class.java, this.status)!! as DnActions
@@ -44,7 +46,10 @@ fun DnActionsMask.setBits(vararg dnActions: DnActions) =
     dnActions.forEach { setBit(it) }
 
 fun GEnum.toShortName(): String =
-    this.name().replace("CFG", "").toLowerCase()
+    this.name().replace(ConfigurationObjects.CFG_PREFIX, "").toLowerCase()
+
+fun CfgTransactionType.toShortName(): String =
+    this.name().replace(ConfigurationObjects.CFG_TRANSACTION_PREFIX, "").toLowerCase()
 
 fun CfgFlag.asBoolean(): Boolean? =
     when (this) {
