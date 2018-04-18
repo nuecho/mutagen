@@ -3,6 +3,29 @@
 > Delivery team to rely on as part of any troubleshooting, testing, support, management,
 > development tasks.
 
+## Development
+
+We are using IntelliJ IDEA as primary IDE and compiling with JDK 8.
+
+1. Get [IntelliJ IDEA Community](https://www.jetbrains.com/idea/download/).
+    - _For Ubuntu users_: you may choose the "Without JDK" version.
+2. After starting and configuring IntelliJ, choose "Import Project".
+    1. Select the mutagen repository folder.
+    2. Choose "Import project from external model", then choose Gradle.
+    3. On the next page, leave default settings and click Next.
+    4. You'll be asked if you want to override the `.idea` folder. Choose Yes.
+3. The project will then be imported to IntelliJ. But since we have checked-in some project configuration files,
+   other steps are mandatory:
+   1. Within IntelliJ, close the project (`File -> Close Project`).
+   2. Run `git clean -fdx` within the mutagen folder.
+   3. Within IntelliJ, open the project again.
+4. _For ubuntu users_, you may encounter compiling issues for whatever reason ("Unresolved reference: java").
+   If this is the case, a final step is required:
+   1. Go to `File -> Project Structure...`
+   2. Select `Platform Settings -> SDKs`.
+   3. You'll need to re-select the "JDK Home Path". This will refresh the Classpath items with missing jars.
+   4. Click OK and the project should now build without any compilation error.
+
 ## Getting Started
 
 To get a list of all available tasks:
