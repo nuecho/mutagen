@@ -20,13 +20,13 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgTenant
 import com.genesyslab.platform.applicationblocks.com.objects.CfgTimeZone
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectType
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectType.CFGEnumerator
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_FOLDER_REFERENCE
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_OBJECT_DBID
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgFolder
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgGVPCustomer
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgGVPReseller
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgTenant
-import com.nuecho.genesys.cli.models.configuration.reference.FolderReference
 import io.mockk.every
 import io.mockk.mockk
 
@@ -74,8 +74,8 @@ object ConfServiceExtensionMocks {
     fun mockConfigurationObjectRepository() {
         val cfgFolder = mockCfgFolder("site", CfgObjectType.CFGFolder)
         every { ConfigurationObjectRepository.contains(any()) } returns false
-        every { ConfigurationObjectRepository.contains(ofType(FolderReference::class)) } returns true
-        every { ConfigurationObjectRepository[ofType(FolderReference::class)] } returns cfgFolder
+        every { ConfigurationObjectRepository.contains(DEFAULT_FOLDER_REFERENCE) } returns true
+        every { ConfigurationObjectRepository[DEFAULT_FOLDER_REFERENCE] } returns cfgFolder
     }
 
     fun mockRetrieveSkill(service: IConfService, dbid: Int = DEFAULT_OBJECT_DBID) =

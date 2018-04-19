@@ -7,12 +7,17 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgAccessGroup
 import com.genesyslab.platform.applicationblocks.com.objects.CfgAgentGroup
 import com.genesyslab.platform.applicationblocks.com.objects.CfgAgentLogin
 import com.genesyslab.platform.applicationblocks.com.objects.CfgApplication
+import com.genesyslab.platform.applicationblocks.com.objects.CfgCampaign
 import com.genesyslab.platform.applicationblocks.com.objects.CfgDN
 import com.genesyslab.platform.applicationblocks.com.objects.CfgDNGroup
+import com.genesyslab.platform.applicationblocks.com.objects.CfgEnumerator
 import com.genesyslab.platform.applicationblocks.com.objects.CfgFolder
 import com.genesyslab.platform.applicationblocks.com.objects.CfgGVPCustomer
 import com.genesyslab.platform.applicationblocks.com.objects.CfgGVPReseller
+import com.genesyslab.platform.applicationblocks.com.objects.CfgIVR
 import com.genesyslab.platform.applicationblocks.com.objects.CfgObjectiveTable
+import com.genesyslab.platform.applicationblocks.com.objects.CfgOwnerID
+import com.genesyslab.platform.applicationblocks.com.objects.CfgParentID
 import com.genesyslab.platform.applicationblocks.com.objects.CfgPerson
 import com.genesyslab.platform.applicationblocks.com.objects.CfgPhysicalSwitch
 import com.genesyslab.platform.applicationblocks.com.objects.CfgPlace
@@ -27,7 +32,9 @@ import com.genesyslab.platform.commons.GEnum
 import com.genesyslab.platform.commons.protocol.Endpoint
 import com.genesyslab.platform.configuration.protocol.types.CfgDNRegisterFlag
 import com.genesyslab.platform.configuration.protocol.types.CfgFlag
+import com.genesyslab.platform.configuration.protocol.types.CfgFolderClass
 import com.genesyslab.platform.configuration.protocol.types.CfgIVRProfileType
+import com.genesyslab.platform.configuration.protocol.types.CfgObjectType
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectType.CFGFolder
 import com.genesyslab.platform.configuration.protocol.types.CfgTransactionType
 import com.genesyslab.platform.reporting.protocol.statserver.AgentStatus
@@ -36,6 +43,7 @@ import com.genesyslab.platform.reporting.protocol.statserver.DnActionsMask
 import com.genesyslab.platform.reporting.protocol.statserver.DnStatus
 import com.genesyslab.platform.reporting.protocol.statserver.DnStatusesCollection
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.CFG_DN_REGISTER_FLAG_PREFIX
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.CFG_FOLDER_CLASS_PREFIX
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.CFG_IVR_PROFILE_PREFIX
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.CFG_PREFIX
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.CFG_TRANSACTION_PREFIX
@@ -43,12 +51,16 @@ import com.nuecho.genesys.cli.models.configuration.reference.AccessGroupReferenc
 import com.nuecho.genesys.cli.models.configuration.reference.AgentGroupReference
 import com.nuecho.genesys.cli.models.configuration.reference.AgentLoginReference
 import com.nuecho.genesys.cli.models.configuration.reference.ApplicationReference
+import com.nuecho.genesys.cli.models.configuration.reference.CampaignReference
 import com.nuecho.genesys.cli.models.configuration.reference.DNGroupReference
 import com.nuecho.genesys.cli.models.configuration.reference.DNReference
+import com.nuecho.genesys.cli.models.configuration.reference.EnumeratorReference
 import com.nuecho.genesys.cli.models.configuration.reference.FolderReference
 import com.nuecho.genesys.cli.models.configuration.reference.GVPCustomerReference
 import com.nuecho.genesys.cli.models.configuration.reference.GVPResellerReference
+import com.nuecho.genesys.cli.models.configuration.reference.IVRReference
 import com.nuecho.genesys.cli.models.configuration.reference.ObjectiveTableReference
+import com.nuecho.genesys.cli.models.configuration.reference.OwnerReference
 import com.nuecho.genesys.cli.models.configuration.reference.PersonReference
 import com.nuecho.genesys.cli.models.configuration.reference.PhysicalSwitchReference
 import com.nuecho.genesys.cli.models.configuration.reference.PlaceGroupReference
@@ -97,16 +109,12 @@ fun CfgTimeZone.toTimeZoneId(): String =
     TimeZone.getTimeZone(ZoneId.of(this.name, ZoneId.SHORT_IDS)).getDisplayName(false, TimeZone.SHORT)
 
 fun GEnum.toShortName(): String =
-    this.name().replace(CFG_PREFIX, "").toLowerCase()
+    name().replace(CFG_PREFIX, "").toLowerCase()
 
-fun CfgIVRProfileType.toShortName(): String =
-    this.name().replace(CFG_IVR_PROFILE_PREFIX, "").toLowerCase()
-
-fun CfgTransactionType.toShortName(): String =
-    this.name().replace(CFG_TRANSACTION_PREFIX, "").toLowerCase()
-
-fun CfgDNRegisterFlag.toShortName(): String =
-    this.name().replace(CFG_DN_REGISTER_FLAG_PREFIX, "").toLowerCase()
+fun CfgDNRegisterFlag.toShortName(): String = name().replace(CFG_DN_REGISTER_FLAG_PREFIX, "").toLowerCase()
+fun CfgFolderClass.toShortName(): String = name().replace(CFG_FOLDER_CLASS_PREFIX, "").toLowerCase()
+fun CfgIVRProfileType.toShortName(): String = name().replace(CFG_IVR_PROFILE_PREFIX, "").toLowerCase()
+fun CfgTransactionType.toShortName(): String = name().replace(CFG_TRANSACTION_PREFIX, "").toLowerCase()
 
 fun CfgFlag.asBoolean() =
     when (this) {
@@ -117,16 +125,50 @@ fun CfgFlag.asBoolean() =
     }
 
 fun CfgObject.getFolderReference() =
-    if (folderId == 0) null
+    if (folderId == null || folderId == 0) null
     else (configurationService.retrieveObject(CFGFolder, folderId) as CfgFolder).getReference()
+
+fun CfgFolder.getPath(): List<String> {
+    val path = mutableListOf(name)
+
+    var parent = parentID
+    while (parent.getType() == CFGFolder) {
+        val parentFolder = configurationService.retrieveObject(CFGFolder, parent.getDBID()) as CfgFolder
+        path.add(parentFolder.name)
+        parent = parentFolder.parentID
+    }
+
+    path.reverse()
+    return path
+}
+
+@Suppress("ComplexMethod")
+fun CfgOwnerID.getReference() =
+    configurationService.retrieveObject(type, dbid).let {
+        when (it) {
+            is CfgCampaign -> OwnerReference(type.toShortName(), it.name, it.tenant.getReference())
+            is CfgEnumerator -> OwnerReference(type.toShortName(), it.name, it.tenant.getReference())
+            is CfgGVPCustomer -> OwnerReference(type.toShortName(), it.name)
+            is CfgGVPReseller -> OwnerReference(type.toShortName(), it.name)
+            is CfgIVR -> OwnerReference(type.toShortName(), it.name)
+            is CfgSwitch -> OwnerReference(type.toShortName(), it.name, it.tenant.getReference())
+            is CfgTenant -> OwnerReference(type.toShortName(), it.name)
+            else -> throw IllegalArgumentException("Illegal owner type: '$type'")
+        }
+    }
 
 fun CfgAccessGroup.getReference() = AccessGroupReference(groupInfo.name, groupInfo.tenant.getReference())
 fun CfgAgentGroup.getReference() = AgentGroupReference(groupInfo.name, groupInfo.tenant.getReference())
 fun CfgAgentLogin.getReference() = AgentLoginReference(loginCode, switch.getReference())
 fun CfgApplication.getReference() = ApplicationReference(name)
+fun CfgCampaign.getReference() = CampaignReference(name, tenant.getReference())
 fun CfgDN.getReference() = DNReference(this)
 fun CfgDNGroup.getReference() = DNGroupReference(groupInfo.name, groupInfo.tenant.getReference())
+fun CfgEnumerator.getReference() = EnumeratorReference(name, tenant.getReference())
 fun CfgFolder.getReference() = FolderReference(this)
+fun CfgGVPCustomer.getReference() = GVPCustomerReference(name)
+fun CfgGVPReseller.getReference() = GVPResellerReference(name, tenant.getReference())
+fun CfgIVR.getReference() = IVRReference(name)
 fun CfgObjectiveTable.getReference() = ObjectiveTableReference(name, tenant.getReference())
 fun CfgPerson.getReference() = PersonReference(employeeID, tenant.getReference())
 fun CfgPhysicalSwitch.getReference() = PhysicalSwitchReference(name)
@@ -138,5 +180,9 @@ fun CfgStatTable.getReference() = StatTableReference(name, tenant.getReference()
 fun CfgSwitch.getReference() = SwitchReference(name, tenant.getReference())
 fun CfgTenant.getReference() = TenantReference(name)
 fun CfgTimeZone.getReference() = TimeZoneReference(name, tenant.getReference())
-fun CfgGVPReseller.getReference() = GVPResellerReference(name, tenant.getReference())
-fun CfgGVPCustomer.getReference() = GVPCustomerReference(name)
+
+// For some reason, those methods are missing from CfgParentID
+private fun CfgParentID.getDBID() = getProperty("DBID") as Int
+
+private fun CfgParentID.getType(): CfgObjectType =
+    GEnum.getValue(CfgObjectType::class.java, getProperty("type") as Int) as CfgObjectType

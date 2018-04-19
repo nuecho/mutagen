@@ -17,6 +17,7 @@ import com.genesyslab.platform.configuration.protocol.types.CfgFlag
 import com.genesyslab.platform.configuration.protocol.types.CfgFlag.CFGFalse
 import com.genesyslab.platform.configuration.protocol.types.CfgFlag.CFGNoFlag
 import com.genesyslab.platform.configuration.protocol.types.CfgFlag.CFGTrue
+import com.genesyslab.platform.configuration.protocol.types.CfgFolderClass
 import com.genesyslab.platform.configuration.protocol.types.CfgIVRProfileType
 import com.genesyslab.platform.configuration.protocol.types.CfgLinkType
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectState
@@ -37,6 +38,7 @@ object ConfigurationObjects {
     const val CFG_TRANSACTION_PREFIX = "${CFG_PREFIX}TRT"
     const val CFG_DN_REGISTER_FLAG_PREFIX = "${CFG_PREFIX}DR"
     const val CFG_IVR_PROFILE_PREFIX = "${CFG_PREFIX}IPT"
+    const val CFG_FOLDER_CLASS_PREFIX = "${CFG_PREFIX}FC"
 
     fun getCfgObjectTypes(): Set<CfgObjectType> {
         val types = GEnum.valuesBy(CfgObjectType::class.java).toMutableSet()
@@ -100,13 +102,16 @@ object ConfigurationObjects {
 
     fun toCfgIVRProfileType(type: String?) =
         if (type == null) null
-        else GEnum.getValue(CfgIVRProfileType::class.java, "$CFG_IVR_PROFILE_PREFIX$type")
-                as CfgIVRProfileType
+        else GEnum.getValue(CfgIVRProfileType::class.java, "$CFG_IVR_PROFILE_PREFIX$type") as CfgIVRProfileType
 
     fun toCfgTransactionType(transactionType: String?) =
         if (transactionType == null) null
         else GEnum.getValue(CfgTransactionType::class.java, "$CFG_TRANSACTION_PREFIX$transactionType")
                 as CfgTransactionType
+
+    fun toCfgFolderClass(folderClass: String?) =
+        if (folderClass == null) null
+        else GEnum.getValue(CfgFolderClass::class.java, "$CFG_FOLDER_CLASS_PREFIX$folderClass") as CfgFolderClass
 
     private fun toGEnum(shortName: String?, enumType: Class<out GEnum>) =
         if (shortName == null) null

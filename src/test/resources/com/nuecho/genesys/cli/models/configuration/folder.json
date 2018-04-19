@@ -1,0 +1,23 @@
+{
+  "customType": 8,
+  "description": "description",
+  "folder": {
+    "owner": {
+      "name": "tenant",
+      "type": "tenant"
+    },
+    "path": [
+      "folder"
+    ],
+    "type": "folder"
+  },
+  "folderClass": "default",
+  "name": "name",
+  "state": "enabled",
+  "userProperties": {
+    "section": {
+      "number": 456,
+      "string": "def"
+    }
+  }
+}

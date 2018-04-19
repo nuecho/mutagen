@@ -1,0 +1,32 @@
+{
+  "__metadata__": {
+    "formatName": "JSON",
+    "formatVersion": "1.0.0"
+  },
+  "folders": [
+    {
+      "customType": 8,
+      "description": "description",
+      "folder": {
+        "owner": {
+          "name": "Environment",
+          "type": "tenant"
+        },
+        "path": [
+          "Persons"
+        ],
+        "type": "person"
+      },
+      "folderClass": "default",
+      "name": "cfgObjectTest",
+      "state": "enabled",
+      "userProperties": {
+        "section": {
+          "number": 456,
+          "string": "def"
+        }
+      }
+    }
+  ]
+}
+

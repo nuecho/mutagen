@@ -17,7 +17,7 @@ function cfgObjectTests (
       cfgObjectInitialExportTest(cfgObjectType, mergedOptions.initialNumberOfObjects);
     }
     if (mergedOptions.checkMandatoryProperties) {
-      cfgObjectMissingPropertiesTest(cfgObjectType, getResourcePath(`config/config-objects/empty-${configurationFile}`));
+      cfgObjectMissingPropertiesTest(cfgObjectType, getResourcePath(`config/config-objects/invalid-${configurationFile}`));
     }
     cfgObjectCreationTest(cfgObjectType, getResourcePath(`config/config-objects/${configurationFile}`));
     cfgObjectUpdateTest(cfgObjectType, getResourcePath(`config/config-objects/${configurationFile}`));
@@ -43,7 +43,7 @@ function cfgObjectInitialExportTest(cfgObjectType, initialNumberOfObjects) {
 
 function cfgObjectMissingPropertiesTest(cfgObjectType, emptyConfigurationPath) {
   test(`should throw exception when new ${cfgObjectType} to import miss mandatory properties ${cfgObjectType}`, () => {
-    assertMutagenResult(`config import ${emptyConfigurationPath}`, "exception has been thrown", 1);
+    assertMutagenResult(`config import --auto-confirm ${emptyConfigurationPath}`, "exception has been thrown", 1);
   });
 };
 
