@@ -1,4 +1,3 @@
-
 > Provide a powerful, enjoyable, yet lightweight, Genesys toolbox for the Service
 > Delivery team to rely on as part of any troubleshooting, testing, support, management,
 > development tasks.
@@ -74,6 +73,10 @@ RDBMS:
 cd docker
 docker-compose run --rm -p 2020:2020 configserver
 ```
+
+_For linux users_: since the docker-compose file uses environment variable, the preceding command won't work
+if it is ran with `sudo`. Please follow the [Manage Docker as a non-root user](https://docs.docker.com/install/linux/linux-postinstall/) 
+procedure.
 
 Here is a sample `environments.yml` configuration:
 
