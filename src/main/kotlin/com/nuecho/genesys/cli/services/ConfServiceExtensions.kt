@@ -7,6 +7,7 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgEnumerator
 import com.genesyslab.platform.applicationblocks.com.objects.CfgFolder
 import com.genesyslab.platform.applicationblocks.com.objects.CfgObjectiveTable
 import com.genesyslab.platform.applicationblocks.com.objects.CfgPerson
+import com.genesyslab.platform.applicationblocks.com.objects.CfgPhysicalSwitch
 import com.genesyslab.platform.applicationblocks.com.objects.CfgPlace
 import com.genesyslab.platform.applicationblocks.com.objects.CfgRole
 import com.genesyslab.platform.applicationblocks.com.objects.CfgScript
@@ -20,6 +21,7 @@ import com.genesyslab.platform.applicationblocks.com.queries.CfgEnumeratorQuery
 import com.genesyslab.platform.applicationblocks.com.queries.CfgFolderQuery
 import com.genesyslab.platform.applicationblocks.com.queries.CfgObjectiveTableQuery
 import com.genesyslab.platform.applicationblocks.com.queries.CfgPersonQuery
+import com.genesyslab.platform.applicationblocks.com.queries.CfgPhysicalSwitchQuery
 import com.genesyslab.platform.applicationblocks.com.queries.CfgPlaceQuery
 import com.genesyslab.platform.applicationblocks.com.queries.CfgRoleQuery
 import com.genesyslab.platform.applicationblocks.com.queries.CfgScriptQuery
@@ -51,6 +53,9 @@ fun IConfService.retrievePerson(employeeId: String): CfgPerson? {
     query.employeeId = employeeId
     return retrieveObject(CfgPerson::class.java, query)
 }
+
+fun IConfService.retrievePhysicalSwitch(name: String): CfgPhysicalSwitch? =
+    retrieveObject(CfgPhysicalSwitch::class.java, CfgPhysicalSwitchQuery(name))
 
 fun IConfService.retrievePlace(name: String): CfgPlace? = retrieveObject(CfgPlace::class.java, CfgPlaceQuery(name))
 
