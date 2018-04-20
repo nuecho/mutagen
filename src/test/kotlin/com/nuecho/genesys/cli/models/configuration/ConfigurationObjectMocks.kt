@@ -13,15 +13,10 @@ object ConfigurationObjectMocks {
     const val SUB_NUMBER = 456
     const val NUMBER = 123
 
-    fun mockCfgSkillLevel(skillName: String, skillLevel: Int): CfgSkillLevel {
-        val cfgSkill = mockk<CfgSkill>()
-        every { cfgSkill.name } returns skillName
-
-        val cfgSkillLevel = mockk<CfgSkillLevel>()
-        every { cfgSkillLevel.skill } returns cfgSkill
-        every { cfgSkillLevel.level } returns skillLevel
-
-        return cfgSkillLevel
+    private fun mockCfgAgentLogin(loginCode: String): CfgAgentLogin {
+        val cfgAgentLogin = mockk<CfgAgentLogin>()
+        every { cfgAgentLogin.loginCode } returns loginCode
+        return cfgAgentLogin
     }
 
     fun mockCfgAgentLoginInfo(loginCode: String, wrapupTime: Int): CfgAgentLoginInfo {
@@ -33,10 +28,15 @@ object ConfigurationObjectMocks {
         return cfgAgentLoginInfo
     }
 
-    fun mockCfgAgentLogin(loginCode: String): CfgAgentLogin {
-        val cfgAgentLogin = mockk<CfgAgentLogin>()
-        every { cfgAgentLogin.loginCode } returns loginCode
-        return cfgAgentLogin
+    fun mockCfgSkillLevel(skillName: String, skillLevel: Int): CfgSkillLevel {
+        val cfgSkill = mockk<CfgSkill>()
+        every { cfgSkill.name } returns skillName
+
+        val cfgSkillLevel = mockk<CfgSkillLevel>()
+        every { cfgSkillLevel.skill } returns cfgSkill
+        every { cfgSkillLevel.level } returns skillLevel
+
+        return cfgSkillLevel
     }
 
     fun mockKeyValueCollection(): KeyValueCollection {

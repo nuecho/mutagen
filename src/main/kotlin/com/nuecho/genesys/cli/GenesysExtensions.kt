@@ -1,5 +1,6 @@
 package com.nuecho.genesys.cli
 
+import com.genesyslab.platform.applicationblocks.com.CfgObject
 import com.genesyslab.platform.applicationblocks.com.objects.CfgApplication
 import com.genesyslab.platform.commons.GEnum
 import com.genesyslab.platform.commons.collections.KeyValueCollection
@@ -71,3 +72,6 @@ fun KeyValueCollection.asMap(): Map<String, Any>? =
 
         keyValuePair.stringKey!! to value
     }.toMap()
+
+fun Collection<CfgObject?>.toPrimaryKeyList() =
+    this.mapNotNull { ConfigurationObjects.getPrimaryKey(it) }
