@@ -21,6 +21,7 @@ import com.genesyslab.platform.configuration.protocol.types.CfgObjectState
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectType
 import com.genesyslab.platform.configuration.protocol.types.CfgRank
 import com.genesyslab.platform.configuration.protocol.types.CfgScriptType
+import com.genesyslab.platform.configuration.protocol.types.CfgSwitchType
 import com.genesyslab.platform.configuration.protocol.types.CfgTransactionType
 
 object ConfigurationObjects {
@@ -85,6 +86,7 @@ object ConfigurationObjects {
     fun toCfgObjectState(state: String?) = toGEnum(state, CfgObjectState::class.java) as CfgObjectState?
     fun toCfgRank(rank: String?) = toGEnum(rank, CfgRank::class.java) as CfgRank?
     fun toCfgScriptType(type: String?) = toGEnum(type, CfgScriptType::class.java) as CfgScriptType?
+    fun toCfgSwitchType(type: String?) = toGEnum(type, CfgSwitchType::class.java) as CfgSwitchType?
     fun toCfgTransactionType(transactionType: String?) =
         if (transactionType == null) null
         else GEnum.getValue(CfgTransactionType::class.java, "$CFG_TRANSACTION_PREFIX$transactionType")

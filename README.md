@@ -4,6 +4,8 @@
 
 ## Development
 
+Before you start, take a look at the [Getting Started](https://sites.google.com/m.nuecho.com/hub/mutagen) section.
+
 We are using IntelliJ IDEA as primary IDE and compiling with JDK 8.
 
 1. Get [IntelliJ IDEA Community](https://www.jetbrains.com/idea/download/).

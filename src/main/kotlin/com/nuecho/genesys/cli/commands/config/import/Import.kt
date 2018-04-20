@@ -1,6 +1,7 @@
 package com.nuecho.genesys.cli.commands.config.import
 
 import com.genesyslab.platform.applicationblocks.com.CfgObject
+import com.genesyslab.platform.applicationblocks.com.objects.CfgPhysicalSwitch
 import com.genesyslab.platform.applicationblocks.com.objects.CfgTenant
 import com.nuecho.genesys.cli.GenesysCliCommand
 import com.nuecho.genesys.cli.Logging
@@ -41,6 +42,8 @@ class Import : GenesysCliCommand() {
     }
 
     companion object {
+        private val NO_TENANT_DBID_OBJECTS = listOf(CfgTenant::class, CfgPhysicalSwitch::class)
+
         fun importConfiguration(configuration: Configuration, service: ConfService) {
 
             Logging.info { "Beginning import." }
@@ -51,6 +54,7 @@ class Import : GenesysCliCommand() {
                 importConfigurationObjects(configuration.skills.values, service),
                 importConfigurationObjects(configuration.roles.values, service),
                 importConfigurationObjects(configuration.persons.values, service),
+                importConfigurationObjects(configuration.physicalSwitches.values, service),
                 importConfigurationObjects(configuration.scripts.values, service),
                 importConfigurationObjects(configuration.tenants.values, service),
                 importConfigurationObjects(configuration.transactions.values, service)
@@ -92,7 +96,7 @@ class Import : GenesysCliCommand() {
         internal fun save(cfgObject: CfgObject) = applyTenant(cfgObject).save()
 
         internal fun applyTenant(cfgObject: CfgObject): CfgObject {
-            if (cfgObject is CfgTenant) return cfgObject
+            if (cfgObject::class in NO_TENANT_DBID_OBJECTS) return cfgObject
 
             return cfgObject.apply { setProperty("tenantDBID", cfgObject.configurationService.defaultTenantDbid) }
         }
