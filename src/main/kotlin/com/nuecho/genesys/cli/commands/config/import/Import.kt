@@ -1,6 +1,7 @@
 package com.nuecho.genesys.cli.commands.config.import
 
 import com.genesyslab.platform.applicationblocks.com.CfgObject
+import com.genesyslab.platform.applicationblocks.com.objects.CfgAgentGroup
 import com.genesyslab.platform.applicationblocks.com.objects.CfgPhysicalSwitch
 import com.genesyslab.platform.applicationblocks.com.objects.CfgTenant
 import com.nuecho.genesys.cli.GenesysCliCommand
@@ -50,6 +51,7 @@ class Import : GenesysCliCommand() {
 
             val count = intArrayOf(
                 importConfigurationObjects(configuration.actionCodes.values, service),
+                importConfigurationObjects(configuration.agentGroups.values, service),
                 importConfigurationObjects(configuration.enumerators.values, service),
                 importConfigurationObjects(configuration.skills.values, service),
                 importConfigurationObjects(configuration.roles.values, service),
@@ -97,6 +99,10 @@ class Import : GenesysCliCommand() {
 
         internal fun applyTenant(cfgObject: CfgObject): CfgObject {
             if (cfgObject::class in NO_TENANT_DBID_OBJECTS) return cfgObject
+
+            if (cfgObject is CfgAgentGroup) return cfgObject.apply {
+                groupInfo.apply { setProperty("tenantDBID", cfgObject.configurationService.defaultTenantDbid) }
+            }
 
             return cfgObject.apply { setProperty("tenantDBID", cfgObject.configurationService.defaultTenantDbid) }
         }

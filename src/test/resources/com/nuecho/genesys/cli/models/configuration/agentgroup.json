@@ -1,0 +1,39 @@
+{
+  "agents": [
+    "agent1",
+    "agent2",
+    "agent3"
+  ],
+  "group": {
+    "capacityRule": "capacityRule",
+    "capacityTable": "capacityTable",
+    "contract": "contract",
+    "managers": [
+      "manager1",
+      "manager2"
+    ],
+    "name": "name",
+    "quotaTable": "quotaTable",
+    "routeDNs": [
+      "123",
+      "456",
+      "789"
+    ],
+    "site": "site",
+    "state": "enabled",
+    "userProperties": {
+      "number": 123,
+      "string": "abc",
+      "bytes": [
+        "YWJj"
+      ],
+      "subProperties": {
+        "subNumber": 456,
+        "subString": "def",
+        "subBytes": [
+          "ZGVm"
+        ]
+      }
+    }
+  }
+}

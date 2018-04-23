@@ -2,7 +2,9 @@ package com.nuecho.genesys.cli.services
 
 import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgActionCode
+import com.genesyslab.platform.applicationblocks.com.objects.CfgAgentGroup
 import com.genesyslab.platform.applicationblocks.com.objects.CfgAgentLogin
+import com.genesyslab.platform.applicationblocks.com.objects.CfgDN
 import com.genesyslab.platform.applicationblocks.com.objects.CfgEnumerator
 import com.genesyslab.platform.applicationblocks.com.objects.CfgFolder
 import com.genesyslab.platform.applicationblocks.com.objects.CfgObjectiveTable
@@ -12,11 +14,14 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgPlace
 import com.genesyslab.platform.applicationblocks.com.objects.CfgRole
 import com.genesyslab.platform.applicationblocks.com.objects.CfgScript
 import com.genesyslab.platform.applicationblocks.com.objects.CfgSkill
+import com.genesyslab.platform.applicationblocks.com.objects.CfgStatTable
 import com.genesyslab.platform.applicationblocks.com.objects.CfgSwitch
 import com.genesyslab.platform.applicationblocks.com.objects.CfgTenant
 import com.genesyslab.platform.applicationblocks.com.objects.CfgTransaction
 import com.genesyslab.platform.applicationblocks.com.queries.CfgActionCodeQuery
+import com.genesyslab.platform.applicationblocks.com.queries.CfgAgentGroupQuery
 import com.genesyslab.platform.applicationblocks.com.queries.CfgAgentLoginQuery
+import com.genesyslab.platform.applicationblocks.com.queries.CfgDNQuery
 import com.genesyslab.platform.applicationblocks.com.queries.CfgEnumeratorQuery
 import com.genesyslab.platform.applicationblocks.com.queries.CfgFolderQuery
 import com.genesyslab.platform.applicationblocks.com.queries.CfgObjectiveTableQuery
@@ -26,6 +31,7 @@ import com.genesyslab.platform.applicationblocks.com.queries.CfgPlaceQuery
 import com.genesyslab.platform.applicationblocks.com.queries.CfgRoleQuery
 import com.genesyslab.platform.applicationblocks.com.queries.CfgScriptQuery
 import com.genesyslab.platform.applicationblocks.com.queries.CfgSkillQuery
+import com.genesyslab.platform.applicationblocks.com.queries.CfgStatTableQuery
 import com.genesyslab.platform.applicationblocks.com.queries.CfgSwitchQuery
 import com.genesyslab.platform.applicationblocks.com.queries.CfgTenantQuery
 import com.genesyslab.platform.applicationblocks.com.queries.CfgTransactionQuery
@@ -34,11 +40,17 @@ import com.nuecho.genesys.cli.Logging
 fun IConfService.retrieveActionCode(name: String): CfgActionCode? =
     retrieveObject(CfgActionCode::class.java, CfgActionCodeQuery(name))
 
+fun IConfService.retrieveAgentGroup(name: String): CfgAgentGroup? =
+    retrieveObject(CfgAgentGroup::class.java, CfgAgentGroupQuery(name))
+
 fun IConfService.retrieveAgentLogin(loginCode: String): CfgAgentLogin? {
     val query = CfgAgentLoginQuery()
     query.loginCode = loginCode
     return retrieveObject(CfgAgentLogin::class.java, query)
 }
+
+fun IConfService.retrieveDN(dn: String): CfgDN? =
+    retrieveObject(CfgDN::class.java, CfgDNQuery(dn))
 
 fun IConfService.retrieveEnumerator(name: String): CfgEnumerator? =
     retrieveObject(CfgEnumerator::class.java, CfgEnumeratorQuery(name))
@@ -65,11 +77,16 @@ fun IConfService.retrieveScript(name: String): CfgScript? = retrieveObject(CfgSc
 
 fun IConfService.retrieveSkill(name: String): CfgSkill? = retrieveObject(CfgSkill::class.java, CfgSkillQuery(name))
 
+fun IConfService.retrieveStatTable(name: String): CfgStatTable? =
+    retrieveObject(CfgStatTable::class.java, CfgStatTableQuery(name))
+
+fun IConfService.retrieveSwitch(name: String): CfgSwitch? = retrieveObject(CfgSwitch::class.java, CfgSwitchQuery(name))
+
 fun IConfService.retrieveTransaction(name: String): CfgTransaction? =
     retrieveObject(CfgTransaction::class.java, CfgTransactionQuery(name))
 
-fun IConfService.retrieveSwitch(name: String): CfgSwitch? = retrieveObject(CfgSwitch::class.java, CfgSwitchQuery(name))
 fun IConfService.retrieveTenant(name: String): CfgTenant? = retrieveObject(CfgTenant::class.java, CfgTenantQuery(name))
+
 fun IConfService.retrieveTenants(): Collection<CfgTenant> =
     retrieveMultipleObjects(CfgTenant::class.java, CfgTenantQuery().apply { allTenants = 1 })
 
@@ -82,15 +99,26 @@ val IConfService.defaultTenantDbid: Int
         return tenants.first().dbid
     }
 
-fun IConfService.getTenantDbid(name: String?) =
+fun IConfService.getDNDbid(dn: String?) =
+    if (dn == null) null
+    else {
+        val cfgDN = retrieveDN(dn)
+
+        if (cfgDN == null) {
+            Logging.warn { "Cannot find DN '$dn'" }
+            null
+        } else cfgDN.dbid
+    }
+
+fun IConfService.getFolderDbid(name: String?) =
     if (name == null) null
     else {
-        val cfgTenant = retrieveTenant(name)
+        val cfgFolder = retrieveFolder(name)
 
-        if (cfgTenant == null) {
-            Logging.warn { "Cannot find tenant '$name'" }
+        if (cfgFolder == null) {
+            Logging.warn { "Cannot find folder '$name'" }
             null
-        } else cfgTenant.dbid
+        } else cfgFolder.dbid
     }
 
 fun IConfService.getScriptDbid(name: String?) =
@@ -113,4 +141,37 @@ fun IConfService.getObjectiveTableDbid(name: String?) =
             Logging.warn { "Cannot find objective table '$name'" }
             null
         } else cfgObjectiveTable.dbid
+    }
+
+fun IConfService.getPersonDbid(employeeId: String?) =
+    if (employeeId == null) null
+    else {
+        val person = retrievePerson(employeeId)
+
+        if (person == null) {
+            Logging.warn { "Cannot find person '$employeeId'" }
+            null
+        } else person.dbid
+    }
+
+fun IConfService.getStatTableDbid(name: String?) =
+    if (name == null) null
+    else {
+        val cfgStatTable = retrieveStatTable(name)
+
+        if (cfgStatTable == null) {
+            Logging.warn { "Cannot find stat table '$name'" }
+            null
+        } else cfgStatTable.dbid
+    }
+
+fun IConfService.getTenantDbid(name: String?) =
+    if (name == null) null
+    else {
+        val cfgTenant = retrieveTenant(name)
+
+        if (cfgTenant == null) {
+            Logging.warn { "Cannot find tenant '$name'" }
+            null
+        } else cfgTenant.dbid
     }
