@@ -118,6 +118,7 @@ dependencies {
     compile 'org.jetbrains.kotlinx:kotlinx-coroutines-core:0.22.+'
 
     compile 'com.fasterxml.jackson.module:jackson-module-kotlin:2.9.+'
+    compile 'com.fasterxml.jackson.dataformat:jackson-dataformat-csv:2.9.+'
     compile 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.9.+'
     compile 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.9.+'
 
@@ -127,9 +128,10 @@ dependencies {
     compile 'com.genesyslab.platform:reportingprotocol:+'
     compile 'com.genesyslab.platform:voiceprotocol:+'
 
+    compile 'ch.qos.logback:logback-classic:1.2.+'
+    compile 'com.github.kittinunf.fuel:fuel:1.12.+'
     compile 'info.picocli:picocli:2.3.+'
     compile 'io.github.microutils:kotlin-logging:1.5.+'
-    compile 'ch.qos.logback:logback-classic:1.2.+'
     compile 'org.json:json:20180130'
 
     testCompile 'io.kotlintest:kotlintest:2.0.+'

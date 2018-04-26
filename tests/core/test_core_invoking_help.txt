@@ -10,6 +10,7 @@ Usage: mutagen [OPTIONS] <command>
 Commands:
 
   agent         Genesys Agents tool
+  audio         GAX ARM tool
   config        Genesys Config Server tool
   set-password  Save the password for your env encrypted in a not so secure way
   services      Discover services
