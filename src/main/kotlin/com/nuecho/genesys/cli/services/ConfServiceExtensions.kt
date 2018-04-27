@@ -43,10 +43,12 @@ import com.genesyslab.platform.configuration.protocol.types.CfgObjectType.CFGApp
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectType.CFGDN
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectType.CFGFolder
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectType.CFGObjectiveTable
+import com.genesyslab.platform.configuration.protocol.types.CfgObjectType.CFGPerson
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectType.CFGPhysicalSwitch
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectType.CFGPlace
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectType.CFGScript
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectType.CFGStatTable
+import com.genesyslab.platform.configuration.protocol.types.CfgObjectType.CFGSwitch
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectType.CFGTenant
 import com.nuecho.genesys.cli.Logging.warn
 import com.nuecho.genesys.cli.toShortName
@@ -122,14 +124,14 @@ fun IConfService.getFolderDbid(name: String?) = primaryKeyToDbid(name, ::retriev
 fun IConfService.getObjectiveTableDbid(name: String?) =
     primaryKeyToDbid(name, ::retrieveObjectiveTable, CFGObjectiveTable)
 
-fun IConfService.getPersonDbid(name: String?) = primaryKeyToDbid(name, ::retrievePerson, CFGPlace)
+fun IConfService.getPersonDbid(name: String?) = primaryKeyToDbid(name, ::retrievePerson, CFGPerson)
 fun IConfService.getPhysicalSwitchDbid(name: String?) =
     primaryKeyToDbid(name, ::retrievePhysicalSwitch, CFGPhysicalSwitch)
 
 fun IConfService.getPlaceDbid(name: String?) = primaryKeyToDbid(name, ::retrievePlace, CFGPlace)
 fun IConfService.getScriptDbid(name: String?) = primaryKeyToDbid(name, ::retrieveScript, CFGScript)
 fun IConfService.getStatTableDbid(name: String?) = primaryKeyToDbid(name, ::retrieveStatTable, CFGStatTable)
-fun IConfService.getSwitchDbid(name: String?) = primaryKeyToDbid(name, ::retrieveSwitch, CFGScript)
+fun IConfService.getSwitchDbid(name: String?) = primaryKeyToDbid(name, ::retrieveSwitch, CFGSwitch)
 fun IConfService.getTenantDbid(name: String?) = primaryKeyToDbid(name, ::retrieveTenant, CFGTenant)
 
 private fun IConfService.primaryKeyToDbid(
