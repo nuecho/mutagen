@@ -5,6 +5,7 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgSubcode
 import com.genesyslab.platform.configuration.protocol.types.CfgActionCodeType.CFGTransfer
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectState.CFGEnabled
 import com.nuecho.genesys.cli.models.configuration.ConfigurationAsserts.checkSerialization
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgActionCode
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockKeyValueCollection
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgActionCodeType
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgObjectState
@@ -13,7 +14,6 @@ import com.nuecho.genesys.cli.services.retrieveActionCode
 import com.nuecho.genesys.cli.toShortName
 import io.kotlintest.matchers.shouldBe
 import io.mockk.every
-import io.mockk.mockk
 import io.mockk.staticMockk
 import io.mockk.use
 
@@ -67,24 +67,19 @@ class ActionCodeTest : ConfigurationObjectTest(actionCode, ActionCode("name")) {
     }
 
     private fun mockCfgActionCode(): CfgActionCode {
-        val cfgActionCode = mockk<CfgActionCode>()
+        val cfgActionCode = mockCfgActionCode(actionCode.name)
+        val subcode = CfgSubcode(service, cfgActionCode).apply {
+            name = SUBNAME
+            code = SUBCODE
+        }
 
-        val subcode = CfgSubcode(service, cfgActionCode)
-        subcode.name = SUBNAME
-        subcode.code = SUBCODE
-
-        val subcodes = listOf(subcode)
-        val type = toCfgActionCodeType(actionCode.type)
-        val state = toCfgObjectState(actionCode.state)
-
-        every { cfgActionCode.name } returns actionCode.name
-        every { cfgActionCode.type } returns type
-        every { cfgActionCode.code } returns actionCode.code
-        every { cfgActionCode.subcodes } returns subcodes
-        every { cfgActionCode.state } returns state
-        every { cfgActionCode.userProperties } returns mockKeyValueCollection()
-        every { cfgActionCode.configurationService } returns service
-
-        return cfgActionCode
+        return cfgActionCode.apply {
+            every { type } returns toCfgActionCodeType(actionCode.type)
+            every { code } returns actionCode.code
+            every { subcodes } returns listOf(subcode)
+            every { state } returns toCfgObjectState(actionCode.state)
+            every { userProperties } returns mockKeyValueCollection()
+            every { configurationService } returns service
+        }
     }
 }

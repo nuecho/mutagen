@@ -1,6 +1,6 @@
 + person.00001
 Cannot find script 'capacityRule'
-Cannot find objective table 'contract'
+Cannot find objectivetable 'contract'
 Cannot find place 'contract'
 Cannot find folder 'site'
 Cannot find skill 'skill_1'

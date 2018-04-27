@@ -2,17 +2,17 @@ package com.nuecho.genesys.cli.models.configuration
 
 import com.genesyslab.platform.applicationblocks.com.objects.CfgAgentInfo
 import com.genesyslab.platform.applicationblocks.com.objects.CfgAppRank
-import com.genesyslab.platform.applicationblocks.com.objects.CfgFolder
-import com.genesyslab.platform.applicationblocks.com.objects.CfgObjectiveTable
 import com.genesyslab.platform.applicationblocks.com.objects.CfgPerson
-import com.genesyslab.platform.applicationblocks.com.objects.CfgPlace
-import com.genesyslab.platform.applicationblocks.com.objects.CfgScript
 import com.genesyslab.platform.configuration.protocol.types.CfgAppType
 import com.genesyslab.platform.configuration.protocol.types.CfgFlag
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectState
 import com.genesyslab.platform.configuration.protocol.types.CfgRank
 import com.nuecho.genesys.cli.models.configuration.ConfigurationAsserts.checkSerialization
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgAgentLoginInfo
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgFolder
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgObjectiveTable
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgPlace
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgScript
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgSkillLevel
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockKeyValueCollection
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectUpdateStatus.CREATED
@@ -70,6 +70,7 @@ class PersonTest : ConfigurationObjectTest(person, Person(EMPLOYEE_ID)) {
     init {
         "CfgPerson initialized Person should properly serialize" {
             val person = Person(mockCfgPerson())
+
             checkSerialization(person, "person")
         }
 
@@ -171,18 +172,12 @@ class PersonTest : ConfigurationObjectTest(person, Person(EMPLOYEE_ID)) {
         return cfgAppRank
     }
 
+    @Suppress("LongMethod")
     private fun mockCfgAgentInfo(): CfgAgentInfo {
-        val capacityRule = mockk<CfgScript>()
-        every { capacityRule.name } returns "capacityRule"
-
-        val contract = mockk<CfgObjectiveTable>()
-        every { contract.name } returns "contract"
-
-        val place = mockk<CfgPlace>()
-        every { place.name } returns "place"
-
-        val site = mockk<CfgFolder>()
-        every { site.name } returns "site"
+        val capacityRule = mockCfgScript("capacityRule")
+        val contract = mockCfgObjectiveTable("contract")
+        val place = mockCfgPlace("place")
+        val site = mockCfgFolder("site")
 
         val skillLevels = listOf(
             mockCfgSkillLevel("skill_1", 10),

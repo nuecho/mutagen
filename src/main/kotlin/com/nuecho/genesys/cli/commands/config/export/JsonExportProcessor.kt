@@ -6,7 +6,7 @@ import com.genesyslab.platform.configuration.protocol.types.CfgObjectType
 import com.nuecho.genesys.cli.Logging.debug
 import com.nuecho.genesys.cli.core.defaultJsonGenerator
 import com.nuecho.genesys.cli.models.configuration.ConfigurationBuilder
-import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects
+import com.nuecho.genesys.cli.getPrimaryKey
 import java.io.OutputStream
 
 class JsonExportProcessor(output: OutputStream) : ExportProcessor {
@@ -18,7 +18,7 @@ class JsonExportProcessor(output: OutputStream) : ExportProcessor {
     override fun beginType(type: CfgObjectType) {}
 
     override fun processObject(cfgObject: ICfgObject) {
-        debug { "Processing ${ConfigurationObjects.getPrimaryKey(cfgObject)}." }
+        debug { "Processing ${cfgObject.getPrimaryKey()}." }
         configurationBuilder.add(cfgObject)
     }
 

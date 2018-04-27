@@ -58,6 +58,7 @@ class Import : GenesysCliCommand() {
                 importConfigurationObjects(configuration.persons.values, service),
                 importConfigurationObjects(configuration.physicalSwitches.values, service),
                 importConfigurationObjects(configuration.scripts.values, service),
+                importConfigurationObjects(configuration.switches.values, service),
                 importConfigurationObjects(configuration.tenants.values, service),
                 importConfigurationObjects(configuration.transactions.values, service)
             ).sum()

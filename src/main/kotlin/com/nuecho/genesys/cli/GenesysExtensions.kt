@@ -1,7 +1,12 @@
 package com.nuecho.genesys.cli
 
-import com.genesyslab.platform.applicationblocks.com.CfgObject
+import com.genesyslab.platform.applicationblocks.com.ICfgObject
+import com.genesyslab.platform.applicationblocks.com.objects.CfgAgentLogin
 import com.genesyslab.platform.applicationblocks.com.objects.CfgApplication
+import com.genesyslab.platform.applicationblocks.com.objects.CfgDN
+import com.genesyslab.platform.applicationblocks.com.objects.CfgGroup
+import com.genesyslab.platform.applicationblocks.com.objects.CfgIVRPort
+import com.genesyslab.platform.applicationblocks.com.objects.CfgPerson
 import com.genesyslab.platform.commons.GEnum
 import com.genesyslab.platform.commons.collections.KeyValueCollection
 import com.genesyslab.platform.commons.collections.KeyValuePair
@@ -73,5 +78,28 @@ fun KeyValueCollection.asMap(): Map<String, Any>? =
         keyValuePair.stringKey!! to value
     }.toMap()
 
-fun Collection<CfgObject?>.toPrimaryKeyList() =
-    this.mapNotNull { ConfigurationObjects.getPrimaryKey(it) }
+fun ICfgObject.getPrimaryKey(): String = try {
+    val groupInfoGetter = this.javaClass.getMethod("getGroupInfo")
+    val groupInfo = groupInfoGetter.invoke(this) as CfgGroup
+    groupInfo.name
+} catch (exception: Exception) {
+    // Not a group
+    getStringProperty(this, getPrimaryKeyProperty(this))
+}
+
+fun Collection<ICfgObject?>.toPrimaryKeyList() =
+    this.mapNotNull { it?.getPrimaryKey() }
+
+private fun getPrimaryKeyProperty(target: ICfgObject?) = when (target) {
+    is CfgAgentLogin -> "loginCode"
+    is CfgDN -> "number"
+    is CfgIVRPort -> "portNumber"
+    is CfgPerson -> "employeeID"
+    else -> "name"
+}
+
+private fun getStringProperty(target: Any, propertyName: String): String {
+    val getterName = "get${propertyName.capitalize()}"
+    val getter = target.javaClass.getMethod(getterName)
+    return getter.invoke(target) as String
+}

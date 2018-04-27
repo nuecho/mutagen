@@ -13,6 +13,7 @@ import com.nuecho.genesys.cli.services.getObjectiveTableDbid
 import com.nuecho.genesys.cli.services.getPersonDbid
 import com.nuecho.genesys.cli.services.getScriptDbid
 import com.nuecho.genesys.cli.services.getStatTableDbid
+import com.nuecho.genesys.cli.getPrimaryKey
 import com.nuecho.genesys.cli.toPrimaryKeyList
 import com.nuecho.genesys.cli.toShortName
 
@@ -37,13 +38,13 @@ data class Group(
         name = group.name,
         managers = group.managers?.toPrimaryKeyList(),
         routeDNs = group.routeDNs?.toPrimaryKeyList(),
-        capacityTable = ConfigurationObjects.getPrimaryKey(group.capacityTable),
-        quotaTable = ConfigurationObjects.getPrimaryKey(group.quotaTable),
+        capacityTable = group.capacityTable?.getPrimaryKey(),
+        quotaTable = group.quotaTable?.getPrimaryKey(),
         state = group.state?.toShortName(),
         userProperties = group.userProperties?.asMap(),
-        capacityRule = ConfigurationObjects.getPrimaryKey(group.capacityRule),
-        site = ConfigurationObjects.getPrimaryKey(group.site),
-        contract = ConfigurationObjects.getPrimaryKey(group.contract)
+        capacityRule = group.capacityRule?.getPrimaryKey(),
+        site = group.site?.getPrimaryKey(),
+        contract = group.contract?.getPrimaryKey()
     )
 
     fun toCfgGroup(service: IConfService, parent: CfgObject): CfgGroup =

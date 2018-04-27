@@ -3,6 +3,7 @@ package com.nuecho.genesys.cli.models.configuration
 import com.genesyslab.platform.applicationblocks.com.objects.CfgSkill
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectState
 import com.nuecho.genesys.cli.models.configuration.ConfigurationAsserts.checkSerialization
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgSkill
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockKeyValueCollection
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectUpdateStatus.CREATED
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgObjectState
@@ -11,7 +12,6 @@ import com.nuecho.genesys.cli.services.retrieveSkill
 import com.nuecho.genesys.cli.toShortName
 import io.kotlintest.matchers.shouldBe
 import io.mockk.every
-import io.mockk.mockk
 import io.mockk.staticMockk
 import io.mockk.use
 
@@ -46,14 +46,8 @@ class SkillTest : ConfigurationObjectTest(skill, Skill("foo")) {
         }
     }
 
-    private fun mockCfgSkill(): CfgSkill {
-        val state = toCfgObjectState(skill.state)
-
-        val cfgSkill = mockk<CfgSkill>()
-        every { cfgSkill.name } returns skill.name
-        every { cfgSkill.state } returns state
-        every { cfgSkill.userProperties } returns mockKeyValueCollection()
-
-        return cfgSkill
+    private fun mockCfgSkill() = mockCfgSkill(skill.name).also {
+        every { it.state } returns toCfgObjectState(skill.state)
+        every { it.userProperties } returns mockKeyValueCollection()
     }
 }

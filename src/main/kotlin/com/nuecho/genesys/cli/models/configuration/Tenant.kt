@@ -9,7 +9,6 @@ import com.nuecho.genesys.cli.asBoolean
 import com.nuecho.genesys.cli.asMap
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectUpdateStatus.CREATED
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectUpdateStatus.UNCHANGED
-import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.getPrimaryKey
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setProperty
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgFlag
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgObjectState
@@ -18,6 +17,7 @@ import com.nuecho.genesys.cli.services.getObjectiveTableDbid
 import com.nuecho.genesys.cli.services.getScriptDbid
 import com.nuecho.genesys.cli.services.getTenantDbid
 import com.nuecho.genesys.cli.services.retrieveTenant
+import com.nuecho.genesys.cli.getPrimaryKey
 import com.nuecho.genesys.cli.toShortName
 
 data class Tenant(
@@ -40,11 +40,11 @@ data class Tenant(
 
     constructor(tenant: CfgTenant) : this(
         chargeableNumber = tenant.chargeableNumber,
-        defaultCapacityRule = getPrimaryKey(tenant.defaultCapacityRule),
-        defaultContract = getPrimaryKey(tenant.defaultContract),
+        defaultCapacityRule = tenant.defaultCapacityRule?.getPrimaryKey(),
+        defaultContract = tenant.defaultContract?.getPrimaryKey(),
         isServiceProvider = tenant.isServiceProvider.asBoolean(),
         name = tenant.name,
-        parentTenant = getPrimaryKey(tenant.parentTenant),
+        parentTenant = tenant.parentTenant?.getPrimaryKey(),
         password = tenant.password,
         state = tenant.state?.toShortName(),
         userProperties = tenant.userProperties?.asMap()
