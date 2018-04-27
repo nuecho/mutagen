@@ -1,0 +1,47 @@
+{
+  "dnRange": "74233-74244, 74290",
+  "linkType": "madgelink",
+  "name": "main-switch",
+  "physicalSwitch": "physicalSwitch",
+  "state": "enabled",
+  "switchAccessCodes": [
+    {
+      "accessCode": "123",
+      "destinationSource": "destinationSource1",
+      "dnSource": "dnSource1",
+      "dnisSource": "dnisSource1",
+      "extensionSource": "extensionSource1",
+      "locationSource": "locationSource1",
+      "reasonSource": "reasonSource1",
+      "routeType": "announcement",
+      "switch": "other-switch",
+      "targetType": "maxtargettype"
+    },
+    {
+      "accessCode": "234",
+      "destinationSource": "destinationSource2",
+      "dnSource": "dnSource2",
+      "dnisSource": "dnisSource2",
+      "extensionSource": "extensionSource2",
+      "locationSource": "locationSource2",
+      "reasonSource": "reasonSource2",
+      "routeType": "iddd",
+      "targetType": "targetagentgroup"
+    }
+  ],
+  "tServer": "tServer",
+  "userProperties": {
+    "bytes": [
+      "YWJj"
+    ],
+    "number": 123,
+    "string": "abc",
+    "subProperties": {
+      "subBytes": [
+        "ZGVm"
+      ],
+      "subNumber": 456,
+      "subString": "def"
+    }
+  }
+}

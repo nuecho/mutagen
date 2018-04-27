@@ -1,11 +1,12 @@
 package com.nuecho.genesys.cli.models.configuration
 
-import com.genesyslab.platform.applicationblocks.com.objects.CfgObjectiveTable
-import com.genesyslab.platform.applicationblocks.com.objects.CfgScript
 import com.genesyslab.platform.applicationblocks.com.objects.CfgTenant
 import com.genesyslab.platform.configuration.protocol.types.CfgFlag
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectState.CFGEnabled
 import com.nuecho.genesys.cli.models.configuration.ConfigurationAsserts.checkSerialization
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgObjectiveTable
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgScript
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgTenant
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockKeyValueCollection
 import com.nuecho.genesys.cli.models.configuration.ConfigurationTestData.defaultProperties
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks
@@ -13,7 +14,6 @@ import com.nuecho.genesys.cli.services.retrieveTenant
 import com.nuecho.genesys.cli.toShortName
 import io.kotlintest.matchers.shouldBe
 import io.mockk.every
-import io.mockk.mockk
 import io.mockk.staticMockk
 import io.mockk.use
 
@@ -63,28 +63,19 @@ class TenantTest : ConfigurationObjectTest(tenant, Tenant("foo")) {
     }
 
     private fun mockCfgTenant(): CfgTenant {
+        val capacityRule = mockCfgScript(tenant.defaultCapacityRule)
+        val contract = mockCfgObjectiveTable(tenant.defaultContract)
+        val parentTenant = mockCfgTenant(tenant.parentTenant)
 
-        val capacityRule = mockk<CfgScript>()
-        every { capacityRule.name } returns tenant.defaultCapacityRule
-
-        val contract = mockk<CfgObjectiveTable>()
-        every { contract.name } returns tenant.defaultContract
-
-        val parentTenant = mockk<CfgTenant>()
-        every { parentTenant.name } returns tenant.parentTenant
-
-        val cfgTenant = mockk<CfgTenant>()
-
-        every { cfgTenant.password } returns tenant.password
-        every { cfgTenant.name } returns tenant.name
-        every { cfgTenant.state } returns CFGEnabled
-        every { cfgTenant.userProperties } returns mockKeyValueCollection()
-        every { cfgTenant.chargeableNumber } returns tenant.chargeableNumber
-        every { cfgTenant.isServiceProvider } returns CfgFlag.CFGFalse
-        every { cfgTenant.defaultCapacityRule } returns capacityRule
-        every { cfgTenant.defaultContract } returns contract
-        every { cfgTenant.parentTenant } returns parentTenant
-
-        return cfgTenant
+        return mockCfgTenant(tenant.name).also {
+            every { it.password } returns tenant.password
+            every { it.state } returns CFGEnabled
+            every { it.userProperties } returns mockKeyValueCollection()
+            every { it.chargeableNumber } returns tenant.chargeableNumber
+            every { it.isServiceProvider } returns CfgFlag.CFGFalse
+            every { it.defaultCapacityRule } returns capacityRule
+            every { it.defaultContract } returns contract
+            every { it.parentTenant } returns parentTenant
+        }
     }
 }

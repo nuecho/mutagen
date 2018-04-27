@@ -1,17 +1,16 @@
 package com.nuecho.genesys.cli.models.configuration
 
-import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgAgentInfo
 import com.genesyslab.platform.applicationblocks.com.objects.CfgPerson
 import com.genesyslab.platform.applicationblocks.com.objects.CfgSkillLevel
 import com.nuecho.genesys.cli.Logging.warn
-import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.getPrimaryKey
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setProperty
+import com.nuecho.genesys.cli.services.getFolderDbid
 import com.nuecho.genesys.cli.services.getObjectiveTableDbid
+import com.nuecho.genesys.cli.services.getPlaceDbid
 import com.nuecho.genesys.cli.services.getScriptDbid
-import com.nuecho.genesys.cli.services.retrieveFolder
-import com.nuecho.genesys.cli.services.retrievePlace
 import com.nuecho.genesys.cli.services.retrieveSkill
+import com.nuecho.genesys.cli.getPrimaryKey
 
 data class AgentInfo(
     val capacityRule: String? = null,
@@ -22,12 +21,12 @@ data class AgentInfo(
     val agentLogins: List<AgentLoginInfo>? = null
 ) {
     constructor(agentInfo: CfgAgentInfo) : this(
-        capacityRule = getPrimaryKey(agentInfo.capacityRule),
-        contract = getPrimaryKey(agentInfo.contract),
-        place = getPrimaryKey(agentInfo.place),
-        site = getPrimaryKey(agentInfo.site),
-        skillLevels = agentInfo.skillLevels?.map { getPrimaryKey(it.skill)!! to it.level }?.toMap(),
-        agentLogins = agentInfo.agentLogins?.map { AgentLoginInfo(it) }?.toList()
+        capacityRule = agentInfo.capacityRule?.getPrimaryKey(),
+        contract = agentInfo.contract?.getPrimaryKey(),
+        place = agentInfo.place?.getPrimaryKey(),
+        site = agentInfo.site?.getPrimaryKey(),
+        skillLevels = agentInfo.skillLevels?.map { it.skill!!.getPrimaryKey() to it.level }?.toMap(),
+        agentLogins = agentInfo.agentLogins?.map { AgentLoginInfo(it) }
     )
 
     fun toCfgAgentInfo(person: CfgPerson): CfgAgentInfo {
@@ -37,35 +36,13 @@ data class AgentInfo(
         // agentLogins are not exported
         setProperty("capacityRuleDBID", service.getScriptDbid(capacityRule), agentInfo)
         setProperty("contractDBID", service.getObjectiveTableDbid(contract), agentInfo)
-        setProperty("placeDBID", getPlaceDbid(contract, service), agentInfo)
-        setProperty("siteDBID", getFolderDbid(site, service), agentInfo)
+        setProperty("placeDBID", service.getPlaceDbid(contract), agentInfo)
+        setProperty("siteDBID", service.getFolderDbid(site), agentInfo)
         setProperty("skillLevels", toCfgSkillLevel(skillLevels, person), agentInfo)
 
         return agentInfo
     }
 }
-
-private fun getPlaceDbid(name: String?, service: IConfService) =
-    if (name == null) null
-    else {
-        val cfgPlace = service.retrievePlace(name)
-
-        if (cfgPlace == null) {
-            warn { "Cannot find place '$name'" }
-            null
-        } else cfgPlace.dbid
-    }
-
-private fun getFolderDbid(name: String?, service: IConfService) =
-    if (name == null) null
-    else {
-        val cfgFolder = service.retrieveFolder(name)
-
-        if (cfgFolder == null) {
-            warn { "Cannot find folder '$name'" }
-            null
-        } else cfgFolder.dbid
-    }
 
 private fun toCfgSkillLevel(skillLevels: Map<String, Int>?, person: CfgPerson): List<CfgSkillLevel?>? {
     if (skillLevels == null) return null

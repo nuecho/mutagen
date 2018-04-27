@@ -4,6 +4,7 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgPhysicalSwitch
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectState.CFGEnabled
 import com.genesyslab.platform.configuration.protocol.types.CfgSwitchType.CFGFujitsu
 import com.nuecho.genesys.cli.models.configuration.ConfigurationAsserts.checkSerialization
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgPhysicalSwitch
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockKeyValueCollection
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectUpdateStatus.CREATED
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgObjectState
@@ -13,7 +14,6 @@ import com.nuecho.genesys.cli.services.retrievePhysicalSwitch
 import com.nuecho.genesys.cli.toShortName
 import io.kotlintest.matchers.shouldBe
 import io.mockk.every
-import io.mockk.mockk
 import io.mockk.staticMockk
 import io.mockk.use
 
@@ -50,16 +50,9 @@ class PhysicalSwitchTest : ConfigurationObjectTest(physicalSwitch, PhysicalSwitc
         }
     }
 
-    private fun mockPhysicalSwitch(): CfgPhysicalSwitch {
-        val state = toCfgObjectState(physicalSwitch.state)
-        val type = toCfgSwitchType(physicalSwitch.type)
-
-        val cfgPhysicalSwitch = mockk<CfgPhysicalSwitch>()
-        every { cfgPhysicalSwitch.name } returns physicalSwitch.name
-        every { cfgPhysicalSwitch.type } returns type
-        every { cfgPhysicalSwitch.state } returns state
-        every { cfgPhysicalSwitch.userProperties } returns mockKeyValueCollection()
-
-        return cfgPhysicalSwitch
+    private fun mockPhysicalSwitch() = mockCfgPhysicalSwitch(physicalSwitch.name).also {
+        every { it.type } returns toCfgSwitchType(physicalSwitch.type)
+        every { it.state } returns toCfgObjectState(physicalSwitch.state)
+        every { it.userProperties } returns mockKeyValueCollection()
     }
 }

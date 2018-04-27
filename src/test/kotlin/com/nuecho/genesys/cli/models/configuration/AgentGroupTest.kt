@@ -1,14 +1,14 @@
 package com.nuecho.genesys.cli.models.configuration
 
 import com.genesyslab.platform.applicationblocks.com.objects.CfgAgentGroup
-import com.genesyslab.platform.applicationblocks.com.objects.CfgDN
-import com.genesyslab.platform.applicationblocks.com.objects.CfgFolder
 import com.genesyslab.platform.applicationblocks.com.objects.CfgGroup
-import com.genesyslab.platform.applicationblocks.com.objects.CfgObjectiveTable
-import com.genesyslab.platform.applicationblocks.com.objects.CfgPerson
-import com.genesyslab.platform.applicationblocks.com.objects.CfgScript
-import com.genesyslab.platform.applicationblocks.com.objects.CfgStatTable
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectState
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgDn
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgFolder
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgObjectiveTable
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgPerson
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgScript
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgStatTable
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgObjectState
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks
 import com.nuecho.genesys.cli.services.retrieveAgentGroup
@@ -84,20 +84,15 @@ class AgentGroupTest : ConfigurationObjectTest(agentGroup, AgentGroup(name)) {
 
 @Suppress("LongMethod")
 private fun mockCfgAgentGroup(): CfgAgentGroup {
-    val agentsMock = agentGroup.agents?.map { employeeID ->
-        mockk<CfgPerson>().also { every { it.employeeID } returns employeeID }
-    }
-    val managersMock = agentGroup.group.managers?.map { employeeID ->
-        mockk<CfgPerson>().also { every { it.employeeID } returns employeeID }
-    }
-    val routeDNsMock = agentGroup.group.routeDNs?.map { dn ->
-        mockk<CfgDN>().also { every { it.number } returns dn }
-    }
-    val capacityTableMock = mockk<CfgStatTable>().also { every { it.name } returns agentGroup.group.capacityTable }
-    val quotaTableMock = mockk<CfgStatTable>().also { every { it.name } returns agentGroup.group.quotaTable }
-    val capacityRuleMock = mockk<CfgScript>().also { every { it.name } returns agentGroup.group.capacityRule }
-    val siteMock = mockk<CfgFolder>().also { every { it.name } returns agentGroup.group.site }
-    val contractMock = mockk<CfgObjectiveTable>().also { every { it.name } returns agentGroup.group.contract }
+    val agentsMock = agentGroup.agents?.map { employeeID -> mockCfgPerson(employeeID) }
+    val managersMock = agentGroup.group.managers?.map { employeeID -> mockCfgPerson(employeeID) }
+    val routeDNsMock = agentGroup.group.routeDNs?.map { dn -> mockCfgDn(dn) }
+
+    val capacityTableMock = mockCfgStatTable(agentGroup.group.capacityTable)
+    val quotaTableMock = mockCfgStatTable(agentGroup.group.quotaTable)
+    val capacityRuleMock = mockCfgScript(agentGroup.group.capacityRule)
+    val siteMock = mockCfgFolder(agentGroup.group.site)
+    val contractMock = mockCfgObjectiveTable(agentGroup.group.contract)
 
     val groupMock = mockk<CfgGroup>().apply {
         every { name } returns agentGroup.group.name

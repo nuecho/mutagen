@@ -9,6 +9,7 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgPhysicalSwitch
 import com.genesyslab.platform.applicationblocks.com.objects.CfgRole
 import com.genesyslab.platform.applicationblocks.com.objects.CfgScript
 import com.genesyslab.platform.applicationblocks.com.objects.CfgSkill
+import com.genesyslab.platform.applicationblocks.com.objects.CfgSwitch
 import com.genesyslab.platform.applicationblocks.com.objects.CfgTenant
 import com.genesyslab.platform.applicationblocks.com.objects.CfgTransaction
 
@@ -21,6 +22,7 @@ class ConfigurationBuilder {
     private val roles = HashMap<String, Role>()
     private val scripts = HashMap<String, Script>()
     private val skills = HashMap<String, Skill>()
+    private val switches = HashMap<String, Switch>()
     private val tenants = HashMap<String, Tenant>()
     private val transactions = HashMap<String, Transaction>()
 
@@ -34,6 +36,7 @@ class ConfigurationBuilder {
             is CfgRole -> Role(cfgObject).run { roles.put(primaryKey, this) }
             is CfgScript -> Script(cfgObject).run { scripts.put(primaryKey, this) }
             is CfgSkill -> Skill(cfgObject).run { skills.put(primaryKey, this) }
+            is CfgSwitch -> Switch(cfgObject).run { switches.put(primaryKey, this) }
             is CfgTenant -> Tenant(cfgObject).run { tenants.put(primaryKey, this) }
             is CfgTransaction -> Transaction(cfgObject).run { transactions.put(primaryKey, this) }
             else -> false
@@ -48,6 +51,7 @@ class ConfigurationBuilder {
         roles,
         scripts,
         skills,
+        switches,
         tenants,
         transactions
     )

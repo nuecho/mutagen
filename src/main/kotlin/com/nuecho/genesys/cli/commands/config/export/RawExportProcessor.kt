@@ -5,7 +5,7 @@ import com.genesyslab.platform.applicationblocks.com.ICfgObject
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectType
 import com.nuecho.genesys.cli.core.defaultJsonGenerator
 import com.nuecho.genesys.cli.core.defaultJsonObjectMapper
-import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.getPrimaryKey
+import com.nuecho.genesys.cli.getPrimaryKey
 import org.json.JSONArray
 import org.json.JSONObject
 import org.json.XML.toJSONObject
@@ -36,9 +36,7 @@ class RawExportProcessor(output: OutputStream) : ExportProcessor {
     }
 
     override fun processObject(cfgObject: ICfgObject) {
-        getPrimaryKey(cfgObject)?.let {
-            configurationObjects[it] = cfgObject
-        }
+        configurationObjects[cfgObject.getPrimaryKey()] = cfgObject
     }
 
     override fun endType(type: CfgObjectType) {

@@ -4,6 +4,7 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgEnumerator
 import com.genesyslab.platform.configuration.protocol.types.CfgEnumeratorType.CFGENTRole
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectState.CFGEnabled
 import com.nuecho.genesys.cli.models.configuration.ConfigurationAsserts.checkSerialization
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgEnumerator
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockKeyValueCollection
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgEnumeratorType
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgObjectState
@@ -12,7 +13,6 @@ import com.nuecho.genesys.cli.services.retrieveEnumerator
 import com.nuecho.genesys.cli.toShortName
 import io.kotlintest.matchers.shouldBe
 import io.mockk.every
-import io.mockk.mockk
 import io.mockk.staticMockk
 import io.mockk.use
 
@@ -69,20 +69,12 @@ class EnumeratorTest : ConfigurationObjectTest(enumerator, Enumerator(NAME)) {
         }
     }
 
-    private fun mockCfgEnumerator(): CfgEnumerator {
-        val cfgEnumerator = mockk<CfgEnumerator>()
-
-        val type = toCfgEnumeratorType(enumerator.type)
-        val state = toCfgObjectState(enumerator.state)
-
-        every { cfgEnumerator.name } returns enumerator.name
-        every { cfgEnumerator.displayName } returns enumerator.displayName
-        every { cfgEnumerator.description } returns enumerator.description
-        every { cfgEnumerator.type } returns type
-        every { cfgEnumerator.state } returns state
-        every { cfgEnumerator.userProperties } returns mockKeyValueCollection()
-        every { cfgEnumerator.configurationService } returns service
-
-        return cfgEnumerator
+    private fun mockCfgEnumerator() = mockCfgEnumerator(enumerator.name).also {
+        every { it.displayName } returns enumerator.displayName
+        every { it.description } returns enumerator.description
+        every { it.type } returns toCfgEnumeratorType(enumerator.type)
+        every { it.state } returns toCfgObjectState(enumerator.state)
+        every { it.userProperties } returns mockKeyValueCollection()
+        every { it.configurationService } returns service
     }
 }
