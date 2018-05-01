@@ -16,14 +16,14 @@ object TestResources {
         File(ClassLoader.getSystemClassLoader().getResource(".mutagen/$path").toURI())
 
     fun loadRawConfiguration(path: String): JsonNode =
-        defaultJsonObjectMapper().readTree(loadConfigurationFile(path))
+        defaultJsonObjectMapper().readTree(getTestResource(path))
 
     fun loadJsonConfiguration(path: String): Configuration =
-        defaultJsonObjectMapper().readValue(loadConfigurationFile(path), Configuration::class.java)
+        defaultJsonObjectMapper().readValue(getTestResource(path), Configuration::class.java)
 
     fun <T> loadJsonConfiguration(path: String, objectType: Class<T>): T =
-        defaultJsonObjectMapper().readValue(loadConfigurationFile(path), objectType)
+        defaultJsonObjectMapper().readValue(getTestResource(path), objectType)
 
-    private fun loadConfigurationFile(path: String) =
+    fun getTestResource(path: String) =
         ClassLoader.getSystemClassLoader().getResource("com/nuecho/genesys/cli/$path")
 }

@@ -1,6 +1,7 @@
 package com.nuecho.genesys.cli
 
 import com.nuecho.genesys.cli.commands.agent.Agent
+import com.nuecho.genesys.cli.commands.audio.Audio
 import com.nuecho.genesys.cli.commands.config.Config
 import com.nuecho.genesys.cli.commands.password.SetPasswordCommand
 import com.nuecho.genesys.cli.commands.services.Services
@@ -30,7 +31,7 @@ const val EXTRA_FOOTER = "Please specify a command."
     versionProvider = VersionProvider::class,
     footer = ["%n$FOOTER"],
     commandListHeading = "%nCommands:%n%n",
-    subcommands = [Agent::class, Config::class, SetPasswordCommand::class, Services::class]
+    subcommands = [Agent::class, Audio::class, Config::class, SetPasswordCommand::class, Services::class]
 )
 open class GenesysCli : GenesysCliCommand() {
     companion object {
