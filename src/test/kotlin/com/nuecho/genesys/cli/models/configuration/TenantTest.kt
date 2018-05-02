@@ -54,7 +54,7 @@ class TenantTest : ConfigurationObjectTest(tenant, Tenant("foo"), Tenant(mockCfg
                     parentTenant shouldBe null
                     password shouldBe tenant.password
                     state shouldBe ConfigurationObjects.toCfgObjectState(tenant.state)
-                    userProperties.size shouldBe 4
+                    userProperties.asCategorizedProperties() shouldBe tenant.userProperties
                 }
             }
         }

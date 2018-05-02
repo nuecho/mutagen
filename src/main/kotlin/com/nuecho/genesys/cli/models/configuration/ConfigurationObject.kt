@@ -4,7 +4,7 @@ import com.genesyslab.platform.applicationblocks.com.IConfService
 
 interface ConfigurationObject : Comparable<ConfigurationObject> {
     val primaryKey: String
-    val userProperties: Map<String, Any>?
+    val userProperties: CategorizedProperties?
 
     override fun compareTo(other: ConfigurationObject) = primaryKey.compareTo(other.primaryKey)
 

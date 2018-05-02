@@ -44,7 +44,7 @@ class TransactionTest : ConfigurationObjectTest(transaction, Transaction("foo"),
                     recordPeriod shouldBe transaction.recordPeriod
                     description shouldBe transaction.description
                     state shouldBe ConfigurationObjects.toCfgObjectState(transaction.state)
-                    userProperties.size shouldBe 4
+                    userProperties.asCategorizedProperties() shouldBe transaction.userProperties
                 }
             }
         }

@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgSkill
-import com.nuecho.genesys.cli.asMap
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectUpdateStatus.CREATED
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectUpdateStatus.UNCHANGED
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setProperty
@@ -17,8 +16,8 @@ data class Skill(
     val name: String,
     val state: String? = null,
     @JsonSerialize(using = KeyValueCollectionSerializer::class)
-    @JsonDeserialize(using = KeyValueCollectionDeserializer::class)
-    override val userProperties: Map<String, Any>? = null
+    @JsonDeserialize(using = CategorizedPropertiesDeserializer::class)
+    override val userProperties: CategorizedProperties? = null
 
 ) : ConfigurationObject {
     override val primaryKey: String
@@ -28,7 +27,7 @@ data class Skill(
     constructor(skill: CfgSkill) : this(
         name = skill.name,
         state = skill.state?.toShortName(),
-        userProperties = skill.userProperties?.asMap()
+        userProperties = skill.userProperties?.asCategorizedProperties()
     )
 
     override fun updateCfgObject(service: IConfService): ConfigurationObjectUpdateResult {

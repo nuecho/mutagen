@@ -8,17 +8,9 @@
     "person/pdeschen"
   ],
   "userProperties": {
-    "number": 123,
-    "string": "abc",
-    "bytes": [
-      "YWJj"
-    ],
-    "subProperties": {
-      "subNumber": 456,
-      "subString": "def",
-      "subBytes": [
-        "ZGVm"
-      ]
+    "section": {
+      "number": 456,
+      "string": "def"
     }
   }
 }

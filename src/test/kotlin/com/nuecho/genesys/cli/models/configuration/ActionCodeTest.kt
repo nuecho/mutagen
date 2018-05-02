@@ -57,7 +57,7 @@ class ActionCodeTest : ConfigurationObjectTest(actionCode, ActionCode("name"), A
                     }
 
                     state shouldBe state
-                    userProperties.size shouldBe 4
+                    userProperties.asCategorizedProperties() shouldBe actionCode.userProperties
                 }
             }
         }

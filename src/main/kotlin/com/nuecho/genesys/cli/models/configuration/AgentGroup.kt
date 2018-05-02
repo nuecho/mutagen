@@ -17,7 +17,7 @@ data class AgentGroup(
         @JsonIgnore
         get() = group.primaryKey
 
-    override val userProperties: Map<String, Any>?
+    override val userProperties: CategorizedProperties?
         @JsonIgnore
         get() = group.userProperties
 

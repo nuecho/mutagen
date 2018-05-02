@@ -16,9 +16,7 @@ class GenesysExtensionsTest : StringSpec() {
                 status = DnActions.LoggedIn
             )
 
-            val string = status.toConsoleString()
-
-            string shouldBe """
+            status.toConsoleString() shouldBe """
                 |Agent (test):
                 |  Status: LoggedIn
                 |  Place : testPlace

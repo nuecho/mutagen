@@ -88,7 +88,7 @@ class DNTest : ConfigurationObjectTest(
                     registerAll shouldBe ConfigurationObjects.toCfgDNRegisterFlag(dn.switch.registerAll)
                     switchSpecificType shouldBe dn.switch.switchSpecificType
                     state shouldBe ConfigurationObjects.toCfgObjectState(dn.state)
-                    userProperties.size shouldBe 4
+                    userProperties.asCategorizedProperties() shouldBe dn.userProperties
                 }
             }
         }

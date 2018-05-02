@@ -26,8 +26,7 @@ import io.mockk.every
 import io.mockk.mockk
 
 object ConfigurationObjectMocks {
-    const val SUB_NUMBER = 456
-    const val NUMBER = 123
+    const val NUMBER = 456
 
     fun mockCfgAgentLoginInfo(loginCode: String, wrapupTime: Int): CfgAgentLoginInfo {
         val agentLogin = mockCfgAgentLogin(loginCode)
@@ -47,19 +46,15 @@ object ConfigurationObjectMocks {
     }
 
     fun mockKeyValueCollection(): KeyValueCollection {
-        val subKeyValueCollection = KeyValueCollection()
-        with(subKeyValueCollection) {
-            addPair(KeyValuePair("subNumber", SUB_NUMBER))
-            addPair(KeyValuePair("subString", "def"))
-            addPair(KeyValuePair("subBytes", "def".toByteArray()))
+        val sectionKeyValueCollection = KeyValueCollection()
+        with(sectionKeyValueCollection) {
+            addPair(KeyValuePair("number", NUMBER))
+            addPair(KeyValuePair("string", "def"))
         }
 
         val keyValueCollection = KeyValueCollection()
         with(keyValueCollection) {
-            addPair(KeyValuePair("number", NUMBER))
-            addPair(KeyValuePair("string", "abc"))
-            addPair(KeyValuePair("bytes", "abc".toByteArray()))
-            addPair(KeyValuePair("subProperties", subKeyValueCollection))
+            addPair(KeyValuePair("section", sectionKeyValueCollection))
         }
 
         return keyValueCollection

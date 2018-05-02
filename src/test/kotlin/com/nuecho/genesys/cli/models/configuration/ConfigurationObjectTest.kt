@@ -2,7 +2,6 @@ package com.nuecho.genesys.cli.models.configuration
 
 import com.nuecho.genesys.cli.TestResources.loadJsonConfiguration
 import com.nuecho.genesys.cli.models.configuration.ConfigurationAsserts.checkSerialization
-import com.nuecho.genesys.cli.models.configuration.ConfigurationAsserts.checkUserProperties
 import io.kotlintest.specs.StringSpec
 
 @Suppress("UnnecessaryAbstractClass")
@@ -29,7 +28,7 @@ abstract class ConfigurationObjectTest(
         }
 
         "fully initialized $configurationObjectType should properly serialize" {
-            checkSerialization(configurationObject, "$configurationObjectType")
+            checkSerialization(configurationObject, configurationObjectType)
         }
 
         "$configurationObjectType should properly deserialize" {
@@ -41,8 +40,7 @@ abstract class ConfigurationObjectTest(
             // Normally we should simply check that 'deserializedConfigurationObject shouldBe configurationObject' but
             // since ConfigurationObjectWithUserProperties.equals is broken because of ByteArray.equals, this should do
             // the trick for now.
-            checkSerialization(deserializedConfigurationObject, "$configurationObjectType")
-            checkUserProperties(configurationObject.userProperties!!, deserializedConfigurationObject.userProperties!!)
+            checkSerialization(deserializedConfigurationObject, configurationObjectType)
         }
     }
 }

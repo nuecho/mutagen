@@ -39,7 +39,7 @@ class ScriptTest : ConfigurationObjectTest(script, Script("foo"), Script(mockCfg
                     index shouldBe script.index
                     state shouldBe ConfigurationObjects.toCfgObjectState(script.state)
                     type shouldBe ConfigurationObjects.toCfgScriptType(script.type)
-                    userProperties.size shouldBe 4
+                    userProperties.asCategorizedProperties() shouldBe script.userProperties
                 }
             }
         }

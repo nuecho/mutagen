@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgSwitch
-import com.nuecho.genesys.cli.asMap
+import com.nuecho.genesys.cli.getPrimaryKey
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectUpdateStatus.CREATED
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectUpdateStatus.UNCHANGED
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setProperty
@@ -16,7 +16,6 @@ import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toKeyVal
 import com.nuecho.genesys.cli.services.getApplicationDbid
 import com.nuecho.genesys.cli.services.getPhysicalSwitchDbid
 import com.nuecho.genesys.cli.services.retrieveSwitch
-import com.nuecho.genesys.cli.getPrimaryKey
 import com.nuecho.genesys.cli.toShortName
 
 /**
@@ -31,8 +30,8 @@ data class Switch(
     val dnRange: String? = null,
     val state: String? = null,
     @JsonSerialize(using = KeyValueCollectionSerializer::class)
-    @JsonDeserialize(using = KeyValueCollectionDeserializer::class)
-    override val userProperties: Map<String, Any>? = null
+    @JsonDeserialize(using = CategorizedPropertiesDeserializer::class)
+    override val userProperties: CategorizedProperties? = null
 ) : ConfigurationObject {
     override val primaryKey: String
         @JsonIgnore
@@ -46,7 +45,7 @@ data class Switch(
         switchAccessCodes = switch.switchAccessCodes?.map { SwitchAccessCode(it) },
         dnRange = switch.dnRange,
         state = switch.state?.toShortName(),
-        userProperties = switch.userProperties?.asMap()
+        userProperties = switch.userProperties?.asCategorizedProperties()
     )
 
     override fun updateCfgObject(service: IConfService): ConfigurationObjectUpdateResult {

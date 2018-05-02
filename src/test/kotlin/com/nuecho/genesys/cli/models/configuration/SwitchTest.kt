@@ -86,7 +86,8 @@ class SwitchTest : ConfigurationObjectTest(mainSwitch, Switch("switch"), Switch(
                     linkType shouldBe CfgLinkType.CFGMadgeLink
                     dnRange shouldBe mainSwitch.dnRange
                     state shouldBe toCfgObjectState(mainSwitch.state)
-                    userProperties.size shouldBe 4
+                    userProperties.asCategorizedProperties() shouldBe mainSwitch.userProperties
+
                     switchAccessCodes.size shouldBe 2
 
                     switchAccessCodes.zip(mainSwitch.switchAccessCodes!!) { actual, expected ->

@@ -41,7 +41,7 @@ class SkillTest : ConfigurationObjectTest(
                 with(cfgSkill) {
                     name shouldBe skill.name
                     state shouldBe ConfigurationObjects.toCfgObjectState(skill.state)
-                    userProperties.size shouldBe 4
+                    userProperties.asCategorizedProperties() shouldBe skill.userProperties
                 }
             }
         }

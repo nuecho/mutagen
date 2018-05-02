@@ -7,7 +7,6 @@ import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgScript
 import com.genesyslab.platform.configuration.protocol.types.CfgScriptType
 import com.nuecho.genesys.cli.Logging.warn
-import com.nuecho.genesys.cli.asMap
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectUpdateStatus.CREATED
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectUpdateStatus.UNCHANGED
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setProperty
@@ -23,8 +22,8 @@ data class Script(
     val index: Int = 0,
     val state: String? = null,
     @JsonSerialize(using = KeyValueCollectionSerializer::class)
-    @JsonDeserialize(using = KeyValueCollectionDeserializer::class)
-    override val userProperties: Map<String, Any>? = null
+    @JsonDeserialize(using = CategorizedPropertiesDeserializer::class)
+    override val userProperties: CategorizedProperties? = null
 
 ) : ConfigurationObject {
     override val primaryKey: String
@@ -36,7 +35,7 @@ data class Script(
         type = script.type.toShortName(),
         index = script.index,
         state = script.state?.toShortName(),
-        userProperties = script.userProperties?.asMap()
+        userProperties = script.userProperties?.asCategorizedProperties()
     ) {
         script.resources?.let { warn { "Unsupported ResourceObject collection. Ignoring." } }
     }
