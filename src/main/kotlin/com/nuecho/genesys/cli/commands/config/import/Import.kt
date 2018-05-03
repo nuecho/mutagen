@@ -1,6 +1,7 @@
 package com.nuecho.genesys.cli.commands.config.import
 
 import com.genesyslab.platform.applicationblocks.com.CfgObject
+import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgAgentGroup
 import com.genesyslab.platform.applicationblocks.com.objects.CfgPhysicalSwitch
 import com.genesyslab.platform.applicationblocks.com.objects.CfgTenant
@@ -52,6 +53,7 @@ class Import : GenesysCliCommand() {
             val count = intArrayOf(
                 importConfigurationObjects(configuration.actionCodes.values, service),
                 importConfigurationObjects(configuration.agentGroups.values, service),
+                importConfigurationObjects(configuration.dns.values, service),
                 importConfigurationObjects(configuration.enumerators.values, service),
                 importConfigurationObjects(configuration.skills.values, service),
                 importConfigurationObjects(configuration.roles.values, service),
@@ -68,7 +70,7 @@ class Import : GenesysCliCommand() {
 
         internal fun importConfigurationObjects(
             objects: Collection<ConfigurationObject>,
-            service: ConfService
+            service: IConfService
         ): Int {
             var count = 0
 

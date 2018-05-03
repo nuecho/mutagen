@@ -3,12 +3,12 @@ package com.nuecho.genesys.cli.models.configuration
 import com.genesyslab.platform.applicationblocks.com.objects.CfgEnumerator
 import com.genesyslab.platform.configuration.protocol.types.CfgEnumeratorType.CFGENTRole
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectState.CFGEnabled
-import com.nuecho.genesys.cli.models.configuration.ConfigurationAsserts.checkSerialization
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgEnumerator
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockKeyValueCollection
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgEnumeratorType
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgObjectState
 import com.nuecho.genesys.cli.models.configuration.ConfigurationTestData.defaultProperties
+import com.nuecho.genesys.cli.services.ServiceMocks.mockConfService
 import com.nuecho.genesys.cli.services.retrieveEnumerator
 import com.nuecho.genesys.cli.toShortName
 import io.kotlintest.matchers.shouldBe
@@ -26,12 +26,9 @@ private val enumerator = Enumerator(
     userProperties = defaultProperties()
 )
 
-class EnumeratorTest : ConfigurationObjectTest(enumerator, Enumerator(NAME)) {
+class EnumeratorTest : ConfigurationObjectTest(enumerator, Enumerator(NAME), Enumerator(mockCfgEnumerator())) {
     init {
-        "CfgEnumerator initialized Enumerator should properly serialize" {
-            val enumerator = Enumerator(mockCfgEnumerator())
-            checkSerialization(enumerator, "enumerator")
-        }
+        val service = mockConfService()
 
         "Enumerator.updateCfgObject should properly create CfgEnumerator" {
             staticMockk("com.nuecho.genesys.cli.services.ConfServiceExtensionsKt").use {
@@ -68,13 +65,13 @@ class EnumeratorTest : ConfigurationObjectTest(enumerator, Enumerator(NAME)) {
             }
         }
     }
+}
 
-    private fun mockCfgEnumerator() = mockCfgEnumerator(enumerator.name).also {
-        every { it.displayName } returns enumerator.displayName
-        every { it.description } returns enumerator.description
-        every { it.type } returns toCfgEnumeratorType(enumerator.type)
-        every { it.state } returns toCfgObjectState(enumerator.state)
-        every { it.userProperties } returns mockKeyValueCollection()
-        every { it.configurationService } returns service
-    }
+private fun mockCfgEnumerator() = mockCfgEnumerator(enumerator.name).also {
+    every { it.displayName } returns enumerator.displayName
+    every { it.description } returns enumerator.description
+    every { it.type } returns toCfgEnumeratorType(enumerator.type)
+    every { it.state } returns toCfgObjectState(enumerator.state)
+    every { it.userProperties } returns mockKeyValueCollection()
+    every { it.configurationService } returns mockConfService()
 }

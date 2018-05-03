@@ -4,13 +4,13 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgAgentInfo
 import com.genesyslab.platform.applicationblocks.com.objects.CfgPerson
 import com.genesyslab.platform.applicationblocks.com.objects.CfgSkillLevel
 import com.nuecho.genesys.cli.Logging.warn
+import com.nuecho.genesys.cli.getPrimaryKey
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setProperty
 import com.nuecho.genesys.cli.services.getFolderDbid
 import com.nuecho.genesys.cli.services.getObjectiveTableDbid
 import com.nuecho.genesys.cli.services.getPlaceDbid
 import com.nuecho.genesys.cli.services.getScriptDbid
 import com.nuecho.genesys.cli.services.retrieveSkill
-import com.nuecho.genesys.cli.getPrimaryKey
 
 data class AgentInfo(
     val capacityRule: String? = null,

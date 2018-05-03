@@ -1,0 +1,13 @@
+{
+  "number": "123",
+  "routing": {
+    "type": "direct"
+  },
+  "switch": {
+    "name": "aswitch",
+    "registerAll": "true",
+    "switchSpecificType": 1
+  },
+  "type": "nodn",
+  "useOverride": true
+}

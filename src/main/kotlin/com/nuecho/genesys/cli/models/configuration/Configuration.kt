@@ -3,6 +3,7 @@ package com.nuecho.genesys.cli.models.configuration
 data class Configuration(
     val actionCodes: Map<String, ActionCode> = emptyMap(),
     val agentGroups: Map<String, AgentGroup> = emptyMap(),
+    val dns: Map<String, DN> = emptyMap(),
     val enumerators: Map<String, Enumerator> = emptyMap(),
     val persons: Map<String, Person> = emptyMap(),
     val physicalSwitches: Map<String, PhysicalSwitch> = emptyMap(),

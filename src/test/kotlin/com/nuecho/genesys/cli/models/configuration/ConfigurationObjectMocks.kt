@@ -5,6 +5,7 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgAgentLogin
 import com.genesyslab.platform.applicationblocks.com.objects.CfgAgentLoginInfo
 import com.genesyslab.platform.applicationblocks.com.objects.CfgApplication
 import com.genesyslab.platform.applicationblocks.com.objects.CfgDN
+import com.genesyslab.platform.applicationblocks.com.objects.CfgDNGroup
 import com.genesyslab.platform.applicationblocks.com.objects.CfgEnumerator
 import com.genesyslab.platform.applicationblocks.com.objects.CfgFolder
 import com.genesyslab.platform.applicationblocks.com.objects.CfgObjectiveTable
@@ -67,7 +68,8 @@ object ConfigurationObjectMocks {
     fun mockCfgActionCode(name: String?) = mockk<CfgActionCode>().also { every { it.name } returns name }
     fun mockCfgAgentLogin(loginCode: String) = mockk<CfgAgentLogin>().also { every { it.loginCode } returns loginCode }
     fun mockCfgApplication(name: String) = mockk<CfgApplication>().also { every { it.name } returns name }
-    fun mockCfgDn(number: String?) = mockk<CfgDN>().also { every { it.number } returns number }
+    fun mockCfgDN(number: String?) = mockk<CfgDN>().also { every { it.number } returns number }
+    fun mockCfgDNGroup(name: String?) = mockk<CfgDNGroup>().also { every { it.groupInfo.name } returns name }
     fun mockCfgEnumerator(name: String?) = mockk<CfgEnumerator>().also { every { it.name } returns name }
     fun mockCfgFolder(name: String?) = mockk<CfgFolder>().also { every { it.name } returns name }
     fun mockCfgObjectiveTable(name: String?) = mockk<CfgObjectiveTable>().also { every { it.name } returns name }
