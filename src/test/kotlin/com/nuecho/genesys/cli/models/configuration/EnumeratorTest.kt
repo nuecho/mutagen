@@ -73,5 +73,4 @@ private fun mockCfgEnumerator() = mockCfgEnumerator(enumerator.name).also {
     every { it.type } returns toCfgEnumeratorType(enumerator.type)
     every { it.state } returns toCfgObjectState(enumerator.state)
     every { it.userProperties } returns mockKeyValueCollection()
-    every { it.configurationService } returns mockConfService()
 }
