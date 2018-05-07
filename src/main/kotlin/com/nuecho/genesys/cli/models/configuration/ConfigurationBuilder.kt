@@ -15,48 +15,48 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgTenant
 import com.genesyslab.platform.applicationblocks.com.objects.CfgTransaction
 
 class ConfigurationBuilder {
-    private val actionCodes = HashMap<String, ActionCode>()
-    private val agentGroups = HashMap<String, AgentGroup>()
-    private val dns = HashMap<String, DN>()
-    private val enumerators = HashMap<String, Enumerator>()
-    private val persons = HashMap<String, Person>()
-    private val physicalSwitches = HashMap<String, PhysicalSwitch>()
-    private val roles = HashMap<String, Role>()
-    private val scripts = HashMap<String, Script>()
-    private val skills = HashMap<String, Skill>()
-    private val switches = HashMap<String, Switch>()
-    private val tenants = HashMap<String, Tenant>()
-    private val transactions = HashMap<String, Transaction>()
+    private val actionCodes = ArrayList<ActionCode>()
+    private val agentGroups = ArrayList<AgentGroup>()
+    private val dns = ArrayList<DN>()
+    private val enumerators = ArrayList<Enumerator>()
+    private val persons = ArrayList<Person>()
+    private val physicalSwitches = ArrayList<PhysicalSwitch>()
+    private val roles = ArrayList<Role>()
+    private val scripts = ArrayList<Script>()
+    private val skills = ArrayList<Skill>()
+    private val switches = ArrayList<Switch>()
+    private val tenants = ArrayList<Tenant>()
+    private val transactions = ArrayList<Transaction>()
 
     fun add(cfgObject: ICfgObject) =
         when (cfgObject) {
-            is CfgActionCode -> ActionCode(cfgObject).run { actionCodes.put(primaryKey, this) }
-            is CfgAgentGroup -> AgentGroup(cfgObject).run { agentGroups.put(primaryKey, this) }
-            is CfgDN -> DN(cfgObject).run { dns.put(primaryKey, this) }
-            is CfgEnumerator -> Enumerator(cfgObject).run { enumerators.put(primaryKey, this) }
-            is CfgPerson -> Person(cfgObject).run { persons.put(primaryKey, this) }
-            is CfgPhysicalSwitch -> PhysicalSwitch(cfgObject).run { physicalSwitches.put(primaryKey, this) }
-            is CfgRole -> Role(cfgObject).run { roles.put(primaryKey, this) }
-            is CfgScript -> Script(cfgObject).run { scripts.put(primaryKey, this) }
-            is CfgSkill -> Skill(cfgObject).run { skills.put(primaryKey, this) }
-            is CfgSwitch -> Switch(cfgObject).run { switches.put(primaryKey, this) }
-            is CfgTenant -> Tenant(cfgObject).run { tenants.put(primaryKey, this) }
-            is CfgTransaction -> Transaction(cfgObject).run { transactions.put(primaryKey, this) }
-            else -> false
+            is CfgActionCode -> actionCodes += ActionCode(cfgObject)
+            is CfgAgentGroup -> agentGroups += AgentGroup(cfgObject)
+            is CfgDN -> dns += DN(cfgObject)
+            is CfgEnumerator -> enumerators += Enumerator(cfgObject)
+            is CfgPerson -> persons += Person(cfgObject)
+            is CfgPhysicalSwitch -> physicalSwitches += PhysicalSwitch(cfgObject)
+            is CfgRole -> roles += Role(cfgObject)
+            is CfgScript -> scripts += Script(cfgObject)
+            is CfgSkill -> skills += Skill(cfgObject)
+            is CfgSwitch -> switches += Switch(cfgObject)
+            is CfgTenant -> tenants += Tenant(cfgObject)
+            is CfgTransaction -> transactions += Transaction(cfgObject)
+            else -> Unit
         }
 
     fun build() = Configuration(
-        actionCodes,
-        agentGroups,
-        dns,
-        enumerators,
-        persons,
-        physicalSwitches,
-        roles,
-        scripts,
-        skills,
-        switches,
-        tenants,
-        transactions
+        actionCodes.sorted(),
+        agentGroups.sorted(),
+        dns.sorted(),
+        enumerators.sorted(),
+        persons.sorted(),
+        physicalSwitches.sorted(),
+        roles.sorted(),
+        scripts.sorted(),
+        skills.sorted(),
+        switches.sorted(),
+        tenants.sorted(),
+        transactions.sorted()
     )
 }

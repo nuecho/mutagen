@@ -1,6 +1,6 @@
 {
-  "persons": {
-    "00001": {
+  "persons": [
+    {
       "employeeId": "00001",
       "externalId": "externalId",
       "firstName": "firstName",
@@ -19,7 +19,7 @@
         "agentdesktop": "designer"
       }
     },
-    "00002": {
+    {
       "employeeId": "00002",
       "externalId": "externalId",
       "firstName": "firstName",
@@ -77,5 +77,5 @@
         ]
       }
     }
-  }
+  ]
 }

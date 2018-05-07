@@ -62,8 +62,8 @@ data class DN(
 
     constructor(dn: CfgDN) : this(
         number = dn.number,
-        switch = DNSwitch(dn.switch.name, dn.registerAll.toShortName(), dn.switchSpecificType),
-        type = dn.type.toShortName(),
+        switch = DNSwitch(dn.switch.name, dn.registerAll?.toShortName(), dn.switchSpecificType),
+        type = dn.type?.toShortName(),
 
         association = dn.association,
 
@@ -75,7 +75,7 @@ data class DN(
         },
 
         dnLoginID = dn.dnLoginID,
-        group = dn.group.getPrimaryKey(),
+        group = dn.group?.getPrimaryKey(),
         trunks = dn.trunks,
         override = dn.override,
 
@@ -84,11 +84,11 @@ data class DN(
 
         name = dn.name,
 
-        useOverride = dn.useOverride.asBoolean(),
+        useOverride = dn.useOverride?.asBoolean(),
 
-        accessNumbers = dn.accessNumbers.map { DNAccessNumber(it) },
-        site = dn.site.getPrimaryKey(),
-        contract = dn.contract.getPrimaryKey()
+        accessNumbers = dn.accessNumbers?.map { DNAccessNumber(it) },
+        site = dn.site?.getPrimaryKey(),
+        contract = dn.contract?.getPrimaryKey()
     )
 
     override fun updateCfgObject(service: IConfService): ConfigurationObjectUpdateResult {
