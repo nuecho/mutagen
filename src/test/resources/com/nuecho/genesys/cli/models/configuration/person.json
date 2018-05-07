@@ -38,6 +38,7 @@
   "passwordHashAlgorithm": 1,
   "passwordUpdatingDate": 20180314,
   "state": "enabled",
+  "tenant": "tenant",
   "userName": "userName",
   "userProperties": {
     "section": {

@@ -20,6 +20,7 @@ import com.nuecho.genesys.cli.models.configuration.reference.DNReference
 import com.nuecho.genesys.cli.models.configuration.reference.FolderReference
 import com.nuecho.genesys.cli.models.configuration.reference.ObjectiveTableReference
 import com.nuecho.genesys.cli.models.configuration.reference.SwitchReference
+import com.nuecho.genesys.cli.models.configuration.reference.TenantReference
 import com.nuecho.genesys.cli.services.getObjectDbid
 import com.nuecho.genesys.cli.services.retrieveObject
 import com.nuecho.genesys.cli.toShortName
@@ -28,6 +29,7 @@ import com.nuecho.genesys.cli.toShortName
  * @See https://docs.genesys.com/Documentation/PSDK/8.5.x/ConfigLayerRef/CfgDN
  */
 data class DN(
+    val tenant: TenantReference,
     val number: String,
     val switch: SwitchReference,
     val type: String,
@@ -63,6 +65,7 @@ data class DN(
     override val reference = DNReference(switch, number, type, name)
 
     constructor(dn: CfgDN) : this(
+        tenant = TenantReference(dn.tenant.name),
         number = dn.number,
         switch = dn.switch.getReference(),
         type = dn.type!!.toShortName(),
@@ -102,6 +105,7 @@ data class DN(
         }
 
         CfgDN(service).let {
+            setProperty("tenantDBID", service.getObjectDbid(tenant), it)
             setProperty("number", number, it)
 
             // Switch

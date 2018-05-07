@@ -2,8 +2,6 @@ package com.nuecho.genesys.cli.services
 
 import com.genesyslab.platform.applicationblocks.com.ICfgObject
 import com.genesyslab.platform.applicationblocks.com.IConfService
-import com.genesyslab.platform.applicationblocks.com.objects.CfgTenant
-import com.genesyslab.platform.applicationblocks.com.queries.CfgTenantQuery
 import com.nuecho.genesys.cli.Logging
 import com.nuecho.genesys.cli.models.configuration.reference.ConfigurationObjectReference
 import com.nuecho.genesys.cli.toShortName
@@ -21,15 +19,3 @@ fun IConfService.getObjectDbid(reference: ConfigurationObjectReference<*>?): Int
     Logging.warn { "Cannot find ${reference.getCfgObjectType().toShortName()} '$reference'" }
     return null
 }
-
-fun IConfService.retrieveTenants(): Collection<CfgTenant> =
-    retrieveMultipleObjects(CfgTenant::class.java, CfgTenantQuery().apply { allTenants = 1 })
-
-val IConfService.tenants: Collection<CfgTenant> by TenantCacheDelegate()
-
-val IConfService.defaultTenantDbid: Int
-    get() {
-        if (tenants.isEmpty()) throw IllegalStateException("No tenant found.")
-        if (tenants.size > 1) throw IllegalStateException("Unsupported multi-tenancy. " + tenants.map { it.name })
-        return tenants.first().dbid
-    }

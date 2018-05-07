@@ -47,8 +47,8 @@ class PhysicalSwitchTest : ConfigurationObjectTest(
     }
 }
 
-private fun mockPhysicalSwitch() = mockCfgPhysicalSwitch(physicalSwitch.name).also {
-    every { it.type } returns toCfgSwitchType(physicalSwitch.type)
-    every { it.state } returns toCfgObjectState(physicalSwitch.state)
-    every { it.userProperties } returns mockKeyValueCollection()
+private fun mockPhysicalSwitch() = mockCfgPhysicalSwitch(physicalSwitch.name).apply {
+    every { type } returns toCfgSwitchType(physicalSwitch.type)
+    every { state } returns toCfgObjectState(physicalSwitch.state)
+    every { userProperties } returns mockKeyValueCollection()
 }

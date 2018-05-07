@@ -16,6 +16,8 @@ import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgObj
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgRank
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toKeyValueCollection
 import com.nuecho.genesys.cli.models.configuration.reference.PersonReference
+import com.nuecho.genesys.cli.models.configuration.reference.TenantReference
+import com.nuecho.genesys.cli.services.getObjectDbid
 import com.nuecho.genesys.cli.services.retrieveObject
 import com.nuecho.genesys.cli.toShortName
 
@@ -23,6 +25,7 @@ import com.nuecho.genesys.cli.toShortName
  * Unused address and phones properties are not defined.
  */
 data class Person(
+    val tenant: TenantReference,
     val employeeId: String,
     var userName: String? = null,
     val externalId: String? = null,
@@ -46,6 +49,7 @@ data class Person(
     override val reference = PersonReference(employeeId)
 
     constructor(person: CfgPerson) : this(
+        tenant = TenantReference(person.tenant.name),
         employeeId = person.employeeID,
         externalId = person.externalID,
         firstName = person.firstName,
@@ -70,6 +74,7 @@ data class Person(
         }
 
         CfgPerson(service).let {
+            setProperty("tenantDBID", service.getObjectDbid(tenant), it)
             setProperty("employeeID", employeeId, it)
             setProperty("userName", userName ?: employeeId, it)
             setProperty("externalID", externalId, it)

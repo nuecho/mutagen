@@ -6,6 +6,7 @@
   },
   "switch": "aswitch",
   "switchSpecificType": 1,
+  "tenant": "tenant",
   "type": "nodn",
   "useOverride": true
 }

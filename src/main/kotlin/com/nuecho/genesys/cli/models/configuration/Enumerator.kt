@@ -11,10 +11,13 @@ import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setPrope
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgEnumeratorType
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgObjectState
 import com.nuecho.genesys.cli.models.configuration.reference.EnumeratorReference
+import com.nuecho.genesys.cli.models.configuration.reference.TenantReference
+import com.nuecho.genesys.cli.services.getObjectDbid
 import com.nuecho.genesys.cli.services.retrieveObject
 import com.nuecho.genesys.cli.toShortName
 
 data class Enumerator(
+    val tenant: TenantReference,
     val name: String,
     val displayName: String? = null,
     val description: String? = null,
@@ -28,6 +31,7 @@ data class Enumerator(
     override val reference = EnumeratorReference(name)
 
     constructor(enumerator: CfgEnumerator) : this(
+        tenant = TenantReference(enumerator.tenant.name),
         name = enumerator.name,
         displayName = enumerator.displayName,
         description = enumerator.description,
@@ -42,6 +46,7 @@ data class Enumerator(
         }
 
         CfgEnumerator(service).let {
+            setProperty("tenantDBID", service.getObjectDbid(tenant), it)
             setProperty("name", name, it)
             setProperty("displayName", displayName ?: name, it)
             setProperty("description", description, it)

@@ -5,6 +5,7 @@
   "subcodes": {
     "subname": "subcode"
   },
+  "tenant": "tenant",
   "type": "transfer",
   "userProperties": {
     "section": {

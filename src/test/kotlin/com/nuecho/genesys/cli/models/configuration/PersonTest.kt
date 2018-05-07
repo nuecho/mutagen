@@ -7,9 +7,12 @@ import com.genesyslab.platform.configuration.protocol.types.CfgAppType
 import com.genesyslab.platform.configuration.protocol.types.CfgFlag
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectState
 import com.genesyslab.platform.configuration.protocol.types.CfgRank
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_OBJECT_DBID
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_REFERENCE
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgAgentLoginInfo
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgFolder
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgObjectiveTable
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgPerson
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgPlace
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgScript
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgSkillLevel
@@ -24,7 +27,13 @@ import com.nuecho.genesys.cli.models.configuration.reference.ObjectiveTableRefer
 import com.nuecho.genesys.cli.models.configuration.reference.PlaceReference
 import com.nuecho.genesys.cli.models.configuration.reference.ScriptReference
 import com.nuecho.genesys.cli.models.configuration.reference.SkillReference
-import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks
+import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveAgentLogin
+import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveFolder
+import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveObjectiveTable
+import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrievePlace
+import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveScript
+import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveSkill
+import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveTenant
 import com.nuecho.genesys.cli.services.ServiceMocks.mockConfService
 import com.nuecho.genesys.cli.toShortName
 import io.kotlintest.matchers.shouldBe
@@ -33,6 +42,7 @@ import io.mockk.mockk
 
 private const val EMPLOYEE_ID = "employeeId"
 private val person = Person(
+    tenant = DEFAULT_TENANT_REFERENCE,
     employeeId = EMPLOYEE_ID,
     externalId = "externalId",
     firstName = "firstName",
@@ -69,20 +79,23 @@ private val person = Person(
     )
 )
 
-class PersonTest : ConfigurationObjectTest(person, Person(EMPLOYEE_ID), Person(mockCfgPerson())) {
+class PersonTest : ConfigurationObjectTest(
+    person,
+    Person(tenant = DEFAULT_TENANT_REFERENCE, employeeId = EMPLOYEE_ID),
+    Person(mockCfgPerson())
+) {
     init {
-        val service = mockConfService()
-
         "Person.updateCfgObject should properly create CfgPerson" {
-            val dbid = 101
+            val service = mockConfService()
 
             every { service.retrieveObject(CfgPerson::class.java, any()) } returns null
-            ConfServiceExtensionMocks.mockRetrieveAgentLogin(service, dbid)
-            ConfServiceExtensionMocks.mockRetrieveFolder(service, dbid)
-            ConfServiceExtensionMocks.mockRetrieveObjectiveTable(service, dbid)
-            ConfServiceExtensionMocks.mockRetrievePlace(service, dbid)
-            ConfServiceExtensionMocks.mockRetrieveScript(service, dbid)
-            ConfServiceExtensionMocks.mockRetrieveSkill(service, dbid)
+            mockRetrieveTenant(service)
+            mockRetrieveAgentLogin(service)
+            mockRetrieveFolder(service)
+            mockRetrieveObjectiveTable(service)
+            mockRetrievePlace(service)
+            mockRetrieveScript(service)
+            mockRetrieveSkill(service)
 
             val (status, cfgObject) = person.updateCfgObject(service)
             val cfgPerson = cfgObject as CfgPerson
@@ -108,19 +121,21 @@ class PersonTest : ConfigurationObjectTest(person, Person(EMPLOYEE_ID), Person(m
             }
 
             with(cfgPerson.agentInfo) {
-                siteDBID shouldBe dbid
-                placeDBID shouldBe dbid
-                contractDBID shouldBe dbid
-                capacityRuleDBID shouldBe dbid
+                siteDBID shouldBe DEFAULT_OBJECT_DBID
+                placeDBID shouldBe DEFAULT_OBJECT_DBID
+                contractDBID shouldBe DEFAULT_OBJECT_DBID
+                capacityRuleDBID shouldBe DEFAULT_OBJECT_DBID
                 skillLevels.size shouldBe 3
                 agentLogins.size shouldBe 0
             }
         }
 
         "Person.updateCfgObject should use employeeId when username is not specified" {
+            val service = mockConfService()
             every { service.retrieveObject(CfgPerson::class.java, any()) } returns null
+            mockRetrieveTenant(service)
 
-            val (_, cfgObject) = Person(EMPLOYEE_ID).updateCfgObject(service)
+            val (_, cfgObject) = Person(DEFAULT_TENANT_REFERENCE, EMPLOYEE_ID).updateCfgObject(service)
             val cfgPerson = cfgObject as CfgPerson
 
             with(cfgPerson) {
@@ -133,32 +148,30 @@ class PersonTest : ConfigurationObjectTest(person, Person(EMPLOYEE_ID), Person(m
 
 @Suppress("LongMethod")
 private fun mockCfgPerson(): CfgPerson {
-    val appRanks = listOf(
+    val cfgAppRanks = listOf(
         mockCfgAppRank(CfgAppType.CFGAdvisors, CfgRank.CFGUser),
         mockCfgAppRank(CfgAppType.CFGAgentDesktop, CfgRank.CFGDesigner)
     )
 
-    val agentInfo = mockCfgAgentInfo()
+    val cfgAgentInfo = mockCfgAgentInfo()
 
-    val cfgPerson = mockk<CfgPerson>()
-    every { cfgPerson.employeeID } returns person.employeeId
-    every { cfgPerson.externalID } returns person.externalId
-    every { cfgPerson.firstName } returns person.firstName
-    every { cfgPerson.lastName } returns person.lastName
-    every { cfgPerson.userName } returns person.userName
-    every { cfgPerson.password } returns person.password
-    every { cfgPerson.passwordHashAlgorithm } returns person.passwordHashAlgorithm
-    every { cfgPerson.passwordUpdatingDate } returns person.passwordUpdatingDate
-    every { cfgPerson.changePasswordOnNextLogin } returns CfgFlag.CFGFalse
-    every { cfgPerson.emailAddress } returns person.emailAddress
-    every { cfgPerson.state } returns toCfgObjectState(person.state)
-    every { cfgPerson.isAgent } returns CfgFlag.CFGTrue
-    every { cfgPerson.isExternalAuth } returns CfgFlag.CFGFalse
-    every { cfgPerson.appRanks } returns appRanks
-    every { cfgPerson.userProperties } returns mockKeyValueCollection()
-    every { cfgPerson.agentInfo } returns agentInfo
-
-    return cfgPerson
+    return mockCfgPerson(person.employeeId).apply {
+        every { externalID } returns person.externalId
+        every { firstName } returns person.firstName
+        every { lastName } returns person.lastName
+        every { userName } returns person.userName
+        every { password } returns person.password
+        every { passwordHashAlgorithm } returns person.passwordHashAlgorithm
+        every { passwordUpdatingDate } returns person.passwordUpdatingDate
+        every { changePasswordOnNextLogin } returns CfgFlag.CFGFalse
+        every { emailAddress } returns person.emailAddress
+        every { state } returns toCfgObjectState(person.state)
+        every { isAgent } returns CfgFlag.CFGTrue
+        every { isExternalAuth } returns CfgFlag.CFGFalse
+        every { appRanks } returns cfgAppRanks
+        every { userProperties } returns mockKeyValueCollection()
+        every { agentInfo } returns cfgAgentInfo
+    }
 }
 
 private fun mockCfgAppRank(appType: CfgAppType, appRank: CfgRank): CfgAppRank {

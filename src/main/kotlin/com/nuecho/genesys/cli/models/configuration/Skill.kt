@@ -10,10 +10,13 @@ import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectUpdateStat
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setProperty
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toKeyValueCollection
 import com.nuecho.genesys.cli.models.configuration.reference.SkillReference
+import com.nuecho.genesys.cli.models.configuration.reference.TenantReference
+import com.nuecho.genesys.cli.services.getObjectDbid
 import com.nuecho.genesys.cli.services.retrieveObject
 import com.nuecho.genesys.cli.toShortName
 
 data class Skill(
+    val tenant: TenantReference,
     val name: String,
     val state: String? = null,
     @JsonSerialize(using = CategorizedPropertiesSerializer::class)
@@ -25,6 +28,7 @@ data class Skill(
     override val reference = SkillReference(name)
 
     constructor(skill: CfgSkill) : this(
+        tenant = TenantReference(skill.tenant.name),
         name = skill.name,
         state = skill.state?.toShortName(),
         userProperties = skill.userProperties?.asCategorizedProperties()
@@ -36,6 +40,7 @@ data class Skill(
         }
 
         CfgSkill(service).let {
+            setProperty("tenantDBID", service.getObjectDbid(tenant), it)
             setProperty("name", name, it)
             setProperty("userProperties", toKeyValueCollection(userProperties), it)
             setProperty("state", ConfigurationObjects.toCfgObjectState(state), it)

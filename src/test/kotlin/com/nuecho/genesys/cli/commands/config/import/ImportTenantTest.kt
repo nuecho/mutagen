@@ -4,4 +4,7 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgTenant
 import com.nuecho.genesys.cli.models.configuration.Tenant
 import com.nuecho.genesys.cli.services.ServiceMocks.mockConfService
 
-class ImportTenantTest : ImportObjectSpec(CfgTenant(mockConfService()), listOf(Tenant("foo"), Tenant("bar")))
+class ImportTenantTest : ImportObjectSpec(
+    CfgTenant(mockConfService()),
+    listOf(Tenant("foo"), Tenant("bar"))
+)

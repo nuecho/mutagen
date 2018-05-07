@@ -2,6 +2,11 @@
 > Delivery team to rely on as part of any troubleshooting, testing, support, management,
 > development tasks.
 
+## Windows
+- Before checking out the code, ensure that autocrlf is properly set: `git config --global core.autocrlf true`
+- The supported way to run Gradle commands is by using Git Bash through ConEmu.
+  - Use the following launcher config: `"%ConEmuDir%\..\Git\git-cmd.exe" --no-cd --command=usr/bin/bash.exe -l -i`
+
 ## Development
 
 Before you start, take a look at the [Getting Started](https://sites.google.com/m.nuecho.com/hub/mutagen) section.
@@ -26,6 +31,7 @@ We are using IntelliJ IDEA as primary IDE and compiling with JDK 8.
    2. Select `Platform Settings -> SDKs`.
    3. You'll need to re-select the "JDK Home Path". This will refresh the Classpath items with missing jars.
    4. Click OK and the project should now build without any compilation error.
+
 
 ## Getting Started
 

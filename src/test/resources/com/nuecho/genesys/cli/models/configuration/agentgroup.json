@@ -33,6 +33,7 @@
     ],
     "site": "site",
     "state": "enabled",
+    "tenant": "tenant",
     "userProperties": {
       "section": {
         "number": 456,

@@ -1,3 +1,4 @@
 {
-  "name": "switch"
+  "name": "main-switch",
+  "tenant": "tenant"
 }

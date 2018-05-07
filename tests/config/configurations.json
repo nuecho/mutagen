@@ -5,6 +5,7 @@
   },
   "persons": [
     {
+      "tenant": "Environment",
       "employeeId": "00001",
       "externalId": "externalId",
       "firstName": "firstName",
@@ -24,6 +25,7 @@
       }
     },
     {
+      "tenant": "Environment",
       "employeeId": "00002",
       "externalId": "externalId",
       "firstName": "firstName",

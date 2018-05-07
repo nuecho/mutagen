@@ -8,6 +8,7 @@ import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectUpdateStat
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setProperty
 import com.nuecho.genesys.cli.models.configuration.reference.AgentGroupReference
 import com.nuecho.genesys.cli.models.configuration.reference.PersonReference
+import com.nuecho.genesys.cli.models.configuration.reference.TenantReference
 import com.nuecho.genesys.cli.services.getObjectDbid
 import com.nuecho.genesys.cli.services.retrieveObject
 
@@ -27,9 +28,9 @@ data class AgentGroup(
         group = Group(agentGroup.groupInfo)
     )
 
-    constructor(name: String) : this(
+    constructor(tenant: TenantReference, name: String) : this(
         agents = emptyList(),
-        group = Group(name)
+        group = Group(tenant, name)
     )
 
     override fun updateCfgObject(service: IConfService): ConfigurationObjectUpdateResult {

@@ -14,10 +14,13 @@ import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgObj
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgScriptType
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toKeyValueCollection
 import com.nuecho.genesys.cli.models.configuration.reference.ScriptReference
+import com.nuecho.genesys.cli.models.configuration.reference.TenantReference
+import com.nuecho.genesys.cli.services.getObjectDbid
 import com.nuecho.genesys.cli.services.retrieveObject
 import com.nuecho.genesys.cli.toShortName
 
 data class Script(
+    val tenant: TenantReference,
     val name: String,
     val type: String = CfgScriptType.CFGNoScript.toShortName(),
     val index: Int = 0,
@@ -31,6 +34,7 @@ data class Script(
     override val reference = ScriptReference(name)
 
     constructor(script: CfgScript) : this(
+        tenant = TenantReference(script.tenant.name),
         name = script.name,
         type = script.type.toShortName(),
         index = script.index,
@@ -46,10 +50,10 @@ data class Script(
         }
 
         CfgScript(service).let {
+            setProperty("tenantDBID", service.getObjectDbid(tenant), it)
             setProperty("name", name, it)
             setProperty("type", toCfgScriptType(type), it)
             setProperty("index", index, it)
-
             setProperty("state", toCfgObjectState(state), it)
             setProperty("userProperties", toKeyValueCollection(userProperties), it)
             return ConfigurationObjectUpdateResult(CREATED, it)

@@ -1,15 +1,13 @@
 package com.nuecho.genesys.cli.models.configuration
 
 import com.genesyslab.platform.applicationblocks.com.objects.CfgDN
-import com.genesyslab.platform.applicationblocks.com.objects.CfgDNGroup
-import com.genesyslab.platform.applicationblocks.com.objects.CfgFolder
-import com.genesyslab.platform.applicationblocks.com.objects.CfgObjectiveTable
-import com.genesyslab.platform.applicationblocks.com.objects.CfgSwitch
 import com.genesyslab.platform.configuration.protocol.types.CfgDNType
 import com.genesyslab.platform.configuration.protocol.types.CfgFlag
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectState
 import com.genesyslab.platform.configuration.protocol.types.CfgRouteType
 import com.nuecho.genesys.cli.asBoolean
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_OBJECT_DBID
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_REFERENCE
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgDN
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgDNGroup
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgFolder
@@ -17,23 +15,31 @@ import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mock
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgSwitch
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockKeyValueCollection
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectUpdateStatus.CREATED
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgDNRegisterFlag
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgDNType
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgObjectState
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgRouteType
 import com.nuecho.genesys.cli.models.configuration.reference.DNGroupReference
 import com.nuecho.genesys.cli.models.configuration.reference.DNReference
 import com.nuecho.genesys.cli.models.configuration.reference.FolderReference
 import com.nuecho.genesys.cli.models.configuration.reference.ObjectiveTableReference
 import com.nuecho.genesys.cli.models.configuration.reference.SwitchReference
+import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveDNGroup
+import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveFolder
+import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveObjectiveTable
+import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveSwitch
+import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveTenant
 import com.nuecho.genesys.cli.services.ServiceMocks.mockConfService
 import com.nuecho.genesys.cli.toShortName
 import io.kotlintest.matchers.shouldBe
 import io.mockk.every
-import io.mockk.staticMockk
-import io.mockk.use
 
-private const val SWITCH_DBID = 1
+private const val NUMBER = "123"
+private const val SWITCH_NAME = "aswitch"
 private val dn = DN(
-    number = "123",
-    switch = SwitchReference("aswitch"),
+    tenant = DEFAULT_TENANT_REFERENCE,
+    number = NUMBER,
+    switch = SwitchReference(SWITCH_NAME),
     type = CfgDNType.CFGNoDN.toShortName(),
     group = DNGroupReference("dnGroup"),
     association = "anassociation",
@@ -54,48 +60,35 @@ private val dn = DN(
 
 class DNTest : ConfigurationObjectTest(
     dn, DN(
+        tenant = DEFAULT_TENANT_REFERENCE,
         number = "123",
         switch = SwitchReference("aswitch"),
         type = CfgDNType.CFGNoDN.toShortName()
     ), DN(mockCfgDN())
 ) {
     init {
-        val service = mockConfService()
 
         "DN.updateCfgObject should properly create CfgDN" {
-            staticMockk("com.nuecho.genesys.cli.services.ConfServiceExtensionsKt").use {
-                val cfgSwitch = mockCfgSwitch(dn.switch.primaryKey)
-                every { cfgSwitch.objectDbid } returns SWITCH_DBID
+            val service = mockConfService()
+            every { service.retrieveObject(CfgDN::class.java, any()) } returns null
+            mockRetrieveTenant(service)
+            mockRetrieveDNGroup(service)
+            mockRetrieveSwitch(service)
+            mockRetrieveFolder(service)
+            mockRetrieveObjectiveTable(service)
 
-                val cfgFolder = mockCfgFolder(dn.site!!.primaryKey)
-                every { cfgFolder.objectDbid } returns 2
+            val (status, cfgObject) = dn.updateCfgObject(service)
+            val cfgDN = cfgObject as CfgDN
 
-                val cfgObjectiveTable = mockCfgObjectiveTable(dn.contract!!.primaryKey)
-                every { cfgObjectiveTable.objectDbid } returns 3
+            status shouldBe CREATED
 
-                val cfgDNGroup = mockCfgDNGroup(dn.group!!.primaryKey)
-                every { cfgDNGroup.objectDbid } returns 5
-
-                every { service.retrieveObject(CfgDN::class.java, any()) } returns null
-                every { service.retrieveObject(CfgDNGroup::class.java, any()) } returns cfgDNGroup
-                every { service.retrieveObject(CfgSwitch::class.java, any()) } returns cfgSwitch
-                every { service.retrieveObject(CfgFolder::class.java, any()) } returns cfgFolder
-                every { service.retrieveObject(CfgDN::class.java, any()) } returns null
-                every { service.retrieveObject(CfgObjectiveTable::class.java, any()) } returns cfgObjectiveTable
-
-                val (status, cfgObject) = dn.updateCfgObject(service)
-                val cfgDN = cfgObject as CfgDN
-
-                status shouldBe CREATED
-
-                with(cfgDN) {
-                    name shouldBe dn.name
-                    switchDBID shouldBe SWITCH_DBID
-                    registerAll shouldBe ConfigurationObjects.toCfgDNRegisterFlag(dn.registerAll)
-                    switchSpecificType shouldBe dn.switchSpecificType
-                    state shouldBe ConfigurationObjects.toCfgObjectState(dn.state)
-                    userProperties.asCategorizedProperties() shouldBe dn.userProperties
-                }
+            with(cfgDN) {
+                name shouldBe dn.name
+                switchDBID shouldBe DEFAULT_OBJECT_DBID
+                registerAll shouldBe ConfigurationObjects.toCfgDNRegisterFlag(dn.registerAll)
+                switchSpecificType shouldBe dn.switchSpecificType
+                state shouldBe ConfigurationObjects.toCfgObjectState(dn.state)
+                userProperties.asCategorizedProperties() shouldBe dn.userProperties
             }
         }
     }
@@ -103,42 +96,39 @@ class DNTest : ConfigurationObjectTest(
 
 @Suppress("LongMethod")
 private fun mockCfgDN(): CfgDN {
-    val state = toCfgObjectState(dn.state)
-
+    val cfgState = toCfgObjectState(dn.state)
     val cfgDNGroup = mockCfgDNGroup(dn.group!!.primaryKey)
     val cfgSwitch = mockCfgSwitch(dn.switch.primaryKey)
     val cfgSite = mockCfgFolder(dn.site!!.primaryKey)
-    val cfgDestDN = mockCfgDN(dn.routing!!.destinationDNs.first().number).also {
-        every { it.switch } returns cfgSwitch
-        every { it.type } returns CfgDNType.CFGACDQueue
-        every { it.name } returns null
+    val cfgDestDN = mockCfgDN(dn.routing!!.destinationDNs.first().number).apply {
+        every { switch } returns cfgSwitch
+        every { type } returns CfgDNType.CFGACDQueue
+        every { name } returns null
     }
     val cfgObjectiveTable = mockCfgObjectiveTable(dn.contract!!.primaryKey)
     every { cfgObjectiveTable.dbid } returns 111
 
-    val cfgDN = mockCfgDN(dn.number)
+    return mockCfgDN(dn.number).apply {
+        every { group } returns cfgDNGroup
+        every { switch } returns cfgSwitch
+        every { registerAll } returns toCfgDNRegisterFlag(dn.registerAll)
+        every { switchSpecificType } returns dn.switchSpecificType
 
-    every { cfgDN.group } returns cfgDNGroup
-    every { cfgDN.switch } returns cfgSwitch
-    every { cfgDN.registerAll } returns ConfigurationObjects.toCfgDNRegisterFlag(dn.registerAll)
-    every { cfgDN.switchSpecificType } returns dn.switchSpecificType
+        every { type } returns toCfgDNType(dn.type)
+        every { association } returns dn.association
 
-    every { cfgDN.type } returns ConfigurationObjects.toCfgDNType(dn.type)
-    every { cfgDN.association } returns dn.association
+        every { routeType } returns toCfgRouteType(dn.routing?.type)
+        every { destDNs } returns listOf(cfgDestDN)
+        every { dnLoginID } returns dn.dnLoginID
+        every { trunks } returns dn.trunks
+        every { override } returns dn.override
+        every { accessNumbers } returns emptyList()
+        every { state } returns cfgState
+        every { userProperties } returns mockKeyValueCollection()
 
-    every { cfgDN.routeType } returns ConfigurationObjects.toCfgRouteType(dn.routing?.type)
-    every { cfgDN.destDNs } returns listOf(cfgDestDN)
-    every { cfgDN.dnLoginID } returns dn.dnLoginID
-    every { cfgDN.trunks } returns dn.trunks
-    every { cfgDN.override } returns dn.override
-    every { cfgDN.accessNumbers } returns listOf()
-    every { cfgDN.state } returns state
-    every { cfgDN.userProperties } returns mockKeyValueCollection()
-
-    every { cfgDN.name } returns dn.name
-    every { cfgDN.useOverride } returns ConfigurationObjects.toCfgFlag(dn.useOverride)
-    every { cfgDN.site } returns cfgSite
-    every { cfgDN.contract } returns cfgObjectiveTable
-
-    return cfgDN
+        every { name } returns dn.name
+        every { useOverride } returns ConfigurationObjects.toCfgFlag(dn.useOverride)
+        every { site } returns cfgSite
+        every { contract } returns cfgObjectiveTable
+    }
 }

@@ -3,6 +3,7 @@ package com.nuecho.genesys.cli.models.configuration
 import com.genesyslab.platform.applicationblocks.com.objects.CfgTenant
 import com.genesyslab.platform.configuration.protocol.types.CfgFlag
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectState.CFGEnabled
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_OBJECT_DBID
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgObjectiveTable
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgScript
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgTenant
@@ -11,7 +12,8 @@ import com.nuecho.genesys.cli.models.configuration.ConfigurationTestData.default
 import com.nuecho.genesys.cli.models.configuration.reference.ObjectiveTableReference
 import com.nuecho.genesys.cli.models.configuration.reference.ScriptReference
 import com.nuecho.genesys.cli.models.configuration.reference.TenantReference
-import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks
+import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveObjectiveTable
+import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveScript
 import com.nuecho.genesys.cli.services.ServiceMocks.mockConfService
 import com.nuecho.genesys.cli.toShortName
 import io.kotlintest.matchers.shouldBe
@@ -30,14 +32,11 @@ private val tenant = Tenant(
 
 class TenantTest : ConfigurationObjectTest(tenant, Tenant("foo"), Tenant(mockCfgTenant())) {
     init {
-        val service = mockConfService()
-
         "Tenant.updateCfgObject should properly create CfgTenant" {
-            val dbid = 101
-
+            val service = mockConfService()
             every { service.retrieveObject(CfgTenant::class.java, any()) } returns null
-            ConfServiceExtensionMocks.mockRetrieveObjectiveTable(service, dbid)
-            ConfServiceExtensionMocks.mockRetrieveScript(service, dbid)
+            mockRetrieveObjectiveTable(service)
+            mockRetrieveScript(service)
 
             val (status, cfgObject) = tenant.updateCfgObject(service)
             val cfgTenant = cfgObject as CfgTenant
@@ -46,8 +45,8 @@ class TenantTest : ConfigurationObjectTest(tenant, Tenant("foo"), Tenant(mockCfg
 
             with(cfgTenant) {
                 name shouldBe tenant.name
-                defaultCapacityRuleDBID shouldBe dbid
-                defaultContractDBID shouldBe dbid
+                defaultCapacityRuleDBID shouldBe DEFAULT_OBJECT_DBID
+                defaultContractDBID shouldBe DEFAULT_OBJECT_DBID
                 chargeableNumber shouldBe tenant.chargeableNumber
                 parentTenant shouldBe null
                 password shouldBe tenant.password

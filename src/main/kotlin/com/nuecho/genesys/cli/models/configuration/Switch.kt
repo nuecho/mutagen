@@ -16,6 +16,7 @@ import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toKeyVal
 import com.nuecho.genesys.cli.models.configuration.reference.ApplicationReference
 import com.nuecho.genesys.cli.models.configuration.reference.PhysicalSwitchReference
 import com.nuecho.genesys.cli.models.configuration.reference.SwitchReference
+import com.nuecho.genesys.cli.models.configuration.reference.TenantReference
 import com.nuecho.genesys.cli.services.getObjectDbid
 import com.nuecho.genesys.cli.services.retrieveObject
 import com.nuecho.genesys.cli.toShortName
@@ -24,6 +25,7 @@ import com.nuecho.genesys.cli.toShortName
  * Unused fields address and contactPersonDBID are not defined.
  */
 data class Switch(
+    val tenant: TenantReference,
     val name: String,
 
     val physicalSwitch: PhysicalSwitchReference? = null,
@@ -43,6 +45,7 @@ data class Switch(
     override val reference = SwitchReference(name)
 
     constructor(switch: CfgSwitch) : this(
+        tenant = TenantReference(switch.tenant.name),
         name = switch.name,
         physicalSwitch = switch.physSwitch?.getReference(),
         tServer = switch.tServer?.getReference(),
@@ -59,6 +62,7 @@ data class Switch(
         }
 
         CfgSwitch(service).let { switch ->
+            setProperty("tenantDBID", service.getObjectDbid(tenant), switch)
             setProperty("name", name, switch)
             setProperty("physSwitchDBID", service.getObjectDbid(physicalSwitch), switch)
             setProperty("TServerDBID", service.getObjectDbid(tServer), switch)

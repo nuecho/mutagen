@@ -13,10 +13,13 @@ import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgAct
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgObjectState
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toKeyValueCollection
 import com.nuecho.genesys.cli.models.configuration.reference.ActionCodeReference
+import com.nuecho.genesys.cli.models.configuration.reference.TenantReference
+import com.nuecho.genesys.cli.services.getObjectDbid
 import com.nuecho.genesys.cli.services.retrieveObject
 import com.nuecho.genesys.cli.toShortName
 
 data class ActionCode(
+    val tenant: TenantReference,
     val name: String,
     val type: String? = null,
     val code: String? = null,
@@ -30,6 +33,7 @@ data class ActionCode(
     override val reference = ActionCodeReference(name)
 
     constructor(actionCode: CfgActionCode) : this(
+        tenant = TenantReference(actionCode.tenant.name),
         name = actionCode.name,
         type = actionCode.type?.toShortName(),
         code = actionCode.code,
@@ -44,6 +48,7 @@ data class ActionCode(
         }
 
         CfgActionCode(service).let {
+            setProperty("tenantDBID", service.getObjectDbid(tenant), it)
             setProperty("name", name, it)
             setProperty("type", toCfgActionCodeType(type), it)
             setProperty("code", code, it)

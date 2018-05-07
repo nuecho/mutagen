@@ -14,11 +14,14 @@ import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setPrope
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgObjectState
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toKeyValueCollection
 import com.nuecho.genesys.cli.models.configuration.reference.RoleReference
+import com.nuecho.genesys.cli.models.configuration.reference.TenantReference
+import com.nuecho.genesys.cli.services.getObjectDbid
 import com.nuecho.genesys.cli.services.retrieveObject
 import com.nuecho.genesys.cli.toShortName
 import java.util.SortedSet
 
 data class Role(
+    val tenant: TenantReference,
     val name: String,
     val description: String? = null,
     val state: String? = null,
@@ -31,6 +34,7 @@ data class Role(
     override val reference = RoleReference(name)
 
     constructor(role: CfgRole) : this(
+        tenant = TenantReference(role.tenant.name),
         name = role.name,
         description = role.description,
         state = role.state?.toShortName(),
@@ -62,6 +66,7 @@ data class Role(
 
         // members are not exported
         CfgRole(service).let {
+            setProperty("tenantDBID", service.getObjectDbid(tenant), it)
             setProperty("name", name, it)
             setProperty("description", description, it)
             setProperty("state", toCfgObjectState(state), it)

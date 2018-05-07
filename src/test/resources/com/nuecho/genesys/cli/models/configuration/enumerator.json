@@ -3,6 +3,7 @@
   "displayName": "displayName",
   "name": "name",
   "state": "enabled",
+  "tenant": "tenant",
   "type": "entrole",
   "userProperties": {
     "section": {
