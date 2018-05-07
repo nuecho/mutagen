@@ -11,8 +11,6 @@ import org.json.JSONObject
 import org.json.XML.toJSONObject
 import java.io.OutputStream
 import java.io.StringWriter
-import java.util.SortedMap
-import java.util.TreeMap
 import javax.xml.transform.OutputKeys
 import javax.xml.transform.TransformerFactory
 import javax.xml.transform.dom.DOMSource
@@ -25,7 +23,7 @@ class RawExportProcessor(output: OutputStream) : ExportProcessor {
     private val xmlTransformer = TransformerFactory.newInstance().newTransformer()
     private val objectMapper = defaultJsonObjectMapper()
     private val jsonGenerator: JsonGenerator = defaultJsonGenerator(output)
-    private val configurationObjects: SortedMap<String, ICfgObject> = TreeMap()
+    private val configurationObjects: MutableList<ICfgObject> = ArrayList()
 
     override fun begin() {
         jsonGenerator.writeStartObject()
@@ -36,28 +34,27 @@ class RawExportProcessor(output: OutputStream) : ExportProcessor {
     }
 
     override fun processObject(cfgObject: ICfgObject) {
-        configurationObjects[cfgObject.getPrimaryKey()] = cfgObject
+        configurationObjects += cfgObject
     }
 
     override fun endType(type: CfgObjectType) {
         val typeName = type.name()
-        jsonGenerator.writeObjectFieldStart(typeName)
+        jsonGenerator.writeArrayFieldStart(typeName)
 
-        configurationObjects.forEach {
-            val (primaryKey, configurationObject) = it
-            val xml = toXml(configurationObject)
+        configurationObjects
+            .sortedBy { it.getPrimaryKey() }
+            .forEach { configurationObject ->
+                val xml = toXml(configurationObject)
 
-            val jsonObject = toJSONObject(xml).getJSONObject(typeName.replace("CFG", "Cfg"))!!
-            jsonObject.remove(XMLNS)
-            prettifyObject(jsonObject)
+                val jsonObject = toJSONObject(xml).getJSONObject(typeName.replace("CFG", "Cfg"))!!
+                jsonObject.remove(XMLNS)
+                prettifyObject(jsonObject)
 
-            val jsonNode = objectMapper.readTree(jsonObject.toString(0))
+                val jsonNode = objectMapper.readTree(jsonObject.toString(0))
+                jsonGenerator.writeObject(jsonNode)
+            }
 
-            jsonGenerator.writeFieldName(primaryKey)
-            jsonGenerator.writeObject(jsonNode)
-        }
-
-        jsonGenerator.writeEndObject()
+        jsonGenerator.writeEndArray()
     }
 
     override fun end() {
