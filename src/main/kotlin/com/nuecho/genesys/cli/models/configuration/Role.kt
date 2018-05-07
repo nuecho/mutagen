@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgRole
 import com.nuecho.genesys.cli.Logging.warn
-import com.nuecho.genesys.cli.asMap
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectUpdateStatus.CREATED
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectUpdateStatus.UNCHANGED
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.dbidToPrimaryKey
@@ -23,8 +22,8 @@ data class Role(
     val state: String? = null,
     val members: SortedSet<String>? = null,
     @JsonSerialize(using = KeyValueCollectionSerializer::class)
-    @JsonDeserialize(using = KeyValueCollectionDeserializer::class)
-    override val userProperties: Map<String, Any>? = null
+    @JsonDeserialize(using = CategorizedPropertiesDeserializer::class)
+    override val userProperties: CategorizedProperties? = null
 ) : ConfigurationObject {
     override val primaryKey: String
         @JsonIgnore
@@ -34,7 +33,7 @@ data class Role(
         name = role.name,
         description = role.description,
         state = role.state?.toShortName(),
-        userProperties = role.userProperties?.asMap(),
+        userProperties = role.userProperties?.asCategorizedProperties(),
         members = role.members?.map {
             val type = it.objectType.toShortName()
             val key = dbidToPrimaryKey(it.objectDBID, it.objectType, role.configurationService) ?: it.objectDBID

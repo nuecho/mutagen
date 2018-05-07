@@ -7,7 +7,6 @@ import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgAppRank
 import com.genesyslab.platform.applicationblocks.com.objects.CfgPerson
 import com.nuecho.genesys.cli.asBoolean
-import com.nuecho.genesys.cli.asMap
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectUpdateStatus.CREATED
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectUpdateStatus.UNCHANGED
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setProperty
@@ -39,8 +38,8 @@ data class Person(
     val appRanks: Map<String, String>? = null,
     val agentInfo: AgentInfo? = null,
     @JsonSerialize(using = KeyValueCollectionSerializer::class)
-    @JsonDeserialize(using = KeyValueCollectionDeserializer::class)
-    override val userProperties: Map<String, Any>? = null
+    @JsonDeserialize(using = CategorizedPropertiesDeserializer::class)
+    override val userProperties: CategorizedProperties? = null
 ) : ConfigurationObject {
 
     override val primaryKey: String
@@ -62,7 +61,7 @@ data class Person(
         agent = person.isAgent?.asBoolean(),
         externalAuth = person.isExternalAuth?.asBoolean(),
         appRanks = person.appRanks?.map { it.appType.toShortName() to it.appRank.toShortName() }?.toMap(),
-        userProperties = person.userProperties?.asMap(),
+        userProperties = person.userProperties?.asCategorizedProperties(),
         agentInfo = if (person.agentInfo != null) AgentInfo(person.agentInfo) else null
     )
 

@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgPhysicalSwitch
-import com.nuecho.genesys.cli.asMap
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectUpdateStatus.CREATED
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectUpdateStatus.UNCHANGED
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setProperty
@@ -23,8 +22,8 @@ data class PhysicalSwitch(
     val type: String? = null,
     val state: String? = null,
     @JsonSerialize(using = KeyValueCollectionSerializer::class)
-    @JsonDeserialize(using = KeyValueCollectionDeserializer::class)
-    override val userProperties: Map<String, Any>? = null
+    @JsonDeserialize(using = CategorizedPropertiesDeserializer::class)
+    override val userProperties: CategorizedProperties? = null
 ) : ConfigurationObject {
     override val primaryKey: String
         @JsonIgnore
@@ -34,7 +33,7 @@ data class PhysicalSwitch(
         name = physicalSwitch.name,
         type = physicalSwitch.type?.toShortName(),
         state = physicalSwitch.state?.toShortName(),
-        userProperties = physicalSwitch.userProperties?.asMap()
+        userProperties = physicalSwitch.userProperties?.asCategorizedProperties()
     )
 
     override fun updateCfgObject(service: IConfService): ConfigurationObjectUpdateResult {

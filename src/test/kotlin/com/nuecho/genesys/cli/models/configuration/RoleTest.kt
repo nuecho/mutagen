@@ -61,7 +61,7 @@ class RoleTest : ConfigurationObjectTest(role, Role("name")) {
                     description shouldBe role.description
                     state shouldBe toCfgObjectState(role.state)
                     members.size shouldBe 0
-                    userProperties.size shouldBe 4
+                    userProperties.asCategorizedProperties() shouldBe role.userProperties
                 }
             }
         }

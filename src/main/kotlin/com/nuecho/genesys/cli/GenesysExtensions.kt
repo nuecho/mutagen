@@ -11,8 +11,6 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgIVRPort
 import com.genesyslab.platform.applicationblocks.com.objects.CfgPerson
 import com.genesyslab.platform.applicationblocks.com.objects.CfgPlaceGroup
 import com.genesyslab.platform.commons.GEnum
-import com.genesyslab.platform.commons.collections.KeyValueCollection
-import com.genesyslab.platform.commons.collections.KeyValuePair
 import com.genesyslab.platform.commons.protocol.Endpoint
 import com.genesyslab.platform.configuration.protocol.types.CfgDNRegisterFlag
 import com.genesyslab.platform.configuration.protocol.types.CfgFlag
@@ -71,19 +69,6 @@ fun CfgFlag.asBoolean(): Boolean? =
         CfgFlag.CFGFalse -> false
         else -> throw IllegalArgumentException("Illegal CfgFlag value: '$this'")
     }
-
-fun KeyValueCollection.asMap(): Map<String, Any>? =
-    if (this.isEmpty()) null // so we don't turn out serializing top level empty map
-    else this.map {
-        val keyValuePair = it as KeyValuePair
-        var value = keyValuePair.value!!
-
-        if (value is KeyValueCollection) {
-            value = value.asMap() ?: emptyMap<String, String>()
-        }
-
-        keyValuePair.stringKey!! to value
-    }.toMap()
 
 fun ICfgObject.getPrimaryKey(): String = when (this) {
     is CfgAccessGroup -> groupInfo.name

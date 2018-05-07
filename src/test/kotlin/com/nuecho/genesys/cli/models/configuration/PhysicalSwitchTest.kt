@@ -45,7 +45,7 @@ class PhysicalSwitchTest : ConfigurationObjectTest(
                     name shouldBe physicalSwitch.name
                     type shouldBe toCfgSwitchType(physicalSwitch.type)
                     state shouldBe toCfgObjectState(physicalSwitch.state)
-                    userProperties.size shouldBe 4
+                    userProperties.asCategorizedProperties() shouldBe physicalSwitch.userProperties
                 }
             }
         }

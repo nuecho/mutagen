@@ -10,19 +10,30 @@ import com.fasterxml.jackson.databind.node.NumericNode
 import com.fasterxml.jackson.databind.node.ObjectNode
 import com.fasterxml.jackson.databind.node.TextNode
 
-class KeyValueCollectionDeserializer @JvmOverloads constructor(type: Class<*>? = null) :
-    StdDeserializer<Map<String, Any>>(type) {
+class CategorizedPropertiesDeserializer @JvmOverloads constructor(type: Class<*>? = null) :
+    StdDeserializer<Map<String, Map<String, Any>>>(type) {
 
-    override fun deserialize(parser: JsonParser, context: DeserializationContext): Map<String, Any> =
+    override fun deserialize(parser: JsonParser, context: DeserializationContext): CategorizedProperties =
         parser.codec.readTree<JsonNode>(parser).let {
-            return if (it is ObjectNode) deserializeMap(it, parser)
+            return if (it is ObjectNode) deserializeMapWithSections(it, parser)
             else throw JsonParseException(parser, "Unexpected node value ($it)")
         }
 
-    private fun deserializeMap(node: ObjectNode, parser: JsonParser): Map<String, Any> =
+    @Suppress("UNCHECKED_CAST")
+    private fun deserializeMapWithSections(node: ObjectNode, parser: JsonParser): CategorizedProperties =
+        deserializeMap(node, parser, { value, valueParser ->
+            if (value is ObjectNode) deserializeMap(value, valueParser)
+            else throw InvalidKeyValueCollectionException(
+                "Key Value Collection must contains sections (KeyValueCollection of KeyValueCollection)."
+            )
+        }) as CategorizedProperties
+
+    private fun deserializeMap(
+        node: ObjectNode, parser: JsonParser, deserializer: (JsonNode, JsonParser) -> Any = ::deserializeValue
+    ): Map<String, Any> =
         node.fields()
             .asSequence()
-            .associateBy({ it.key }, { deserializeValue(it.value, parser) })
+            .associateBy({ it.key }, { deserializer(it.value, parser) })
 
     private fun deserializeValue(node: JsonNode, parser: JsonParser): Any =
         when (node) {

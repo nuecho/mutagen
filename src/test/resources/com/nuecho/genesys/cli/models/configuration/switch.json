@@ -31,17 +31,9 @@
   ],
   "tServer": "tServer",
   "userProperties": {
-    "bytes": [
-      "YWJj"
-    ],
-    "number": 123,
-    "string": "abc",
-    "subProperties": {
-      "subBytes": [
-        "ZGVm"
-      ],
-      "subNumber": 456,
-      "subString": "def"
+    "section": {
+      "number": 456,
+      "string": "def"
     }
   }
 }

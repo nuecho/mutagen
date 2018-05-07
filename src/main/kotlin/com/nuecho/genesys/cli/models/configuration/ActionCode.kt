@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgActionCode
 import com.genesyslab.platform.applicationblocks.com.objects.CfgSubcode
-import com.nuecho.genesys.cli.asMap
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectUpdateStatus.CREATED
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectUpdateStatus.UNCHANGED
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setProperty
@@ -23,8 +22,8 @@ data class ActionCode(
     val subcodes: Map<String, String>? = null,
     val state: String? = null,
     @JsonSerialize(using = KeyValueCollectionSerializer::class)
-    @JsonDeserialize(using = KeyValueCollectionDeserializer::class)
-    override val userProperties: Map<String, Any>? = null
+    @JsonDeserialize(using = CategorizedPropertiesDeserializer::class)
+    override val userProperties: CategorizedProperties? = null
 ) : ConfigurationObject {
     override val primaryKey: String
         @JsonIgnore
@@ -36,7 +35,7 @@ data class ActionCode(
         code = actionCode.code,
         subcodes = actionCode.subcodes?.map { it.name to it.code }?.toMap(),
         state = actionCode.state?.toShortName(),
-        userProperties = actionCode.userProperties?.asMap()
+        userProperties = actionCode.userProperties.asCategorizedProperties()
     )
 
     override fun updateCfgObject(service: IConfService): ConfigurationObjectUpdateResult {

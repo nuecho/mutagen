@@ -11,7 +11,6 @@ import com.genesyslab.platform.configuration.protocol.types.CfgDNType
 import com.genesyslab.platform.configuration.protocol.types.CfgFlag
 import com.genesyslab.platform.configuration.protocol.types.CfgRouteType
 import com.nuecho.genesys.cli.asBoolean
-import com.nuecho.genesys.cli.asMap
 import com.nuecho.genesys.cli.getPrimaryKey
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectUpdateStatus.CREATED
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectUpdateStatus.UNCHANGED
@@ -45,8 +44,8 @@ data class DN(
     val state: String? = null,
 
     @JsonSerialize(using = KeyValueCollectionSerializer::class)
-    @JsonDeserialize(using = KeyValueCollectionDeserializer::class)
-    override val userProperties: Map<String, Any>? = null,
+    @JsonDeserialize(using = CategorizedPropertiesDeserializer::class)
+    override val userProperties: CategorizedProperties? = null,
 
     val name: String? = null,
 
@@ -80,7 +79,7 @@ data class DN(
         override = dn.override,
 
         state = dn.state?.toShortName(),
-        userProperties = dn.userProperties?.asMap(),
+        userProperties = dn.userProperties?.asCategorizedProperties(),
 
         name = dn.name,
 

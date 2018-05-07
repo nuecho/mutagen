@@ -24,8 +24,8 @@ private val jsonObjectMapper = jacksonObjectMapper()
 
 private val yamlObjectMapper = ObjectMapper(YAMLFactory()).registerModule(KotlinModule())
 
-fun defaultJsonObjectMapper() = jsonObjectMapper
-fun defaultYamlObjectMapper() = yamlObjectMapper
+fun defaultJsonObjectMapper(): ObjectMapper = jsonObjectMapper
+fun defaultYamlObjectMapper(): ObjectMapper = yamlObjectMapper
 
 fun defaultJsonGenerator(outputStream: OutputStream = System.out): JsonGenerator = JsonFactory()
     .createGenerator(outputStream, JsonEncoding.UTF8)

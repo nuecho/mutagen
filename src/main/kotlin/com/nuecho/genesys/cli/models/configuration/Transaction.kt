@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgTransaction
 import com.genesyslab.platform.configuration.protocol.types.CfgTransactionType
-import com.nuecho.genesys.cli.asMap
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectUpdateStatus.CREATED
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectUpdateStatus.UNCHANGED
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setProperty
@@ -23,8 +22,8 @@ data class Transaction(
     val state: String? = null,
     val type: String? = CfgTransactionType.CFGTRTNoTransactionType.toShortName(),
     @JsonSerialize(using = KeyValueCollectionSerializer::class)
-    @JsonDeserialize(using = KeyValueCollectionDeserializer::class)
-    override val userProperties: Map<String, Any>? = null
+    @JsonDeserialize(using = CategorizedPropertiesDeserializer::class)
+    override val userProperties: CategorizedProperties? = null
 
 ) : ConfigurationObject {
     override val primaryKey: String
@@ -38,7 +37,7 @@ data class Transaction(
         recordPeriod = transaction.recordPeriod,
         state = transaction.state?.toShortName(),
         type = transaction.type.toShortName(),
-        userProperties = transaction.userProperties?.asMap()
+        userProperties = transaction.userProperties?.asCategorizedProperties()
     )
 
     override fun updateCfgObject(service: IConfService): ConfigurationObjectUpdateResult {

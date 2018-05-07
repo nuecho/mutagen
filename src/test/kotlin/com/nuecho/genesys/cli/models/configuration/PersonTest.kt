@@ -102,7 +102,7 @@ class PersonTest : ConfigurationObjectTest(person, Person(EMPLOYEE_ID), Person(m
                     isAgent shouldBe toCfgFlag(person.agent)
                     isExternalAuth shouldBe toCfgFlag(person.externalAuth)
                     appRanks.size shouldBe 2
-                    userProperties.size shouldBe 4
+                    userProperties.asCategorizedProperties() shouldBe person.userProperties
                 }
 
                 with(cfgPerson.agentInfo) {

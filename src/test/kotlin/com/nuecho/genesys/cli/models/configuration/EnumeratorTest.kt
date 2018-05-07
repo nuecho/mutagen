@@ -46,7 +46,7 @@ class EnumeratorTest : ConfigurationObjectTest(enumerator, Enumerator(NAME), Enu
                     description shouldBe enumerator.description
                     type shouldBe toCfgEnumeratorType(enumerator.type)
                     state shouldBe toCfgObjectState(enumerator.state)
-                    userProperties.size shouldBe 4
+                    userProperties.asCategorizedProperties() shouldBe enumerator.userProperties
                 }
             }
         }

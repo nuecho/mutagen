@@ -68,7 +68,7 @@ class AgentGroupTest : ConfigurationObjectTest(agentGroup, AgentGroup(name), Age
                         capacityTableDBID shouldBe dbid
                         quotaTableDBID shouldBe dbid
                         state shouldBe toCfgObjectState(agentGroup.group.state)
-                        userProperties.size shouldBe 4
+                        userProperties.asCategorizedProperties() shouldBe agentGroup.userProperties
                         capacityRuleDBID shouldBe dbid
                         siteDBID shouldBe dbid
                         contractDBID shouldBe dbid
