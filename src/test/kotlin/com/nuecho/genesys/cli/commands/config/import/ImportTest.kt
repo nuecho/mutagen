@@ -2,6 +2,8 @@ package com.nuecho.genesys.cli.commands.config.import
 
 import com.genesyslab.platform.applicationblocks.com.CfgObject
 import com.nuecho.genesys.cli.CliOutputCaptureWrapper.execute
+import com.nuecho.genesys.cli.commands.config.ConfigMocks.mockMetadata
+import com.nuecho.genesys.cli.commands.config.export.ExportFormat.JSON
 import com.nuecho.genesys.cli.commands.config.import.Import.Companion.applyTenant
 import com.nuecho.genesys.cli.commands.config.import.Import.Companion.importConfiguration
 import com.nuecho.genesys.cli.models.configuration.ConfigurationBuilder
@@ -32,12 +34,13 @@ class ImportTest : StringSpec() {
         }
 
         "importing empty configuration should do nothing" {
-            val configuration = ConfigurationBuilder().build()
+            val metadata = mockMetadata(JSON)
+            val configuration = ConfigurationBuilder().build(metadata)
             val service = mockConfService()
 
             objectMockk(Import.Companion).use {
                 importConfiguration(configuration, service)
-                verify(exactly = 0) { Import.Companion.save(any()) }
+                verify(exactly = 0) { Import.save(any()) }
             }
         }
 

@@ -45,7 +45,8 @@ class ConfigurationBuilder {
             else -> Unit
         }
 
-    fun build() = Configuration(
+    fun build(metadata: Metadata) = Configuration(
+        metadata,
         actionCodes.sorted(),
         agentGroups.sorted(),
         dns.sorted(),

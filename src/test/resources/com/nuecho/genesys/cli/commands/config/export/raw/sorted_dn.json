@@ -1,4 +1,12 @@
 {
+  "__metadata__": {
+    "date": "now",
+    "formatName": "RAW",
+    "formatVersion": "1.1.1",
+    "host": "localhost",
+    "mutagenVersion": "2.2.2",
+    "user": "mutagen"
+  },
   "CFGDN": [
     {
       "number": 1111,

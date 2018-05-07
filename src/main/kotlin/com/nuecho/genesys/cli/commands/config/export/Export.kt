@@ -10,6 +10,8 @@ import com.nuecho.genesys.cli.Logging.debug
 import com.nuecho.genesys.cli.Logging.info
 import com.nuecho.genesys.cli.commands.config.Config
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects
+import com.nuecho.genesys.cli.models.configuration.Metadata
+import com.nuecho.genesys.cli.preferences.environment.Environment
 import com.nuecho.genesys.cli.services.ConfService
 import picocli.CommandLine
 import java.io.OutputStream
@@ -26,12 +28,14 @@ class Export : GenesysCliCommand() {
         names = ["--format"],
         description = ["Export format [RAW|JSON]."]
     )
-    private var format: ExportProcessorType? = ExportProcessorType.RAW
+    private var format: ExportFormat? = ExportFormat.RAW
 
     override fun execute() {
+        val environment = getGenesysCli().loadEnvironment()
+
         exportConfiguration(
-            createExportProcessor(System.out),
-            ConfService(getGenesysCli().loadEnvironment())
+            createExportProcessor(System.out, environment),
+            ConfService(environment)
         )
     }
 
@@ -58,11 +62,13 @@ class Export : GenesysCliCommand() {
         }
     }
 
-    private fun createExportProcessor(output: OutputStream) =
-        when (format) {
-            ExportProcessorType.RAW -> RawExportProcessor(output)
-            ExportProcessorType.JSON -> JsonExportProcessor(output)
-            else -> throw IllegalArgumentException("Illegal export format value: '$format'")
+    private fun createExportProcessor(output: OutputStream, environment: Environment) =
+        Metadata.create(ExportFormat.JSON, environment).let {
+            when (format) {
+                ExportFormat.RAW -> RawExportProcessor(output, it)
+                ExportFormat.JSON -> JsonExportProcessor(output, it)
+                else -> throw IllegalArgumentException("Illegal export format value: '$format'")
+            }
         }
 
     private fun processObjectType(type: CfgObjectType, processor: ExportProcessor, service: ConfService) {

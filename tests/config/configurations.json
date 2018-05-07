@@ -1,4 +1,8 @@
 {
+  "__metadata__": {
+    "formatName": "JSON",
+    "formatVersion": "1.0.0"
+  },
   "persons": [
     {
       "employeeId": "00001",

@@ -1,4 +1,12 @@
 {
+  "__metadata__": {
+    "date": "now",
+    "formatName": "JSON",
+    "formatVersion": "1.1.1",
+    "host": "localhost",
+    "mutagenVersion": "2.2.2",
+    "user": "mutagen"
+  },
   "persons": [
     {
       "employeeId": "111",
