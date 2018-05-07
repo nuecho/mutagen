@@ -51,18 +51,18 @@ class Import : GenesysCliCommand() {
             Logging.info { "Beginning import." }
 
             val count = intArrayOf(
-                importConfigurationObjects(configuration.actionCodes.values, service),
-                importConfigurationObjects(configuration.agentGroups.values, service),
-                importConfigurationObjects(configuration.dns.values, service),
-                importConfigurationObjects(configuration.enumerators.values, service),
-                importConfigurationObjects(configuration.skills.values, service),
-                importConfigurationObjects(configuration.roles.values, service),
-                importConfigurationObjects(configuration.persons.values, service),
-                importConfigurationObjects(configuration.physicalSwitches.values, service),
-                importConfigurationObjects(configuration.scripts.values, service),
-                importConfigurationObjects(configuration.switches.values, service),
-                importConfigurationObjects(configuration.tenants.values, service),
-                importConfigurationObjects(configuration.transactions.values, service)
+                importConfigurationObjects(configuration.actionCodes, service),
+                importConfigurationObjects(configuration.agentGroups, service),
+                importConfigurationObjects(configuration.dns, service),
+                importConfigurationObjects(configuration.enumerators, service),
+                importConfigurationObjects(configuration.skills, service),
+                importConfigurationObjects(configuration.roles, service),
+                importConfigurationObjects(configuration.persons, service),
+                importConfigurationObjects(configuration.physicalSwitches, service),
+                importConfigurationObjects(configuration.scripts, service),
+                importConfigurationObjects(configuration.switches, service),
+                importConfigurationObjects(configuration.tenants, service),
+                importConfigurationObjects(configuration.transactions, service)
             ).sum()
 
             println("Completed. $count object(s) imported.")
