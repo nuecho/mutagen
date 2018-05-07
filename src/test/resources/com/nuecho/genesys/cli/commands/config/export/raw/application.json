@@ -1,6 +1,6 @@
 {
-  "CFGApplication": {
-    "Application": {
+  "CFGApplication": [
+    {
       "appServerDBIDs": {
         "CfgConnectionInfo": [
           {
@@ -16,5 +16,5 @@
       "options": "",
       "userProperties": ""
     }
-  }
+  ]
 }
