@@ -4,6 +4,8 @@ import com.genesyslab.platform.applicationblocks.com.ICfgObject
 import com.genesyslab.platform.applicationblocks.com.ICfgQuery
 import com.nuecho.genesys.cli.CliOutputCaptureWrapper.execute
 import com.nuecho.genesys.cli.TestResources.loadRawConfiguration
+import com.nuecho.genesys.cli.commands.config.ConfigMocks.mockMetadata
+import com.nuecho.genesys.cli.commands.config.export.ExportFormat.RAW
 import com.nuecho.genesys.cli.core.defaultJsonObjectMapper
 import com.nuecho.genesys.cli.services.ConfService
 import io.kotlintest.matchers.should
@@ -30,7 +32,7 @@ class ExportTest : StringSpec() {
 
         "exporting raw empty configuration should generate an empty JSON array for each object type" {
             val output = ByteArrayOutputStream()
-            val processor = RawExportProcessor(output)
+            val processor = RawExportProcessor(output, mockMetadata(RAW))
             val service = mockConfService()
 
             Export().exportConfiguration(processor, service)

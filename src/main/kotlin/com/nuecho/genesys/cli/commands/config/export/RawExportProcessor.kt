@@ -6,6 +6,7 @@ import com.genesyslab.platform.configuration.protocol.types.CfgObjectType
 import com.nuecho.genesys.cli.core.defaultJsonGenerator
 import com.nuecho.genesys.cli.core.defaultJsonObjectMapper
 import com.nuecho.genesys.cli.getPrimaryKey
+import com.nuecho.genesys.cli.models.configuration.Metadata
 import org.json.JSONArray
 import org.json.JSONObject
 import org.json.XML.toJSONObject
@@ -18,8 +19,9 @@ import javax.xml.transform.stream.StreamResult
 
 private const val XMLNS = "xmlns"
 private const val VALUE_KEY = "value"
+private const val METADATA_KEY = "__metadata__"
 
-class RawExportProcessor(output: OutputStream) : ExportProcessor {
+class RawExportProcessor(output: OutputStream, val metadata: Metadata) : ExportProcessor {
     private val xmlTransformer = TransformerFactory.newInstance().newTransformer()
     private val objectMapper = defaultJsonObjectMapper()
     private val jsonGenerator: JsonGenerator = defaultJsonGenerator(output)
@@ -27,6 +29,8 @@ class RawExportProcessor(output: OutputStream) : ExportProcessor {
 
     override fun begin() {
         jsonGenerator.writeStartObject()
+        jsonGenerator.writeFieldName(METADATA_KEY)
+        jsonGenerator.writeObject(metadata)
     }
 
     override fun beginType(type: CfgObjectType) {

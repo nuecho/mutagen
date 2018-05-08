@@ -1,6 +1,7 @@
 package com.nuecho.genesys.cli.models.configuration
 
 data class Configuration(
+    val __metadata__: Metadata,
     val actionCodes: List<ActionCode> = emptyList(),
     val agentGroups: List<AgentGroup> = emptyList(),
     val dns: List<DN> = emptyList(),

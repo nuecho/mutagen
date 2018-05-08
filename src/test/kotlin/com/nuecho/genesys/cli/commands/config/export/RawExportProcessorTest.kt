@@ -6,6 +6,8 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgConnInfo
 import com.genesyslab.platform.applicationblocks.com.objects.CfgDN
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectType
 import com.nuecho.genesys.cli.TestResources.loadRawConfiguration
+import com.nuecho.genesys.cli.commands.config.ConfigMocks.mockMetadata
+import com.nuecho.genesys.cli.commands.config.export.ExportFormat.RAW
 import com.nuecho.genesys.cli.core.defaultJsonObjectMapper
 import com.nuecho.genesys.cli.preferences.environment.Environment
 import com.nuecho.genesys.cli.services.ConfService
@@ -50,8 +52,9 @@ class RawExportProcessorTest : StringSpec() {
         type: CfgObjectType,
         vararg objects: ICfgObject
     ) {
+        val metadata = mockMetadata(RAW)
         val output = ByteArrayOutputStream()
-        val processor = RawExportProcessor(output)
+        val processor = RawExportProcessor(output, metadata)
 
         processor.begin()
         processor.beginType(type)

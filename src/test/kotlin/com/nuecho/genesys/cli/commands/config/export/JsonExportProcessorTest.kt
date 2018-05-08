@@ -5,6 +5,8 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgPerson
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectType
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectType.CFGPerson
 import com.nuecho.genesys.cli.TestResources
+import com.nuecho.genesys.cli.commands.config.ConfigMocks.mockMetadata
+import com.nuecho.genesys.cli.commands.config.export.ExportFormat.JSON
 import com.nuecho.genesys.cli.core.defaultJsonObjectMapper
 import com.nuecho.genesys.cli.models.configuration.Configuration
 import com.nuecho.genesys.cli.preferences.environment.Environment
@@ -43,8 +45,9 @@ class JsonExportProcessorTest : StringSpec() {
         type: CfgObjectType,
         vararg objects: ICfgObject
     ) {
+        val metadata = mockMetadata(JSON)
         val output = ByteArrayOutputStream()
-        val processor = JsonExportProcessor(output)
+        val processor = JsonExportProcessor(output, metadata)
 
         processor.begin()
         processor.beginType(type)
