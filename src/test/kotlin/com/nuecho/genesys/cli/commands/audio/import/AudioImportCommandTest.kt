@@ -7,17 +7,16 @@ import com.github.kittinunf.fuel.core.Request
 import com.github.kittinunf.fuel.core.Response
 import com.nuecho.genesys.cli.CliOutputCaptureWrapper
 import com.nuecho.genesys.cli.TestResources.getTestResource
-import com.nuecho.genesys.cli.commands.audio.import.AudioImport.APPLICATION_JSON
-import com.nuecho.genesys.cli.commands.audio.import.AudioImport.AUDIO_RESOURCES_PATH
-import com.nuecho.genesys.cli.commands.audio.import.AudioImport.CONTENT_TYPE
+import com.nuecho.genesys.cli.commands.audio.AudioServices.APPLICATION_JSON
+import com.nuecho.genesys.cli.commands.audio.AudioServices.AUDIO_RESOURCES_PATH
+import com.nuecho.genesys.cli.commands.audio.AudioServices.CONTENT_TYPE
+import com.nuecho.genesys.cli.commands.audio.AudioServicesException
 import com.nuecho.genesys.cli.commands.audio.import.AudioImport.CREATE_MESSAGE_SUCCESS_CODE
 import com.nuecho.genesys.cli.commands.audio.import.AudioImport.LOCATION
-import com.nuecho.genesys.cli.commands.audio.import.AudioImport.LOGIN_SUCCESS_CODE
 import com.nuecho.genesys.cli.commands.audio.import.AudioImport.UPLOAD_AUDIO_SUCCESS_CODE
 import com.nuecho.genesys.cli.commands.audio.import.AudioImport.UPLOAD_PATH
 import com.nuecho.genesys.cli.commands.audio.import.AudioImport.createMessage
 import com.nuecho.genesys.cli.commands.audio.import.AudioImport.importAudios
-import com.nuecho.genesys.cli.commands.audio.import.AudioImport.login
 import com.nuecho.genesys.cli.commands.audio.import.AudioImport.readAudioData
 import com.nuecho.genesys.cli.commands.audio.import.AudioImport.uploadAudio
 import com.nuecho.genesys.cli.preferences.environment.Environment
@@ -49,7 +48,7 @@ class AudioImportCommandTest : StringSpec() {
             output should startWith(USAGE_PREFIX)
         }
 
-        "readAudioData should properly deserialize audio data" {
+        "readAudioData should properly deserialize audio messagesData" {
             val audioData = readAudioData(audioCsv.openStream())
             audioData.next() shouldBe mapOf(
                 "name" to "foo",
@@ -61,27 +60,6 @@ class AudioImportCommandTest : StringSpec() {
             audioData.next()
             audioData.next()
             audioData.hasNextValue() shouldBe false
-        }
-
-        "login should properly handle success" {
-            val user = "user"
-            val password = "password"
-
-            mockHttpClient(LOGIN_SUCCESS_CODE) {
-                it.method shouldBe Method.POST
-                it.body() shouldBe """{"username":"$user","password":"$password","isPasswordEncrypted":false}"""
-                it.headers[CONTENT_TYPE] shouldBe APPLICATION_JSON
-                it.path shouldBe "$GAX_URL${AudioImport.LOGIN_PATH}"
-            }
-
-            login(user, password, false, GAX_URL)
-        }
-
-        "login should properly handle error" {
-            mockHttpClient(666)
-            shouldThrow<AudioImportException> {
-                login("user", "password", false, GAX_URL)
-            }
         }
 
         "createMessage should return the message url" {
@@ -111,7 +89,7 @@ class AudioImportCommandTest : StringSpec() {
 
         "createMessage should properly handle error" {
             mockHttpClient(666, mapOf(LOCATION to listOf(MESSAGE_URL)))
-            shouldThrow<AudioImportException> {
+            shouldThrow<AudioServicesException> {
                 createMessage("name", "description", GAX_URL)
             }
         }
@@ -136,13 +114,13 @@ class AudioImportCommandTest : StringSpec() {
 
             mockHttpClient(666)
 
-            shouldThrow<AudioImportException> {
+            shouldThrow<AudioServicesException> {
                 uploadAudio(MESSAGE_URL, audioFile, personality, callbackSequenceNumber)
             }
         }
 
         "importAudios should fail when name column is missing" {
-            shouldThrow<AudioImportException> {
+            shouldThrow<AudioServicesException> {
                 importAudios(
                     Environment(host = "host", user = "user", rawPassword = "password"),
                     audioCsv.openStream(),
