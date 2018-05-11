@@ -24,15 +24,15 @@ import io.mockk.mockk
 import io.mockk.slot
 import kotlinx.coroutines.experimental.launch
 
-private const val MISSING_EMPLOYEE_ID = "Missing required parameter: employeeId"
-private const val USAGE_PREFIX = "Usage: status [-?] [--stat-host=<statHost>] [--stat-port=<statPort>] employeeId"
+private const val MISSING_REQUIRED_OPTIONS = "Missing required options [--stat-host=<statHost>, --stat-port=<statPort>, params[0]=employeeId]"
+private const val USAGE_PREFIX = "Usage: status [-?] --stat-host=<statHost> --stat-port=<statPort> employeeId"
 private const val TEST_TIMEOUT = 1L
 
 class StatusCommandTest : StringSpec() {
     init {
-        "executing Status with no arguments should print an error message" {
+        "executing Status with no arguments should print usage" {
             val output = execute("agent", "status")
-            output should startWith(MISSING_EMPLOYEE_ID)
+            output should startWith(MISSING_REQUIRED_OPTIONS)
         }
 
         "executing Status with -h argument should print usage" {

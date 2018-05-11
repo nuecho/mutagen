@@ -32,14 +32,16 @@ class LogoutCommand : GenesysCliCommand() {
     @CommandLine.Option(
         arity = "1",
         names = ["--stat-host"],
-        description = ["Stat server hostname."]
+        description = ["Stat server hostname."],
+        required = true
     )
     private var statHost: String? = null
 
     @CommandLine.Option(
         arity = "1",
         names = ["--stat-port"],
-        description = ["Stat server port."]
+        description = ["Stat server port."],
+        required = true
     )
     private var statPort: Int? = null
 

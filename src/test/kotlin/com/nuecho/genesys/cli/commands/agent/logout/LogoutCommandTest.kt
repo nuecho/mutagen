@@ -24,14 +24,14 @@ import io.mockk.staticMockk
 import io.mockk.use
 import io.mockk.verify
 
-private const val MISSING_EMPLOYEE_ID = "Missing required parameter: employeeId"
-private const val USAGE_PREFIX = "Usage: logout [-?] [--stat-host=<statHost>] [--stat-port=<statPort>] employeeId"
+private const val MISSING_REQUIRED_OPTIONS = "Missing required options [--stat-host=<statHost>, --stat-port=<statPort>, params[ 0]=employeeId]"
+private const val USAGE_PREFIX = "Usage: logout [-?] --stat-host=<statHost> --stat-port=<statPort> employeeId"
 
 class LogoutCommandTest : StringSpec() {
     init {
         "executing Logout with no arguments should print an error message" {
             val output = execute("agent", "logout")
-            output should startWith(MISSING_EMPLOYEE_ID)
+            output should startWith(MISSING_REQUIRED_OPTIONS)
         }
 
         "executing Logout with -h argument should print usage" {
