@@ -21,7 +21,7 @@ data class Transaction(
     val recordPeriod: Int? = 0,
     val state: String? = null,
     val type: String? = CfgTransactionType.CFGTRTNoTransactionType.toShortName(),
-    @JsonSerialize(using = KeyValueCollectionSerializer::class)
+    @JsonSerialize(using = CategorizedPropertiesSerializer::class)
     @JsonDeserialize(using = CategorizedPropertiesDeserializer::class)
     override val userProperties: CategorizedProperties? = null
 

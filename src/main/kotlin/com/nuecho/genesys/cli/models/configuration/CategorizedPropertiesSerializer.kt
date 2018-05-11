@@ -5,12 +5,17 @@ import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.databind.SerializerProvider
 import com.fasterxml.jackson.databind.ser.std.StdSerializer
 
-class KeyValueCollectionSerializer @JvmOverloads constructor(type: Class<Map<String, Any>>? = null) :
-    StdSerializer<Map<String, Any>>(type) {
+class CategorizedPropertiesSerializer @JvmOverloads constructor(type: Class<CategorizedProperties>? = null) :
+    StdSerializer<CategorizedProperties>(type) {
+
+    override fun serialize(
+        categorizedProperties: CategorizedProperties,
+        generator: JsonGenerator,
+        provider: SerializerProvider
+    ) = serializeMap(categorizedProperties, generator, provider)
 
     @Suppress("UNCHECKED_CAST")
-    override fun serialize(map: Map<String, Any>, generator: JsonGenerator, provider: SerializerProvider) {
-
+    private fun serializeMap(map: Map<String, Any>, generator: JsonGenerator, provider: SerializerProvider) {
         with(generator) {
             writeStartObject()
 
@@ -21,7 +26,7 @@ class KeyValueCollectionSerializer @JvmOverloads constructor(type: Class<Map<Str
                     is Int -> writeNumber(value)
                     is String -> writeString(value)
                     is ByteArray -> writeByteArray(value)
-                    is Map<*, *> -> serialize(value as Map<String, Any>, generator, provider)
+                    is Map<*, *> -> serializeMap(value as Map<String, Any>, generator, provider)
                     else -> throw JsonGenerationException("Unexpected value of type ${value::class})", generator)
                 }
             }

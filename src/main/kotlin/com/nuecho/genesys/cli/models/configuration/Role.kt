@@ -21,7 +21,7 @@ data class Role(
     val description: String? = null,
     val state: String? = null,
     val members: SortedSet<String>? = null,
-    @JsonSerialize(using = KeyValueCollectionSerializer::class)
+    @JsonSerialize(using = CategorizedPropertiesSerializer::class)
     @JsonDeserialize(using = CategorizedPropertiesDeserializer::class)
     override val userProperties: CategorizedProperties? = null
 ) : ConfigurationObject {

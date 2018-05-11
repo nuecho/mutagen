@@ -43,7 +43,7 @@ data class DN(
 
     val state: String? = null,
 
-    @JsonSerialize(using = KeyValueCollectionSerializer::class)
+    @JsonSerialize(using = CategorizedPropertiesSerializer::class)
     @JsonDeserialize(using = CategorizedPropertiesDeserializer::class)
     override val userProperties: CategorizedProperties? = null,
 

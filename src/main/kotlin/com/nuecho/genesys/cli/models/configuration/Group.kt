@@ -23,7 +23,7 @@ data class Group(
     val capacityTable: String? = null,
     val quotaTable: String? = null,
     val state: String? = null,
-    @JsonSerialize(using = KeyValueCollectionSerializer::class)
+    @JsonSerialize(using = CategorizedPropertiesSerializer::class)
     @JsonDeserialize(using = CategorizedPropertiesDeserializer::class)
     val userProperties: CategorizedProperties? = null,
     val capacityRule: String? = null,

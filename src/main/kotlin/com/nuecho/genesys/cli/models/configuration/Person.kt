@@ -37,7 +37,7 @@ data class Person(
     val externalAuth: Boolean? = null,
     val appRanks: Map<String, String>? = null,
     val agentInfo: AgentInfo? = null,
-    @JsonSerialize(using = KeyValueCollectionSerializer::class)
+    @JsonSerialize(using = CategorizedPropertiesSerializer::class)
     @JsonDeserialize(using = CategorizedPropertiesDeserializer::class)
     override val userProperties: CategorizedProperties? = null
 ) : ConfigurationObject {

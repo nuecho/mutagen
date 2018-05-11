@@ -21,7 +21,7 @@ data class Script(
     val type: String = CfgScriptType.CFGNoScript.toShortName(),
     val index: Int = 0,
     val state: String? = null,
-    @JsonSerialize(using = KeyValueCollectionSerializer::class)
+    @JsonSerialize(using = CategorizedPropertiesSerializer::class)
     @JsonDeserialize(using = CategorizedPropertiesDeserializer::class)
     override val userProperties: CategorizedProperties? = null
 
