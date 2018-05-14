@@ -1,21 +1,26 @@
 package com.nuecho.genesys.cli.commands.audio.import
 
-import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.dataformat.csv.CsvMapper
 import com.fasterxml.jackson.dataformat.csv.CsvSchema
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.github.kittinunf.fuel.core.DataPart
 import com.github.kittinunf.fuel.core.FuelManager
-import com.github.kittinunf.fuel.core.Request
-import com.github.kittinunf.fuel.core.Response
 import com.github.kittinunf.fuel.httpPost
 import com.github.kittinunf.fuel.httpUpload
-import com.github.kittinunf.result.Result
 import com.nuecho.genesys.cli.GenesysCli
 import com.nuecho.genesys.cli.GenesysCliCommand
-import com.nuecho.genesys.cli.Logging.debug
 import com.nuecho.genesys.cli.Logging.info
 import com.nuecho.genesys.cli.commands.audio.Audio
+import com.nuecho.genesys.cli.commands.audio.AudioServices.APPLICATION_JSON
+import com.nuecho.genesys.cli.commands.audio.AudioServices.AUDIO_RESOURCES_PATH
+import com.nuecho.genesys.cli.commands.audio.AudioServices.CONTENT_TYPE
+import com.nuecho.genesys.cli.commands.audio.AudioServices.DESCRIPTION
+import com.nuecho.genesys.cli.commands.audio.AudioServices.HTTP
+import com.nuecho.genesys.cli.commands.audio.AudioServices.MESSAGE_AR_ID
+import com.nuecho.genesys.cli.commands.audio.AudioServices.NAME
+import com.nuecho.genesys.cli.commands.audio.AudioServices.TENANT_ID
+import com.nuecho.genesys.cli.commands.audio.AudioServices.checkStatusCode
+import com.nuecho.genesys.cli.commands.audio.AudioServices.login
+import com.nuecho.genesys.cli.commands.audio.AudioServices.toJson
 import com.nuecho.genesys.cli.preferences.environment.Environment
 import picocli.CommandLine
 import java.io.File
@@ -52,26 +57,15 @@ class AudioImportCommand : GenesysCliCommand() {
 }
 
 object AudioImport {
-    // URL Components
-    private const val HTTP = "http://"
-    private const val GAX_BASE_PATH = "/gax/api"
-    const val LOGIN_PATH = "$GAX_BASE_PATH/session/login"
-    const val AUDIO_RESOURCES_PATH = "$GAX_BASE_PATH/arm/audioresources/"
+    // URL Component
     const val UPLOAD_PATH = "/upload/?callback="
 
     // Status Codes
-    const val LOGIN_SUCCESS_CODE = 204
     const val CREATE_MESSAGE_SUCCESS_CODE = 302
     const val UPLOAD_AUDIO_SUCCESS_CODE = 200
 
-    // Message Map Keys
-    private const val NAME = "name"
-    private const val DESCRIPTION = "description"
-
-    // Headers
+    // Header
     const val LOCATION = "Location"
-    const val CONTENT_TYPE = "Content-Type"
-    const val APPLICATION_JSON = "application/json"
 
     fun importAudios(environment: Environment, audioData: InputStream, audioDirectory: File) {
         // To disable the automatic redirection
@@ -94,6 +88,10 @@ object AudioImport {
             val messageUrl = createMessage(name, description, gaxUrl)
 
             for ((personality, audioPath) in message) {
+                if (audioPath.isEmpty() || personality == MESSAGE_AR_ID || personality == TENANT_ID) {
+                    continue
+                }
+
                 info { "Uploading '$audioPath'." }
                 uploadAudio(
                     messageUrl = messageUrl,
@@ -110,19 +108,6 @@ object AudioImport {
             .readerFor(Map::class.java)
             .with(CsvSchema.emptySchema().withHeader())
             .readValues<Map<String, String>>(inputStream)
-
-    internal fun login(user: String, password: String, encryptPassword: Boolean, gaxUrl: String) {
-        val effectivePassword = if (encryptPassword) encryptPassword(password) else password
-
-        "$gaxUrl$LOGIN_PATH"
-            .httpPost()
-            .header(CONTENT_TYPE to APPLICATION_JSON)
-            .body(LoginRequest(user, effectivePassword, encryptPassword).toJson())
-            .responseString()
-            .let { (request, response, result) ->
-                checkStatusCode(LOGIN_SUCCESS_CODE, "Failed to log in to GAX.", request, response, result)
-            }
-    }
 
     internal fun createMessage(name: String, description: String, gaxUrl: String): String {
         "$gaxUrl$AUDIO_RESOURCES_PATH"
@@ -169,49 +154,7 @@ object AudioImport {
     }
 }
 
-// Based on GAX quickEncrypt JS function
-@Suppress("MagicNumber")
-private fun encryptPassword(password: String): String {
-    val chars = password.chars().toArray()
-    val encryptedChars = IntArray(chars.size * 2)
-
-    for (charIndex in 0 until password.length) {
-        val random = (Math.round(Math.random() * 122) + 68).toInt()
-        val encryptedCharIndex = charIndex * 2
-        encryptedChars[encryptedCharIndex] = chars[charIndex] + random
-        encryptedChars[encryptedCharIndex + 1] = random
-    }
-
-    return String(encryptedChars.map { it.toChar() }.toCharArray())
-}
-
-private fun checkStatusCode(
-    statusCode: Int,
-    errorMessage: String,
-    request: Request,
-    response: Response,
-    result: Result<*, *>
-) {
-    if (response.statusCode != statusCode) {
-        debug {
-            """
-            |Request: $request
-            |Response: $response
-            |Result: $result
-            """.trimMargin()
-        }
-        throw AudioImportException(errorMessage)
-    }
-}
-
 class AudioImportException(message: String) : Exception(message)
-
-private data class LoginRequest(
-    val username: String,
-    val password: String,
-    @get:JsonProperty("isPasswordEncrypted")
-    val isPasswordEncrypted: Boolean
-)
 
 private data class CreateMessageRequest(
     val name: String,
@@ -219,5 +162,3 @@ private data class CreateMessageRequest(
     val type: String = "ANNOUNCEMENT",
     val privateResource: Boolean = false
 )
-
-private fun Any.toJson(): String = jacksonObjectMapper().writeValueAsString(this)
