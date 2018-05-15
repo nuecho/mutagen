@@ -21,7 +21,7 @@ data class PhysicalSwitch(
     val name: String,
     val type: String? = null,
     val state: String? = null,
-    @JsonSerialize(using = KeyValueCollectionSerializer::class)
+    @JsonSerialize(using = CategorizedPropertiesSerializer::class)
     @JsonDeserialize(using = CategorizedPropertiesDeserializer::class)
     override val userProperties: CategorizedProperties? = null
 ) : ConfigurationObject {

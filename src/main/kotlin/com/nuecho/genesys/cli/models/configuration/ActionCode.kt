@@ -21,7 +21,7 @@ data class ActionCode(
     val code: String? = null,
     val subcodes: Map<String, String>? = null,
     val state: String? = null,
-    @JsonSerialize(using = KeyValueCollectionSerializer::class)
+    @JsonSerialize(using = CategorizedPropertiesSerializer::class)
     @JsonDeserialize(using = CategorizedPropertiesDeserializer::class)
     override val userProperties: CategorizedProperties? = null
 ) : ConfigurationObject {

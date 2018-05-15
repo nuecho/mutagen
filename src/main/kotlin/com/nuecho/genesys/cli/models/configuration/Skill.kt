@@ -15,7 +15,7 @@ import com.nuecho.genesys.cli.toShortName
 data class Skill(
     val name: String,
     val state: String? = null,
-    @JsonSerialize(using = KeyValueCollectionSerializer::class)
+    @JsonSerialize(using = CategorizedPropertiesSerializer::class)
     @JsonDeserialize(using = CategorizedPropertiesDeserializer::class)
     override val userProperties: CategorizedProperties? = null
 

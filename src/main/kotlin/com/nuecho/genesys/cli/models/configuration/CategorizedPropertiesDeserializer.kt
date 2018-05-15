@@ -11,7 +11,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode
 import com.fasterxml.jackson.databind.node.TextNode
 
 class CategorizedPropertiesDeserializer @JvmOverloads constructor(type: Class<*>? = null) :
-    StdDeserializer<Map<String, Map<String, Any>>>(type) {
+    StdDeserializer<CategorizedProperties>(type) {
 
     override fun deserialize(parser: JsonParser, context: DeserializationContext): CategorizedProperties =
         parser.codec.readTree<JsonNode>(parser).let {
