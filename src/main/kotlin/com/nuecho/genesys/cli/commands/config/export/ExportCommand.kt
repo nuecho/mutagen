@@ -9,6 +9,8 @@ import com.nuecho.genesys.cli.GenesysCliCommand
 import com.nuecho.genesys.cli.Logging.debug
 import com.nuecho.genesys.cli.Logging.info
 import com.nuecho.genesys.cli.commands.config.Config
+import com.nuecho.genesys.cli.commands.config.export.Export.createExportProcessor
+import com.nuecho.genesys.cli.commands.config.export.Export.exportConfiguration
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects
 import com.nuecho.genesys.cli.models.configuration.Metadata
 import com.nuecho.genesys.cli.preferences.environment.Environment
@@ -20,7 +22,7 @@ import java.io.OutputStream
     name = "export",
     description = ["Export configuration objects."]
 )
-class Export : GenesysCliCommand() {
+class ExportCommand : GenesysCliCommand() {
     @CommandLine.ParentCommand
     private var config: Config? = null
 
@@ -34,13 +36,15 @@ class Export : GenesysCliCommand() {
         val environment = getGenesysCli().loadEnvironment()
 
         exportConfiguration(
-            createExportProcessor(System.out, environment),
+            createExportProcessor(format!!, environment, System.out),
             ConfService(environment)
         )
     }
 
     override fun getGenesysCli() = config!!.getGenesysCli()
+}
 
+object Export {
     fun exportConfiguration(processor: ExportProcessor, service: ConfService) {
         try {
             service.open()
@@ -62,12 +66,11 @@ class Export : GenesysCliCommand() {
         }
     }
 
-    private fun createExportProcessor(output: OutputStream, environment: Environment) =
-        Metadata.create(ExportFormat.JSON, environment).let {
+    internal fun createExportProcessor(format: ExportFormat, environment: Environment, output: OutputStream) =
+        Metadata.create(format, environment).let {
             when (format) {
                 ExportFormat.RAW -> RawExportProcessor(output, it)
                 ExportFormat.JSON -> JsonExportProcessor(output, it)
-                else -> throw IllegalArgumentException("Illegal export format value: '$format'")
             }
         }
 
