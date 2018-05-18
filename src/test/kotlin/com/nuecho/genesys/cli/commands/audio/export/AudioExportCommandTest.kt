@@ -9,6 +9,7 @@ import com.github.kittinunf.fuel.core.Response
 import com.google.common.base.Charsets
 import com.nuecho.genesys.cli.CliOutputCaptureWrapper
 import com.nuecho.genesys.cli.TestResources.getTestResource
+import com.nuecho.genesys.cli.commands.audio.AudioServices
 import com.nuecho.genesys.cli.commands.audio.AudioServices.APPLICATION_JSON
 import com.nuecho.genesys.cli.commands.audio.AudioServices.CONTENT_TYPE
 import com.nuecho.genesys.cli.commands.audio.AudioServices.DESCRIPTION
@@ -20,10 +21,18 @@ import com.nuecho.genesys.cli.commands.audio.export.AudioExport.AUDIO_MESSAGES_P
 import com.nuecho.genesys.cli.commands.audio.export.AudioExport.DOWNLOAD_AUDIO_SUCCESS_CODE
 import com.nuecho.genesys.cli.commands.audio.export.AudioExport.PERSONALITIES_PATH
 import com.nuecho.genesys.cli.commands.audio.export.AudioExport.getPersonalities
-import com.nuecho.genesys.cli.commands.audio.export.AudioExport.buildSchema
-import com.nuecho.genesys.cli.commands.audio.export.AudioExport.getAudioData
+import com.nuecho.genesys.cli.commands.audio.export.AudioExport.getSchemaBuilder
+import com.nuecho.genesys.cli.commands.audio.export.AudioExport.getMissingPersonalitiesIds
+import com.nuecho.genesys.cli.commands.audio.export.AudioExport.downloadAudioFile
+import com.nuecho.genesys.cli.commands.audio.export.AudioExport.downloadAudioFiles
+import com.nuecho.genesys.cli.commands.audio.export.AudioExport.getAudioMap
+import com.nuecho.genesys.cli.commands.audio.export.AudioExport.getMessagesData
+import com.nuecho.genesys.cli.commands.audio.export.AudioExport.isSelectedPersonality
 import com.nuecho.genesys.cli.commands.audio.export.AudioExport.writeAudioData
 import com.nuecho.genesys.cli.core.defaultJsonObjectMapper
+import io.kotlintest.matchers.beEmpty
+import io.kotlintest.matchers.haveKey
+import io.kotlintest.matchers.include
 import io.kotlintest.matchers.should
 import io.kotlintest.matchers.shouldBe
 import io.kotlintest.matchers.startWith
@@ -38,12 +47,21 @@ private const val USAGE_PREFIX = "Usage: export [-?]"
 private const val GAX_URL = "http://genesys.com"
 private const val INTERNAL_SERVER_ERROR = 500
 
+private const val FRANK_ID = "10002"
+private const val JOELLA_ID = "10004"
+private const val INVALID_PERSONALITY_ID = "10016"
+
 class AudioExportCommandTest : StringSpec() {
     init {
-        val messagesData = File(getTestResource("commands/audio/messagesData.csv").toURI())
-        val personalitiesData = File(getTestResource("commands/audio/personalitiesData.csv").toURI())
-        val audioCsv = File(getTestResource("commands/audio/audioOutput.csv").toURI())
-        val expectedAudioCsv = File(getTestResource("commands/audio/audioOutput.csv").toURI())
+        val messagesData = File(getTestResource("commands/audio/messages_data.json").toURI())
+        val personalitiesData = File(getTestResource("commands/audio/personalities_data.json").toURI())
+        val audioCsv = File(getTestResource("commands/audio/audio_output.csv").toURI())
+        val expectedAudioCsv = File(getTestResource("commands/audio/expected_audio_output.csv").toURI())
+
+        val responseItems: List<Message> = defaultJsonObjectMapper().readValue(messagesData.inputStream(), object : TypeReference<List<Message>>() {})
+        val personalities: Set<Personality> = defaultJsonObjectMapper().readValue(personalitiesData.inputStream(), object : TypeReference<Set<Personality>>() {})
+
+        val audioWav = File(getTestResource("commands/audio/audio.wav").toURI())
 
         // To disable the automatic redirection
         FuelManager.instance.removeAllResponseInterceptors()
@@ -51,6 +69,11 @@ class AudioExportCommandTest : StringSpec() {
         "executing Export with -h argument should print usage" {
             val output = CliOutputCaptureWrapper.execute("audio", "export", "-h")
             output should startWith(USAGE_PREFIX)
+        }
+
+        "executing Export with wrong argument should print usage" {
+            val output = CliOutputCaptureWrapper.execute("audio", "export", "audioOutput.csv", "--with")
+            output should include(USAGE_PREFIX)
         }
 
         "getPersonalities should fail when the response status code is wrong" {
@@ -64,9 +87,7 @@ class AudioExportCommandTest : StringSpec() {
         }
 
         "writeAudioData should fail when the response status code is wrong" {
-
-            mockHttpClient(DOWNLOAD_AUDIO_SUCCESS_CODE, personalitiesData.inputStream())
-            val schemaBuilder = buildSchema(getPersonalities(GAX_URL))
+            val schemaBuilder = getSchemaBuilder(personalities)
 
             mockHttpClient(
                 INTERNAL_SERVER_ERROR,
@@ -74,7 +95,7 @@ class AudioExportCommandTest : StringSpec() {
             )
             shouldThrow<AudioServicesException> {
                 writeAudioData(
-                    getAudioData(GAX_URL),
+                    getMessagesData(GAX_URL),
                     schemaBuilder,
                     audioCsv.outputStream()
                 )
@@ -82,7 +103,6 @@ class AudioExportCommandTest : StringSpec() {
         }
 
         "getPersonalities should properly build the Request" {
-
             mockHttpClient(
                 DOWNLOAD_AUDIO_SUCCESS_CODE, personalitiesData.inputStream()
             ) {
@@ -95,9 +115,7 @@ class AudioExportCommandTest : StringSpec() {
         }
 
         "writeAudioData should properly build the Request" {
-
-            mockHttpClient(DOWNLOAD_AUDIO_SUCCESS_CODE, personalitiesData.inputStream())
-            val schemaBuilder = buildSchema(getPersonalities(GAX_URL))
+            val schemaBuilder = getSchemaBuilder(personalities)
 
             mockHttpClient(
                 DOWNLOAD_AUDIO_SUCCESS_CODE,
@@ -109,39 +127,89 @@ class AudioExportCommandTest : StringSpec() {
             }
 
             writeAudioData(
-                getAudioData(GAX_URL),
+                getMessagesData(GAX_URL),
                 schemaBuilder,
                 audioCsv.outputStream()
             )
         }
 
-        "buildSchema should properly build csv schema builder from map" {
-            mockHttpClient(DOWNLOAD_AUDIO_SUCCESS_CODE, personalitiesData.inputStream())
+        "downloadAudioFile should properly build the request" {
+            mockHttpClient(DOWNLOAD_AUDIO_SUCCESS_CODE) {
+                it.method shouldBe Method.GET
+                it.path shouldBe "$GAX_URL${AudioServices.AUDIO_RESOURCES_PATH}/10001${AudioExport.FILES_PATH}/10001${AudioExport.AUDIO_PATH}"
+            }
 
-            val schema = buildSchema(getPersonalities(GAX_URL))
+            val file = File("${audioCsv.parentFile.path}test.wav")
+            file.createNewFile()
 
-            schema.hasColumn(NAME) shouldBe true
-            schema.hasColumn(DESCRIPTION) shouldBe true
-            schema.hasColumn(MESSAGE_AR_ID) shouldBe true
-            schema.hasColumn(TENANT_ID) shouldBe true
-            schema.hasColumn("10002") shouldBe true
-            schema.hasColumn("10004") shouldBe true
-            schema.hasColumn("10015") shouldBe true
-            schema.hasColumn("10003") shouldBe true
-            schema.hasColumn("10005") shouldBe true
+            downloadAudioFile(
+                GAX_URL,
+                AudioRequestInfo("10001", "10001"),
+                file
+            )
 
-            schema.size() shouldBe 9
+            file.delete()
         }
 
-        "writeCsvFile should properly write in csv file" {
-            mockHttpClient(DOWNLOAD_AUDIO_SUCCESS_CODE, personalitiesData.inputStream())
+        "downloadAudioFiles should properly write in audio files" {
+            val audioMap = getAudioMap(responseItems, setOf(INVALID_PERSONALITY_ID, FRANK_ID), audioCsv.parentFile.path)
 
-            val personalities = getPersonalities(GAX_URL)
-            val responseItems: List<ResponseItem> = defaultJsonObjectMapper().readValue(messagesData.inputStream(), object : TypeReference<List<ResponseItem>>() {})
+            mockHttpClient(
+                DOWNLOAD_AUDIO_SUCCESS_CODE,
+                audioWav.inputStream()
+            )
 
-            writeAudioData( responseItems, buildSchema(personalities), audioCsv.outputStream())
+            downloadAudioFiles(
+                GAX_URL,
+                audioMap
+            )
 
-            audioCsv.readText(Charsets.UTF_8) shouldBe expectedAudioCsv.readText(Charsets.UTF_8)
+            audioMap.forEach { filePath, _ ->
+                File(filePath).readText(Charsets.UTF_8) shouldBe audioWav.readText(Charsets.UTF_8)
+            }
+        }
+
+        "getMissingPersonalitiesIds should return personalities that don't exist" {
+            getMissingPersonalitiesIds(personalities, setOf(INVALID_PERSONALITY_ID, FRANK_ID)) shouldBe setOf(INVALID_PERSONALITY_ID)
+            getMissingPersonalitiesIds(personalities, null) should beEmpty()
+        }
+
+        "isSelectedPersonalities should return whether the personality is in the list or not" {
+            isSelectedPersonality(FRANK_ID, setOf(FRANK_ID, JOELLA_ID)) shouldBe true
+            isSelectedPersonality(JOELLA_ID, setOf(FRANK_ID, JOELLA_ID)) shouldBe true
+            isSelectedPersonality(INVALID_PERSONALITY_ID, setOf(FRANK_ID, JOELLA_ID)) shouldBe false
+            isSelectedPersonality(FRANK_ID, null) shouldBe true
+        }
+
+        "getAudioMap should return map including exclusively existing personality id keys" {
+            val audioMap = getAudioMap(responseItems, setOf(INVALID_PERSONALITY_ID, FRANK_ID), audioCsv.parentFile.path)
+            audioMap should haveKey("${audioCsv.parentFile.path}/$FRANK_ID/Test.wav")
+            audioMap should haveKey("${audioCsv.parentFile.path}/$FRANK_ID/Test(1).wav")
+            audioMap should haveKey("${audioCsv.parentFile.path}/$FRANK_ID/sorry_didnt_get_that_try_again.wav")
+
+            audioMap shouldBe mapOf(
+                "${audioCsv.parentFile.path}/$FRANK_ID/Test.wav" to AudioRequestInfo("10001", "10001"),
+                "${audioCsv.parentFile.path}/$FRANK_ID/Test(1).wav" to AudioRequestInfo("10002", "10003"),
+                "${audioCsv.parentFile.path}/$FRANK_ID/sorry_didnt_get_that_try_again.wav" to AudioRequestInfo("10003", "10004")
+
+            )
+
+            "getSchemaBuilder should properly build csv schema builder from personalities" {
+                val schemaBuilder = getSchemaBuilder(personalities)
+
+                schemaBuilder.hasColumn(NAME) shouldBe true
+                schemaBuilder.hasColumn(DESCRIPTION) shouldBe true
+                schemaBuilder.hasColumn(MESSAGE_AR_ID) shouldBe true
+                schemaBuilder.hasColumn(TENANT_ID) shouldBe true
+                schemaBuilder.hasColumn(FRANK_ID) shouldBe true
+                schemaBuilder.hasColumn(JOELLA_ID) shouldBe true
+            }
+
+            "writeCsvFile should properly write in csv file" {
+                writeAudioData(responseItems, getSchemaBuilder(personalities), audioCsv.outputStream())
+
+                audioCsv.readText(Charsets.UTF_8) shouldBe expectedAudioCsv.readText(Charsets.UTF_8)
+            }
         }
     }
 }

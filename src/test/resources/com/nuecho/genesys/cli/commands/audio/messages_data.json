@@ -1,0 +1,152 @@
+[
+    {
+        "name": "Test",
+        "description": "Test description",
+        "id": 10001,
+        "arId": 1000,
+        "creatorTenantDbid": 1,
+        "creatorTenantName": "",
+        "tenantId": 1,
+        "tenantName": null,
+        "type": "MUSIC",
+        "editable": true,
+        "copy": false,
+        "preinstalled": false,
+        "privateResource": false,
+        "deployedResourceFiles": [],
+        "ownResourceFiles": [
+            {
+                "id": 10001,
+                "arfId": 1100010,
+                "originalFilename": "Test.wav",
+                "fileStatus": "TRANSFERRED",
+                "is_copy": false,
+                "encoding": "ORIGINAL",
+                "originalFileSize": 63990,
+                "preinstalled": false,
+                "Timestamp": "",
+                "personality": {
+                    "id": 10002,
+                    "name": "Frank (en-us)",
+                    "tenantDbId": 1,
+                    "logicalId": 10,
+                    "gender": "MALE",
+                    "language": "en-us",
+                    "description": "Frank (en-us) - voice talent from Acme Voices",
+                    "tenantDbId": 1,
+                    "personalityId": 10,
+                    "privateResource": false,
+                    "preinstalled": false
+                }
+            }
+        ]
+    },
+    {
+        "name": "Enter Password",
+        "description": "Now enter your password, followed by pound",
+        "id": 10002,
+        "arId": 1001,
+        "creatorTenantDbid": 1,
+        "creatorTenantName": "",
+        "tenantId": 1,
+        "tenantName": null,
+        "type": "ANNOUNCEMENT",
+        "editable": true,
+        "copy": false,
+        "preinstalled": false,
+        "privateResource": false,
+        "deployedResourceFiles": [],
+        "ownResourceFiles": [
+            {
+                "id": 10003,
+                "arfId": 1100110,
+                "originalFilename": "Test.wav",
+                "fileStatus": "TRANSFERRED",
+                "is_copy": false,
+                "encoding": "ORIGINAL",
+                "originalFileSize": 318032,
+                "preinstalled": false,
+                "Timestamp": "",
+                "personality": {
+                    "id": 10002,
+                    "name": "Frank (en-us)",
+                    "tenantDbId": 1,
+                    "logicalId": 10,
+                    "gender": "MALE",
+                    "language": "en-us",
+                    "description": "Frank (en-us) - voice talent from Acme Voices",
+                    "tenantDbId": 1,
+                    "personalityId": 10,
+                    "privateResource": false,
+                    "preinstalled": false
+                }
+            }
+        ]
+    },
+    {
+        "name": "Didn't get that",
+        "description": "Sorry, I didn't get that.  Let's try again.",
+        "id": 10003,
+        "arId": 1002,
+        "creatorTenantDbid": 1,
+        "creatorTenantName": "",
+        "tenantId": 1,
+        "tenantName": null,
+        "type": "ANNOUNCEMENT",
+        "editable": true,
+        "copy": false,
+        "preinstalled": false,
+        "privateResource": false,
+        "deployedResourceFiles": [],
+        "ownResourceFiles": [
+            {
+                "id": 10008,
+                "arfId": 1100212,
+                "originalFilename": "f_sorry_didnt_get_that.wav",
+                "fileStatus": "TRANSFERRED",
+                "is_copy": false,
+                "encoding": "ORIGINAL",
+                "originalFileSize": 189942,
+                "preinstalled": false,
+                "Timestamp": "",
+                "personality": {
+                    "id": 10004,
+                    "name": "Joella (french)",
+                    "tenantDbId": 1,
+                    "logicalId": 12,
+                    "gender": "FEMALE",
+                    "language": "french",
+                    "description": "Joella (french) - voice talent from Paris Voice Company",
+                    "tenantDbId": 1,
+                    "personalityId": 12,
+                    "privateResource": false,
+                    "preinstalled": false
+                }
+            },
+            {
+                "id": 10004,
+                "arfId": 1100210,
+                "originalFilename": "sorry_didnt_get_that_try_again.wav",
+                "fileStatus": "TRANSFERRED",
+                "is_copy": false,
+                "encoding": "ORIGINAL",
+                "originalFileSize": 334160,
+                "preinstalled": false,
+                "Timestamp": "",
+                "personality": {
+                    "id": 10002,
+                    "name": "Frank (en-us)",
+                    "tenantDbId": 1,
+                    "logicalId": 10,
+                    "gender": "MALE",
+                    "language": "en-us",
+                    "description": "Frank (en-us) - voice talent from Acme Voices",
+                    "tenantDbId": 1,
+                    "personalityId": 10,
+                    "privateResource": false,
+                    "preinstalled": false
+                }
+            }
+        ]
+    }
+]
