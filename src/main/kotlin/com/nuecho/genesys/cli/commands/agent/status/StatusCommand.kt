@@ -34,11 +34,12 @@ import com.nuecho.genesys.cli.GenesysCliCommand
 import com.nuecho.genesys.cli.Logging.debug
 import com.nuecho.genesys.cli.Logging.info
 import com.nuecho.genesys.cli.commands.agent.Agent
+import com.nuecho.genesys.cli.models.configuration.reference.PersonReference
 import com.nuecho.genesys.cli.services.ConfService
 import com.nuecho.genesys.cli.services.GenesysServices
 import com.nuecho.genesys.cli.services.StatService
 import com.nuecho.genesys.cli.services.StatServiceException
-import com.nuecho.genesys.cli.services.retrievePerson
+import com.nuecho.genesys.cli.services.retrieveObject
 import com.nuecho.genesys.cli.services.withService
 import com.nuecho.genesys.cli.setBits
 import com.nuecho.genesys.cli.toConsoleString
@@ -95,7 +96,7 @@ object Status {
     fun getAgentStatus(confService: ConfService, statService: StatService, employeeId: String) =
         getAgentStatus(
             statService,
-            confService.retrievePerson(employeeId)
+            confService.retrieveObject(PersonReference(employeeId))
                     ?: throw ConfigServerException("Error while retrieving CfgPerson ($employeeId).")
         )
 

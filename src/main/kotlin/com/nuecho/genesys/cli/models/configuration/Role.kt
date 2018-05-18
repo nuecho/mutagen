@@ -4,15 +4,17 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.genesyslab.platform.applicationblocks.com.IConfService
+import com.genesyslab.platform.applicationblocks.com.objects.CfgAccessGroup
+import com.genesyslab.platform.applicationblocks.com.objects.CfgPerson
 import com.genesyslab.platform.applicationblocks.com.objects.CfgRole
 import com.nuecho.genesys.cli.Logging.warn
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectUpdateStatus.CREATED
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectUpdateStatus.UNCHANGED
-import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.dbidToPrimaryKey
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setProperty
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgObjectState
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toKeyValueCollection
-import com.nuecho.genesys.cli.services.retrieveRole
+import com.nuecho.genesys.cli.models.configuration.reference.RoleReference
+import com.nuecho.genesys.cli.services.retrieveObject
 import com.nuecho.genesys.cli.toShortName
 import java.util.SortedSet
 
@@ -25,9 +27,8 @@ data class Role(
     @JsonDeserialize(using = CategorizedPropertiesDeserializer::class)
     override val userProperties: CategorizedProperties? = null
 ) : ConfigurationObject {
-    override val primaryKey: String
-        @JsonIgnore
-        get() = name
+    @get:JsonIgnore
+    override val reference = RoleReference(name)
 
     constructor(role: CfgRole) : this(
         name = role.name,
@@ -35,21 +36,27 @@ data class Role(
         state = role.state?.toShortName(),
         userProperties = role.userProperties?.asCategorizedProperties(),
         members = role.members?.map {
-            val type = it.objectType.toShortName()
-            val key = dbidToPrimaryKey(it.objectDBID, it.objectType, role.configurationService) ?: it.objectDBID
+            val dbid = it.objectDBID
+            val type = it.objectType
 
-            if (key == it.objectDBID) {
-                warn {
-                    "Cannot find ${it.objectType} object with DBID ${it.objectDBID} referred by role '${role.name}'."
+            val member = role.configurationService.retrieveObject(type, dbid)
+
+            val key = when (member) {
+                null -> {
+                    warn { "Cannot find $type object with DBID $dbid referred by role '${role.name}'." }
+                    it.objectDBID.toString()
                 }
+                is CfgPerson -> member.employeeID
+                is CfgAccessGroup -> member.groupInfo.name
+                else -> throw IllegalArgumentException("Unexpected member type $type referred by role '${role.name}'.")
             }
 
-            "$type/$key"
+            "${type.toShortName()}/$key"
         }?.toSortedSet()
     )
 
     override fun updateCfgObject(service: IConfService): ConfigurationObjectUpdateResult {
-        service.retrieveRole(name)?.let {
+        service.retrieveObject(reference)?.let {
             return ConfigurationObjectUpdateResult(UNCHANGED, it)
         }
 

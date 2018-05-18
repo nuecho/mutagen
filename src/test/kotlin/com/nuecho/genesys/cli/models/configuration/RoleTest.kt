@@ -1,23 +1,22 @@
 package com.nuecho.genesys.cli.models.configuration
 
+import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgRole
 import com.genesyslab.platform.applicationblocks.com.objects.CfgRoleMember
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectState
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectType.CFGPerson
 import com.nuecho.genesys.cli.models.configuration.ConfigurationAsserts.checkSerialization
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgPerson
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgRole
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockKeyValueCollection
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectUpdateStatus.CREATED
-import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.dbidToPrimaryKey
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgObjectState
 import com.nuecho.genesys.cli.models.configuration.ConfigurationTestData.defaultProperties
 import com.nuecho.genesys.cli.services.ServiceMocks.mockConfService
-import com.nuecho.genesys.cli.services.retrieveRole
 import com.nuecho.genesys.cli.toShortName
 import io.kotlintest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.objectMockk
-import io.mockk.staticMockk
 import io.mockk.use
 
 private const val PERSON1 = "dmorand"
@@ -36,40 +35,40 @@ class RoleTest : ConfigurationObjectTest(role, Role("name")) {
         val service = mockConfService()
 
         "CfgRole initialized Role should properly serialize" {
+            val person1 = mockCfgPerson(PERSON1)
+            val person2 = mockCfgPerson(PERSON2)
+            val person3 = mockCfgPerson(PERSON3)
+
             objectMockk(ConfigurationObjects).use {
                 every {
-                    dbidToPrimaryKey(any(), any(), any())
-                } returns PERSON3 andThen PERSON2 andThen PERSON1
+                    service.retrieveObject(CFGPerson, any())
+                } returns person3 andThen person2 andThen person1
 
-                val role = Role(mockCfgRole())
+                val role = Role(mockCfgRole(service))
                 checkSerialization(role, "role")
             }
         }
 
         "Role.updateCfgObject should properly create CfgRole" {
-            staticMockk("com.nuecho.genesys.cli.services.ConfServiceExtensionsKt").use {
+            every { service.retrieveObject(CfgRole::class.java, any()) } returns null
 
-                every { service.retrieveRole(any()) } returns null
+            val (status, cfgObject) = role.updateCfgObject(service)
+            val cfgRole = cfgObject as CfgRole
 
-                val (status, cfgObject) = role.updateCfgObject(service)
-                val cfgRole = cfgObject as CfgRole
+            status shouldBe CREATED
 
-                status shouldBe CREATED
-
-                with(cfgRole) {
-                    name shouldBe role.name
-                    description shouldBe role.description
-                    state shouldBe toCfgObjectState(role.state)
-                    members.size shouldBe 0
-                    userProperties.asCategorizedProperties() shouldBe role.userProperties
-                }
+            with(cfgRole) {
+                name shouldBe role.name
+                description shouldBe role.description
+                state shouldBe toCfgObjectState(role.state)
+                members.size shouldBe 0
+                userProperties.asCategorizedProperties() shouldBe role.userProperties
             }
         }
     }
 }
 
-private fun mockCfgRole(): CfgRole {
-    val service = mockConfService()
+private fun mockCfgRole(service: IConfService): CfgRole {
     val cfgRole = mockCfgRole(role.name)
 
     val state = toCfgObjectState(role.state)

@@ -10,12 +10,9 @@ import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgObj
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgSwitchType
 import com.nuecho.genesys.cli.models.configuration.ConfigurationTestData.defaultProperties
 import com.nuecho.genesys.cli.services.ServiceMocks.mockConfService
-import com.nuecho.genesys.cli.services.retrievePhysicalSwitch
 import com.nuecho.genesys.cli.toShortName
 import io.kotlintest.matchers.shouldBe
 import io.mockk.every
-import io.mockk.staticMockk
-import io.mockk.use
 
 private val physicalSwitch = PhysicalSwitch(
     name = "foo",
@@ -33,20 +30,18 @@ class PhysicalSwitchTest : ConfigurationObjectTest(
         val service = mockConfService()
 
         "PhysicalSwitch.updateCfgObject should properly create CfgPhysicalSwitch" {
-            staticMockk("com.nuecho.genesys.cli.services.ConfServiceExtensionsKt").use {
-                every { service.retrievePhysicalSwitch(any()) } returns null
+            every { service.retrieveObject(CfgPhysicalSwitch::class.java, any()) } returns null
 
-                val (status, cfgObject) = physicalSwitch.updateCfgObject(service)
-                val cfgPhysicalSwitch = cfgObject as CfgPhysicalSwitch
+            val (status, cfgObject) = physicalSwitch.updateCfgObject(service)
+            val cfgPhysicalSwitch = cfgObject as CfgPhysicalSwitch
 
-                status shouldBe CREATED
+            status shouldBe CREATED
 
-                with(cfgPhysicalSwitch) {
-                    name shouldBe physicalSwitch.name
-                    type shouldBe toCfgSwitchType(physicalSwitch.type)
-                    state shouldBe toCfgObjectState(physicalSwitch.state)
-                    userProperties.asCategorizedProperties() shouldBe physicalSwitch.userProperties
-                }
+            with(cfgPhysicalSwitch) {
+                name shouldBe physicalSwitch.name
+                type shouldBe toCfgSwitchType(physicalSwitch.type)
+                state shouldBe toCfgObjectState(physicalSwitch.state)
+                userProperties.asCategorizedProperties() shouldBe physicalSwitch.userProperties
             }
         }
     }

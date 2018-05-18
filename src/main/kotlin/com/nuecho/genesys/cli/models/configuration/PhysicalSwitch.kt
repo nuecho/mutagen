@@ -11,7 +11,8 @@ import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setPrope
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgObjectState
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgSwitchType
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toKeyValueCollection
-import com.nuecho.genesys.cli.services.retrievePhysicalSwitch
+import com.nuecho.genesys.cli.models.configuration.reference.PhysicalSwitchReference
+import com.nuecho.genesys.cli.services.retrieveObject
 import com.nuecho.genesys.cli.toShortName
 
 /**
@@ -25,9 +26,8 @@ data class PhysicalSwitch(
     @JsonDeserialize(using = CategorizedPropertiesDeserializer::class)
     override val userProperties: CategorizedProperties? = null
 ) : ConfigurationObject {
-    override val primaryKey: String
-        @JsonIgnore
-        get() = name
+    @get:JsonIgnore
+    override val reference = PhysicalSwitchReference(name)
 
     constructor(physicalSwitch: CfgPhysicalSwitch) : this(
         name = physicalSwitch.name,
@@ -37,7 +37,7 @@ data class PhysicalSwitch(
     )
 
     override fun updateCfgObject(service: IConfService): ConfigurationObjectUpdateResult {
-        service.retrievePhysicalSwitch(name)?.let {
+        service.retrieveObject(reference)?.let {
             return ConfigurationObjectUpdateResult(UNCHANGED, it)
         }
 

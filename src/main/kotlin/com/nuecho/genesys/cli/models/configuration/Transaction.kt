@@ -11,7 +11,8 @@ import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectUpdateStat
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setProperty
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgTransactionType
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toKeyValueCollection
-import com.nuecho.genesys.cli.services.retrieveTransaction
+import com.nuecho.genesys.cli.models.configuration.reference.TransactionReference
+import com.nuecho.genesys.cli.services.retrieveObject
 import com.nuecho.genesys.cli.toShortName
 
 data class Transaction(
@@ -26,9 +27,8 @@ data class Transaction(
     override val userProperties: CategorizedProperties? = null
 
 ) : ConfigurationObject {
-    override val primaryKey: String
-        @JsonIgnore
-        get() = name
+    @get:JsonIgnore
+    override val reference = TransactionReference(name)
 
     constructor(transaction: CfgTransaction) : this(
         name = transaction.name,
@@ -41,7 +41,7 @@ data class Transaction(
     )
 
     override fun updateCfgObject(service: IConfService): ConfigurationObjectUpdateResult {
-        service.retrieveTransaction(name)?.let {
+        service.retrieveObject(reference)?.let {
             return ConfigurationObjectUpdateResult(UNCHANGED, it)
         }
 

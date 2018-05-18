@@ -18,15 +18,18 @@ import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectUpdateStat
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgFlag
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgObjectState
 import com.nuecho.genesys.cli.models.configuration.ConfigurationTestData.defaultProperties
+import com.nuecho.genesys.cli.models.configuration.reference.AgentLoginReference
+import com.nuecho.genesys.cli.models.configuration.reference.FolderReference
+import com.nuecho.genesys.cli.models.configuration.reference.ObjectiveTableReference
+import com.nuecho.genesys.cli.models.configuration.reference.PlaceReference
+import com.nuecho.genesys.cli.models.configuration.reference.ScriptReference
+import com.nuecho.genesys.cli.models.configuration.reference.SkillReference
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks
 import com.nuecho.genesys.cli.services.ServiceMocks.mockConfService
-import com.nuecho.genesys.cli.services.retrievePerson
 import com.nuecho.genesys.cli.toShortName
 import io.kotlintest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
-import io.mockk.staticMockk
-import io.mockk.use
 
 private const val EMPLOYEE_ID = "employeeId"
 private val person = Person(
@@ -49,19 +52,19 @@ private val person = Person(
     ),
     userProperties = defaultProperties(),
     agentInfo = AgentInfo(
-        capacityRule = "capacityRule",
-        contract = "contract",
-        place = "place",
-        site = "site",
+        capacityRule = ScriptReference("capacityRule"),
+        contract = ObjectiveTableReference("contract"),
+        place = PlaceReference("place"),
+        site = FolderReference("site"),
         skillLevels = mapOf(
-            "skill_1" to 10,
-            "skill_2" to 20,
-            "skill_3" to 30
+            SkillReference("skill_1") to 10,
+            SkillReference("skill_2") to 20,
+            SkillReference("skill_3") to 30
         ),
         agentLogins = listOf(
-            AgentLoginInfo("agent_1", 1000),
-            AgentLoginInfo("agent_2", 2000),
-            AgentLoginInfo("agent_3", 3000)
+            AgentLoginInfo(AgentLoginReference("agent_1"), 1000),
+            AgentLoginInfo(AgentLoginReference("agent_2"), 2000),
+            AgentLoginInfo(AgentLoginReference("agent_3"), 3000)
         )
     )
 )
@@ -71,62 +74,58 @@ class PersonTest : ConfigurationObjectTest(person, Person(EMPLOYEE_ID), Person(m
         val service = mockConfService()
 
         "Person.updateCfgObject should properly create CfgPerson" {
-            staticMockk("com.nuecho.genesys.cli.services.ConfServiceExtensionsKt").use {
-                val dbid = 101
+            val dbid = 101
 
-                every { service.retrievePerson(any()) } returns null
-                ConfServiceExtensionMocks.mockRetrieveAgentLogin(service, dbid)
-                ConfServiceExtensionMocks.mockRetrieveFolder(service, dbid)
-                ConfServiceExtensionMocks.mockRetrieveObjectiveTable(service, dbid)
-                ConfServiceExtensionMocks.mockRetrievePlace(service, dbid)
-                ConfServiceExtensionMocks.mockRetrieveScript(service, dbid)
-                ConfServiceExtensionMocks.mockRetrieveSkill(service, dbid)
+            every { service.retrieveObject(CfgPerson::class.java, any()) } returns null
+            ConfServiceExtensionMocks.mockRetrieveAgentLogin(service, dbid)
+            ConfServiceExtensionMocks.mockRetrieveFolder(service, dbid)
+            ConfServiceExtensionMocks.mockRetrieveObjectiveTable(service, dbid)
+            ConfServiceExtensionMocks.mockRetrievePlace(service, dbid)
+            ConfServiceExtensionMocks.mockRetrieveScript(service, dbid)
+            ConfServiceExtensionMocks.mockRetrieveSkill(service, dbid)
 
-                val (status, cfgObject) = person.updateCfgObject(service)
-                val cfgPerson = cfgObject as CfgPerson
+            val (status, cfgObject) = person.updateCfgObject(service)
+            val cfgPerson = cfgObject as CfgPerson
 
-                status shouldBe CREATED
+            status shouldBe CREATED
 
-                with(cfgPerson) {
-                    employeeID shouldBe person.employeeId
-                    externalID shouldBe person.externalId
-                    firstName shouldBe person.firstName
-                    lastName shouldBe person.lastName
-                    userName shouldBe person.userName
-                    password shouldBe person.password
-                    passwordHashAlgorithm shouldBe person.passwordHashAlgorithm
-                    passwordUpdatingDate shouldBe person.passwordUpdatingDate
-                    changePasswordOnNextLogin shouldBe toCfgFlag(person.changePasswordOnNextLogin)
-                    emailAddress shouldBe person.emailAddress
-                    state shouldBe toCfgObjectState(person.state)
-                    isAgent shouldBe toCfgFlag(person.agent)
-                    isExternalAuth shouldBe toCfgFlag(person.externalAuth)
-                    appRanks.size shouldBe 2
-                    userProperties.asCategorizedProperties() shouldBe person.userProperties
-                }
+            with(cfgPerson) {
+                employeeID shouldBe person.employeeId
+                externalID shouldBe person.externalId
+                firstName shouldBe person.firstName
+                lastName shouldBe person.lastName
+                userName shouldBe person.userName
+                password shouldBe person.password
+                passwordHashAlgorithm shouldBe person.passwordHashAlgorithm
+                passwordUpdatingDate shouldBe person.passwordUpdatingDate
+                changePasswordOnNextLogin shouldBe toCfgFlag(person.changePasswordOnNextLogin)
+                emailAddress shouldBe person.emailAddress
+                state shouldBe toCfgObjectState(person.state)
+                isAgent shouldBe toCfgFlag(person.agent)
+                isExternalAuth shouldBe toCfgFlag(person.externalAuth)
+                appRanks.size shouldBe 2
+                userProperties.asCategorizedProperties() shouldBe person.userProperties
+            }
 
-                with(cfgPerson.agentInfo) {
-                    siteDBID shouldBe dbid
-                    placeDBID shouldBe dbid
-                    contractDBID shouldBe dbid
-                    capacityRuleDBID shouldBe dbid
-                    skillLevels.size shouldBe 3
-                    agentLogins.size shouldBe 0
-                }
+            with(cfgPerson.agentInfo) {
+                siteDBID shouldBe dbid
+                placeDBID shouldBe dbid
+                contractDBID shouldBe dbid
+                capacityRuleDBID shouldBe dbid
+                skillLevels.size shouldBe 3
+                agentLogins.size shouldBe 0
             }
         }
 
         "Person.updateCfgObject should use employeeId when username is not specified" {
-            staticMockk("com.nuecho.genesys.cli.services.ConfServiceExtensionsKt").use {
-                every { service.retrievePerson(any()) } returns null
+            every { service.retrieveObject(CfgPerson::class.java, any()) } returns null
 
-                val (_, cfgObject) = Person(EMPLOYEE_ID).updateCfgObject(service)
-                val cfgPerson = cfgObject as CfgPerson
+            val (_, cfgObject) = Person(EMPLOYEE_ID).updateCfgObject(service)
+            val cfgPerson = cfgObject as CfgPerson
 
-                with(cfgPerson) {
-                    employeeID shouldBe EMPLOYEE_ID
-                    userName shouldBe EMPLOYEE_ID
-                }
+            with(cfgPerson) {
+                employeeID shouldBe EMPLOYEE_ID
+                userName shouldBe EMPLOYEE_ID
             }
         }
     }

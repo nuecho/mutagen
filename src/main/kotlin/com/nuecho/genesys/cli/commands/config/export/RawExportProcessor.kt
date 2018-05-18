@@ -5,7 +5,6 @@ import com.genesyslab.platform.applicationblocks.com.ICfgObject
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectType
 import com.nuecho.genesys.cli.core.defaultJsonGenerator
 import com.nuecho.genesys.cli.core.defaultJsonObjectMapper
-import com.nuecho.genesys.cli.getPrimaryKey
 import com.nuecho.genesys.cli.models.configuration.Metadata
 import org.json.JSONArray
 import org.json.JSONObject
@@ -46,7 +45,7 @@ class RawExportProcessor(output: OutputStream, val metadata: Metadata) : ExportP
         jsonGenerator.writeArrayFieldStart(typeName)
 
         configurationObjects
-            .sortedBy { it.getPrimaryKey() }
+            .sortedBy { it.objectDbid }
             .forEach { configurationObject ->
                 val xml = toXml(configurationObject)
 

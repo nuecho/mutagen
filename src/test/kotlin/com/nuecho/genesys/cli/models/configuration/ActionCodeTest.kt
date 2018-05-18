@@ -10,12 +10,9 @@ import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgAct
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgObjectState
 import com.nuecho.genesys.cli.models.configuration.ConfigurationTestData.defaultProperties
 import com.nuecho.genesys.cli.services.ServiceMocks.mockConfService
-import com.nuecho.genesys.cli.services.retrieveActionCode
 import com.nuecho.genesys.cli.toShortName
 import io.kotlintest.matchers.shouldBe
 import io.mockk.every
-import io.mockk.staticMockk
-import io.mockk.use
 
 private const val SUBNAME = "subname"
 private const val SUBCODE = "subcode"
@@ -35,30 +32,28 @@ class ActionCodeTest : ConfigurationObjectTest(actionCode, ActionCode("name"), A
         val service = mockConfService()
 
         "ActionCode.updateCfgObject should properly create CfgActionCode" {
-            staticMockk("com.nuecho.genesys.cli.services.ConfServiceExtensionsKt").use {
-                every { service.retrieveActionCode(any()) } returns null
+            every { service.retrieveObject(CfgActionCode::class.java, any()) } returns null
 
-                val type = toCfgActionCodeType(actionCode.type)
-                val state = toCfgObjectState(actionCode.state)
-                val (status, cfgObject) = actionCode.updateCfgObject(service)
-                val cfgActionCode = cfgObject as CfgActionCode
+            val type = toCfgActionCodeType(actionCode.type)
+            val state = toCfgObjectState(actionCode.state)
+            val (status, cfgObject) = actionCode.updateCfgObject(service)
+            val cfgActionCode = cfgObject as CfgActionCode
 
-                status shouldBe ConfigurationObjectUpdateStatus.CREATED
+            status shouldBe ConfigurationObjectUpdateStatus.CREATED
 
-                with(cfgActionCode) {
-                    name shouldBe actionCode.name
-                    type shouldBe type
-                    code shouldBe actionCode.code
-                    subcodes.size shouldBe 1
+            with(cfgActionCode) {
+                name shouldBe actionCode.name
+                type shouldBe type
+                code shouldBe actionCode.code
+                subcodes.size shouldBe 1
 
-                    with(subcodes.iterator().next()) {
-                        name shouldBe SUBNAME
-                        code shouldBe SUBCODE
-                    }
-
-                    state shouldBe state
-                    userProperties.asCategorizedProperties() shouldBe actionCode.userProperties
+                with(subcodes.iterator().next()) {
+                    name shouldBe SUBNAME
+                    code shouldBe SUBCODE
                 }
+
+                state shouldBe state
+                userProperties.asCategorizedProperties() shouldBe actionCode.userProperties
             }
         }
     }

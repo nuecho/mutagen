@@ -10,7 +10,8 @@ import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectUpdateStat
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setProperty
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgEnumeratorType
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgObjectState
-import com.nuecho.genesys.cli.services.retrieveEnumerator
+import com.nuecho.genesys.cli.models.configuration.reference.EnumeratorReference
+import com.nuecho.genesys.cli.services.retrieveObject
 import com.nuecho.genesys.cli.toShortName
 
 data class Enumerator(
@@ -23,9 +24,8 @@ data class Enumerator(
     @JsonDeserialize(using = CategorizedPropertiesDeserializer::class)
     override val userProperties: CategorizedProperties? = null
 ) : ConfigurationObject {
-    override val primaryKey: String
-        @JsonIgnore
-        get() = name
+    @get:JsonIgnore
+    override val reference = EnumeratorReference(name)
 
     constructor(enumerator: CfgEnumerator) : this(
         name = enumerator.name,
@@ -37,7 +37,7 @@ data class Enumerator(
     )
 
     override fun updateCfgObject(service: IConfService): ConfigurationObjectUpdateResult {
-        service.retrieveEnumerator(name)?.let {
+        service.retrieveObject(reference)?.let {
             return ConfigurationObjectUpdateResult(UNCHANGED, it)
         }
 

@@ -7,12 +7,9 @@ import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mock
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgScriptType
 import com.nuecho.genesys.cli.models.configuration.ConfigurationTestData.defaultProperties
 import com.nuecho.genesys.cli.services.ServiceMocks.mockConfService
-import com.nuecho.genesys.cli.services.retrieveScript
 import com.nuecho.genesys.cli.toShortName
 import io.kotlintest.matchers.shouldBe
 import io.mockk.every
-import io.mockk.staticMockk
-import io.mockk.use
 
 private val script = Script(
     name = "foo",
@@ -25,22 +22,19 @@ class ScriptTest : ConfigurationObjectTest(script, Script("foo"), Script(mockCfg
         val service = mockConfService()
 
         "Script.updateCfgObject should properly create CfgScript" {
-            staticMockk("com.nuecho.genesys.cli.services.ConfServiceExtensionsKt").use {
+            every { service.retrieveObject(CfgScript::class.java, any()) } returns null
 
-                every { service.retrieveScript(any()) } returns null
+            val (status, cfgObject) = script.updateCfgObject(service)
+            val cfgScript = cfgObject as CfgScript
 
-                val (status, cfgObject) = script.updateCfgObject(service)
-                val cfgScript = cfgObject as CfgScript
+            status shouldBe ConfigurationObjectUpdateStatus.CREATED
 
-                status shouldBe ConfigurationObjectUpdateStatus.CREATED
-
-                with(cfgScript) {
-                    name shouldBe script.name
-                    index shouldBe script.index
-                    state shouldBe ConfigurationObjects.toCfgObjectState(script.state)
-                    type shouldBe ConfigurationObjects.toCfgScriptType(script.type)
-                    userProperties.asCategorizedProperties() shouldBe script.userProperties
-                }
+            with(cfgScript) {
+                name shouldBe script.name
+                index shouldBe script.index
+                state shouldBe ConfigurationObjects.toCfgObjectState(script.state)
+                type shouldBe ConfigurationObjects.toCfgScriptType(script.type)
+                userProperties.asCategorizedProperties() shouldBe script.userProperties
             }
         }
     }

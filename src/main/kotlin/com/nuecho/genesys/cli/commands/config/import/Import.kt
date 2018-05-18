@@ -11,6 +11,7 @@ import com.nuecho.genesys.cli.commands.config.Config
 import com.nuecho.genesys.cli.core.defaultJsonObjectMapper
 import com.nuecho.genesys.cli.models.configuration.Configuration
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObject
+import com.nuecho.genesys.cli.models.configuration.reference.ConfigurationObjectReference
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectUpdateStatus.CREATED
 import com.nuecho.genesys.cli.services.ConfService
 import com.nuecho.genesys.cli.services.defaultTenantDbid
@@ -75,7 +76,7 @@ class Import : GenesysCliCommand() {
             var count = 0
 
             objects.forEach {
-                val primaryKey = it.primaryKey
+                val primaryKey = it.reference
                 val (status, cfgObject) = it.updateCfgObject(service)
                 val type = cfgObject.objectType.toShortName()
 
@@ -93,9 +94,13 @@ class Import : GenesysCliCommand() {
             return count
         }
 
-        private fun objectImportProgress(type: String, key: String, skip: Boolean = false) {
+        private fun objectImportProgress(
+            type: String,
+            reference: ConfigurationObjectReference<*>,
+            skip: Boolean = false
+        ) {
             val prefix = if (skip) "=" else "+"
-            println("$prefix $type.$key")
+            println("$prefix $type => $reference")
         }
 
         internal fun save(cfgObject: CfgObject) = applyTenant(cfgObject).save()

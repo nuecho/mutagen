@@ -9,7 +9,8 @@ import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectUpdateStat
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectUpdateStatus.UNCHANGED
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setProperty
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toKeyValueCollection
-import com.nuecho.genesys.cli.services.retrieveSkill
+import com.nuecho.genesys.cli.models.configuration.reference.SkillReference
+import com.nuecho.genesys.cli.services.retrieveObject
 import com.nuecho.genesys.cli.toShortName
 
 data class Skill(
@@ -20,9 +21,8 @@ data class Skill(
     override val userProperties: CategorizedProperties? = null
 
 ) : ConfigurationObject {
-    override val primaryKey: String
-        @JsonIgnore
-        get() = name
+    @get:JsonIgnore
+    override val reference = SkillReference(name)
 
     constructor(skill: CfgSkill) : this(
         name = skill.name,
@@ -31,7 +31,7 @@ data class Skill(
     )
 
     override fun updateCfgObject(service: IConfService): ConfigurationObjectUpdateResult {
-        service.retrieveSkill(name)?.let {
+        service.retrieveObject(reference)?.let {
             return ConfigurationObjectUpdateResult(UNCHANGED, it)
         }
 

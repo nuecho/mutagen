@@ -8,9 +8,10 @@ import com.nuecho.genesys.cli.CliOutputCaptureWrapper.execute
 import com.nuecho.genesys.cli.commands.agent.mockAgentStatus
 import com.nuecho.genesys.cli.commands.agent.status.Status
 import com.nuecho.genesys.cli.getDefaultEndpoint
+import com.nuecho.genesys.cli.models.configuration.reference.SwitchReference
 import com.nuecho.genesys.cli.services.ConfService
 import com.nuecho.genesys.cli.services.TService
-import com.nuecho.genesys.cli.services.retrieveSwitch
+import com.nuecho.genesys.cli.services.retrieveObject
 import io.kotlintest.matchers.should
 import io.kotlintest.matchers.shouldEqual
 import io.kotlintest.matchers.startWith
@@ -57,12 +58,13 @@ class LogoutCommandTest : StringSpec() {
             val agentStatus = mockAgentStatus()
 
             val switchId = "testSwitch"
+            val switchReference = SwitchReference(switchId)
             val switch = mockk<CfgSwitch>()
 
             val confService = mockk<ConfService>()
 
             staticMockk("com.nuecho.genesys.cli.services.ConfServiceExtensionsKt").use {
-                every { confService.retrieveSwitch(switchId) } returns switch
+                every { confService.retrieveObject(switchReference) } returns switch
 
                 val tService = mockTService()
 

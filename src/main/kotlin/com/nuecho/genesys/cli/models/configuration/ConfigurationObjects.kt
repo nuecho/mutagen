@@ -1,7 +1,7 @@
 package com.nuecho.genesys.cli.models.configuration
 
 import com.genesyslab.platform.applicationblocks.com.ICfgBase
-import com.genesyslab.platform.applicationblocks.com.IConfService
+import com.genesyslab.platform.applicationblocks.com.ICfgObject
 import com.genesyslab.platform.commons.GEnum
 import com.genesyslab.platform.commons.collections.KeyValueCollection
 import com.genesyslab.platform.commons.collections.KeyValuePair
@@ -25,7 +25,6 @@ import com.genesyslab.platform.configuration.protocol.types.CfgScriptType
 import com.genesyslab.platform.configuration.protocol.types.CfgSwitchType
 import com.genesyslab.platform.configuration.protocol.types.CfgTargetType
 import com.genesyslab.platform.configuration.protocol.types.CfgTransactionType
-import com.nuecho.genesys.cli.getPrimaryKey
 
 object ConfigurationObjects {
 
@@ -40,11 +39,11 @@ object ConfigurationObjects {
         return types
     }
 
+    fun getCfgObjectType(cfgObjectClass: Class<out ICfgObject>) =
+        CfgObjectType.getValue(CfgObjectType::class.java, cfgObjectClass.simpleName) as CfgObjectType
+
     fun setProperty(name: String, value: Any?, cfgBase: ICfgBase) =
         value?.let { cfgBase.setProperty(name, it) }
-
-    fun dbidToPrimaryKey(dbid: Int, type: CfgObjectType, service: IConfService) =
-        service.retrieveObject(type, dbid)?.getPrimaryKey()
 
     @Suppress("UNCHECKED_CAST")
     fun toKeyValueCollection(map: Map<String, Any>?): KeyValueCollection? =

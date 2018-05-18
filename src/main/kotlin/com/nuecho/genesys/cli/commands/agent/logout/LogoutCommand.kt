@@ -12,10 +12,11 @@ import com.nuecho.genesys.cli.commands.agent.Agent
 import com.nuecho.genesys.cli.commands.agent.status.Status
 import com.nuecho.genesys.cli.getDefaultEndpoint
 import com.nuecho.genesys.cli.isLoggedOut
+import com.nuecho.genesys.cli.models.configuration.reference.SwitchReference
 import com.nuecho.genesys.cli.services.ConfService
 import com.nuecho.genesys.cli.services.StatService
 import com.nuecho.genesys.cli.services.TService
-import com.nuecho.genesys.cli.services.retrieveSwitch
+import com.nuecho.genesys.cli.services.retrieveObject
 import com.nuecho.genesys.cli.services.withService
 import com.nuecho.genesys.cli.toConsoleString
 import com.nuecho.genesys.cli.toList
@@ -74,7 +75,7 @@ object Logout {
             .toSwitchIdDnMap()
             .mapKeys {
                 val name = it.key
-                val switch = confService.retrieveSwitch(name)
+                val switch = confService.retrieveObject(SwitchReference(name))
                         ?: throw ConfigServerException("Error while retrieving CfgSwitch ($name)")
                 switch.getTService()
             }

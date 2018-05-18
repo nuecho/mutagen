@@ -7,12 +7,9 @@ import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mock
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockKeyValueCollection
 import com.nuecho.genesys.cli.models.configuration.ConfigurationTestData.defaultProperties
 import com.nuecho.genesys.cli.services.ServiceMocks.mockConfService
-import com.nuecho.genesys.cli.services.retrieveTransaction
 import com.nuecho.genesys.cli.toShortName
 import io.kotlintest.matchers.shouldBe
 import io.mockk.every
-import io.mockk.staticMockk
-import io.mockk.use
 
 private val transaction = Transaction(
     name = "foo",
@@ -29,23 +26,21 @@ class TransactionTest : ConfigurationObjectTest(transaction, Transaction("foo"),
         val service = mockConfService()
 
         "Transaction.updateCfgObject should properly create CfgTransaction" {
-            staticMockk("com.nuecho.genesys.cli.services.ConfServiceExtensionsKt").use {
-                every { service.retrieveTransaction(any()) } returns null
+            every { service.retrieveObject(CfgTransaction::class.java, any()) } returns null
 
-                val (status, cfgObject) = transaction.updateCfgObject(service)
-                val cfgTransaction = cfgObject as CfgTransaction
+            val (status, cfgObject) = transaction.updateCfgObject(service)
+            val cfgTransaction = cfgObject as CfgTransaction
 
-                status shouldBe ConfigurationObjectUpdateStatus.CREATED
+            status shouldBe ConfigurationObjectUpdateStatus.CREATED
 
-                with(cfgTransaction) {
-                    name shouldBe transaction.name
-                    alias shouldBe transaction.alias
-                    type shouldBe ConfigurationObjects.toCfgTransactionType(transaction.type)
-                    recordPeriod shouldBe transaction.recordPeriod
-                    description shouldBe transaction.description
-                    state shouldBe ConfigurationObjects.toCfgObjectState(transaction.state)
-                    userProperties.asCategorizedProperties() shouldBe transaction.userProperties
-                }
+            with(cfgTransaction) {
+                name shouldBe transaction.name
+                alias shouldBe transaction.alias
+                type shouldBe ConfigurationObjects.toCfgTransactionType(transaction.type)
+                recordPeriod shouldBe transaction.recordPeriod
+                description shouldBe transaction.description
+                state shouldBe ConfigurationObjects.toCfgObjectState(transaction.state)
+                userProperties.asCategorizedProperties() shouldBe transaction.userProperties
             }
         }
     }

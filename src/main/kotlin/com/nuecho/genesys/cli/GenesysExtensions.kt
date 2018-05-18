@@ -1,15 +1,24 @@
+@file:Suppress("MethodOverloading")
+
 package com.nuecho.genesys.cli
 
-import com.genesyslab.platform.applicationblocks.com.ICfgObject
 import com.genesyslab.platform.applicationblocks.com.objects.CfgAccessGroup
 import com.genesyslab.platform.applicationblocks.com.objects.CfgAgentGroup
 import com.genesyslab.platform.applicationblocks.com.objects.CfgAgentLogin
 import com.genesyslab.platform.applicationblocks.com.objects.CfgApplication
 import com.genesyslab.platform.applicationblocks.com.objects.CfgDN
 import com.genesyslab.platform.applicationblocks.com.objects.CfgDNGroup
-import com.genesyslab.platform.applicationblocks.com.objects.CfgIVRPort
+import com.genesyslab.platform.applicationblocks.com.objects.CfgFolder
+import com.genesyslab.platform.applicationblocks.com.objects.CfgObjectiveTable
 import com.genesyslab.platform.applicationblocks.com.objects.CfgPerson
+import com.genesyslab.platform.applicationblocks.com.objects.CfgPhysicalSwitch
+import com.genesyslab.platform.applicationblocks.com.objects.CfgPlace
 import com.genesyslab.platform.applicationblocks.com.objects.CfgPlaceGroup
+import com.genesyslab.platform.applicationblocks.com.objects.CfgScript
+import com.genesyslab.platform.applicationblocks.com.objects.CfgSkill
+import com.genesyslab.platform.applicationblocks.com.objects.CfgStatTable
+import com.genesyslab.platform.applicationblocks.com.objects.CfgSwitch
+import com.genesyslab.platform.applicationblocks.com.objects.CfgTenant
 import com.genesyslab.platform.commons.GEnum
 import com.genesyslab.platform.commons.protocol.Endpoint
 import com.genesyslab.platform.configuration.protocol.types.CfgDNRegisterFlag
@@ -21,6 +30,23 @@ import com.genesyslab.platform.reporting.protocol.statserver.DnActionsMask
 import com.genesyslab.platform.reporting.protocol.statserver.DnStatus
 import com.genesyslab.platform.reporting.protocol.statserver.DnStatusesCollection
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects
+import com.nuecho.genesys.cli.models.configuration.reference.AccessGroupReference
+import com.nuecho.genesys.cli.models.configuration.reference.AgentGroupReference
+import com.nuecho.genesys.cli.models.configuration.reference.AgentLoginReference
+import com.nuecho.genesys.cli.models.configuration.reference.ApplicationReference
+import com.nuecho.genesys.cli.models.configuration.reference.DNGroupReference
+import com.nuecho.genesys.cli.models.configuration.reference.DNReference
+import com.nuecho.genesys.cli.models.configuration.reference.FolderReference
+import com.nuecho.genesys.cli.models.configuration.reference.ObjectiveTableReference
+import com.nuecho.genesys.cli.models.configuration.reference.PersonReference
+import com.nuecho.genesys.cli.models.configuration.reference.PhysicalSwitchReference
+import com.nuecho.genesys.cli.models.configuration.reference.PlaceGroupReference
+import com.nuecho.genesys.cli.models.configuration.reference.PlaceReference
+import com.nuecho.genesys.cli.models.configuration.reference.ScriptReference
+import com.nuecho.genesys.cli.models.configuration.reference.SkillReference
+import com.nuecho.genesys.cli.models.configuration.reference.StatTableReference
+import com.nuecho.genesys.cli.models.configuration.reference.SwitchReference
+import com.nuecho.genesys.cli.models.configuration.reference.TenantReference
 
 fun AgentStatus.getStatusAsDnAction(): DnActions =
     GEnum.getValue(DnActions::class.java, this.status)!! as DnActions
@@ -70,27 +96,20 @@ fun CfgFlag.asBoolean(): Boolean? =
         else -> throw IllegalArgumentException("Illegal CfgFlag value: '$this'")
     }
 
-fun ICfgObject.getPrimaryKey(): String = when (this) {
-    is CfgAccessGroup -> groupInfo.name
-    is CfgAgentGroup -> groupInfo.name
-    is CfgDNGroup -> groupInfo.name
-    is CfgPlaceGroup -> groupInfo.name
-    else -> getStringProperty(this, getPrimaryKeyProperty(this))
-}
-
-fun Collection<ICfgObject?>.toPrimaryKeyList() =
-    this.mapNotNull { it?.getPrimaryKey() }
-
-private fun getPrimaryKeyProperty(target: ICfgObject?) = when (target) {
-    is CfgAgentLogin -> "loginCode"
-    is CfgDN -> "number"
-    is CfgIVRPort -> "portNumber"
-    is CfgPerson -> "employeeID"
-    else -> "name"
-}
-
-private fun getStringProperty(target: Any, propertyName: String): String {
-    val getterName = "get${propertyName.capitalize()}"
-    val getter = target.javaClass.getMethod(getterName)
-    return getter.invoke(target) as String
-}
+fun CfgAccessGroup.getReference() = AccessGroupReference(groupInfo.name)
+fun CfgAgentGroup.getReference() = AgentGroupReference(groupInfo.name)
+fun CfgAgentLogin.getReference() = AgentLoginReference(loginCode)
+fun CfgApplication.getReference() = ApplicationReference(name)
+fun CfgDN.getReference() = DNReference(this)
+fun CfgDNGroup.getReference() = DNGroupReference(groupInfo.name)
+fun CfgFolder.getReference() = FolderReference(name)
+fun CfgObjectiveTable.getReference() = ObjectiveTableReference(name)
+fun CfgPerson.getReference() = PersonReference(employeeID)
+fun CfgPhysicalSwitch.getReference() = PhysicalSwitchReference(name)
+fun CfgPlace.getReference() = PlaceReference(name)
+fun CfgPlaceGroup.getReference() = PlaceGroupReference(groupInfo.name)
+fun CfgScript.getReference() = ScriptReference(name)
+fun CfgSkill.getReference() = SkillReference(name)
+fun CfgStatTable.getReference() = StatTableReference(name)
+fun CfgSwitch.getReference() = SwitchReference(name)
+fun CfgTenant.getReference() = TenantReference(name)

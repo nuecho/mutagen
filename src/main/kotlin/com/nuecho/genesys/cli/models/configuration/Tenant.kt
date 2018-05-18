@@ -6,26 +6,27 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgTenant
 import com.nuecho.genesys.cli.asBoolean
-import com.nuecho.genesys.cli.getPrimaryKey
+import com.nuecho.genesys.cli.getReference
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectUpdateStatus.CREATED
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectUpdateStatus.UNCHANGED
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setProperty
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgFlag
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgObjectState
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toKeyValueCollection
-import com.nuecho.genesys.cli.services.getObjectiveTableDbid
-import com.nuecho.genesys.cli.services.getScriptDbid
-import com.nuecho.genesys.cli.services.getTenantDbid
-import com.nuecho.genesys.cli.services.retrieveTenant
+import com.nuecho.genesys.cli.models.configuration.reference.ObjectiveTableReference
+import com.nuecho.genesys.cli.models.configuration.reference.ScriptReference
+import com.nuecho.genesys.cli.models.configuration.reference.TenantReference
+import com.nuecho.genesys.cli.services.getObjectDbid
+import com.nuecho.genesys.cli.services.retrieveObject
 import com.nuecho.genesys.cli.toShortName
 
 data class Tenant(
     val name: String,
     val chargeableNumber: String? = null,
-    val defaultContract: String? = null,
-    val defaultCapacityRule: String? = null,
+    val defaultContract: ObjectiveTableReference? = null,
+    val defaultCapacityRule: ScriptReference? = null,
     val isServiceProvider: Boolean? = false,
-    val parentTenant: String? = null,
+    val parentTenant: TenantReference? = null,
     val password: String? = null,
     val state: String? = null,
     @JsonSerialize(using = CategorizedPropertiesSerializer::class)
@@ -33,34 +34,33 @@ data class Tenant(
     override val userProperties: CategorizedProperties? = null
 
 ) : ConfigurationObject {
-    override val primaryKey: String
-        @JsonIgnore
-        get() = name
+    @get:JsonIgnore
+    override val reference = TenantReference(name)
 
     constructor(tenant: CfgTenant) : this(
         chargeableNumber = tenant.chargeableNumber,
-        defaultCapacityRule = tenant.defaultCapacityRule?.getPrimaryKey(),
-        defaultContract = tenant.defaultContract?.getPrimaryKey(),
+        defaultCapacityRule = tenant.defaultCapacityRule?.getReference(),
+        defaultContract = tenant.defaultContract?.getReference(),
         isServiceProvider = tenant.isServiceProvider.asBoolean(),
         name = tenant.name,
-        parentTenant = tenant.parentTenant?.getPrimaryKey(),
+        parentTenant = tenant.parentTenant?.getReference(),
         password = tenant.password,
         state = tenant.state?.toShortName(),
         userProperties = tenant.userProperties?.asCategorizedProperties()
     )
 
     override fun updateCfgObject(service: IConfService): ConfigurationObjectUpdateResult {
-        service.retrieveTenant(name)?.let {
+        service.retrieveObject(reference)?.let {
             return ConfigurationObjectUpdateResult(UNCHANGED, it)
         }
 
         CfgTenant(service).let {
             setProperty("chargeableNumber", chargeableNumber, it)
-            setProperty("defaultCapacityRuleDBID", service.getScriptDbid(defaultCapacityRule), it)
-            setProperty("defaultContractDBID", service.getObjectiveTableDbid(defaultContract), it)
+            setProperty("defaultCapacityRuleDBID", service.getObjectDbid(defaultCapacityRule), it)
+            setProperty("defaultContractDBID", service.getObjectDbid(defaultContract), it)
             setProperty("isServiceProvider", toCfgFlag(isServiceProvider), it)
             setProperty("name", name, it)
-            setProperty("parentTenantDBID", service.getTenantDbid(parentTenant), it)
+            setProperty("parentTenantDBID", service.getObjectDbid(parentTenant), it)
             setProperty("password", password, it)
 
             setProperty("state", toCfgObjectState(state), it)

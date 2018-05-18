@@ -1,0 +1,13 @@
+{
+  "listOfPerson": [
+    "employee1",
+    "employee2",
+    "employee3"
+  ],
+  "mapOfSkill": {
+    "skill1": 1,
+    "skill2": 2,
+    "skill3": 3
+  },
+  "tenant": "tenant-name"
+}

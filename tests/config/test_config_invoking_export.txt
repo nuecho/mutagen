@@ -1,21 +1,6 @@
 {
   "CfgGroup": {
     "capacityRuleDBID": 0,
-    "DBID": 102,
-    "siteDBID": 0,
-    "name": "Administrators",
-    "quotaTableDBID": 0,
-    "userProperties": "",
-    "contractDBID": 0,
-    "state": 1,
-    "capacityTableDBID": 0,
-    "tenantDBID": 1
-  },
-  "type": 3
-}
-{
-  "CfgGroup": {
-    "capacityRuleDBID": 0,
     "DBID": 97,
     "siteDBID": 0,
     "name": "EVERYONE",
@@ -57,6 +42,21 @@
     "tenantDBID": 1
   },
   "type": 4
+}
+{
+  "CfgGroup": {
+    "capacityRuleDBID": 0,
+    "DBID": 102,
+    "siteDBID": 0,
+    "name": "Administrators",
+    "quotaTableDBID": 0,
+    "userProperties": "",
+    "contractDBID": 0,
+    "state": 1,
+    "capacityTableDBID": 0,
+    "tenantDBID": 1
+  },
+  "type": 3
 }
 {
   "CfgGroup": {

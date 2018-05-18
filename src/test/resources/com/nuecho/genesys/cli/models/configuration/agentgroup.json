@@ -15,9 +15,21 @@
     "name": "name",
     "quotaTable": "quotaTable",
     "routeDNs": [
-      "123",
-      "456",
-      "789"
+      {
+        "number": "123",
+        "switch": "switch",
+        "type": "cp"
+      },
+      {
+        "number": "456",
+        "switch": "switch",
+        "type": "cp"
+      },
+      {
+        "number": "789",
+        "switch": "switch",
+        "type": "cp"
+      }
     ],
     "site": "site",
     "state": "enabled",
