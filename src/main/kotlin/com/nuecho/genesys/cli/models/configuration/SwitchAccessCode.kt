@@ -3,20 +3,23 @@ package com.nuecho.genesys.cli.models.configuration
 import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgSwitch
 import com.genesyslab.platform.applicationblocks.com.objects.CfgSwitchAccessCode
+import com.nuecho.genesys.cli.getReference
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setProperty
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgRouteType
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgTargetType
-import com.nuecho.genesys.cli.services.getSwitchDbid
+import com.nuecho.genesys.cli.models.configuration.reference.SwitchReference
+import com.nuecho.genesys.cli.services.getObjectDbid
 import com.nuecho.genesys.cli.toShortName
 
 /**
  * Note the possible values of field CfgSwitchAccessCode.switchDBID.
  * - if > 0, switchDBID points to the Switch to which this access code is assigned
  * - if = 0, there is no switch to which this access code is assigned - this access code is a "default access code"
- * In our model, we represent `switchDBID = 0` by `switch = ""`
+ * Currently, having the `switch` field set to null mean that switchBBID will be set to 0.
+ * TODO: This is something we'll need to address when adding the Update functionnality
  */
 data class SwitchAccessCode(
-    val switch: String? = null,
+    val switch: SwitchReference? = null,
     val accessCode: String? = null,
     val targetType: String? = null,
     val routeType: String? = null,
@@ -28,7 +31,7 @@ data class SwitchAccessCode(
     val extensionSource: String? = null
 ) {
     constructor(switchAccessCode: CfgSwitchAccessCode) : this(
-        switch = if (switchAccessCode.switchDBID == 0) "" else switchAccessCode.switch.name,
+        switch = if (switchAccessCode.switchDBID == 0) null else switchAccessCode.switch.getReference(),
         accessCode = switchAccessCode.accessCode,
         targetType = switchAccessCode.targetType?.toShortName(),
         routeType = switchAccessCode.routeType?.toShortName(),
@@ -41,11 +44,7 @@ data class SwitchAccessCode(
     )
 
     fun toCfgSwitchAccessCode(service: IConfService, parent: CfgSwitch) = CfgSwitchAccessCode(service, parent).also {
-        val switchDbid = when (switch) {
-            null -> null
-            "" -> 0
-            else -> service.getSwitchDbid(switch)
-        }
+        val switchDbid = if (switch == null) 0 else service.getObjectDbid(switch)
 
         setProperty("switchDBID", switchDbid, it)
         setProperty("accessCode", accessCode, it)

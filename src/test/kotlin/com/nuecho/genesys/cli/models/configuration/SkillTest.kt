@@ -8,12 +8,9 @@ import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectUpdateStat
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgObjectState
 import com.nuecho.genesys.cli.models.configuration.ConfigurationTestData.defaultProperties
 import com.nuecho.genesys.cli.services.ServiceMocks.mockConfService
-import com.nuecho.genesys.cli.services.retrieveSkill
 import com.nuecho.genesys.cli.toShortName
 import io.kotlintest.matchers.shouldBe
 import io.mockk.every
-import io.mockk.staticMockk
-import io.mockk.use
 
 private val skill = Skill(
     name = "foo",
@@ -30,19 +27,17 @@ class SkillTest : ConfigurationObjectTest(
         val service = mockConfService()
 
         "Skill.updateCfgObject should properly create CfgSkill" {
-            staticMockk("com.nuecho.genesys.cli.services.ConfServiceExtensionsKt").use {
-                every { service.retrieveSkill(any()) } returns null
+            every { service.retrieveObject(CfgSkill::class.java, any()) } returns null
 
-                val (status, cfgObject) = skill.updateCfgObject(service)
-                val cfgSkill = cfgObject as CfgSkill
+            val (status, cfgObject) = skill.updateCfgObject(service)
+            val cfgSkill = cfgObject as CfgSkill
 
-                status shouldBe CREATED
+            status shouldBe CREATED
 
-                with(cfgSkill) {
-                    name shouldBe skill.name
-                    state shouldBe ConfigurationObjects.toCfgObjectState(skill.state)
-                    userProperties.asCategorizedProperties() shouldBe skill.userProperties
-                }
+            with(cfgSkill) {
+                name shouldBe skill.name
+                state shouldBe ConfigurationObjects.toCfgObjectState(skill.state)
+                userProperties.asCategorizedProperties() shouldBe skill.userProperties
             }
         }
     }

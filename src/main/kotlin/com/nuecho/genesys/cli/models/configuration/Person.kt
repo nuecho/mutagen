@@ -15,7 +15,8 @@ import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgFla
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgObjectState
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgRank
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toKeyValueCollection
-import com.nuecho.genesys.cli.services.retrievePerson
+import com.nuecho.genesys.cli.models.configuration.reference.PersonReference
+import com.nuecho.genesys.cli.services.retrieveObject
 import com.nuecho.genesys.cli.toShortName
 
 /**
@@ -41,10 +42,8 @@ data class Person(
     @JsonDeserialize(using = CategorizedPropertiesDeserializer::class)
     override val userProperties: CategorizedProperties? = null
 ) : ConfigurationObject {
-
-    override val primaryKey: String
-        @JsonIgnore
-        get() = employeeId
+    @get:JsonIgnore
+    override val reference = PersonReference(employeeId)
 
     constructor(person: CfgPerson) : this(
         employeeId = person.employeeID,
@@ -66,7 +65,7 @@ data class Person(
     )
 
     override fun updateCfgObject(service: IConfService): ConfigurationObjectUpdateResult {
-        service.retrievePerson(employeeId)?.let {
+        service.retrieveObject(reference)?.let {
             return ConfigurationObjectUpdateResult(UNCHANGED, it)
         }
 

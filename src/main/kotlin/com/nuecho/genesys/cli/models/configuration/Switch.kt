@@ -6,16 +6,18 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgSwitch
-import com.nuecho.genesys.cli.getPrimaryKey
+import com.nuecho.genesys.cli.getReference
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectUpdateStatus.CREATED
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectUpdateStatus.UNCHANGED
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setProperty
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgLinkType
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgObjectState
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toKeyValueCollection
-import com.nuecho.genesys.cli.services.getApplicationDbid
-import com.nuecho.genesys.cli.services.getPhysicalSwitchDbid
-import com.nuecho.genesys.cli.services.retrieveSwitch
+import com.nuecho.genesys.cli.models.configuration.reference.ApplicationReference
+import com.nuecho.genesys.cli.models.configuration.reference.PhysicalSwitchReference
+import com.nuecho.genesys.cli.models.configuration.reference.SwitchReference
+import com.nuecho.genesys.cli.services.getObjectDbid
+import com.nuecho.genesys.cli.services.retrieveObject
 import com.nuecho.genesys.cli.toShortName
 
 /**
@@ -23,8 +25,12 @@ import com.nuecho.genesys.cli.toShortName
  */
 data class Switch(
     val name: String,
-    val physicalSwitch: String? = null,
-    @get:JsonProperty("tServer") val tServer: String? = null,
+
+    val physicalSwitch: PhysicalSwitchReference? = null,
+
+    @get:JsonProperty("tServer")
+    val tServer: ApplicationReference? = null,
+
     val linkType: String? = null,
     val switchAccessCodes: List<SwitchAccessCode>? = null,
     val dnRange: String? = null,
@@ -33,14 +39,13 @@ data class Switch(
     @JsonDeserialize(using = CategorizedPropertiesDeserializer::class)
     override val userProperties: CategorizedProperties? = null
 ) : ConfigurationObject {
-    override val primaryKey: String
-        @JsonIgnore
-        get() = name
+    @get:JsonIgnore
+    override val reference = SwitchReference(name)
 
     constructor(switch: CfgSwitch) : this(
-        name = switch.getPrimaryKey(),
-        physicalSwitch = switch.physSwitch?.getPrimaryKey(),
-        tServer = switch.tServer?.getPrimaryKey(),
+        name = switch.name,
+        physicalSwitch = switch.physSwitch?.getReference(),
+        tServer = switch.tServer?.getReference(),
         linkType = switch.linkType?.toShortName(),
         switchAccessCodes = switch.switchAccessCodes?.map { SwitchAccessCode(it) },
         dnRange = switch.dnRange,
@@ -49,14 +54,14 @@ data class Switch(
     )
 
     override fun updateCfgObject(service: IConfService): ConfigurationObjectUpdateResult {
-        service.retrieveSwitch(name)?.let {
+        service.retrieveObject(reference)?.let {
             return ConfigurationObjectUpdateResult(UNCHANGED, it)
         }
 
         CfgSwitch(service).let { switch ->
             setProperty("name", name, switch)
-            setProperty("physSwitchDBID", service.getPhysicalSwitchDbid(physicalSwitch), switch)
-            setProperty("TServerDBID", service.getApplicationDbid(tServer), switch)
+            setProperty("physSwitchDBID", service.getObjectDbid(physicalSwitch), switch)
+            setProperty("TServerDBID", service.getObjectDbid(tServer), switch)
             setProperty("linkType", toCfgLinkType(linkType), switch)
             setProperty(
                 "switchAccessCodes",

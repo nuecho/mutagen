@@ -8,22 +8,22 @@ import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mock
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgTenant
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockKeyValueCollection
 import com.nuecho.genesys.cli.models.configuration.ConfigurationTestData.defaultProperties
+import com.nuecho.genesys.cli.models.configuration.reference.ObjectiveTableReference
+import com.nuecho.genesys.cli.models.configuration.reference.ScriptReference
+import com.nuecho.genesys.cli.models.configuration.reference.TenantReference
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks
 import com.nuecho.genesys.cli.services.ServiceMocks.mockConfService
-import com.nuecho.genesys.cli.services.retrieveTenant
 import com.nuecho.genesys.cli.toShortName
 import io.kotlintest.matchers.shouldBe
 import io.mockk.every
-import io.mockk.staticMockk
-import io.mockk.use
 
 private val tenant = Tenant(
     name = "foo",
-    defaultCapacityRule = "capacityRule",
-    defaultContract = "contract",
+    defaultCapacityRule = ScriptReference("capacityRule"),
+    defaultContract = ObjectiveTableReference("contract"),
     chargeableNumber = "123",
     password = "password",
-    parentTenant = "parent",
+    parentTenant = TenantReference("parent"),
     state = CFGEnabled.toShortName(),
     userProperties = defaultProperties()
 )
@@ -33,38 +33,35 @@ class TenantTest : ConfigurationObjectTest(tenant, Tenant("foo"), Tenant(mockCfg
         val service = mockConfService()
 
         "Tenant.updateCfgObject should properly create CfgTenant" {
-            staticMockk("com.nuecho.genesys.cli.services.ConfServiceExtensionsKt").use {
+            val dbid = 101
 
-                val dbid = 101
+            every { service.retrieveObject(CfgTenant::class.java, any()) } returns null
+            ConfServiceExtensionMocks.mockRetrieveObjectiveTable(service, dbid)
+            ConfServiceExtensionMocks.mockRetrieveScript(service, dbid)
 
-                every { service.retrieveTenant(any()) } returns null
-                ConfServiceExtensionMocks.mockRetrieveObjectiveTable(service, dbid)
-                ConfServiceExtensionMocks.mockRetrieveScript(service, dbid)
+            val (status, cfgObject) = tenant.updateCfgObject(service)
+            val cfgTenant = cfgObject as CfgTenant
 
-                val (status, cfgObject) = tenant.updateCfgObject(service)
-                val cfgTenant = cfgObject as CfgTenant
+            status shouldBe ConfigurationObjectUpdateStatus.CREATED
 
-                status shouldBe ConfigurationObjectUpdateStatus.CREATED
-
-                with(cfgTenant) {
-                    name shouldBe tenant.name
-                    defaultCapacityRuleDBID shouldBe dbid
-                    defaultContractDBID shouldBe dbid
-                    chargeableNumber shouldBe tenant.chargeableNumber
-                    parentTenant shouldBe null
-                    password shouldBe tenant.password
-                    state shouldBe ConfigurationObjects.toCfgObjectState(tenant.state)
-                    userProperties.asCategorizedProperties() shouldBe tenant.userProperties
-                }
+            with(cfgTenant) {
+                name shouldBe tenant.name
+                defaultCapacityRuleDBID shouldBe dbid
+                defaultContractDBID shouldBe dbid
+                chargeableNumber shouldBe tenant.chargeableNumber
+                parentTenant shouldBe null
+                password shouldBe tenant.password
+                state shouldBe ConfigurationObjects.toCfgObjectState(tenant.state)
+                userProperties.asCategorizedProperties() shouldBe tenant.userProperties
             }
         }
     }
 }
 
 private fun mockCfgTenant(): CfgTenant {
-    val capacityRule = mockCfgScript(tenant.defaultCapacityRule)
-    val contract = mockCfgObjectiveTable(tenant.defaultContract)
-    val parentTenant = mockCfgTenant(tenant.parentTenant)
+    val capacityRule = mockCfgScript(tenant.defaultCapacityRule!!.primaryKey)
+    val contract = mockCfgObjectiveTable(tenant.defaultContract!!.primaryKey)
+    val parentTenant = mockCfgTenant(tenant.parentTenant!!.primaryKey)
 
     return mockCfgTenant(tenant.name).also {
         every { it.password } returns tenant.password

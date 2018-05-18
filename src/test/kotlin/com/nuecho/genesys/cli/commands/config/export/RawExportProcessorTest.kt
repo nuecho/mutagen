@@ -3,7 +3,7 @@ package com.nuecho.genesys.cli.commands.config.export
 import com.genesyslab.platform.applicationblocks.com.ICfgObject
 import com.genesyslab.platform.applicationblocks.com.objects.CfgApplication
 import com.genesyslab.platform.applicationblocks.com.objects.CfgConnInfo
-import com.genesyslab.platform.applicationblocks.com.objects.CfgDN
+import com.genesyslab.platform.applicationblocks.com.objects.CfgSwitch
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectType
 import com.nuecho.genesys.cli.TestResources.loadRawConfiguration
 import com.nuecho.genesys.cli.commands.config.ConfigMocks.mockMetadata
@@ -13,22 +13,29 @@ import com.nuecho.genesys.cli.preferences.environment.Environment
 import com.nuecho.genesys.cli.services.ConfService
 import io.kotlintest.matchers.shouldBe
 import io.kotlintest.specs.StringSpec
+import io.mockk.every
+import io.mockk.spyk
 import java.io.ByteArrayOutputStream
 
 class RawExportProcessorTest : StringSpec() {
     private val service = ConfService(Environment(host = "test", user = "test", rawPassword = "test"))
 
     init {
-        "exporting multiple objects of the same type should generate an ordered result" {
-            val dn1 = CfgDN(service)
-            val dn2 = CfgDN(service)
-            val dn3 = CfgDN(service)
+        "exporting multiple objects of the same type should generate an ordered result by dbid" {
+            val switch1 = spyk(CfgSwitch(service)).apply {
+                every { objectDbid } returns 101
+                name = "aaa"
+            }
+            val switch2 = spyk(CfgSwitch(service)).apply {
+                every { objectDbid } returns 102
+                name = "bbb"
+            }
+            val switch3 = spyk(CfgSwitch(service)).apply {
+                every { objectDbid } returns 103
+                name = "ccc"
+            }
 
-            dn1.number = "5555"
-            dn2.number = "3333"
-            dn3.number = "1111"
-
-            checkExportOutput("sorted_dn.json", CfgObjectType.CFGDN, dn1, dn2, dn3)
+            checkExportOutput("sorted_switch.json", CfgObjectType.CFGSwitch, switch3, switch2, switch1)
         }
 
         "exporting an object with array properties should properly serialize all array elements" {

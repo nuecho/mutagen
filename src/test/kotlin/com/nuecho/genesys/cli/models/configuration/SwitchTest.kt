@@ -15,9 +15,12 @@ import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgObj
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgRouteType
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgTargetType
 import com.nuecho.genesys.cli.models.configuration.ConfigurationTestData.defaultProperties
+import com.nuecho.genesys.cli.models.configuration.reference.ApplicationReference
+import com.nuecho.genesys.cli.models.configuration.reference.PhysicalSwitchReference
+import com.nuecho.genesys.cli.models.configuration.reference.SwitchReference
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks
 import com.nuecho.genesys.cli.services.ServiceMocks.mockConfService
-import com.nuecho.genesys.cli.services.retrieveSwitch
+import com.nuecho.genesys.cli.services.retrieveObject
 import com.nuecho.genesys.cli.toShortName
 import io.kotlintest.matchers.shouldBe
 import io.mockk.every
@@ -27,15 +30,15 @@ import io.mockk.use
 
 private val mainSwitch = Switch(
     name = "main-switch",
-    physicalSwitch = "physicalSwitch",
-    tServer = "tServer",
+    physicalSwitch = PhysicalSwitchReference("physicalSwitch"),
+    tServer = ApplicationReference("tServer"),
     linkType = CfgLinkType.CFGMadgeLink.toShortName(),
     dnRange = "74233-74244, 74290",
     state = CFGEnabled.toShortName(),
     userProperties = defaultProperties(),
     switchAccessCodes = listOf(
         SwitchAccessCode(
-            switch = "other-switch",
+            switch = SwitchReference("other-switch"),
             accessCode = "123",
             targetType = CfgTargetType.CFGMaxTargetType.toShortName(),
             routeType = CfgRouteType.CFGAnnouncement.toShortName(),
@@ -47,7 +50,7 @@ private val mainSwitch = Switch(
             extensionSource = "extensionSource1"
         ),
         SwitchAccessCode(
-            switch = "",
+            switch = null,
             accessCode = "234",
             targetType = CfgTargetType.CFGTargetAgentGroup.toShortName(),
             routeType = CfgRouteType.CFGIDDD.toShortName(),
@@ -68,8 +71,8 @@ class SwitchTest : ConfigurationObjectTest(mainSwitch, Switch("switch"), Switch(
         "Switch.updateCfgObject should properly create CfgSwitch" {
             staticMockk("com.nuecho.genesys.cli.services.ConfServiceExtensionsKt").use {
                 val otherCfgSwitch = mockOtherCfgSwitch()
-                every { service.retrieveSwitch("main-switch") } returns null
-                every { service.retrieveSwitch("other-switch") } returns otherCfgSwitch
+                every { service.retrieveObject(SwitchReference("main-switch")) } returns null
+                every { service.retrieveObject(SwitchReference("other-switch")) } returns otherCfgSwitch
 
                 ConfServiceExtensionMocks.mockRetrievePhysicalSwitch(service, 101)
                 ConfServiceExtensionMocks.mockRetrieveApplication(service, 102)
@@ -116,7 +119,9 @@ private fun mockMainCfgSwitch(): CfgSwitch {
     val service = mockConfService()
     staticMockk("com.nuecho.genesys.cli.services.ConfServiceExtensionsKt").use {
         val otherCfgSwitch = mockOtherCfgSwitch()
-        every { service.retrieveSwitch("other-switch") } returns otherCfgSwitch
+        every {
+            service.retrieveObject(SwitchReference("other-switch"))
+        } returns otherCfgSwitch
 
         val mainCfgSwitch = mockCfgSwitch(mainSwitch.name)
         val accessCodes = mainSwitch.switchAccessCodes?.map { accessCode ->

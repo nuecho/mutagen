@@ -1,12 +1,13 @@
 package com.nuecho.genesys.cli.models.configuration
 
 import com.genesyslab.platform.applicationblocks.com.IConfService
+import com.nuecho.genesys.cli.models.configuration.reference.ConfigurationObjectReference
 
 interface ConfigurationObject : Comparable<ConfigurationObject> {
-    val primaryKey: String
+    val reference: ConfigurationObjectReference<*>
     val userProperties: CategorizedProperties?
 
-    override fun compareTo(other: ConfigurationObject) = primaryKey.compareTo(other.primaryKey)
+    override fun compareTo(other: ConfigurationObject) = reference.compareTo(other.reference)
 
     fun updateCfgObject(service: IConfService): ConfigurationObjectUpdateResult
 }

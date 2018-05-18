@@ -7,17 +7,17 @@
     "mutagenVersion": "2.2.2",
     "user": "mutagen"
   },
-  "CFGDN": [
+  "CFGSwitch": [
     {
-      "number": 1111,
+      "name": "aaa",
       "userProperties": ""
     },
     {
-      "number": 3333,
+      "name": "bbb",
       "userProperties": ""
     },
     {
-      "number": 5555,
+      "name": "ccc",
       "userProperties": ""
     }
   ]
