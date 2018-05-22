@@ -3,6 +3,7 @@ package com.nuecho.genesys.cli.models.configuration
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgAgentGroup
+import com.nuecho.genesys.cli.core.InitializingBean
 import com.nuecho.genesys.cli.getReference
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectUpdateStatus.UNCHANGED
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setProperty
@@ -15,9 +16,9 @@ import com.nuecho.genesys.cli.services.retrieveObject
 data class AgentGroup(
     val agents: List<PersonReference>? = null,
     val group: Group
-) : ConfigurationObject {
+) : ConfigurationObject, InitializingBean {
     @get:JsonIgnore
-    override val reference = AgentGroupReference(group.reference)
+    override val reference = AgentGroupReference(group.name, group.tenant)
 
     override val userProperties: CategorizedProperties?
         @JsonIgnore
@@ -45,4 +46,6 @@ data class AgentGroup(
             return ConfigurationObjectUpdateResult(ConfigurationObjectUpdateStatus.CREATED, it)
         }
     }
+
+    override fun afterPropertiesSet() = group.updateTenantReferences()
 }

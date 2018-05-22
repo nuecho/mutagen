@@ -43,143 +43,180 @@ import com.genesyslab.platform.applicationblocks.com.queries.CfgStatTableQuery
 import com.genesyslab.platform.applicationblocks.com.queries.CfgSwitchQuery
 import com.genesyslab.platform.applicationblocks.com.queries.CfgTenantQuery
 import com.genesyslab.platform.applicationblocks.com.queries.CfgTransactionQuery
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectNotFoundException
+import com.nuecho.genesys.cli.services.getObjectDbid
 
 @JsonSerialize(using = SimpleObjectReferenceSerializer::class)
-@JsonDeserialize(using = SimpleObjectReferenceDeserializer::class)
-class AccessGroupReference(override val primaryKey: String) :
-    SimpleObjectReference<CfgAccessGroup>(CfgAccessGroup::class.java) {
-    override fun toQuery(service: IConfService) = CfgAccessGroupQuery(primaryKey)
+@JsonDeserialize(using = SimpleObjectReferenceWithTenantDeserializer::class)
+class AccessGroupReference(name: String, tenant: TenantReference?) :
+    SimpleObjectReferenceWithTenant<CfgAccessGroup>(CfgAccessGroup::class.java, name, tenant) {
+    override fun toQuery(service: IConfService) = CfgAccessGroupQuery(primaryKey).apply {
+        tenantDbid = getTenantDbid(tenant, service)
+    }
+}
+
+@JsonSerialize(using = SimpleObjectReferenceSerializer::class)
+@JsonDeserialize(using = SimpleObjectReferenceWithTenantDeserializer::class)
+class ActionCodeReference(name: String, tenant: TenantReference) :
+    SimpleObjectReferenceWithTenant<CfgActionCode>(CfgActionCode::class.java, name, tenant) {
+    override fun toQuery(service: IConfService) = CfgActionCodeQuery(primaryKey).apply {
+        tenantDbid = getTenantDbid(tenant, service)
+    }
+}
+
+@JsonSerialize(using = SimpleObjectReferenceSerializer::class)
+@JsonDeserialize(using = SimpleObjectReferenceWithTenantDeserializer::class)
+class AgentGroupReference(name: String, tenant: TenantReference) :
+    SimpleObjectReferenceWithTenant<CfgAgentGroup>(CfgAgentGroup::class.java, name, tenant) {
+    override fun toQuery(service: IConfService) = CfgAgentGroupQuery(primaryKey).apply {
+        tenantDbid = getTenantDbid(tenant, service)
+    }
+}
+
+@JsonSerialize(using = SimpleObjectReferenceSerializer::class)
+@JsonDeserialize(using = SimpleObjectReferenceWithTenantDeserializer::class)
+class AgentLoginReference(loginCode: String, tenant: TenantReference?) :
+    SimpleObjectReferenceWithTenant<CfgAgentLogin>(CfgAgentLogin::class.java, loginCode, tenant) {
+    override fun toQuery(service: IConfService) = CfgAgentLoginQuery().apply {
+        loginCode = primaryKey
+        tenantDbid = getTenantDbid(tenant, service)
+    }
 }
 
 @JsonSerialize(using = SimpleObjectReferenceSerializer::class)
 @JsonDeserialize(using = SimpleObjectReferenceDeserializer::class)
-class ActionCodeReference(override val primaryKey: String) :
-    SimpleObjectReference<CfgActionCode>(CfgActionCode::class.java) {
-    override fun toQuery(service: IConfService) = CfgActionCodeQuery(primaryKey)
-}
-
-@JsonSerialize(using = SimpleObjectReferenceSerializer::class)
-@JsonDeserialize(using = SimpleObjectReferenceDeserializer::class)
-class AgentGroupReference(override val primaryKey: String) :
-    SimpleObjectReference<CfgAgentGroup>(CfgAgentGroup::class.java) {
-    override fun toQuery(service: IConfService) = CfgAgentGroupQuery(primaryKey)
-}
-
-@JsonSerialize(using = SimpleObjectReferenceSerializer::class)
-@JsonDeserialize(using = SimpleObjectReferenceDeserializer::class)
-class AgentLoginReference(override val primaryKey: String) :
-    SimpleObjectReference<CfgAgentLogin>(CfgAgentLogin::class.java) {
-    override fun toQuery(service: IConfService) = CfgAgentLoginQuery().apply { loginCode = primaryKey }
-}
-
-@JsonSerialize(using = SimpleObjectReferenceSerializer::class)
-@JsonDeserialize(using = SimpleObjectReferenceDeserializer::class)
-class ApplicationReference(override val primaryKey: String) :
-    SimpleObjectReference<CfgApplication>(CfgApplication::class.java) {
+class ApplicationReference(name: String) :
+    SimpleObjectReference<CfgApplication>(CfgApplication::class.java, name) {
     override fun toQuery(service: IConfService) = CfgApplicationQuery(primaryKey)
 }
 
 @JsonSerialize(using = SimpleObjectReferenceSerializer::class)
-@JsonDeserialize(using = SimpleObjectReferenceDeserializer::class)
-class DNGroupReference(override val primaryKey: String) :
-    SimpleObjectReference<CfgDNGroup>(CfgDNGroup::class.java) {
-    override fun toQuery(service: IConfService) = CfgDNGroupQuery(primaryKey)
+@JsonDeserialize(using = SimpleObjectReferenceWithTenantDeserializer::class)
+class DNGroupReference(name: String, tenant: TenantReference?) :
+    SimpleObjectReferenceWithTenant<CfgDNGroup>(CfgDNGroup::class.java, name, tenant) {
+    override fun toQuery(service: IConfService) = CfgDNGroupQuery(primaryKey).apply {
+        tenantDbid = getTenantDbid(tenant, service)
+    }
+}
+
+@JsonSerialize(using = SimpleObjectReferenceSerializer::class)
+@JsonDeserialize(using = SimpleObjectReferenceWithTenantDeserializer::class)
+class EnumeratorReference(name: String, tenant: TenantReference?) :
+    SimpleObjectReferenceWithTenant<CfgEnumerator>(CfgEnumerator::class.java, name, tenant) {
+    override fun toQuery(service: IConfService) = CfgEnumeratorQuery(primaryKey).apply {
+        tenantDbid = getTenantDbid(tenant, service)
+    }
 }
 
 @JsonSerialize(using = SimpleObjectReferenceSerializer::class)
 @JsonDeserialize(using = SimpleObjectReferenceDeserializer::class)
-class EnumeratorReference(override val primaryKey: String) :
-    SimpleObjectReference<CfgEnumerator>(CfgEnumerator::class.java) {
-    override fun toQuery(service: IConfService) = CfgEnumeratorQuery(primaryKey)
-}
-
-@JsonSerialize(using = SimpleObjectReferenceSerializer::class)
-@JsonDeserialize(using = SimpleObjectReferenceDeserializer::class)
-class FolderReference(override val primaryKey: String) :
-    SimpleObjectReference<CfgFolder>(CfgFolder::class.java) {
+class FolderReference(name: String) :
+    SimpleObjectReference<CfgFolder>(CfgFolder::class.java, name) {
     override fun toQuery(service: IConfService) = CfgFolderQuery(primaryKey)
 }
 
 @JsonSerialize(using = SimpleObjectReferenceSerializer::class)
-@JsonDeserialize(using = SimpleObjectReferenceDeserializer::class)
-class ObjectiveTableReference(override val primaryKey: String) :
-    SimpleObjectReference<CfgObjectiveTable>(CfgObjectiveTable::class.java) {
-    override fun toQuery(service: IConfService) = CfgObjectiveTableQuery(primaryKey)
+@JsonDeserialize(using = SimpleObjectReferenceWithTenantDeserializer::class)
+class ObjectiveTableReference(name: String, tenant: TenantReference?) :
+    SimpleObjectReferenceWithTenant<CfgObjectiveTable>(CfgObjectiveTable::class.java, name, tenant) {
+    override fun toQuery(service: IConfService) = CfgObjectiveTableQuery(primaryKey).apply {
+        tenantDbid = getTenantDbid(tenant, service)
+    }
+}
+
+@JsonSerialize(using = SimpleObjectReferenceSerializer::class)
+@JsonDeserialize(using = SimpleObjectReferenceWithTenantDeserializer::class)
+class PersonReference(employeeId: String, tenant: TenantReference?) :
+    SimpleObjectReferenceWithTenant<CfgPerson>(CfgPerson::class.java, employeeId, tenant) {
+    override fun toQuery(service: IConfService) = CfgPersonQuery().apply {
+        employeeId = primaryKey
+        tenantDbid = getTenantDbid(tenant, service)
+    }
 }
 
 @JsonSerialize(using = SimpleObjectReferenceSerializer::class)
 @JsonDeserialize(using = SimpleObjectReferenceDeserializer::class)
-class PersonReference(override val primaryKey: String) :
-    SimpleObjectReference<CfgPerson>(CfgPerson::class.java) {
-    override fun toQuery(service: IConfService) = CfgPersonQuery().apply { employeeId = primaryKey }
-}
-
-@JsonSerialize(using = SimpleObjectReferenceSerializer::class)
-@JsonDeserialize(using = SimpleObjectReferenceDeserializer::class)
-class PhysicalSwitchReference(override val primaryKey: String) :
-    SimpleObjectReference<CfgPhysicalSwitch>(CfgPhysicalSwitch::class.java) {
+class PhysicalSwitchReference(name: String) :
+    SimpleObjectReference<CfgPhysicalSwitch>(CfgPhysicalSwitch::class.java, name) {
     override fun toQuery(service: IConfService) = CfgPhysicalSwitchQuery(primaryKey)
 }
 
 @JsonSerialize(using = SimpleObjectReferenceSerializer::class)
-@JsonDeserialize(using = SimpleObjectReferenceDeserializer::class)
-class PlaceGroupReference(override val primaryKey: String) :
-    SimpleObjectReference<CfgPlaceGroup>(CfgPlaceGroup::class.java) {
-    override fun toQuery(service: IConfService) = CfgPlaceGroupQuery(primaryKey)
+@JsonDeserialize(using = SimpleObjectReferenceWithTenantDeserializer::class)
+class PlaceGroupReference(name: String, tenant: TenantReference?) :
+    SimpleObjectReferenceWithTenant<CfgPlaceGroup>(CfgPlaceGroup::class.java, name, tenant) {
+    override fun toQuery(service: IConfService) = CfgPlaceGroupQuery(primaryKey).apply {
+        tenantDbid = getTenantDbid(tenant, service)
+    }
+}
+
+@JsonSerialize(using = SimpleObjectReferenceSerializer::class)
+@JsonDeserialize(using = SimpleObjectReferenceWithTenantDeserializer::class)
+class PlaceReference(name: String, tenant: TenantReference?) :
+    SimpleObjectReferenceWithTenant<CfgPlace>(CfgPlace::class.java, name, tenant) {
+    override fun toQuery(service: IConfService) = CfgPlaceQuery(primaryKey).apply {
+        tenantDbid = getTenantDbid(tenant, service)
+    }
 }
 
 @JsonSerialize(using = SimpleObjectReferenceSerializer::class)
 @JsonDeserialize(using = SimpleObjectReferenceDeserializer::class)
-class PlaceReference(override val primaryKey: String) :
-    SimpleObjectReference<CfgPlace>(CfgPlace::class.java) {
-    override fun toQuery(service: IConfService) = CfgPlaceQuery(primaryKey)
-}
-
-@JsonSerialize(using = SimpleObjectReferenceSerializer::class)
-@JsonDeserialize(using = SimpleObjectReferenceDeserializer::class)
-class RoleReference(override val primaryKey: String) :
-    SimpleObjectReference<CfgRole>(CfgRole::class.java) {
+class RoleReference(name: String) :
+    SimpleObjectReference<CfgRole>(CfgRole::class.java, name) {
     override fun toQuery(service: IConfService) = CfgRoleQuery(primaryKey)
 }
 
 @JsonSerialize(using = SimpleObjectReferenceSerializer::class)
-@JsonDeserialize(using = SimpleObjectReferenceDeserializer::class)
-class ScriptReference(override val primaryKey: String) :
-    SimpleObjectReference<CfgScript>(CfgScript::class.java) {
-    override fun toQuery(service: IConfService) = CfgScriptQuery(primaryKey)
+@JsonDeserialize(using = SimpleObjectReferenceWithTenantDeserializer::class)
+class ScriptReference(name: String, tenant: TenantReference?) :
+    SimpleObjectReferenceWithTenant<CfgScript>(CfgScript::class.java, name, tenant) {
+    override fun toQuery(service: IConfService) = CfgScriptQuery(primaryKey).apply {
+        tenantDbid = getTenantDbid(tenant, service)
+    }
+}
+
+@JsonSerialize(using = SimpleObjectReferenceSerializer::class)
+@JsonDeserialize(using = SimpleObjectReferenceWithTenantDeserializer::class)
+class SkillReference(name: String, tenant: TenantReference?) :
+    SimpleObjectReferenceWithTenant<CfgSkill>(CfgSkill::class.java, name, tenant) {
+    override fun toQuery(service: IConfService) = CfgSkillQuery(primaryKey).apply {
+        tenantDbid = getTenantDbid(tenant, service)
+    }
+}
+
+@JsonSerialize(using = SimpleObjectReferenceSerializer::class)
+@JsonDeserialize(using = SimpleObjectReferenceWithTenantDeserializer::class)
+class StatTableReference(name: String, tenant: TenantReference?) :
+    SimpleObjectReferenceWithTenant<CfgStatTable>(CfgStatTable::class.java, name, tenant) {
+    override fun toQuery(service: IConfService) = CfgStatTableQuery(primaryKey).apply {
+        tenantDbid = getTenantDbid(tenant, service)
+    }
+}
+
+@JsonSerialize(using = SimpleObjectReferenceSerializer::class)
+@JsonDeserialize(using = SimpleObjectReferenceWithTenantDeserializer::class)
+class SwitchReference(name: String, tenant: TenantReference?) :
+    SimpleObjectReferenceWithTenant<CfgSwitch>(CfgSwitch::class.java, name, tenant) {
+    override fun toQuery(service: IConfService) = CfgSwitchQuery(primaryKey).apply {
+        tenantDbid = getTenantDbid(tenant, service)
+    }
 }
 
 @JsonSerialize(using = SimpleObjectReferenceSerializer::class)
 @JsonDeserialize(using = SimpleObjectReferenceDeserializer::class)
-class SkillReference(override val primaryKey: String) :
-    SimpleObjectReference<CfgSkill>(CfgSkill::class.java) {
-    override fun toQuery(service: IConfService) = CfgSkillQuery(primaryKey)
-}
-
-@JsonSerialize(using = SimpleObjectReferenceSerializer::class)
-@JsonDeserialize(using = SimpleObjectReferenceDeserializer::class)
-class StatTableReference(override val primaryKey: String) :
-    SimpleObjectReference<CfgStatTable>(CfgStatTable::class.java) {
-    override fun toQuery(service: IConfService) = CfgStatTableQuery(primaryKey)
-}
-
-@JsonSerialize(using = SimpleObjectReferenceSerializer::class)
-@JsonDeserialize(using = SimpleObjectReferenceDeserializer::class)
-class SwitchReference(override val primaryKey: String) :
-    SimpleObjectReference<CfgSwitch>(CfgSwitch::class.java) {
-    override fun toQuery(service: IConfService) = CfgSwitchQuery(primaryKey)
-}
-
-@JsonSerialize(using = SimpleObjectReferenceSerializer::class)
-@JsonDeserialize(using = SimpleObjectReferenceDeserializer::class)
-class TenantReference(override val primaryKey: String) :
-    SimpleObjectReference<CfgTenant>(CfgTenant::class.java) {
+class TenantReference(name: String) :
+    SimpleObjectReference<CfgTenant>(CfgTenant::class.java, name) {
     override fun toQuery(service: IConfService) = CfgTenantQuery(primaryKey).apply { allTenants = 1 }
 }
 
 @JsonSerialize(using = SimpleObjectReferenceSerializer::class)
-@JsonDeserialize(using = SimpleObjectReferenceDeserializer::class)
-class TransactionReference(override val primaryKey: String) :
-    SimpleObjectReference<CfgTransaction>(CfgTransaction::class.java) {
-    override fun toQuery(service: IConfService) = CfgTransactionQuery(primaryKey)
+@JsonDeserialize(using = SimpleObjectReferenceWithTenantDeserializer::class)
+class TransactionReference(name: String, tenant: TenantReference?) :
+    SimpleObjectReferenceWithTenant<CfgTransaction>(CfgTransaction::class.java, name, tenant) {
+    override fun toQuery(service: IConfService) = CfgTransactionQuery(primaryKey).apply {
+        tenantDbid = getTenantDbid(tenant, service)
+    }
 }
+
+private fun getTenantDbid(tenant: TenantReference?, service: IConfService) =
+    service.getObjectDbid(tenant) ?: throw ConfigurationObjectNotFoundException(tenant)

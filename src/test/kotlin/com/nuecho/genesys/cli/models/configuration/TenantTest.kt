@@ -4,6 +4,9 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgTenant
 import com.genesyslab.platform.configuration.protocol.types.CfgFlag
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectState.CFGEnabled
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_OBJECT_DBID
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_DBID
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_REFERENCE
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgObjectiveTable
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgScript
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgTenant
@@ -21,8 +24,8 @@ import io.mockk.every
 
 private val tenant = Tenant(
     name = "foo",
-    defaultCapacityRule = ScriptReference("capacityRule"),
-    defaultContract = ObjectiveTableReference("contract"),
+    defaultCapacityRule = ScriptReference("capacityRule", DEFAULT_TENANT_REFERENCE),
+    defaultContract = ObjectiveTableReference("contract", DEFAULT_TENANT_REFERENCE),
     chargeableNumber = "123",
     password = "password",
     parentTenant = TenantReference("parent"),
@@ -33,8 +36,9 @@ private val tenant = Tenant(
 class TenantTest : ConfigurationObjectTest(tenant, Tenant("foo"), Tenant(mockCfgTenant())) {
     init {
         "Tenant.updateCfgObject should properly create CfgTenant" {
+            val defaultTenant = mockCfgTenant(DEFAULT_TENANT)
             val service = mockConfService()
-            every { service.retrieveObject(CfgTenant::class.java, any()) } returns null
+            every { service.retrieveObject(CfgTenant::class.java, any()) } returns null andThen defaultTenant
             mockRetrieveObjectiveTable(service)
             mockRetrieveScript(service)
 
@@ -48,7 +52,7 @@ class TenantTest : ConfigurationObjectTest(tenant, Tenant("foo"), Tenant(mockCfg
                 defaultCapacityRuleDBID shouldBe DEFAULT_OBJECT_DBID
                 defaultContractDBID shouldBe DEFAULT_OBJECT_DBID
                 chargeableNumber shouldBe tenant.chargeableNumber
-                parentTenant shouldBe null
+                parentTenantDBID shouldBe DEFAULT_TENANT_DBID
                 password shouldBe tenant.password
                 state shouldBe ConfigurationObjects.toCfgObjectState(tenant.state)
                 userProperties.asCategorizedProperties() shouldBe tenant.userProperties

@@ -2,6 +2,7 @@ package com.nuecho.genesys.cli.commands.agent.status
 
 import com.genesyslab.platform.applicationblocks.com.ConfigServerException
 import com.genesyslab.platform.applicationblocks.com.objects.CfgPerson
+import com.genesyslab.platform.applicationblocks.com.queries.CfgPersonQuery
 import com.genesyslab.platform.commons.protocol.Endpoint
 import com.genesyslab.platform.commons.protocol.MessageHandler
 import com.genesyslab.platform.reporting.protocol.statserver.AgentStatus
@@ -34,12 +35,10 @@ import com.nuecho.genesys.cli.GenesysCliCommand
 import com.nuecho.genesys.cli.Logging.debug
 import com.nuecho.genesys.cli.Logging.info
 import com.nuecho.genesys.cli.commands.agent.Agent
-import com.nuecho.genesys.cli.models.configuration.reference.PersonReference
 import com.nuecho.genesys.cli.services.ConfService
 import com.nuecho.genesys.cli.services.GenesysServices
 import com.nuecho.genesys.cli.services.StatService
 import com.nuecho.genesys.cli.services.StatServiceException
-import com.nuecho.genesys.cli.services.retrieveObject
 import com.nuecho.genesys.cli.services.withService
 import com.nuecho.genesys.cli.setBits
 import com.nuecho.genesys.cli.toConsoleString
@@ -96,7 +95,7 @@ object Status {
     fun getAgentStatus(confService: ConfService, statService: StatService, employeeId: String) =
         getAgentStatus(
             statService,
-            confService.retrieveObject(PersonReference(employeeId))
+            confService.retrieveObject(CfgPerson::class.java, CfgPersonQuery().also { it.employeeId = employeeId })
                     ?: throw ConfigServerException("Error while retrieving CfgPerson ($employeeId).")
         )
 

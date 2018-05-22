@@ -17,6 +17,7 @@ import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mock
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectUpdateStatus.CREATED
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgDNRegisterFlag
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgDNType
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgFlag
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgObjectState
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgRouteType
 import com.nuecho.genesys.cli.models.configuration.reference.DNGroupReference
@@ -39,13 +40,20 @@ private const val SWITCH_NAME = "aswitch"
 private val dn = DN(
     tenant = DEFAULT_TENANT_REFERENCE,
     number = NUMBER,
-    switch = SwitchReference(SWITCH_NAME),
+    switch = SwitchReference(SWITCH_NAME, DEFAULT_TENANT_REFERENCE),
     type = CfgDNType.CFGNoDN.toShortName(),
-    group = DNGroupReference("dnGroup"),
+    group = DNGroupReference("dnGroup", DEFAULT_TENANT_REFERENCE),
     association = "anassociation",
     routing = Routing(
         CfgRouteType.CFGDirect.toShortName(),
-        listOf(DNReference(number = "1234", switch = "aswitch", type = CfgDNType.CFGACDQueue))
+        listOf(
+            DNReference(
+                tenant = DEFAULT_TENANT_REFERENCE,
+                number = "1234",
+                switch = "aswitch",
+                type = CfgDNType.CFGACDQueue
+            )
+        )
     ),
     dnLoginID = "anId",
     trunks = 1,
@@ -53,7 +61,7 @@ private val dn = DN(
     name = "aname",
     useOverride = CfgFlag.CFGTrue.asBoolean(),
     site = FolderReference("abc"),
-    contract = ObjectiveTableReference("acontract"),
+    contract = ObjectiveTableReference("acontract", DEFAULT_TENANT_REFERENCE),
     userProperties = ConfigurationTestData.defaultProperties(),
     state = CfgObjectState.CFGEnabled.toShortName()
 )
@@ -62,7 +70,7 @@ class DNTest : ConfigurationObjectTest(
     dn, DN(
         tenant = DEFAULT_TENANT_REFERENCE,
         number = "123",
-        switch = SwitchReference("aswitch"),
+        switch = SwitchReference("aswitch", DEFAULT_TENANT_REFERENCE),
         type = CfgDNType.CFGNoDN.toShortName()
     ), DN(mockCfgDN())
 ) {
@@ -85,9 +93,9 @@ class DNTest : ConfigurationObjectTest(
             with(cfgDN) {
                 name shouldBe dn.name
                 switchDBID shouldBe DEFAULT_OBJECT_DBID
-                registerAll shouldBe ConfigurationObjects.toCfgDNRegisterFlag(dn.registerAll)
+                registerAll shouldBe toCfgDNRegisterFlag(dn.registerAll)
                 switchSpecificType shouldBe dn.switchSpecificType
-                state shouldBe ConfigurationObjects.toCfgObjectState(dn.state)
+                state shouldBe toCfgObjectState(dn.state)
                 userProperties.asCategorizedProperties() shouldBe dn.userProperties
             }
         }
@@ -127,7 +135,7 @@ private fun mockCfgDN(): CfgDN {
         every { userProperties } returns mockKeyValueCollection()
 
         every { name } returns dn.name
-        every { useOverride } returns ConfigurationObjects.toCfgFlag(dn.useOverride)
+        every { useOverride } returns toCfgFlag(dn.useOverride)
         every { site } returns cfgSite
         every { contract } returns cfgObjectiveTable
     }

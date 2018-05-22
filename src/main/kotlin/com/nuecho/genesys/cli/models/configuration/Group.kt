@@ -1,6 +1,5 @@
 package com.nuecho.genesys.cli.models.configuration
 
-import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.genesyslab.platform.applicationblocks.com.CfgObject
@@ -34,9 +33,6 @@ data class Group(
     val site: FolderReference? = null,
     val contract: ObjectiveTableReference? = null
 ) {
-    @JsonIgnore
-    val reference = name
-
     constructor(group: CfgGroup) : this(
         tenant = TenantReference(group.tenant.name),
         name = group.name,
@@ -65,4 +61,13 @@ data class Group(
             setProperty("siteDBID", service.getObjectDbid(site), it)
             setProperty("contractDBID", service.getObjectDbid(contract), it)
         }
+}
+
+fun Group.updateTenantReferences() {
+    managers?.forEach { it.tenant = tenant }
+    routeDNs?.forEach { it.tenant = tenant }
+    capacityTable?.tenant = tenant
+    quotaTable?.tenant = tenant
+    capacityRule?.tenant = tenant
+    contract?.tenant = tenant
 }

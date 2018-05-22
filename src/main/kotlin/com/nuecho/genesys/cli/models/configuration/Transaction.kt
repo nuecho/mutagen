@@ -31,7 +31,7 @@ data class Transaction(
 
 ) : ConfigurationObject {
     @get:JsonIgnore
-    override val reference = TransactionReference(name)
+    override val reference = TransactionReference(name, tenant)
 
     constructor(transaction: CfgTransaction) : this(
         tenant = TenantReference(transaction.tenant.name),

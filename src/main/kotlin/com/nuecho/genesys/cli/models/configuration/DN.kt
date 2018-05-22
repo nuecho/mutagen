@@ -10,6 +10,7 @@ import com.genesyslab.platform.configuration.protocol.types.CfgDNRegisterFlag
 import com.genesyslab.platform.configuration.protocol.types.CfgFlag
 import com.genesyslab.platform.configuration.protocol.types.CfgRouteType
 import com.nuecho.genesys.cli.asBoolean
+import com.nuecho.genesys.cli.core.InitializingBean
 import com.nuecho.genesys.cli.getReference
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectUpdateStatus.CREATED
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectUpdateStatus.UNCHANGED
@@ -60,9 +61,9 @@ data class DN(
     val site: FolderReference? = null,
     val contract: ObjectiveTableReference? = null
 
-) : ConfigurationObject {
+) : ConfigurationObject, InitializingBean {
     @get:JsonIgnore
-    override val reference = DNReference(switch, number, type, name)
+    override val reference = DNReference(tenant, switch, number, type, name)
 
     constructor(dn: CfgDN) : this(
         tenant = TenantReference(dn.tenant.name),
@@ -140,6 +141,14 @@ data class DN(
 
             return ConfigurationObjectUpdateResult(CREATED, it)
         }
+    }
+
+    override fun afterPropertiesSet() {
+        switch.tenant = tenant
+        routing?.destinationDNs?.forEach { it.tenant = tenant }
+        group?.tenant = tenant
+        accessNumbers?.forEach { it.updateTenantReferences(tenant) }
+        contract?.tenant = tenant
     }
 }
 
