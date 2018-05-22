@@ -1,6 +1,7 @@
 {
-  "name": "foo",
+  "name": "name",
   "state": "enabled",
+  "tenant": "tenant",
   "userProperties": {
     "section": {
       "number": 456,

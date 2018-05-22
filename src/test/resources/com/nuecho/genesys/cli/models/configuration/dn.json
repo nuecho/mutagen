@@ -21,6 +21,7 @@
   "state": "enabled",
   "switch": "aswitch",
   "switchSpecificType": 1,
+  "tenant": "tenant",
   "trunks": 1,
   "type": "nodn",
   "useOverride": true,

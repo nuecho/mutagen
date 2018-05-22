@@ -10,15 +10,18 @@
   "persons": [
     {
       "employeeId": "111",
-      "userName": "dmorand"
+      "userName": "dmorand",
+      "tenant": "tenant"
     },
     {
       "employeeId": "222",
-      "userName": "fparga"
+      "userName": "fparga",
+      "tenant": "tenant"
     },
     {
       "employeeId": "333",
-      "userName": "pdeschen"
+      "userName": "pdeschen",
+      "tenant": "tenant"
     }
   ]
 }

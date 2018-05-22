@@ -145,7 +145,7 @@ class RoleReference(override val primaryKey: String) :
 @JsonSerialize(using = SimpleObjectReferenceSerializer::class)
 @JsonDeserialize(using = SimpleObjectReferenceDeserializer::class)
 class ScriptReference(override val primaryKey: String) :
-        SimpleObjectReference<CfgScript>(CfgScript::class.java) {
+    SimpleObjectReference<CfgScript>(CfgScript::class.java) {
     override fun toQuery(service: IConfService) = CfgScriptQuery(primaryKey)
 }
 
@@ -174,7 +174,7 @@ class SwitchReference(override val primaryKey: String) :
 @JsonDeserialize(using = SimpleObjectReferenceDeserializer::class)
 class TenantReference(override val primaryKey: String) :
     SimpleObjectReference<CfgTenant>(CfgTenant::class.java) {
-    override fun toQuery(service: IConfService) = CfgTenantQuery(primaryKey)
+    override fun toQuery(service: IConfService) = CfgTenantQuery(primaryKey).apply { allTenants = 1 }
 }
 
 @JsonSerialize(using = SimpleObjectReferenceSerializer::class)

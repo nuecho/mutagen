@@ -3,6 +3,7 @@
   "description": "some description",
   "name": "foo",
   "state": "enabled",
+  "tenant": "tenant",
   "type": "notransactiontype",
   "userProperties": {
     "section": {

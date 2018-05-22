@@ -1,6 +1,7 @@
 package com.nuecho.genesys.cli.models.configuration
 
 import com.genesyslab.platform.applicationblocks.com.objects.CfgActionCode
+import com.genesyslab.platform.applicationblocks.com.objects.CfgAgentGroup
 import com.genesyslab.platform.applicationblocks.com.objects.CfgAgentLogin
 import com.genesyslab.platform.applicationblocks.com.objects.CfgAgentLoginInfo
 import com.genesyslab.platform.applicationblocks.com.objects.CfgApplication
@@ -22,11 +23,18 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgTenant
 import com.genesyslab.platform.applicationblocks.com.objects.CfgTransaction
 import com.genesyslab.platform.commons.collections.KeyValueCollection
 import com.genesyslab.platform.commons.collections.KeyValuePair
+import com.nuecho.genesys.cli.models.configuration.ConfigurationTestData.CATEGORIZED_PROPERTIES_NUMBER
+import com.nuecho.genesys.cli.models.configuration.ConfigurationTestData.CATEGORIZED_PROPERTIES_STRING
+import com.nuecho.genesys.cli.models.configuration.reference.TenantReference
 import io.mockk.every
 import io.mockk.mockk
 
+@Suppress("LargeClass")
 object ConfigurationObjectMocks {
-    const val NUMBER = 456
+    const val DEFAULT_TENANT = "tenant"
+    const val DEFAULT_TENANT_DBID = 1
+    const val DEFAULT_OBJECT_DBID = 101
+    val DEFAULT_TENANT_REFERENCE = TenantReference(DEFAULT_TENANT)
 
     fun mockCfgAgentLoginInfo(loginCode: String, wrapupTime: Int): CfgAgentLoginInfo {
         val agentLogin = mockCfgAgentLogin(loginCode)
@@ -48,8 +56,8 @@ object ConfigurationObjectMocks {
     fun mockKeyValueCollection(): KeyValueCollection {
         val sectionKeyValueCollection = KeyValueCollection()
         with(sectionKeyValueCollection) {
-            addPair(KeyValuePair("number", NUMBER))
-            addPair(KeyValuePair("string", "def"))
+            addPair(KeyValuePair("number", CATEGORIZED_PROPERTIES_NUMBER))
+            addPair(KeyValuePair("string", CATEGORIZED_PROPERTIES_STRING))
         }
 
         val keyValueCollection = KeyValueCollection()
@@ -60,22 +68,132 @@ object ConfigurationObjectMocks {
         return keyValueCollection
     }
 
-    fun mockCfgActionCode(name: String?) = mockk<CfgActionCode>().also { every { it.name } returns name }
-    fun mockCfgAgentLogin(loginCode: String) = mockk<CfgAgentLogin>().also { every { it.loginCode } returns loginCode }
-    fun mockCfgApplication(name: String) = mockk<CfgApplication>().also { every { it.name } returns name }
-    fun mockCfgDN(number: String?) = mockk<CfgDN>().also { every { it.number } returns number }
-    fun mockCfgDNGroup(name: String?) = mockk<CfgDNGroup>().also { every { it.groupInfo.name } returns name }
-    fun mockCfgEnumerator(name: String?) = mockk<CfgEnumerator>().also { every { it.name } returns name }
-    fun mockCfgFolder(name: String?) = mockk<CfgFolder>().also { every { it.name } returns name }
-    fun mockCfgObjectiveTable(name: String?) = mockk<CfgObjectiveTable>().also { every { it.name } returns name }
-    fun mockCfgPerson(employeeID: String?) = mockk<CfgPerson>().also { every { it.employeeID } returns employeeID }
-    fun mockCfgPhysicalSwitch(name: String?) = mockk<CfgPhysicalSwitch>().also { every { it.name } returns name }
-    fun mockCfgPlace(name: String?) = mockk<CfgPlace>().also { every { it.name } returns name }
-    fun mockCfgRole(name: String?) = mockk<CfgRole>().also { every { it.name } returns name }
-    fun mockCfgScript(name: String?) = mockk<CfgScript>().also { every { it.name } returns name }
-    fun mockCfgSkill(name: String?) = mockk<CfgSkill>().also { every { it.name } returns name }
-    fun mockCfgSwitch(name: String?) = mockk<CfgSwitch>().also { every { it.name } returns name }
-    fun mockCfgStatTable(name: String?) = mockk<CfgStatTable>().also { every { it.name } returns name }
-    fun mockCfgTenant(name: String?) = mockk<CfgTenant>().also { every { it.name } returns name }
-    fun mockCfgTransaction(name: String?) = mockk<CfgTransaction>().also { every { it.name } returns name }
+    fun mockCfgActionCode(name: String?, tenant: CfgTenant = mockCfgTenant(DEFAULT_TENANT)) =
+        mockk<CfgActionCode>().also {
+            every { it.name } returns name
+            every { it.tenant } returns tenant
+            every { it.objectDbid } returns DEFAULT_OBJECT_DBID
+        }
+
+    fun mockCfgAgentGroup(name: String?, tenant: CfgTenant = mockCfgTenant(DEFAULT_TENANT)) =
+        mockk<CfgAgentGroup>().also {
+            every { it.groupInfo.name } returns name
+            every { it.groupInfo.tenant } returns tenant
+            every { it.objectDbid } returns DEFAULT_OBJECT_DBID
+        }
+
+    fun mockCfgAgentLogin(loginCode: String, tenant: CfgTenant = mockCfgTenant(DEFAULT_TENANT)) =
+        mockk<CfgAgentLogin>().also {
+            every { it.loginCode } returns loginCode
+            every { it.tenant } returns tenant
+            every { it.objectDbid } returns DEFAULT_OBJECT_DBID
+        }
+
+    fun mockCfgApplication(name: String) =
+        mockk<CfgApplication>().also {
+            every { it.name } returns name
+            every { it.objectDbid } returns DEFAULT_OBJECT_DBID
+        }
+
+    fun mockCfgDN(number: String?, tenant: CfgTenant = mockCfgTenant(DEFAULT_TENANT)) =
+        mockk<CfgDN>().also {
+            every { it.number } returns number
+            every { it.tenant } returns tenant
+            every { it.objectDbid } returns DEFAULT_OBJECT_DBID
+        }
+
+    fun mockCfgDNGroup(name: String?, tenant: CfgTenant = mockCfgTenant(DEFAULT_TENANT)) =
+        mockk<CfgDNGroup>().also {
+            every { it.groupInfo.name } returns name
+            every { it.groupInfo.tenant } returns tenant
+            every { it.objectDbid } returns DEFAULT_OBJECT_DBID
+        }
+
+    fun mockCfgEnumerator(name: String?, tenant: CfgTenant = mockCfgTenant(DEFAULT_TENANT)) =
+        mockk<CfgEnumerator>().also {
+            every { it.tenant } returns tenant
+            every { it.name } returns name
+            every { it.objectDbid } returns DEFAULT_OBJECT_DBID
+        }
+
+    fun mockCfgFolder(name: String?) =
+        mockk<CfgFolder>().also {
+            every { it.name } returns name
+            every { it.objectDbid } returns DEFAULT_OBJECT_DBID
+        }
+
+    fun mockCfgObjectiveTable(name: String?, tenant: CfgTenant = mockCfgTenant(DEFAULT_TENANT)) =
+        mockk<CfgObjectiveTable>().also {
+            every { it.name } returns name
+            every { it.tenant } returns tenant
+            every { it.objectDbid } returns DEFAULT_OBJECT_DBID
+        }
+
+    fun mockCfgPerson(employeeID: String?, tenant: CfgTenant = mockCfgTenant(DEFAULT_TENANT)) =
+        mockk<CfgPerson>().also {
+            every { it.employeeID } returns employeeID
+            every { it.tenant } returns tenant
+            every { it.objectDbid } returns DEFAULT_OBJECT_DBID
+        }
+
+    fun mockCfgPhysicalSwitch(name: String?) =
+        mockk<CfgPhysicalSwitch>().also {
+            every { it.name } returns name
+            every { it.objectDbid } returns DEFAULT_OBJECT_DBID
+        }
+
+    fun mockCfgPlace(name: String?, tenant: CfgTenant = mockCfgTenant(DEFAULT_TENANT)) =
+        mockk<CfgPlace>().also {
+            every { it.name } returns name
+            every { it.tenant } returns tenant
+            every { it.objectDbid } returns DEFAULT_OBJECT_DBID
+        }
+
+    fun mockCfgRole(name: String?, tenant: CfgTenant = mockCfgTenant(DEFAULT_TENANT)) =
+        mockk<CfgRole>().also {
+            every { it.name } returns name
+            every { it.tenant } returns tenant
+            every { it.objectDbid } returns DEFAULT_OBJECT_DBID
+        }
+
+    fun mockCfgScript(name: String?, tenant: CfgTenant = mockCfgTenant(DEFAULT_TENANT)) =
+        mockk<CfgScript>().also {
+            every { it.name } returns name
+            every { it.tenant } returns tenant
+            every { it.objectDbid } returns DEFAULT_OBJECT_DBID
+        }
+
+    fun mockCfgSkill(name: String?, tenant: CfgTenant = mockCfgTenant(DEFAULT_TENANT)) =
+        mockk<CfgSkill>().also {
+            every { it.name } returns name
+            every { it.tenant } returns tenant
+            every { it.objectDbid } returns DEFAULT_OBJECT_DBID
+        }
+
+    fun mockCfgSwitch(name: String?, tenant: CfgTenant = mockCfgTenant(DEFAULT_TENANT)) =
+        mockk<CfgSwitch>().also {
+            every { it.name } returns name
+            every { it.tenant } returns tenant
+            every { it.objectDbid } returns DEFAULT_OBJECT_DBID
+        }
+
+    fun mockCfgStatTable(name: String?, tenant: CfgTenant = mockCfgTenant(DEFAULT_TENANT)) =
+        mockk<CfgStatTable>().also {
+            every { it.name } returns name
+            every { it.tenant } returns tenant
+            every { it.objectDbid } returns DEFAULT_OBJECT_DBID
+        }
+
+    fun mockCfgTenant(name: String?) =
+        mockk<CfgTenant>().also {
+            every { it.name } returns name
+            every { it.objectDbid } returns DEFAULT_TENANT_DBID
+        }
+
+    fun mockCfgTransaction(name: String?, tenant: CfgTenant = mockCfgTenant(DEFAULT_TENANT)) =
+        mockk<CfgTransaction>().also {
+            every { it.name } returns name
+            every { it.tenant } returns tenant
+            every { it.objectDbid } returns DEFAULT_OBJECT_DBID
+        }
 }

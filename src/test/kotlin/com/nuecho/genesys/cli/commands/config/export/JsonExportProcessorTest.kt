@@ -9,10 +9,14 @@ import com.nuecho.genesys.cli.commands.config.ConfigMocks.mockMetadata
 import com.nuecho.genesys.cli.commands.config.export.ExportFormat.JSON
 import com.nuecho.genesys.cli.core.defaultJsonObjectMapper
 import com.nuecho.genesys.cli.models.configuration.Configuration
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgTenant
 import com.nuecho.genesys.cli.preferences.environment.Environment
 import com.nuecho.genesys.cli.services.ConfService
 import io.kotlintest.matchers.shouldBe
 import io.kotlintest.specs.StringSpec
+import io.mockk.every
+import io.mockk.spyk
 import java.io.ByteArrayOutputStream
 
 class JsonExportProcessorTest : StringSpec() {
@@ -24,15 +28,20 @@ class JsonExportProcessorTest : StringSpec() {
         }
 
         "exporting multiple objects of the same type should generate an ordered result" {
-            val person1 = CfgPerson(service)
+            val tenant = mockCfgTenant(DEFAULT_TENANT)
+
+            val person1 = spyk(CfgPerson(service))
+            every { person1.tenant } returns tenant
             person1.employeeID = "333"
             person1.userName = "pdeschen"
 
-            val person2 = CfgPerson(service)
+            val person2 = spyk(CfgPerson(service))
+            every { person2.tenant } returns tenant
             person2.employeeID = "222"
             person2.userName = "fparga"
 
-            val person3 = CfgPerson(service)
+            val person3 = spyk(CfgPerson(service))
+            every { person3.tenant } returns tenant
             person3.employeeID = "111"
             person3.userName = "dmorand"
 

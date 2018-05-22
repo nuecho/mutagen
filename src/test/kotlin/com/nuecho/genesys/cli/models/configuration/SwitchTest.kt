@@ -5,6 +5,8 @@ import com.genesyslab.platform.configuration.protocol.types.CfgLinkType
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectState.CFGEnabled
 import com.genesyslab.platform.configuration.protocol.types.CfgRouteType
 import com.genesyslab.platform.configuration.protocol.types.CfgTargetType
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_OBJECT_DBID
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_REFERENCE
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgApplication
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgPhysicalSwitch
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgSwitch
@@ -18,7 +20,9 @@ import com.nuecho.genesys.cli.models.configuration.ConfigurationTestData.default
 import com.nuecho.genesys.cli.models.configuration.reference.ApplicationReference
 import com.nuecho.genesys.cli.models.configuration.reference.PhysicalSwitchReference
 import com.nuecho.genesys.cli.models.configuration.reference.SwitchReference
-import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks
+import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveApplication
+import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrievePhysicalSwitch
+import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveTenant
 import com.nuecho.genesys.cli.services.ServiceMocks.mockConfService
 import com.nuecho.genesys.cli.services.retrieveObject
 import com.nuecho.genesys.cli.toShortName
@@ -28,8 +32,11 @@ import io.mockk.spyk
 import io.mockk.staticMockk
 import io.mockk.use
 
+private const val MAIN_SWITCH = "main-switch"
+private const val OTHER_SWITCH = "other-switch"
 private val mainSwitch = Switch(
-    name = "main-switch",
+    tenant = DEFAULT_TENANT_REFERENCE,
+    name = MAIN_SWITCH,
     physicalSwitch = PhysicalSwitchReference("physicalSwitch"),
     tServer = ApplicationReference("tServer"),
     linkType = CfgLinkType.CFGMadgeLink.toShortName(),
@@ -38,7 +45,7 @@ private val mainSwitch = Switch(
     userProperties = defaultProperties(),
     switchAccessCodes = listOf(
         SwitchAccessCode(
-            switch = SwitchReference("other-switch"),
+            switch = SwitchReference(OTHER_SWITCH),
             accessCode = "123",
             targetType = CfgTargetType.CFGMaxTargetType.toShortName(),
             routeType = CfgRouteType.CFGAnnouncement.toShortName(),
@@ -64,18 +71,22 @@ private val mainSwitch = Switch(
     )
 )
 
-class SwitchTest : ConfigurationObjectTest(mainSwitch, Switch("switch"), Switch(mockMainCfgSwitch())) {
+class SwitchTest : ConfigurationObjectTest(
+    mainSwitch,
+    Switch(tenant = DEFAULT_TENANT_REFERENCE, name = MAIN_SWITCH),
+    Switch(mockMainCfgSwitch())
+) {
     init {
-        val service = mockConfService()
-
         "Switch.updateCfgObject should properly create CfgSwitch" {
             staticMockk("com.nuecho.genesys.cli.services.ConfServiceExtensionsKt").use {
                 val otherCfgSwitch = mockOtherCfgSwitch()
-                every { service.retrieveObject(SwitchReference("main-switch")) } returns null
-                every { service.retrieveObject(SwitchReference("other-switch")) } returns otherCfgSwitch
 
-                ConfServiceExtensionMocks.mockRetrievePhysicalSwitch(service, 101)
-                ConfServiceExtensionMocks.mockRetrieveApplication(service, 102)
+                val service = mockConfService()
+                every { service.retrieveObject(SwitchReference(MAIN_SWITCH)) } returns null
+                every { service.retrieveObject(SwitchReference(OTHER_SWITCH)) } returns otherCfgSwitch
+                mockRetrieveTenant(service)
+                mockRetrievePhysicalSwitch(service)
+                mockRetrieveApplication(service)
 
                 val (status, cfgObject) = mainSwitch.updateCfgObject(service)
                 val cfgSwitch = cfgObject as CfgSwitch
@@ -84,8 +95,8 @@ class SwitchTest : ConfigurationObjectTest(mainSwitch, Switch("switch"), Switch(
 
                 with(cfgSwitch) {
                     name shouldBe mainSwitch.name
-                    physSwitchDBID shouldBe 101
-                    tServerDBID shouldBe 102
+                    physSwitchDBID shouldBe DEFAULT_OBJECT_DBID
+                    tServerDBID shouldBe DEFAULT_OBJECT_DBID
                     linkType shouldBe CfgLinkType.CFGMadgeLink
                     dnRange shouldBe mainSwitch.dnRange
                     state shouldBe toCfgObjectState(mainSwitch.state)
@@ -130,25 +141,24 @@ private fun mockMainCfgSwitch(): CfgSwitch {
             }
         }
 
-        val tServer = mockCfgApplication("tServer")
+        val tServerApplication = mockCfgApplication("tServer")
         val physicalSwitch = mockCfgPhysicalSwitch("physicalSwitch")
-        val linkType = toCfgLinkType(mainSwitch.linkType)
+        val cfgLinkType = toCfgLinkType(mainSwitch.linkType)
         val objectState = toCfgObjectState(mainSwitch.state)
-        val userProperties = mockKeyValueCollection()
 
-        return mainCfgSwitch.also {
-            every { it.linkType } returns linkType
-            every { it.dnRange } returns mainSwitch.dnRange
-            every { it.switchAccessCodes } returns accessCodes
-            every { it.state } returns objectState
-            every { it.userProperties } returns userProperties
-            every { it.physSwitch } returns physicalSwitch
-            every { it.tServer } returns tServer
+        return mainCfgSwitch.apply {
+            every { linkType } returns cfgLinkType
+            every { dnRange } returns mainSwitch.dnRange
+            every { switchAccessCodes } returns accessCodes
+            every { state } returns objectState
+            every { userProperties } returns mockKeyValueCollection()
+            every { physSwitch } returns physicalSwitch
+            every { tServer } returns tServerApplication
         }
     }
 }
 
-private fun mockOtherCfgSwitch() = mockCfgSwitch("other-switch").also {
-    every { it.dbid } returns 103
-    every { it.objectDbid } returns 103
+private fun mockOtherCfgSwitch() = mockCfgSwitch(OTHER_SWITCH).apply {
+    every { dbid } returns 103
+    every { objectDbid } returns 103
 }

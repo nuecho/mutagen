@@ -2,9 +2,6 @@ package com.nuecho.genesys.cli.commands.config.import
 
 import com.genesyslab.platform.applicationblocks.com.CfgObject
 import com.genesyslab.platform.applicationblocks.com.IConfService
-import com.genesyslab.platform.applicationblocks.com.objects.CfgAgentGroup
-import com.genesyslab.platform.applicationblocks.com.objects.CfgPhysicalSwitch
-import com.genesyslab.platform.applicationblocks.com.objects.CfgTenant
 import com.nuecho.genesys.cli.GenesysCliCommand
 import com.nuecho.genesys.cli.Logging
 import com.nuecho.genesys.cli.commands.config.Config
@@ -14,7 +11,6 @@ import com.nuecho.genesys.cli.models.configuration.ConfigurationObject
 import com.nuecho.genesys.cli.models.configuration.reference.ConfigurationObjectReference
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectUpdateStatus.CREATED
 import com.nuecho.genesys.cli.services.ConfService
-import com.nuecho.genesys.cli.services.defaultTenantDbid
 import com.nuecho.genesys.cli.toShortName
 import picocli.CommandLine
 import java.io.File
@@ -45,8 +41,6 @@ class Import : GenesysCliCommand() {
     }
 
     companion object {
-        private val NO_TENANT_DBID_OBJECTS = listOf(CfgTenant::class, CfgPhysicalSwitch::class)
-
         fun importConfiguration(configuration: Configuration, service: ConfService) {
 
             Logging.info { "Beginning import." }
@@ -86,7 +80,7 @@ class Import : GenesysCliCommand() {
                 }
 
                 Logging.info { "Creating $type '$primaryKey'." }
-                save(applyTenant(cfgObject))
+                save(cfgObject)
                 objectImportProgress(type, primaryKey)
                 count++
             }
@@ -103,16 +97,6 @@ class Import : GenesysCliCommand() {
             println("$prefix $type => $reference")
         }
 
-        internal fun save(cfgObject: CfgObject) = applyTenant(cfgObject).save()
-
-        internal fun applyTenant(cfgObject: CfgObject): CfgObject {
-            if (cfgObject::class in NO_TENANT_DBID_OBJECTS) return cfgObject
-
-            if (cfgObject is CfgAgentGroup) return cfgObject.apply {
-                groupInfo.apply { setProperty("tenantDBID", cfgObject.configurationService.defaultTenantDbid) }
-            }
-
-            return cfgObject.apply { setProperty("tenantDBID", cfgObject.configurationService.defaultTenantDbid) }
-        }
+        internal fun save(cfgObject: CfgObject) = cfgObject.save()
     }
 }

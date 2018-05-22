@@ -29,6 +29,7 @@
       "targetType": "targetagentgroup"
     }
   ],
+  "tenant": "tenant",
   "tServer": "tServer",
   "userProperties": {
     "section": {

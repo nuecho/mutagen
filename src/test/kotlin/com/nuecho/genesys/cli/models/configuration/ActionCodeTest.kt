@@ -4,20 +4,24 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgActionCode
 import com.genesyslab.platform.applicationblocks.com.objects.CfgSubcode
 import com.genesyslab.platform.configuration.protocol.types.CfgActionCodeType.CFGTransfer
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectState.CFGEnabled
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_REFERENCE
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgActionCode
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockKeyValueCollection
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgActionCodeType
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgObjectState
 import com.nuecho.genesys.cli.models.configuration.ConfigurationTestData.defaultProperties
+import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveTenant
 import com.nuecho.genesys.cli.services.ServiceMocks.mockConfService
 import com.nuecho.genesys.cli.toShortName
 import io.kotlintest.matchers.shouldBe
 import io.mockk.every
 
+private const val NAME = "name"
 private const val SUBNAME = "subname"
 private const val SUBCODE = "subcode"
 private val actionCode = ActionCode(
-    name = "name",
+    tenant = DEFAULT_TENANT_REFERENCE,
+    name = NAME,
     type = CFGTransfer.toShortName(),
     code = "code",
     subcodes = mapOf(
@@ -27,12 +31,16 @@ private val actionCode = ActionCode(
     userProperties = defaultProperties()
 )
 
-class ActionCodeTest : ConfigurationObjectTest(actionCode, ActionCode("name"), ActionCode(mockCfgActionCode())) {
+class ActionCodeTest : ConfigurationObjectTest(
+    actionCode,
+    ActionCode(tenant = DEFAULT_TENANT_REFERENCE, name = NAME),
+    ActionCode(mockCfgActionCode())
+) {
     init {
-        val service = mockConfService()
-
         "ActionCode.updateCfgObject should properly create CfgActionCode" {
+            val service = mockConfService()
             every { service.retrieveObject(CfgActionCode::class.java, any()) } returns null
+            mockRetrieveTenant(service)
 
             val type = toCfgActionCodeType(actionCode.type)
             val state = toCfgObjectState(actionCode.state)
