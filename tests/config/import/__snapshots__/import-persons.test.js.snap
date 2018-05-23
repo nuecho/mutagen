@@ -1,0 +1,28 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`[mutagen config import configurations.json] should do nothing when objects already exist: the two persons already exist and have not been imported 1`] = `
+Object {
+  "stderr": "",
+  "stdout": "= person => Environment/00001
+= person => Environment/00002
+Completed. 0 object(s) imported.
+",
+}
+`;
+
+exports[`[mutagen config import configurations.json] should import objects when they don't exist: the two persons have been imported but there are missing dependencies 1`] = `
+Object {
+  "stderr": "Cannot find script 'Environment/capacityRule'
+Cannot find objectivetable 'Environment/contract'
+Cannot find place 'Environment/place'
+Cannot find folder 'site'
+Cannot find skill 'Environment/skill_1'
+Cannot find skill 'Environment/skill_2'
+Cannot find skill 'Environment/skill_3'
+",
+  "stdout": "+ person => Environment/00001
++ person => Environment/00002
+Completed. 2 object(s) imported.
+",
+}
+`;

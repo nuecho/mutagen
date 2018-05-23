@@ -94,8 +94,6 @@ acceptance:windows:
     - tags
 
 acceptance:test:
-  variables:
-    RELEASE_PATH: "build/releases"
   image: tmaier/docker-compose:latest
   stage: acceptance
   tags:
@@ -104,10 +102,15 @@ acceptance:test:
     - docker:dind
   dependencies:
     - package:binaries
-  script:
+  before_script:
     - VERSION=$(cat .version)
     - export COMPOSE_HTTP_TIMEOUT=300 # 5m. This is sort of slow to execute on a gitlab-runner
-    - cd docker && docker-compose down && docker-compose run --rm -e VERSION=${VERSION} test && docker-compose down
+  script:
+    - chmod 0755 $RELEASE_PATH/unix/mutagen
+    - cd docker 
+    - docker-compose -f docker-compose.yml -f docker-compose.test.yml -f docker-compose.test.ci.yml run --rm test
+  after_script:
+    - cd docker && docker-compose down -v
 
 acceptance:manual:
   stage: acceptance

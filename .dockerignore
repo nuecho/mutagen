@@ -1,5 +1,11 @@
 .git
+.gradle
+.idea
+.vscode
+bin
+ci
 gradle*
+node_modules
+out
 src
 test
-

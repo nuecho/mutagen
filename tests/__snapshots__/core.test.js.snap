@@ -1,0 +1,65 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`[mutagen --help] should print usage: usage 1`] = `
+Object {
+  "stderr": "",
+  "stdout": "Usage: mutagen [OPTIONS] <command>
+
+  -?, -h, --help              Show this help message.
+  -d, --debug                 Set log level to debug.
+  -e, --env=<environmentName> Environment name used for the execution.
+  -i, --info                  Set log level to info.
+  -s, --stacktrace            Print out the stacktrace for all exceptions.
+  -v, --version               Show version info.
+
+Commands:
+
+  agent         Genesys Agents tool
+  audio         GAX ARM tool
+  config        Genesys Config Server tool
+  set-password  Save the password for your env encrypted in a not so secure way
+  services      Discover services
+
+See 'mutagen <command> --help' to read about a specific command.
+",
+}
+`;
+
+exports[`[mutagen] should print usage with banner: usage with banner 1`] = `
+Object {
+  "stderr": "",
+  "stdout": "
+_   .-')                .-') _      ('-.                   ('-.       .-') _
+( '.( OO )_             (  OO) )    ( OO ).-.             _(  OO)     ( OO ) )
+ ,--.   ,--.),--. ,--.  /     '._   / . --. /  ,----.    (,------.,--./ ,--,'
+ |   \`.'   | |  | |  |  |'--...__)  | \\\\-.  \\\\  '  .-./-')  |  .---'|   \\\\ |  |\\\\
+ |         | |  | | .-')'--.  .--'.-'-'  |  | |  |_( O- ) |  |    |    \\\\|  | )
+ |  |'.'|  | |  |_|( OO )  |  |    \\\\| |_.'  | |  | .--, \\\\(|  '--. |  .     |/
+ |  |   |  | |  | | \`-' /  |  |     |  .-.  |(|  | '. (_/ |  .--' |  |\\\\    |
+ |  |   |  |('  '-'(_.-'   |  |     |  | |  | |  '--'  |  |  \`---.|  | \\\\   |
+ \`--'   \`--'  \`-----'      \`--'     \`--' \`--'  \`------'   \`------'\`--'  \`--'
+ Your Genesys Toolbox. (https://sites.google.com/m.nuecho.com/hub/mutagen)
+
+Usage: mutagen [OPTIONS] <command>
+
+  -?, -h, --help              Show this help message.
+  -d, --debug                 Set log level to debug.
+  -e, --env=<environmentName> Environment name used for the execution.
+  -i, --info                  Set log level to info.
+  -s, --stacktrace            Print out the stacktrace for all exceptions.
+  -v, --version               Show version info.
+
+Commands:
+
+  agent         Genesys Agents tool
+  audio         GAX ARM tool
+  config        Genesys Config Server tool
+  set-password  Save the password for your env encrypted in a not so secure way
+  services      Discover services
+
+See 'mutagen <command> --help' to read about a specific command.
+
+Please specify a command.
+",
+}
+`;
