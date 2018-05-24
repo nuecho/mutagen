@@ -98,7 +98,7 @@ fun CfgFlag.asBoolean(): Boolean? =
 
 fun CfgAccessGroup.getReference() = AccessGroupReference(groupInfo.name, groupInfo.tenant.getReference())
 fun CfgAgentGroup.getReference() = AgentGroupReference(groupInfo.name, groupInfo.tenant.getReference())
-fun CfgAgentLogin.getReference() = AgentLoginReference(loginCode, tenant.getReference())
+fun CfgAgentLogin.getReference() = AgentLoginReference(loginCode, switch.getReference())
 fun CfgApplication.getReference() = ApplicationReference(name)
 fun CfgDN.getReference() = DNReference(this)
 fun CfgDNGroup.getReference() = DNGroupReference(groupInfo.name, groupInfo.tenant.getReference())

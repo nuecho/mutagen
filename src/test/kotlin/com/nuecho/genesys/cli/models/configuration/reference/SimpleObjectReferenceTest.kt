@@ -3,7 +3,6 @@ package com.nuecho.genesys.cli.models.configuration.reference
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.genesyslab.platform.applicationblocks.com.objects.CfgTenant
-import com.genesyslab.platform.applicationblocks.com.queries.CfgAgentLoginQuery
 import com.genesyslab.platform.applicationblocks.com.queries.CfgFolderQuery
 import com.genesyslab.platform.applicationblocks.com.queries.CfgObjectiveTableQuery
 import com.genesyslab.platform.applicationblocks.com.queries.CfgPersonQuery
@@ -13,7 +12,6 @@ import com.genesyslab.platform.applicationblocks.com.queries.CfgSkillQuery
 import com.genesyslab.platform.applicationblocks.com.queries.CfgSwitchQuery
 import com.nuecho.genesys.cli.TestResources.loadJsonConfiguration
 import com.nuecho.genesys.cli.models.configuration.ConfigurationAsserts.checkSerialization
-import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_REFERENCE
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgTenant
@@ -46,17 +44,17 @@ class SimpleObjectReferenceTest : StringSpec() {
     )
 
     init {
-        val cfgTenant = mockCfgTenant(ConfigurationObjectMocks.DEFAULT_TENANT)
+        val cfgTenant = mockCfgTenant(DEFAULT_TENANT)
         val service = mockConfService()
         every { service.retrieveObject(CfgTenant::class.java, any()) } returns cfgTenant
 
         "SimpleObjectReference should be serialized as a JSON String" {
-            checkSerialization(container, "reference/simple-object-reference")
+            checkSerialization(container, "reference/simple_object_reference")
         }
 
         "String reference should be deserialized as a SimpleObjectReference" {
             val deserializedContainer = loadJsonConfiguration(
-                "models/configuration/reference/simple-object-reference.json",
+                "models/configuration/reference/simple_object_reference.json",
                 Container::class.java
             )
 
@@ -72,15 +70,12 @@ class SimpleObjectReferenceTest : StringSpec() {
         }
 
         "SimpleObjectReference.toString should generate the proper String" {
-            val loginCode = "loginCode"
-            AgentLoginReference(loginCode, DEFAULT_TENANT_REFERENCE).toString() shouldBe "$DEFAULT_TENANT/loginCode"
+            TenantReference(DEFAULT_TENANT).toString() shouldBe "$DEFAULT_TENANT"
         }
 
-        "AgentLoginReference should create the proper query" {
-            val loginCode = "loginCode"
-            val actual = AgentLoginReference(loginCode, DEFAULT_TENANT_REFERENCE).toQuery(service)
-            actual.javaClass shouldBe CfgAgentLoginQuery::class.java
-            actual.loginCode shouldBe loginCode
+        "SimpleObjectReferenceWithTenant.toString should generate the proper String" {
+            val employeeId = "employeeId"
+            PersonReference(employeeId, DEFAULT_TENANT_REFERENCE).toString() shouldBe "$DEFAULT_TENANT/$employeeId"
         }
 
         "FolderReference should create the proper query" {

@@ -1,4 +1,5 @@
 {
   "name": "name",
-  "tenant": "tenant"
+  "tenant": "tenant",
+  "type": "transfer"
 }

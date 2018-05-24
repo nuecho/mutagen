@@ -61,13 +61,14 @@ data class Group(
             setProperty("siteDBID", service.getObjectDbid(site), it)
             setProperty("contractDBID", service.getObjectDbid(contract), it)
         }
-}
 
-fun Group.updateTenantReferences() {
-    managers?.forEach { it.tenant = tenant }
-    routeDNs?.forEach { it.tenant = tenant }
-    capacityTable?.tenant = tenant
-    quotaTable?.tenant = tenant
-    capacityRule?.tenant = tenant
-    contract?.tenant = tenant
+    @Suppress("DataClassContainsFunctions")
+    fun updateTenantReferences() {
+        managers?.forEach { it.tenant = tenant }
+        routeDNs?.forEach { it.tenant = tenant }
+        capacityTable?.tenant = tenant
+        quotaTable?.tenant = tenant
+        capacityRule?.tenant = tenant
+        contract?.tenant = tenant
+    }
 }

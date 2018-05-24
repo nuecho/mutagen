@@ -1,5 +1,6 @@
 package com.nuecho.genesys.cli.models.configuration.reference
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.core.JsonParser
 import com.fasterxml.jackson.databind.BeanProperty
 import com.fasterxml.jackson.databind.DeserializationContext
@@ -12,8 +13,18 @@ import com.genesyslab.platform.applicationblocks.com.ICfgObject
 abstract class SimpleObjectReferenceWithTenant<T : ICfgObject>(
     cfgObjectClass: Class<T>,
     primaryKey: String,
-    @Transient var tenant: TenantReference? = null
+    @JsonIgnore var tenant: TenantReference? = null
 ) : SimpleObjectReference<T>(cfgObjectClass, primaryKey) {
+    override fun compareTo(other: ConfigurationObjectReference<*>): Int {
+        if (other !is SimpleObjectReferenceWithTenant) return super.compareTo(other)
+
+        return Comparator
+            .comparing { reference: SimpleObjectReferenceWithTenant<*> -> reference.getCfgObjectType().name() }
+            .thenComparing { reference: SimpleObjectReferenceWithTenant<*> -> reference.tenant ?: TenantReference("") }
+            .thenComparing(SimpleObjectReferenceWithTenant<*>::primaryKey)
+            .compare(this, other)
+    }
+
     override fun toString() = "${tenant?.primaryKey}/$primaryKey"
 
     override fun equals(other: Any?): Boolean {

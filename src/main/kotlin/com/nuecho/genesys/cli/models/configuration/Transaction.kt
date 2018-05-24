@@ -24,14 +24,14 @@ data class Transaction(
     val description: String? = "",
     val recordPeriod: Int? = 0,
     val state: String? = null,
-    val type: String? = CfgTransactionType.CFGTRTNoTransactionType.toShortName(),
+    val type: String = CfgTransactionType.CFGTRTNoTransactionType.toShortName(),
     @JsonSerialize(using = CategorizedPropertiesSerializer::class)
     @JsonDeserialize(using = CategorizedPropertiesDeserializer::class)
     override val userProperties: CategorizedProperties? = null
 
 ) : ConfigurationObject {
     @get:JsonIgnore
-    override val reference = TransactionReference(name, tenant)
+    override val reference = TransactionReference(name, type, tenant)
 
     constructor(transaction: CfgTransaction) : this(
         tenant = TenantReference(transaction.tenant.name),

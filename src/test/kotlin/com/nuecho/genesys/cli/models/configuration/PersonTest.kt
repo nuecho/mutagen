@@ -27,6 +27,7 @@ import com.nuecho.genesys.cli.models.configuration.reference.ObjectiveTableRefer
 import com.nuecho.genesys.cli.models.configuration.reference.PlaceReference
 import com.nuecho.genesys.cli.models.configuration.reference.ScriptReference
 import com.nuecho.genesys.cli.models.configuration.reference.SkillReference
+import com.nuecho.genesys.cli.models.configuration.reference.SwitchReference
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveAgentLogin
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveFolder
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveObjectiveTable
@@ -41,6 +42,7 @@ import io.mockk.every
 import io.mockk.mockk
 
 private const val EMPLOYEE_ID = "employeeId"
+private val SWITCH_REFERENCE = SwitchReference("switch", DEFAULT_TENANT_REFERENCE)
 private val person = Person(
     tenant = DEFAULT_TENANT_REFERENCE,
     employeeId = EMPLOYEE_ID,
@@ -72,9 +74,9 @@ private val person = Person(
             SkillReference("skill_3", DEFAULT_TENANT_REFERENCE) to 30
         ),
         agentLogins = listOf(
-            AgentLoginInfo(AgentLoginReference("agent_1", DEFAULT_TENANT_REFERENCE), 1000),
-            AgentLoginInfo(AgentLoginReference("agent_2", DEFAULT_TENANT_REFERENCE), 2000),
-            AgentLoginInfo(AgentLoginReference("agent_3", DEFAULT_TENANT_REFERENCE), 3000)
+            AgentLoginInfo(AgentLoginReference("agent_1", SWITCH_REFERENCE), 1000),
+            AgentLoginInfo(AgentLoginReference("agent_2", SWITCH_REFERENCE), 2000),
+            AgentLoginInfo(AgentLoginReference("agent_3", SWITCH_REFERENCE), 3000)
         )
     )
 )

@@ -1,7 +1,6 @@
 package com.nuecho.genesys.cli.models.configuration.reference
 
 import com.fasterxml.jackson.annotation.JsonIgnore
-import com.genesyslab.platform.applicationblocks.com.ICfgQuery
 import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgDN
 import com.genesyslab.platform.applicationblocks.com.queries.CfgDNQuery
@@ -13,40 +12,30 @@ import com.nuecho.genesys.cli.services.getObjectDbid
 import com.nuecho.genesys.cli.toShortName
 
 data class DNReference(
-    @JsonIgnore var tenant: TenantReference?,
-    val switch: SwitchReference,
     val number: String,
+    val switch: SwitchReference,
     val type: String,
-    val name: String?
+    val name: String?,
+    @JsonIgnore var tenant: TenantReference?
 ) : ConfigurationObjectReference<CfgDN>(CfgDN::class.java) {
 
     constructor(
-        switch: String,
         number: String,
+        switch: String,
         type: CfgDNType,
         name: String? = null,
         tenant: TenantReference? = null
-    ) : this(tenant, SwitchReference(switch, tenant), number, type.toShortName(), name)
+    ) : this(number, SwitchReference(switch, tenant), type.toShortName(), name, tenant)
 
     constructor(dn: CfgDN) : this(
-        tenant = dn.tenant.getReference(),
-        switch = dn.switch.getReference(),
         number = dn.number,
+        switch = dn.switch.getReference(),
         type = dn.type.toShortName(),
-        name = dn.name
+        name = dn.name,
+        tenant = dn.tenant.getReference()
     )
 
-    override fun compareTo(other: ConfigurationObjectReference<*>): Int {
-        if (other !is DNReference) return super.compareTo(other)
-
-        return Comparator.comparing(DNReference::switch)
-            .thenComparing(DNReference::number)
-            .thenComparing(DNReference::type)
-            .thenComparing { dn -> dn.name ?: "" }
-            .compare(this, other)
-    }
-
-    override fun toQuery(service: IConfService): ICfgQuery? {
+    override fun toQuery(service: IConfService): CfgDNQuery {
         val query = CfgDNQuery()
         query.tenantDbid = service.getObjectDbid(tenant) ?: throw ConfigurationObjectNotFoundException(tenant)
         query.dnNumber = number
@@ -56,14 +45,27 @@ data class DNReference(
         return query
     }
 
-    override fun toString() = "tenant: '${tenant?.primaryKey}'" +
-            ", number: '$number'" +
+    override fun compareTo(other: ConfigurationObjectReference<*>): Int {
+        if (other !is DNReference) return super.compareTo(other)
+
+        return Comparator
+            .comparing { reference: DNReference -> reference.tenant ?: TenantReference("") }
+            .thenComparing(DNReference::switch)
+            .thenComparing(DNReference::number)
+            .thenComparing(DNReference::type)
+            .thenComparing { dn -> dn.name ?: "" }
+            .compare(this, other)
+    }
+
+    override fun toString() = "number: '$number'" +
             ", switch: '${switch.primaryKey}'" +
             ", type: '$type'" +
-            if (name != null) ", name: '$name'" else ""
-}
+            (if (name != null) ", name: '$name'" else "") +
+            ", tenant: '${tenant?.primaryKey}'"
 
-fun DNReference.updateTenantReferences(tenantReference: TenantReference) {
-    tenant = tenantReference
-    switch.tenant = tenantReference
+    @Suppress("DataClassContainsFunctions")
+    fun updateTenantReferences(tenantReference: TenantReference) {
+        tenant = tenantReference
+        switch.tenant = tenantReference
+    }
 }

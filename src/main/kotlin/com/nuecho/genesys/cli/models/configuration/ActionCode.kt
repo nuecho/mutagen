@@ -21,7 +21,7 @@ import com.nuecho.genesys.cli.toShortName
 data class ActionCode(
     val tenant: TenantReference,
     val name: String,
-    val type: String? = null,
+    val type: String,
     val code: String? = null,
     val subcodes: Map<String, String>? = null,
     val state: String? = null,
@@ -30,12 +30,12 @@ data class ActionCode(
     override val userProperties: CategorizedProperties? = null
 ) : ConfigurationObject {
     @get:JsonIgnore
-    override val reference = ActionCodeReference(name, tenant)
+    override val reference = ActionCodeReference(name, type, tenant)
 
     constructor(actionCode: CfgActionCode) : this(
         tenant = TenantReference(actionCode.tenant.name),
         name = actionCode.name,
-        type = actionCode.type?.toShortName(),
+        type = actionCode.type.toShortName(),
         code = actionCode.code,
         subcodes = actionCode.subcodes?.map { it.name to it.code }?.toMap(),
         state = actionCode.state?.toShortName(),

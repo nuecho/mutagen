@@ -58,8 +58,9 @@ data class SwitchAccessCode(
         setProperty("reasonSource", reasonSource, it)
         setProperty("extensionSource", extensionSource, it)
     }
-}
 
-fun SwitchAccessCode.updateTenantReferences(tenant: TenantReference) {
-    switch?.tenant = tenant
+    @Suppress("DataClassContainsFunctions")
+    fun updateTenantReferences(tenant: TenantReference) {
+        switch?.tenant = tenant
+    }
 }
