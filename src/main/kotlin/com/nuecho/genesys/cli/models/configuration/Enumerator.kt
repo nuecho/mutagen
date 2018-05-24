@@ -28,7 +28,7 @@ data class Enumerator(
     override val userProperties: CategorizedProperties? = null
 ) : ConfigurationObject {
     @get:JsonIgnore
-    override val reference = EnumeratorReference(name)
+    override val reference = EnumeratorReference(name, tenant)
 
     constructor(enumerator: CfgEnumerator) : this(
         tenant = TenantReference(enumerator.tenant.name),

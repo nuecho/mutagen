@@ -5,25 +5,24 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.genesyslab.platform.applicationblocks.com.objects.CfgAgentInfo
 import com.genesyslab.platform.applicationblocks.com.objects.CfgPerson
 import com.genesyslab.platform.applicationblocks.com.objects.CfgSkillLevel
-import com.nuecho.genesys.cli.Logging.warn
 import com.nuecho.genesys.cli.getReference
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setProperty
 import com.nuecho.genesys.cli.models.configuration.reference.FolderReference
 import com.nuecho.genesys.cli.models.configuration.reference.ObjectiveTableReference
 import com.nuecho.genesys.cli.models.configuration.reference.PlaceReference
 import com.nuecho.genesys.cli.models.configuration.reference.ScriptReference
-import com.nuecho.genesys.cli.models.configuration.reference.SimpleObjectReferenceKeyDeserializer
 import com.nuecho.genesys.cli.models.configuration.reference.SimpleObjectReferenceKeySerializer
+import com.nuecho.genesys.cli.models.configuration.reference.SimpleObjectReferenceWithTenantKeyDeserializer
 import com.nuecho.genesys.cli.models.configuration.reference.SkillReference
+import com.nuecho.genesys.cli.models.configuration.reference.TenantReference
 import com.nuecho.genesys.cli.services.getObjectDbid
-import com.nuecho.genesys.cli.services.retrieveObject
 
 data class AgentInfo(
     val capacityRule: ScriptReference? = null,
     val contract: ObjectiveTableReference? = null,
     val place: PlaceReference? = null,
     val site: FolderReference? = null,
-    @JsonDeserialize(keyUsing = SimpleObjectReferenceKeyDeserializer::class)
+    @JsonDeserialize(keyUsing = SimpleObjectReferenceWithTenantKeyDeserializer::class)
     @JsonSerialize(keyUsing = SimpleObjectReferenceKeySerializer::class)
     val skillLevels: Map<SkillReference, Int>? = null,
     val agentLogins: List<AgentLoginInfo>? = null
@@ -46,27 +45,34 @@ data class AgentInfo(
         setProperty("contractDBID", service.getObjectDbid(contract), agentInfo)
         setProperty("placeDBID", service.getObjectDbid(place), agentInfo)
         setProperty("siteDBID", service.getObjectDbid(site), agentInfo)
-        setProperty("skillLevels", toCfgSkillLevel(skillLevels, person), agentInfo)
+        setProperty("skillLevels", toCfgSkillLevelList(skillLevels, person), agentInfo)
 
         return agentInfo
     }
 }
 
-private fun toCfgSkillLevel(skillLevels: Map<SkillReference, Int>?, person: CfgPerson): List<CfgSkillLevel?>? {
+fun AgentInfo.updateTenantReferences(tenant: TenantReference) {
+    capacityRule?.tenant = tenant
+    contract?.tenant = tenant
+    place?.tenant = tenant
+    skillLevels?.forEach { it.key.tenant = tenant }
+    agentLogins?.forEach { it.updateTenantReferences(tenant) }
+}
+
+private fun toCfgSkillLevelList(
+    skillLevels: Map<SkillReference, Int>?,
+    person: CfgPerson
+): List<CfgSkillLevel?>? {
     if (skillLevels == null) return null
 
     val service = person.configurationService
 
-    return skillLevels.mapNotNull { (reference, level) ->
-        val cfgSkill = service.retrieveObject(reference)
-        if (cfgSkill == null) {
-            warn { "Cannot find skill '$reference'" }
-            null
-        } else {
-            val cfgSkillLevel = CfgSkillLevel(service, person)
-            cfgSkillLevel.skillDBID = cfgSkill.dbid
-            cfgSkillLevel.level = level
-            cfgSkillLevel
+    return skillLevels.mapNotNull { (skillReference, skillLevel) ->
+        val skillDbid = service.getObjectDbid(skillReference)
+        if (skillDbid == null) null
+        else CfgSkillLevel(service, person).apply {
+            skillDBID = skillDbid
+            level = skillLevel
         }
     }.toList()
 }

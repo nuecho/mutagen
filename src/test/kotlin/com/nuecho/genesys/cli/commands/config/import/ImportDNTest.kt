@@ -2,11 +2,14 @@ package com.nuecho.genesys.cli.commands.config.import
 
 import com.genesyslab.platform.applicationblocks.com.objects.CfgDN
 import com.genesyslab.platform.applicationblocks.com.objects.CfgSwitch
+import com.genesyslab.platform.applicationblocks.com.objects.CfgTenant
 import com.genesyslab.platform.configuration.protocol.types.CfgDNType
 import com.nuecho.genesys.cli.commands.config.import.Import.Companion.importConfigurationObjects
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_DBID
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_REFERENCE
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgSwitch
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgTenant
 import com.nuecho.genesys.cli.models.configuration.DN
 import com.nuecho.genesys.cli.models.configuration.reference.SwitchReference
 import com.nuecho.genesys.cli.models.configuration.reference.TenantReference
@@ -28,19 +31,21 @@ class ImportDNTest : StringSpec() {
     val DN1 = DN(
         tenant = DEFAULT_TENANT_REFERENCE,
         number = "1",
-        switch = SwitchReference("aswitch"),
+        switch = SwitchReference("aswitch", DEFAULT_TENANT_REFERENCE),
         type = CfgDNType.CFGACDPosition.toShortName()
     )
     val DN2 = DN(
         tenant = DEFAULT_TENANT_REFERENCE,
         number = "2",
-        switch = SwitchReference("aswitch"),
+        switch = SwitchReference("aswitch", DEFAULT_TENANT_REFERENCE),
         type = CfgDNType.CFGCP.toShortName()
     )
 
     init {
         "importing an existing DN should do nothing" {
             val service = mockConfService()
+
+            val tenant = mockCfgTenant(ConfigurationObjectMocks.DEFAULT_TENANT)
 
             val cfgSwitch = mockk<CfgSwitch>().also {
                 every { it.name } returns "aswitch"
@@ -53,6 +58,7 @@ class ImportDNTest : StringSpec() {
                 type = CfgDNType.CFGACDPosition
             }
 
+            every { service.retrieveObject(CfgTenant::class.java, any()) } returns tenant
             every { service.retrieveObject(CfgDN::class.java, any()) } returns cfgDn
             every { service.retrieveObject(CfgSwitch::class.java, any()) } returns cfgSwitch
 

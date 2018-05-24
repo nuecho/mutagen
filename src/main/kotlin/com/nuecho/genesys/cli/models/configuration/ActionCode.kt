@@ -30,7 +30,7 @@ data class ActionCode(
     override val userProperties: CategorizedProperties? = null
 ) : ConfigurationObject {
     @get:JsonIgnore
-    override val reference = ActionCodeReference(name)
+    override val reference = ActionCodeReference(name, tenant)
 
     constructor(actionCode: CfgActionCode) : this(
         tenant = TenantReference(actionCode.tenant.name),

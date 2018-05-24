@@ -25,7 +25,7 @@ data class Skill(
 
 ) : ConfigurationObject {
     @get:JsonIgnore
-    override val reference = SkillReference(name)
+    override val reference = SkillReference(name, tenant)
 
     constructor(skill: CfgSkill) : this(
         tenant = TenantReference(skill.tenant.name),

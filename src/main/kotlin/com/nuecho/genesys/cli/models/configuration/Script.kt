@@ -31,7 +31,7 @@ data class Script(
 
 ) : ConfigurationObject {
     @get:JsonIgnore
-    override val reference = ScriptReference(name)
+    override val reference = ScriptReference(name, tenant)
 
     constructor(script: CfgScript) : this(
         tenant = TenantReference(script.tenant.name),

@@ -32,34 +32,33 @@ import com.nuecho.genesys.cli.services.ServiceMocks
 import com.nuecho.genesys.cli.toShortName
 import io.kotlintest.matchers.shouldBe
 import io.mockk.every
-import io.mockk.mockk
 
 private const val NAME = "name"
 private val agentGroup = AgentGroup(
     agents = listOf(
-        PersonReference("agent1"),
-        PersonReference("agent2"),
-        PersonReference("agent3")
+        PersonReference("agent1", DEFAULT_TENANT_REFERENCE),
+        PersonReference("agent2", DEFAULT_TENANT_REFERENCE),
+        PersonReference("agent3", DEFAULT_TENANT_REFERENCE)
     ),
     group = Group(
         tenant = DEFAULT_TENANT_REFERENCE,
         name = "name",
         managers = listOf(
-            PersonReference("manager1"),
-            PersonReference("manager2")
+            PersonReference("manager1", DEFAULT_TENANT_REFERENCE),
+            PersonReference("manager2", DEFAULT_TENANT_REFERENCE)
         ),
         routeDNs = listOf(
-            DNReference(number = "123", switch = "switch", type = CFGCP),
-            DNReference(number = "456", switch = "switch", type = CFGCP),
-            DNReference(number = "789", switch = "switch", type = CFGCP)
+            DNReference(tenant = DEFAULT_TENANT_REFERENCE, number = "123", switch = "switch", type = CFGCP),
+            DNReference(tenant = DEFAULT_TENANT_REFERENCE, number = "456", switch = "switch", type = CFGCP),
+            DNReference(tenant = DEFAULT_TENANT_REFERENCE, number = "789", switch = "switch", type = CFGCP)
         ),
-        capacityTable = StatTableReference("capacityTable"),
-        quotaTable = StatTableReference("quotaTable"),
+        capacityTable = StatTableReference("capacityTable", DEFAULT_TENANT_REFERENCE),
+        quotaTable = StatTableReference("quotaTable", DEFAULT_TENANT_REFERENCE),
         state = CfgObjectState.CFGEnabled.toShortName(),
         userProperties = ConfigurationTestData.defaultProperties(),
-        capacityRule = ScriptReference("capacityRule"),
+        capacityRule = ScriptReference("capacityRule", DEFAULT_TENANT_REFERENCE),
         site = FolderReference("site"),
-        contract = ObjectiveTableReference("contract")
+        contract = ObjectiveTableReference("contract", DEFAULT_TENANT_REFERENCE)
     )
 )
 
@@ -111,7 +110,7 @@ class AgentGroupTest : ConfigurationObjectTest(
 
 @Suppress("LongMethod")
 private fun mockCfgAgentGroup(): CfgAgentGroup {
-    val cfgSwitch = mockk<CfgSwitch>().apply { every { name } returns "switch" }
+    val cfgSwitch = mockCfgSwitch("switch")
 
     val agentsMock = agentGroup.agents?.map { ref -> mockCfgPerson(ref.primaryKey) }
     val managersMock = agentGroup.group.managers?.map { ref -> mockCfgPerson(ref.primaryKey) }

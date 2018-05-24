@@ -7,6 +7,7 @@ import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgAppRank
 import com.genesyslab.platform.applicationblocks.com.objects.CfgPerson
 import com.nuecho.genesys.cli.asBoolean
+import com.nuecho.genesys.cli.core.InitializingBean
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectUpdateStatus.CREATED
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectUpdateStatus.UNCHANGED
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setProperty
@@ -44,9 +45,9 @@ data class Person(
     @JsonSerialize(using = CategorizedPropertiesSerializer::class)
     @JsonDeserialize(using = CategorizedPropertiesDeserializer::class)
     override val userProperties: CategorizedProperties? = null
-) : ConfigurationObject {
+) : ConfigurationObject, InitializingBean {
     @get:JsonIgnore
-    override val reference = PersonReference(employeeId)
+    override val reference = PersonReference(employeeId, tenant)
 
     constructor(person: CfgPerson) : this(
         tenant = TenantReference(person.tenant.name),
@@ -93,6 +94,10 @@ data class Person(
             setProperty("agentInfo", agentInfo?.toCfgAgentInfo(it), it)
             return ConfigurationObjectUpdateResult(CREATED, it)
         }
+    }
+
+    override fun afterPropertiesSet() {
+        agentInfo?.updateTenantReferences(tenant)
     }
 }
 

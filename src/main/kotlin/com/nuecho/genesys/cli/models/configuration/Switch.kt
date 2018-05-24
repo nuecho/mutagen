@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgSwitch
+import com.nuecho.genesys.cli.core.InitializingBean
 import com.nuecho.genesys.cli.getReference
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectUpdateStatus.CREATED
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectUpdateStatus.UNCHANGED
@@ -40,9 +41,9 @@ data class Switch(
     @JsonSerialize(using = CategorizedPropertiesSerializer::class)
     @JsonDeserialize(using = CategorizedPropertiesDeserializer::class)
     override val userProperties: CategorizedProperties? = null
-) : ConfigurationObject {
+) : ConfigurationObject, InitializingBean {
     @get:JsonIgnore
-    override val reference = SwitchReference(name)
+    override val reference = SwitchReference(name, tenant)
 
     constructor(switch: CfgSwitch) : this(
         tenant = TenantReference(switch.tenant.name),
@@ -78,5 +79,9 @@ data class Switch(
 
             return ConfigurationObjectUpdateResult(CREATED, switch)
         }
+    }
+
+    override fun afterPropertiesSet() {
+        switchAccessCodes?.forEach { it.updateTenantReferences(tenant) }
     }
 }

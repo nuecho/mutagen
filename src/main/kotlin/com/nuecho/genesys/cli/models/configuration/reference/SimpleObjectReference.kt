@@ -6,16 +6,12 @@ import com.fasterxml.jackson.databind.BeanProperty
 import com.fasterxml.jackson.databind.DeserializationContext
 import com.fasterxml.jackson.databind.JsonDeserializer
 import com.fasterxml.jackson.databind.JsonSerializer
-import com.fasterxml.jackson.databind.KeyDeserializer
 import com.fasterxml.jackson.databind.SerializerProvider
 import com.fasterxml.jackson.databind.deser.ContextualDeserializer
-import com.fasterxml.jackson.databind.deser.ContextualKeyDeserializer
 import com.genesyslab.platform.applicationblocks.com.ICfgObject
 
-abstract class SimpleObjectReference<T : ICfgObject>(cfgObjectClass: Class<T>) :
+abstract class SimpleObjectReference<T : ICfgObject>(cfgObjectClass: Class<T>, val primaryKey: String) :
     ConfigurationObjectReference<T>(cfgObjectClass) {
-    abstract val primaryKey: String
-
     override fun compareTo(other: ConfigurationObjectReference<*>): Int {
         if (other !is SimpleObjectReference) return super.compareTo(other)
 
@@ -62,18 +58,4 @@ class SimpleObjectReferenceDeserializer(
 class SimpleObjectReferenceKeySerializer : JsonSerializer<SimpleObjectReference<*>>() {
     override fun serialize(value: SimpleObjectReference<*>, generator: JsonGenerator, serializers: SerializerProvider) =
         generator.writeFieldName(value.primaryKey)
-}
-
-class SimpleObjectReferenceKeyDeserializer(
-    private val referenceClass: Class<*>?
-) : ContextualKeyDeserializer, KeyDeserializer() {
-    constructor() : this(referenceClass = null)
-
-    override fun deserializeKey(key: String, context: DeserializationContext): SimpleObjectReference<*> {
-        val constructor = referenceClass!!.getDeclaredConstructor(String::class.java)
-        return constructor.newInstance(key) as SimpleObjectReference<*>
-    }
-
-    override fun createContextual(context: DeserializationContext, property: BeanProperty) =
-        SimpleObjectReferenceKeyDeserializer(context.contextualType.keyType.rawClass)
 }

@@ -62,19 +62,19 @@ private val person = Person(
     ),
     userProperties = defaultProperties(),
     agentInfo = AgentInfo(
-        capacityRule = ScriptReference("capacityRule"),
-        contract = ObjectiveTableReference("contract"),
-        place = PlaceReference("place"),
+        capacityRule = ScriptReference("capacityRule", DEFAULT_TENANT_REFERENCE),
+        contract = ObjectiveTableReference("contract", DEFAULT_TENANT_REFERENCE),
+        place = PlaceReference("place", DEFAULT_TENANT_REFERENCE),
         site = FolderReference("site"),
         skillLevels = mapOf(
-            SkillReference("skill_1") to 10,
-            SkillReference("skill_2") to 20,
-            SkillReference("skill_3") to 30
+            SkillReference("skill_1", DEFAULT_TENANT_REFERENCE) to 10,
+            SkillReference("skill_2", DEFAULT_TENANT_REFERENCE) to 20,
+            SkillReference("skill_3", DEFAULT_TENANT_REFERENCE) to 30
         ),
         agentLogins = listOf(
-            AgentLoginInfo(AgentLoginReference("agent_1"), 1000),
-            AgentLoginInfo(AgentLoginReference("agent_2"), 2000),
-            AgentLoginInfo(AgentLoginReference("agent_3"), 3000)
+            AgentLoginInfo(AgentLoginReference("agent_1", DEFAULT_TENANT_REFERENCE), 1000),
+            AgentLoginInfo(AgentLoginReference("agent_2", DEFAULT_TENANT_REFERENCE), 2000),
+            AgentLoginInfo(AgentLoginReference("agent_3", DEFAULT_TENANT_REFERENCE), 3000)
         )
     )
 )

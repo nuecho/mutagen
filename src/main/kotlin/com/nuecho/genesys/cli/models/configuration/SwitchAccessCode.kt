@@ -8,6 +8,7 @@ import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setPrope
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgRouteType
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgTargetType
 import com.nuecho.genesys.cli.models.configuration.reference.SwitchReference
+import com.nuecho.genesys.cli.models.configuration.reference.TenantReference
 import com.nuecho.genesys.cli.services.getObjectDbid
 import com.nuecho.genesys.cli.toShortName
 
@@ -57,4 +58,8 @@ data class SwitchAccessCode(
         setProperty("reasonSource", reasonSource, it)
         setProperty("extensionSource", extensionSource, it)
     }
+}
+
+fun SwitchAccessCode.updateTenantReferences(tenant: TenantReference) {
+    switch?.tenant = tenant
 }

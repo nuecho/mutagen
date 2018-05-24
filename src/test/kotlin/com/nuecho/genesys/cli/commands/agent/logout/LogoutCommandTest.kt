@@ -8,10 +8,9 @@ import com.nuecho.genesys.cli.CliOutputCaptureWrapper.execute
 import com.nuecho.genesys.cli.commands.agent.mockAgentStatus
 import com.nuecho.genesys.cli.commands.agent.status.Status
 import com.nuecho.genesys.cli.getDefaultEndpoint
-import com.nuecho.genesys.cli.models.configuration.reference.SwitchReference
-import com.nuecho.genesys.cli.services.ConfService
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgSwitch
+import com.nuecho.genesys.cli.services.ServiceMocks.mockConfService
 import com.nuecho.genesys.cli.services.TService
-import com.nuecho.genesys.cli.services.retrieveObject
 import io.kotlintest.matchers.should
 import io.kotlintest.matchers.shouldEqual
 import io.kotlintest.matchers.startWith
@@ -57,25 +56,21 @@ class LogoutCommandTest : StringSpec() {
             val dns = listOf("1234")
             val agentStatus = mockAgentStatus()
 
-            val switchId = "testSwitch"
-            val switchReference = SwitchReference(switchId)
-            val switch = mockk<CfgSwitch>()
+            val switchName = "testSwitch"
+            val switch = mockCfgSwitch(switchName)
 
-            val confService = mockk<ConfService>()
+            val service = mockConfService()
+            every { service.retrieveObject(CfgSwitch::class.java, any()) } returns switch
 
-            staticMockk("com.nuecho.genesys.cli.services.ConfServiceExtensionsKt").use {
-                every { confService.retrieveObject(switchReference) } returns switch
+            val tService = mockTService()
 
-                val tService = mockTService()
+            staticMockk("com.nuecho.genesys.cli.commands.agent.logout.LogoutCommandKt").use {
+                every { switch.getTService() } returns tService
+                every { agentStatus.toSwitchIdDnMap() } returns mapOf(switchName to dns)
 
-                staticMockk("com.nuecho.genesys.cli.commands.agent.logout.LogoutCommandKt").use {
-                    every { switch.getTService() } returns tService
-                    every { agentStatus.toSwitchIdDnMap() } returns hashMapOf(switchId to dns)
+                Logout.logoutAgent(service, agentStatus)
 
-                    Logout.logoutAgent(confService, agentStatus)
-
-                    verify { tService.logoutAddresses(dns) }
-                }
+                verify { tService.logoutAddresses(dns) }
             }
         }
 
