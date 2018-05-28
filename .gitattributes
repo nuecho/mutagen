@@ -6,10 +6,11 @@
 
 # Declare files that will always have native line endings on checkout.
 .buildpath textfile
+.dockerignore textfile
 chefignore textfile
 Berksfile textfile
 Berksfile.lock textfile
-Dockerfile textfile
+**/Dockerfile textfile
 Gemfile textfile
 Gemfile.lock textfile
 LICENSE textfile
@@ -76,6 +77,7 @@ Vagrantfile textfile
 *.rsxml textfile
 *.scm textfile
 *.sed textfile
+*.snap textfile
 *.sql textfile
 *.st textfile
 *.sxml textfile
