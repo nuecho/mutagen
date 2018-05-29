@@ -1,3 +1,5 @@
+import org.apache.tools.ant.filters.FixCrLfFilter
+
 plugins {
     id 'com.diffplug.gradle.spotless' version '3.8.0'
     id 'org.jetbrains.kotlin.jvm' version '1.2.41'
@@ -159,6 +161,8 @@ task shellExecutable(type: Copy, dependsOn: 'installShadowDist') {
     filter {
         line -> line.replaceAll(/^CLASSPATH=.*$/, 'CLASSPATH=\\$(which "\\$0" 2>/dev/null)')
     }
+    // since it's a shell script force LS
+    filter(FixCrLfFilter.class, eol: FixCrLfFilter.CrLf.newInstance("lf"))
 }
 
 task shellExecutableWithJarPayload(dependsOn: 'shellExecutable') {

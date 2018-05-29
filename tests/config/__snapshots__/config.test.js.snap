@@ -1,0 +1,14 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`[mutagen config --help] should print config usage: config usage 1`] = `
+Object {
+  "stderr": "",
+  "stdout": "Usage: config [-?]
+Genesys Config Server tool
+  -?, -h, --help              Show this help message.
+Commands:
+  export  Export configuration objects.
+  import  [INCUBATION] Import configuration objects.
+",
+}
+`;

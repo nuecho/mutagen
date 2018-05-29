@@ -1,7 +1,0 @@
-default:
-  host: configserver
-  user: default
-  password: password
-  port: 2020
-  tls: false
-  application: default
