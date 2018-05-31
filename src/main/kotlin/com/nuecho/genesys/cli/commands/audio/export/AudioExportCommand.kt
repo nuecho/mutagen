@@ -240,7 +240,7 @@ object AudioExport {
     ) {
         "$gaxUrl$AUDIO_RESOURCES_PATH/${audioFileInfo.id}$FILES_PATH/${audioFileInfo.fileId}$AUDIO_PATH"
             .httpDownload()
-            .destination { _, _ -> audioFile }
+            .destination { response, _ -> audioFile }
             .responseString { _, response, _ ->
                 if (response.statusCode != DOWNLOAD_AUDIO_SUCCESS_CODE) {
                     warn { "${audioFile.path} download failed, status code: ${response.statusCode}" }
