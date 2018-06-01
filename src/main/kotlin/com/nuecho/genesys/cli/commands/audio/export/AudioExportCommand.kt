@@ -24,8 +24,8 @@ import com.nuecho.genesys.cli.commands.audio.AudioServices.TENANT_ID
 import com.nuecho.genesys.cli.commands.audio.AudioServices.checkStatusCode
 import com.nuecho.genesys.cli.commands.audio.AudioServices.login
 import com.nuecho.genesys.cli.commands.audio.AudioServicesException
-import com.nuecho.genesys.cli.preferences.environment.Environment
 import com.nuecho.genesys.cli.core.defaultJsonObjectMapper
+import com.nuecho.genesys.cli.preferences.environment.Environment
 import picocli.CommandLine
 import java.io.File
 import java.io.OutputStream
@@ -240,7 +240,7 @@ object AudioExport {
     ) {
         "$gaxUrl$AUDIO_RESOURCES_PATH/${audioFileInfo.id}$FILES_PATH/${audioFileInfo.fileId}$AUDIO_PATH"
             .httpDownload()
-            .destination { response, _ -> audioFile }
+            .destination { _, _ -> audioFile }
             .responseString { _, response, _ ->
                 if (response.statusCode != DOWNLOAD_AUDIO_SUCCESS_CODE) {
                     warn { "${audioFile.path} download failed, status code: ${response.statusCode}" }
@@ -299,7 +299,7 @@ object AudioExport {
         personalities: Set<Personality>,
         selectedPersonalitiesIds: Set<String>?
     ) = if (selectedPersonalitiesIds == null) emptySet()
-        else selectedPersonalitiesIds.subtract(personalities.map { it.id })
+    else selectedPersonalitiesIds.subtract(personalities.map { it.id })
 }
 
 internal data class AudioRequestInfo(

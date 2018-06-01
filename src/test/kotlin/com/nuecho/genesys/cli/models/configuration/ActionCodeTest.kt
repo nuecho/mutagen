@@ -17,12 +17,13 @@ import io.kotlintest.matchers.shouldBe
 import io.mockk.every
 
 private const val NAME = "name"
+private val TYPE = CFGTransfer.toShortName()
 private const val SUBNAME = "subname"
 private const val SUBCODE = "subcode"
 private val actionCode = ActionCode(
     tenant = DEFAULT_TENANT_REFERENCE,
     name = NAME,
-    type = CFGTransfer.toShortName(),
+    type = TYPE,
     code = "code",
     subcodes = mapOf(
         SUBNAME to SUBCODE
@@ -33,7 +34,7 @@ private val actionCode = ActionCode(
 
 class ActionCodeTest : ConfigurationObjectTest(
     actionCode,
-    ActionCode(tenant = DEFAULT_TENANT_REFERENCE, name = NAME),
+    ActionCode(tenant = DEFAULT_TENANT_REFERENCE, name = NAME, type = TYPE),
     ActionCode(mockCfgActionCode())
 ) {
     init {

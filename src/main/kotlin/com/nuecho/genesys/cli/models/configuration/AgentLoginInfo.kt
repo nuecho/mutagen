@@ -13,8 +13,7 @@ data class AgentLoginInfo(
         agentLogin = agentLoginInfo.agentLogin.getReference(),
         wrapupTime = agentLoginInfo.wrapupTime
     )
-}
 
-fun AgentLoginInfo.updateTenantReferences(tenant: TenantReference) {
-    agentLogin.tenant = tenant
+    @Suppress("DataClassContainsFunctions")
+    fun updateTenantReferences(tenant: TenantReference) = agentLogin.updateTenantReferences(tenant)
 }

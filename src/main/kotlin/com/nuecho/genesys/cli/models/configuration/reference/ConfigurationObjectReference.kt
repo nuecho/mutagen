@@ -11,7 +11,7 @@ abstract class ConfigurationObjectReference<T : ICfgObject>(
     val cfgObjectClass: Class<T>
 ) : Comparable<ConfigurationObjectReference<*>> {
 
-    abstract fun toQuery(service: IConfService): ICfgQuery?
+    abstract fun toQuery(service: IConfService): ICfgQuery
 
     @JsonIgnore
     fun getCfgObjectType() = getCfgObjectType(cfgObjectClass)

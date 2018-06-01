@@ -14,8 +14,9 @@ data class DNAccessNumber(
         number = dnAccessNumber.number,
         switch = dnAccessNumber.switch.getReference()
     )
-}
 
-fun DNAccessNumber.updateTenantReferences(tenant: TenantReference) {
-    switch.tenant = tenant
+    @Suppress("DataClassContainsFunctions")
+    fun updateTenantReferences(tenant: TenantReference) {
+        switch.tenant = tenant
+    }
 }

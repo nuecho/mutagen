@@ -74,7 +74,7 @@ object ConfigurationObjects {
         if (flag == null) null
         else GEnum.getValue(CfgDNRegisterFlag::class.java, "$CFG_DN_REGISTER_FLAG_PREFIX$flag") as CfgDNRegisterFlag
 
-    fun toCfgActionCodeType(state: String?) = toGEnum(state, CfgActionCodeType::class.java) as CfgActionCodeType?
+    fun toCfgActionCodeType(type: String?) = toGEnum(type, CfgActionCodeType::class.java) as CfgActionCodeType?
     fun toCfgAppType(type: String?) = toGEnum(type, CfgAppType::class.java) as CfgAppType?
     fun toCfgDNType(type: String?) = toGEnum(type, CfgDNType::class.java) as CfgDNType?
     fun toCfgEnumeratorType(type: String?) = toGEnum(type, CfgEnumeratorType::class.java) as CfgEnumeratorType?

@@ -48,9 +48,9 @@ private val agentGroup = AgentGroup(
             PersonReference("manager2", DEFAULT_TENANT_REFERENCE)
         ),
         routeDNs = listOf(
-            DNReference(tenant = DEFAULT_TENANT_REFERENCE, number = "123", switch = "switch", type = CFGCP),
-            DNReference(tenant = DEFAULT_TENANT_REFERENCE, number = "456", switch = "switch", type = CFGCP),
-            DNReference(tenant = DEFAULT_TENANT_REFERENCE, number = "789", switch = "switch", type = CFGCP)
+            DNReference(number = "123", switch = "switch", type = CFGCP, tenant = DEFAULT_TENANT_REFERENCE),
+            DNReference(number = "456", switch = "switch", type = CFGCP, tenant = DEFAULT_TENANT_REFERENCE),
+            DNReference(number = "789", switch = "switch", type = CFGCP, tenant = DEFAULT_TENANT_REFERENCE)
         ),
         capacityTable = StatTableReference("capacityTable", DEFAULT_TENANT_REFERENCE),
         quotaTable = StatTableReference("quotaTable", DEFAULT_TENANT_REFERENCE),

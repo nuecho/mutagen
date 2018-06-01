@@ -82,12 +82,16 @@ object ConfigurationObjectMocks {
             every { it.objectDbid } returns DEFAULT_OBJECT_DBID
         }
 
-    fun mockCfgAgentLogin(loginCode: String, tenant: CfgTenant = mockCfgTenant(DEFAULT_TENANT)) =
-        mockk<CfgAgentLogin>().also {
+    fun mockCfgAgentLogin(loginCode: String, tenant: CfgTenant = mockCfgTenant(DEFAULT_TENANT)): CfgAgentLogin {
+        val switch = mockCfgSwitch("switch")
+
+        return mockk<CfgAgentLogin>().also {
             every { it.loginCode } returns loginCode
+            every { it.switch } returns switch
             every { it.tenant } returns tenant
             every { it.objectDbid } returns DEFAULT_OBJECT_DBID
         }
+    }
 
     fun mockCfgApplication(name: String) =
         mockk<CfgApplication>().also {

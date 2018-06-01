@@ -4,9 +4,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgAccessGroup
-import com.genesyslab.platform.applicationblocks.com.objects.CfgActionCode
 import com.genesyslab.platform.applicationblocks.com.objects.CfgAgentGroup
-import com.genesyslab.platform.applicationblocks.com.objects.CfgAgentLogin
 import com.genesyslab.platform.applicationblocks.com.objects.CfgApplication
 import com.genesyslab.platform.applicationblocks.com.objects.CfgDNGroup
 import com.genesyslab.platform.applicationblocks.com.objects.CfgEnumerator
@@ -22,11 +20,8 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgSkill
 import com.genesyslab.platform.applicationblocks.com.objects.CfgStatTable
 import com.genesyslab.platform.applicationblocks.com.objects.CfgSwitch
 import com.genesyslab.platform.applicationblocks.com.objects.CfgTenant
-import com.genesyslab.platform.applicationblocks.com.objects.CfgTransaction
 import com.genesyslab.platform.applicationblocks.com.queries.CfgAccessGroupQuery
-import com.genesyslab.platform.applicationblocks.com.queries.CfgActionCodeQuery
 import com.genesyslab.platform.applicationblocks.com.queries.CfgAgentGroupQuery
-import com.genesyslab.platform.applicationblocks.com.queries.CfgAgentLoginQuery
 import com.genesyslab.platform.applicationblocks.com.queries.CfgApplicationQuery
 import com.genesyslab.platform.applicationblocks.com.queries.CfgDNGroupQuery
 import com.genesyslab.platform.applicationblocks.com.queries.CfgEnumeratorQuery
@@ -42,7 +37,6 @@ import com.genesyslab.platform.applicationblocks.com.queries.CfgSkillQuery
 import com.genesyslab.platform.applicationblocks.com.queries.CfgStatTableQuery
 import com.genesyslab.platform.applicationblocks.com.queries.CfgSwitchQuery
 import com.genesyslab.platform.applicationblocks.com.queries.CfgTenantQuery
-import com.genesyslab.platform.applicationblocks.com.queries.CfgTransactionQuery
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectNotFoundException
 import com.nuecho.genesys.cli.services.getObjectDbid
 
@@ -57,28 +51,9 @@ class AccessGroupReference(name: String, tenant: TenantReference?) :
 
 @JsonSerialize(using = SimpleObjectReferenceSerializer::class)
 @JsonDeserialize(using = SimpleObjectReferenceWithTenantDeserializer::class)
-class ActionCodeReference(name: String, tenant: TenantReference) :
-    SimpleObjectReferenceWithTenant<CfgActionCode>(CfgActionCode::class.java, name, tenant) {
-    override fun toQuery(service: IConfService) = CfgActionCodeQuery(primaryKey).apply {
-        tenantDbid = getTenantDbid(tenant, service)
-    }
-}
-
-@JsonSerialize(using = SimpleObjectReferenceSerializer::class)
-@JsonDeserialize(using = SimpleObjectReferenceWithTenantDeserializer::class)
 class AgentGroupReference(name: String, tenant: TenantReference) :
     SimpleObjectReferenceWithTenant<CfgAgentGroup>(CfgAgentGroup::class.java, name, tenant) {
     override fun toQuery(service: IConfService) = CfgAgentGroupQuery(primaryKey).apply {
-        tenantDbid = getTenantDbid(tenant, service)
-    }
-}
-
-@JsonSerialize(using = SimpleObjectReferenceSerializer::class)
-@JsonDeserialize(using = SimpleObjectReferenceWithTenantDeserializer::class)
-class AgentLoginReference(loginCode: String, tenant: TenantReference?) :
-    SimpleObjectReferenceWithTenant<CfgAgentLogin>(CfgAgentLogin::class.java, loginCode, tenant) {
-    override fun toQuery(service: IConfService) = CfgAgentLoginQuery().apply {
-        loginCode = primaryKey
         tenantDbid = getTenantDbid(tenant, service)
     }
 }
@@ -207,15 +182,6 @@ class SwitchReference(name: String, tenant: TenantReference?) :
 class TenantReference(name: String) :
     SimpleObjectReference<CfgTenant>(CfgTenant::class.java, name) {
     override fun toQuery(service: IConfService) = CfgTenantQuery(primaryKey).apply { allTenants = 1 }
-}
-
-@JsonSerialize(using = SimpleObjectReferenceSerializer::class)
-@JsonDeserialize(using = SimpleObjectReferenceWithTenantDeserializer::class)
-class TransactionReference(name: String, tenant: TenantReference?) :
-    SimpleObjectReferenceWithTenant<CfgTransaction>(CfgTransaction::class.java, name, tenant) {
-    override fun toQuery(service: IConfService) = CfgTransactionQuery(primaryKey).apply {
-        tenantDbid = getTenantDbid(tenant, service)
-    }
 }
 
 private fun getTenantDbid(tenant: TenantReference?, service: IConfService) =

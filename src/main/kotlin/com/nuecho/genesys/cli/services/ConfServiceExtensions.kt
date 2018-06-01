@@ -6,10 +6,8 @@ import com.nuecho.genesys.cli.Logging
 import com.nuecho.genesys.cli.models.configuration.reference.ConfigurationObjectReference
 import com.nuecho.genesys.cli.toShortName
 
-fun <T : ICfgObject> IConfService.retrieveObject(reference: ConfigurationObjectReference<T>): T? {
-    val query = reference.toQuery(this) ?: return null
-    return retrieveObject(reference.cfgObjectClass, query)
-}
+fun <T : ICfgObject> IConfService.retrieveObject(reference: ConfigurationObjectReference<T>): T? =
+    retrieveObject(reference.cfgObjectClass, reference.toQuery(this))
 
 fun IConfService.getObjectDbid(reference: ConfigurationObjectReference<*>?): Int? {
     if (reference == null) return null

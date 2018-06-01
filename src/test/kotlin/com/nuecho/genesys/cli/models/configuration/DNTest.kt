@@ -48,10 +48,10 @@ private val dn = DN(
         CfgRouteType.CFGDirect.toShortName(),
         listOf(
             DNReference(
-                tenant = DEFAULT_TENANT_REFERENCE,
                 number = "1234",
                 switch = "aswitch",
-                type = CfgDNType.CFGACDQueue
+                type = CfgDNType.CFGACDQueue,
+                tenant = DEFAULT_TENANT_REFERENCE
             )
         )
     ),

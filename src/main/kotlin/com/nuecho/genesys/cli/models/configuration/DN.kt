@@ -63,7 +63,7 @@ data class DN(
 
 ) : ConfigurationObject, InitializingBean {
     @get:JsonIgnore
-    override val reference = DNReference(tenant, switch, number, type, name)
+    override val reference = DNReference(number, switch, type, name, tenant)
 
     constructor(dn: CfgDN) : this(
         tenant = TenantReference(dn.tenant.name),

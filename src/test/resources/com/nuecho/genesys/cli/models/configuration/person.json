@@ -3,15 +3,24 @@
   "agentInfo": {
     "agentLogins": [
       {
-        "agentLogin": "agent_1",
+        "agentLogin": {
+          "loginCode": "agent_1",
+          "switch": "switch"
+        },
         "wrapupTime": 1000
       },
       {
-        "agentLogin": "agent_2",
+        "agentLogin": {
+          "loginCode": "agent_2",
+          "switch": "switch"
+        },
         "wrapupTime": 2000
       },
       {
-        "agentLogin": "agent_3",
+        "agentLogin": {
+          "loginCode": "agent_3",
+          "switch": "switch"
+        },
         "wrapupTime": 3000
       }
     ],
