@@ -12,7 +12,8 @@ data class Environment(
     val user: String,
     @JsonProperty("password")
     var rawPassword: String?,
-    val application: String = GenesysServices.DEFAULT_APPLICATION_NAME
+    val application: String = GenesysServices.DEFAULT_APPLICATION_NAME,
+    val encoding: String = "utf-8"
 ) {
     var password: String?
         @JsonIgnore

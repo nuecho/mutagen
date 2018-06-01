@@ -2,3 +2,9 @@ default:
   host: configserver
   user: default
   password: password
+
+invalidEncoding:
+  host: configserver
+  user: default
+  password: password
+  encoding: test
