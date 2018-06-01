@@ -108,7 +108,7 @@ acceptance:test:
   script:
     - chmod 0755 $RELEASE_PATH/unix/mutagen
     - cd docker 
-    - docker-compose -f docker-compose.yml -f docker-compose.test.yml -f docker-compose.test.ci.yml run --rm test
+    - docker-compose -f docker-compose.yml -f docker-compose.ci.yml run test
   after_script:
     - cd docker && docker-compose down -v
 

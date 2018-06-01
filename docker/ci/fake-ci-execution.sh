@@ -2,13 +2,13 @@
 
 # This file purpose to build a setup closer to the one on the CI for easier debugging
 
-docker run -d --privileged --name ci --network host -v $PWD:/usr/src/mutagen docker:dind
-
 PROJECT_ROOT="$(dirname "$(dirname "$(dirname "$(readlink -fm "$0")")")")"
 RELEASE_PATH=build/releases
 
 mkdir -p $PROJECT_ROOT/build/releases/unix
 cp $PROJECT_ROOT/build/mutagen $PROJECT_ROOT/build/releases/unix/mutagen
+
+docker run -d --privileged --name ci --network host -v $PROJECT_ROOT:/usr/src/mutagen docker:dind
 
 docker exec -t ci sh -c " \
   docker run \

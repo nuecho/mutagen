@@ -51,8 +51,23 @@ RUN ARCH= && dpkgArch="$(dpkg --print-architecture)" \
 # === This is us ===
 
 # Install wait-for-it (https://github.com/vishnubob/wait-for-it)
-RUN curl -fsSL --compressed -o /usr/bin/wait-for-it.sh "https://raw.githubusercontent.com/vishnubob/wait-for-it/db049716e4/wait-for-it.sh" \
-  && chmod 0755 /usr/bin/wait-for-it.sh
+RUN curl -fsSL --compressed "https://raw.githubusercontent.com/vishnubob/wait-for-it/db049716e4/wait-for-it.sh" -o /usr/local/bin/wait-for-it.sh \
+  && chmod 0755 /usr/local/bin/wait-for-it.sh
+
+# Install docker
+
+ARG DOCKER_CHANNEL=stable
+ARG DOCKER_VERSION=18.03.1
+
+RUN curl -fsSL -o docker.tgz "https://download.docker.com/linux/static/${DOCKER_CHANNEL}/x86_64/docker-${DOCKER_VERSION}-ce.tgz" \
+  && tar --extract --file docker.tgz --strip-components 1 --directory /usr/local/bin/ \
+  && rm docker.tgz
+
+# Install docker-compose
+ARG DOCKER_COMPOSE_VERSION=1.21.2
+
+RUN curl -fsSL "https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-Linux-x86_64" -o /usr/local/bin/docker-compose \
+  && chmod +x /usr/local/bin/docker-compose
 
 ENV WAIT_TIMEOUT 180
 ENV CONFIG_SERVER_HOST configserver
@@ -60,4 +75,7 @@ ENV CONFIG_SERVER_PORT 2020
 
 WORKDIR /usr/src/app
 
-CMD [ "/bin/bash", "-c", "npm install && wait-for-it.sh $CONFIG_SERVER_HOST:$CONFIG_SERVER_PORT -s -t $WAIT_TIMEOUT -- npm test -- --ci --colors" ]
+COPY entrypoint.sh .
+
+ENTRYPOINT [ "./entrypoint.sh" ]
+CMD [ "--ci", "--colors" ]

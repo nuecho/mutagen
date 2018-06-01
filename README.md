@@ -95,31 +95,29 @@ default:
   password: password
 ```
 
-To use mutagen docker image as part of compose, build args needs to be used to override binary
-location:
-
-```bash
-cd docker
-docker-compose build --build-arg MUTAGEN=./build/mutagen mutagen
-docker-compose run --rm mutagen
-```
-
-
 ### Functional
 
-A [bats](https://github.com/bats-core/bats-core) functional test suite exists. Assuming you have `bats`
-installed and a config server up & running (see above), then, one can execute the following:
+Functionnal tests are coded in JS (node) using Jest(https://facebook.github.io/jest/).
+The recommended method to run the functional test is to run them as part of the docker-compose setup.
 
+To do so you you can run:
 ```bash
-VERSION=unspecified MUTAGEN=$PWD/build/mutagen bats tests
+./gradlew clean release
+cd docker
+docker-compose run test
 ```
 
-or from docker
-```bash
-docker-compose run --rm -e VERSION=unspecified -e MUTAGEN=/app/build/mutagen test
-```
+This will launch the configserver along with postgres and a test runner container, the test container uses the mutagen 
+you built with `./gradlew release`.
 
-Where in both case, `VERSION` is the actual mutagen version and `MUTAGENT` the binary location.
+You can pass arguments to `docker-compose run test` that will be forwarded to jest.
+
+You can pass a string that will be matched against test file names. For example `docker-compose run test import` will run all
+test files that contains `import` in their name.
+
+To update the snapshot you need to run  `docker-compose run test -u`.
+
+The database and the configserver won't be cleaned up between each run so you should do `docker-compose down` before/after your tests.
 
 ## Release
 

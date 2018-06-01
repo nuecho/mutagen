@@ -6,7 +6,7 @@ services:
     environment:
       - POSTGRES_PASSWORD=mysecretpassword
     volumes:
-      - ./sql_scripts:/docker-entrypoint-initdb.d
+      - $PWD/sql_scripts/init_with_copy.sql:/docker-entrypoint-initdb.d/init_with_copy.sql
 
   configserver:
     image: dr.s.nuecho.com/configserver:d6f87b568191880e9970e67db382db12b1399878
@@ -17,3 +17,18 @@ services:
       - postgres
     links:
       - postgres
+
+  test:
+    build: test
+    depends_on:
+      - configserver
+    links:
+      - configserver
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - $PWD/../build/mutagen:/usr/local/bin/mutagen
+      - $PWD/environments.yml:/root/.mutagen/environments.yml:ro
+      - $PWD/../package.json:/usr/src/app/package.json:ro
+      - $PWD/../package-lock.json:/usr/src/app/package-lock.json:ro
+      - $PWD/../tests:/usr/src/app/tests
+      - $PWD/../docker:/usr/src/app/docker:ro
