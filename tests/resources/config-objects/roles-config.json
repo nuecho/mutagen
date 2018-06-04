@@ -1,0 +1,24 @@
+{
+  "__metadata__": {
+    "formatName": "JSON",
+    "formatVersion": "1.0.0"
+  },
+  "roles": [
+    {
+      "name": "cfgObjectTest",
+      "description": "description",
+      "state": "enabled",
+      "members": [
+        "Environment/cspencer"
+      ],
+      "tenant": "Environment",
+      "userProperties": {
+        "section": {
+          "number": 456,
+          "string": "def"
+        }
+      }
+    }
+    
+  ]
+}

@@ -1,0 +1,19 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`[mutagen transactions config import-export] should do nothing when the transactions already exist: the transactions already exist and have not been imported 1`] = `
+Object {
+  "stderr": "",
+  "stdout": "= transaction => name: 'cfgObjectTest', type: 'callData', tenant: 'Environment'
+Completed. 0 object(s) imported.
+",
+}
+`;
+
+exports[`[mutagen transactions config import-export] should import the transactions: the transactions have been imported 1`] = `
+Object {
+  "stderr": "",
+  "stdout": "+ transaction => name: 'cfgObjectTest', type: 'callData', tenant: 'Environment'
+Completed. 1 object(s) imported.
+",
+}
+`;

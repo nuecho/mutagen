@@ -1,0 +1,20 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`[mutagen switches config import-export] should do nothing when the switches already exist: the switches already exist and have not been imported 1`] = `
+Object {
+  "stderr": "",
+  "stdout": "= switch => Environment/cfgObjectTest
+Completed. 0 object(s) imported.
+",
+}
+`;
+
+exports[`[mutagen switches config import-export] should import the switches: the switches have been imported 1`] = `
+Object {
+  "stderr": "Cannot find application 'tServer'
+",
+  "stdout": "+ switch => Environment/cfgObjectTest
+Completed. 1 object(s) imported.
+",
+}
+`;

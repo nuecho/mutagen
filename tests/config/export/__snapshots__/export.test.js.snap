@@ -11,9 +11,9 @@ Export configuration objects.
 }
 `;
 
+exports[`[mutagen config export] should not warn the user when no encoding is specified: export without warning 1`] = `""`;
+
 exports[`[mutagen config export] should warn the user when an invalid encoding is specified: export invalid encoding warning 1`] = `
 "Encoding 'test' specified in environments.yml is not valid. Default encoding UTF-8 will be used.
 "
 `;
-
-exports[`[mutagen config export] should not warn the user when no encoding is specified: export without warning 1`] = `""`;

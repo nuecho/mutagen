@@ -1,0 +1,26 @@
+{
+  "__metadata__": {
+    "formatName": "JSON",
+    "formatVersion": "1.0.0"
+  },
+  "switches": [
+    {
+      "dnRange": "74233-74244, 74290",
+      "linkType": "madgelink",
+      "name": "switchWithInvalidTenant",
+      "physicalSwitch": "physSwitchForSwitch",
+      "state": "enabled",
+      "switchAccessCodes": [
+      ],
+      "tenant": "Invalid tenant",
+      "tServer": "tServer",
+      "userProperties": {
+        "section": {
+          "number": 456,
+          "string": "def"
+        }
+      }
+    }
+  ]
+}
+

@@ -11,6 +11,43 @@ Object {
 }
 `;
 
+exports[`[mutagen config import file] should import multiple objects of different types: every object has been imported 1`] = `
+Object {
+  "stderr": "Cannot find application 'tServer'
+Cannot find application 'tServer'
+Cannot find application 'tServer'
+",
+  "stdout": "+ physicalswitch => physicalSwitch1
++ physicalswitch => physicalSwitch2
++ switch => Environment/switch1
++ switch => Environment/switch2
++ switch => Environment/switch3
+Completed. 5 object(s) imported.
+",
+}
+`;
+
+exports[`[mutagen config import file] should not import the object if it has an invalid tenant: no object has been imported 1`] = `
+Object {
+  "stderr": "Cannot find tenant 'Invalid tenant'
+Cannot find configuration object: 'Invalid tenant'
+",
+  "stdout": "",
+}
+`;
+
+exports[`[mutagen config import file] should only import objects with a unique key: only one object with the key has been imported 1`] = `
+Object {
+  "stderr": "Cannot find application 'tServer'
+",
+  "stdout": "+ switch => Environment/sameSwitch
+= switch => Environment/sameSwitch
+= switch => Environment/sameSwitch
+Completed. 1 object(s) imported.
+",
+}
+`;
+
 exports[`[mutagen config import] should fail when file to import does not exist: no such file or directory 1`] = `
 Object {
   "stderr": "/tmp/foo (No such file or directory)

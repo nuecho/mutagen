@@ -1,0 +1,21 @@
+{
+  "__metadata__": {
+    "formatName": "JSON",
+    "formatVersion": "1.0.0"
+  },
+  "scripts": [
+    {
+      "name": "cfgObjectTest",
+      "state": "enabled",
+      "tenant": "Environment",
+      "type": "schedule",
+      "userProperties": {
+        "section": {
+          "number": 456,
+          "string": "def"
+        }
+      }
+    }
+    
+  ]
+}

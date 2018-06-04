@@ -1,0 +1,19 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`[mutagen skills config import-export] should do nothing when the skills already exist: the skills already exist and have not been imported 1`] = `
+Object {
+  "stderr": "",
+  "stdout": "= skill => Environment/cfgObjectTest
+Completed. 0 object(s) imported.
+",
+}
+`;
+
+exports[`[mutagen skills config import-export] should import the skills: the skills have been imported 1`] = `
+Object {
+  "stderr": "",
+  "stdout": "+ skill => Environment/cfgObjectTest
+Completed. 1 object(s) imported.
+",
+}
+`;

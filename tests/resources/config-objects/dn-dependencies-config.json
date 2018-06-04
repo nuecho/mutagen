@@ -1,0 +1,39 @@
+{
+  "__metadata__": {
+    "formatName": "JSON",
+    "formatVersion": "1.0.0"
+  },
+  "physicalSwitches": [
+    {
+      "name": "physSwitchForDnSwitch",
+      "state": "enabled",
+      "type": "fujitsu",
+      "userProperties": {
+        "section": {
+          "number": 456,
+          "string": "def"
+        }
+      }
+    }
+  ],
+  "switches": [
+    {
+      "dnRange": "74233-74244, 74290",
+      "linkType": "madgelink",
+      "name": "switchForDn",
+      "physicalSwitch": "physSwitchForDnSwitch",
+      "state": "enabled",
+      "switchAccessCodes": [
+      ],
+      "tenant": "Environment",
+      "tServer": "tServer",
+      "userProperties": {
+        "section": {
+          "number": 456,
+          "string": "def"
+        }
+      }
+    }
+  ]
+}
+
