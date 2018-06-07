@@ -17,6 +17,7 @@ import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.databind.deser.BeanDeserializerModifier
 import com.fasterxml.jackson.databind.deser.std.DelegatingDeserializer
 import com.fasterxml.jackson.databind.module.SimpleModule
+import com.fasterxml.jackson.databind.util.StdDateFormat
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
@@ -26,6 +27,8 @@ private val jsonObjectMapper = jacksonObjectMapper()
     .setSerializationInclusion(JsonInclude.Include.NON_NULL) // do not serialize null
     .setSerializationInclusion(JsonInclude.Include.NON_EMPTY) // both empty arrays and object won't be serialized
     .setSerializationInclusion(JsonInclude.Include.NON_DEFAULT) // do not serialize false, 0,
+    .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+    .setDateFormat(StdDateFormat())
     .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
     .configure(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY, true) // consistent output
     .configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, true) // consistent output

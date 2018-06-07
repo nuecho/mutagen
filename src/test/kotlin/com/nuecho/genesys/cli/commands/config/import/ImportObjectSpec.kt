@@ -1,12 +1,12 @@
 package com.nuecho.genesys.cli.commands.config.import
 
 import com.genesyslab.platform.applicationblocks.com.CfgObject
+import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgTenant
 import com.nuecho.genesys.cli.commands.config.import.Import.Companion.importConfigurationObjects
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObject
-import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT
-import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgTenant
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveTenant
+import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveTimeZone
 import io.kotlintest.matchers.shouldBe
 import io.kotlintest.specs.StringSpec
 import io.mockk.Runs
@@ -27,9 +27,9 @@ abstract class ImportObjectSpec(cfgObject: CfgObject, objects: List<Configuratio
             every { service.retrieveObject(cfgObject.javaClass, any()) } returns cfgObject
 
             if (cfgObject !is CfgTenant) {
-                val tenant = mockCfgTenant(DEFAULT_TENANT)
-                every { service.retrieveObject(CfgTenant::class.java, any()) } returns tenant
+                mockRetrieveTenant(service)
             }
+            mockRetrieveDefaultObjects(service)
 
             objectMockk(Import.Companion).use {
                 val count = importConfigurationObjects(objects, service)
@@ -48,6 +48,8 @@ abstract class ImportObjectSpec(cfgObject: CfgObject, objects: List<Configuratio
                     mockRetrieveTenant(service)
                 }
 
+                mockRetrieveDefaultObjects(service)
+
                 val count = importConfigurationObjects(objects.subList(0, 1), service)
                 count shouldBe 1
                 verify(exactly = 1) { Import.save(ofType(cfgObject.javaClass.kotlin)) }
@@ -64,11 +66,16 @@ abstract class ImportObjectSpec(cfgObject: CfgObject, objects: List<Configuratio
                 if (cfgObject !is CfgTenant) {
                     mockRetrieveTenant(service)
                 }
+                mockRetrieveDefaultObjects(service)
 
                 val count = importConfigurationObjects(objects, service)
                 count shouldBe 2
                 verify(exactly = 2) { Import.save(ofType(cfgObject.javaClass.kotlin)) }
             }
         }
+    }
+
+    private fun mockRetrieveDefaultObjects(service: IConfService) {
+        mockRetrieveTimeZone(service)
     }
 }

@@ -8,8 +8,8 @@ import com.nuecho.genesys.cli.commands.config.Config
 import com.nuecho.genesys.cli.core.defaultJsonObjectMapper
 import com.nuecho.genesys.cli.models.configuration.Configuration
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObject
-import com.nuecho.genesys.cli.models.configuration.reference.ConfigurationObjectReference
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectUpdateStatus.CREATED
+import com.nuecho.genesys.cli.models.configuration.reference.ConfigurationObjectReference
 import com.nuecho.genesys.cli.services.ConfService
 import com.nuecho.genesys.cli.toShortName
 import picocli.CommandLine
@@ -50,6 +50,7 @@ class Import : GenesysCliCommand() {
                 importConfigurationObjects(configuration.agentGroups, service),
                 importConfigurationObjects(configuration.dns, service),
                 importConfigurationObjects(configuration.enumerators, service),
+                importConfigurationObjects(configuration.gvpResellers, service),
                 importConfigurationObjects(configuration.skills, service),
                 importConfigurationObjects(configuration.roles, service),
                 importConfigurationObjects(configuration.persons, service),

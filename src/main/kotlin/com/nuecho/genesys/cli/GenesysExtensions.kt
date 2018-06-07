@@ -19,6 +19,7 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgSkill
 import com.genesyslab.platform.applicationblocks.com.objects.CfgStatTable
 import com.genesyslab.platform.applicationblocks.com.objects.CfgSwitch
 import com.genesyslab.platform.applicationblocks.com.objects.CfgTenant
+import com.genesyslab.platform.applicationblocks.com.objects.CfgTimeZone
 import com.genesyslab.platform.commons.GEnum
 import com.genesyslab.platform.commons.protocol.Endpoint
 import com.genesyslab.platform.configuration.protocol.types.CfgDNRegisterFlag
@@ -47,6 +48,9 @@ import com.nuecho.genesys.cli.models.configuration.reference.SkillReference
 import com.nuecho.genesys.cli.models.configuration.reference.StatTableReference
 import com.nuecho.genesys.cli.models.configuration.reference.SwitchReference
 import com.nuecho.genesys.cli.models.configuration.reference.TenantReference
+import com.nuecho.genesys.cli.models.configuration.reference.TimeZoneReference
+import java.time.ZoneId
+import java.util.TimeZone
 
 fun AgentStatus.getStatusAsDnAction(): DnActions =
     GEnum.getValue(DnActions::class.java, this.status)!! as DnActions
@@ -78,6 +82,9 @@ fun DnStatusesCollection.toConsoleString(): String =
 
 fun DnActionsMask.setBits(vararg dnActions: DnActions) =
     dnActions.forEach { setBit(it) }
+
+fun CfgTimeZone.toTimeZoneId(): String =
+    TimeZone.getTimeZone(ZoneId.of(this.name, ZoneId.SHORT_IDS)).getDisplayName(false, TimeZone.SHORT)
 
 fun GEnum.toShortName(): String =
     this.name().replace(ConfigurationObjects.CFG_PREFIX, "").toLowerCase()
@@ -113,3 +120,4 @@ fun CfgSkill.getReference() = SkillReference(name, tenant.getReference())
 fun CfgStatTable.getReference() = StatTableReference(name, tenant.getReference())
 fun CfgSwitch.getReference() = SwitchReference(name, tenant.getReference())
 fun CfgTenant.getReference() = TenantReference(name)
+fun CfgTimeZone.getReference() = TimeZoneReference(name, tenant.getReference())
