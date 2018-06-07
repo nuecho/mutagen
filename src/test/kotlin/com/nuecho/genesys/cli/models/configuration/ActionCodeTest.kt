@@ -45,10 +45,7 @@ class ActionCodeTest : ConfigurationObjectTest(
 
             val type = toCfgActionCodeType(actionCode.type)
             val state = toCfgObjectState(actionCode.state)
-            val (status, cfgObject) = actionCode.updateCfgObject(service)
-            val cfgActionCode = cfgObject as CfgActionCode
-
-            status shouldBe ConfigurationObjectUpdateStatus.CREATED
+            val cfgActionCode = actionCode.updateCfgObject(service)
 
             with(cfgActionCode) {
                 name shouldBe actionCode.name

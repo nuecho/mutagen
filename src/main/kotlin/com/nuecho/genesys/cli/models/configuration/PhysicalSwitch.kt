@@ -5,8 +5,6 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgPhysicalSwitch
-import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectUpdateStatus.CREATED
-import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectUpdateStatus.UNCHANGED
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setProperty
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgObjectState
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgSwitchType
@@ -37,19 +35,13 @@ data class PhysicalSwitch(
         userProperties = physicalSwitch.userProperties?.asCategorizedProperties()
     )
 
-    override fun updateCfgObject(service: IConfService): ConfigurationObjectUpdateResult {
-        service.retrieveObject(reference)?.let {
-            return ConfigurationObjectUpdateResult(UNCHANGED, it)
-        }
-
-        CfgPhysicalSwitch(service).let {
+    override fun updateCfgObject(service: IConfService) =
+        (service.retrieveObject(reference) ?: CfgPhysicalSwitch(service)).also {
             setProperty("name", name, it)
             setProperty("type", toCfgSwitchType(type), it)
             setProperty("state", toCfgObjectState(state), it)
             setProperty("userProperties", toKeyValueCollection(userProperties), it)
-            return ConfigurationObjectUpdateResult(CREATED, it)
         }
-    }
 
     override fun getReferences(): Set<ConfigurationObjectReference<*>> = setOf()
 }

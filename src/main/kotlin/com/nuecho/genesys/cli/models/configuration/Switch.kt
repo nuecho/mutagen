@@ -8,8 +8,6 @@ import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgSwitch
 import com.nuecho.genesys.cli.core.InitializingBean
 import com.nuecho.genesys.cli.getReference
-import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectUpdateStatus.CREATED
-import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectUpdateStatus.UNCHANGED
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setProperty
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgLinkType
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgObjectState
@@ -59,12 +57,8 @@ data class Switch(
         userProperties = switch.userProperties?.asCategorizedProperties()
     )
 
-    override fun updateCfgObject(service: IConfService): ConfigurationObjectUpdateResult {
-        service.retrieveObject(reference)?.let {
-            return ConfigurationObjectUpdateResult(UNCHANGED, it)
-        }
-
-        CfgSwitch(service).let { switch ->
+    override fun updateCfgObject(service: IConfService) =
+        (service.retrieveObject(reference) ?: CfgSwitch(service)).also { switch ->
             setProperty("tenantDBID", service.getObjectDbid(tenant), switch)
             setProperty("name", name, switch)
             setProperty("physSwitchDBID", service.getObjectDbid(physicalSwitch), switch)
@@ -78,10 +72,7 @@ data class Switch(
             setProperty("DNRange", dnRange, switch)
             setProperty("state", toCfgObjectState(state), switch)
             setProperty("userProperties", toKeyValueCollection(userProperties), switch)
-
-            return ConfigurationObjectUpdateResult(CREATED, switch)
         }
-    }
 
     override fun afterPropertiesSet() {
         switchAccessCodes?.forEach { it.updateTenantReferences(tenant) }

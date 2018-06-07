@@ -11,6 +11,7 @@
       "number": "123",
       "override": "anoverride",
       "registerAll": "true",
+      "routeType": "default",
       "state": "enabled",
       "switch": "switchForDn",
       "switchSpecificType": 1,
@@ -25,6 +26,5 @@
         }
       }
     }
-    
   ]
 }

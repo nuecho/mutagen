@@ -6,8 +6,6 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgActionCode
 import com.genesyslab.platform.applicationblocks.com.objects.CfgSubcode
-import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectUpdateStatus.CREATED
-import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectUpdateStatus.UNCHANGED
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setProperty
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgActionCodeType
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgObjectState
@@ -43,12 +41,8 @@ data class ActionCode(
         userProperties = actionCode.userProperties.asCategorizedProperties()
     )
 
-    override fun updateCfgObject(service: IConfService): ConfigurationObjectUpdateResult {
-        service.retrieveObject(reference)?.let {
-            return ConfigurationObjectUpdateResult(UNCHANGED, it)
-        }
-
-        CfgActionCode(service).let {
+    override fun updateCfgObject(service: IConfService) =
+        (service.retrieveObject(reference) ?: CfgActionCode(service)).also {
             setProperty("tenantDBID", service.getObjectDbid(tenant), it)
             setProperty("name", name, it)
             setProperty("type", toCfgActionCodeType(type), it)
@@ -56,9 +50,7 @@ data class ActionCode(
             setProperty("subcodes", toCfgSubcodeList(subcodes, it), it)
             setProperty("state", toCfgObjectState(state), it)
             setProperty("userProperties", toKeyValueCollection(userProperties), it)
-            return ConfigurationObjectUpdateResult(CREATED, it)
         }
-    }
 
     override fun getReferences(): Set<ConfigurationObjectReference<*>> = setOf(tenant)
 }

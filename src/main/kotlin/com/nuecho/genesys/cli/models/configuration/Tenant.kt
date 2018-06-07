@@ -8,8 +8,6 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgTenant
 import com.nuecho.genesys.cli.asBoolean
 import com.nuecho.genesys.cli.core.InitializingBean
 import com.nuecho.genesys.cli.getReference
-import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectUpdateStatus.CREATED
-import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectUpdateStatus.UNCHANGED
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setProperty
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgFlag
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgObjectState
@@ -28,7 +26,7 @@ data class Tenant(
     val chargeableNumber: String? = null,
     val defaultContract: ObjectiveTableReference? = null,
     val defaultCapacityRule: ScriptReference? = null,
-    val isServiceProvider: Boolean? = false,
+    val serviceProvider: Boolean? = null,
     val parentTenant: TenantReference? = null,
     val password: String? = null,
     val state: String? = null,
@@ -44,7 +42,7 @@ data class Tenant(
         chargeableNumber = tenant.chargeableNumber,
         defaultCapacityRule = tenant.defaultCapacityRule?.getReference(),
         defaultContract = tenant.defaultContract?.getReference(),
-        isServiceProvider = tenant.isServiceProvider.asBoolean(),
+        serviceProvider = tenant.isServiceProvider.asBoolean(),
         name = tenant.name,
         parentTenant = tenant.parentTenant?.getReference(),
         password = tenant.password,
@@ -52,24 +50,26 @@ data class Tenant(
         userProperties = tenant.userProperties?.asCategorizedProperties()
     )
 
-    override fun updateCfgObject(service: IConfService): ConfigurationObjectUpdateResult {
-        service.retrieveObject(reference)?.let {
-            return ConfigurationObjectUpdateResult(UNCHANGED, it)
-        }
+    override fun updateCfgObject(service: IConfService) =
+        (service.retrieveObject(reference) ?: CfgTenant(service)).also {
+            if (!it.isSaved) {
+                applyDefaultValues()
+            }
 
-        CfgTenant(service).let {
             setProperty("chargeableNumber", chargeableNumber, it)
             setProperty("defaultCapacityRuleDBID", service.getObjectDbid(defaultCapacityRule), it)
             setProperty("defaultContractDBID", service.getObjectDbid(defaultContract), it)
-            setProperty("isServiceProvider", toCfgFlag(isServiceProvider), it)
+            setProperty("isServiceProvider", toCfgFlag(serviceProvider), it)
             setProperty("name", name, it)
             setProperty("parentTenantDBID", service.getObjectDbid(parentTenant), it)
             setProperty("password", password, it)
 
             setProperty("state", toCfgObjectState(state), it)
             setProperty("userProperties", toKeyValueCollection(userProperties), it)
-            return ConfigurationObjectUpdateResult(CREATED, it)
         }
+
+    override fun applyDefaultValues() {
+        // serviceProvider = false
     }
 
     override fun afterPropertiesSet() {

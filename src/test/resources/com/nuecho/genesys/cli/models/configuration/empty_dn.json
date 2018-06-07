@@ -1,12 +1,6 @@
 {
   "number": "123",
-  "registerAll": "true",
-  "routing": {
-    "type": "direct"
-  },
   "switch": "aswitch",
-  "switchSpecificType": 1,
   "tenant": "tenant",
-  "type": "nodn",
-  "useOverride": true
+  "type": "routingqueue"
 }

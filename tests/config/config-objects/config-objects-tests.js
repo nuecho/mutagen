@@ -9,8 +9,8 @@ function cfgObjectTests (
     if (checkInitialExport) {
       cfgObjectInitialExportTest(cfgObjectType, initialNumberOfObjects);
     }
-    cfgObjectFirstImportTest(cfgObjectType, getResourcePath(configurationFile));
-    cfgObjectSecondImportTest(cfgObjectType, getResourcePath(configurationFile));
+    cfgObjectCreationTest(cfgObjectType, getResourcePath(configurationFile));
+    cfgObjectUpdateTest(cfgObjectType, getResourcePath(configurationFile));
     cfgObjectExportTest(cfgObjectType, checkKey);
   });
 };
@@ -29,20 +29,20 @@ function cfgObjectInitialExportTest(cfgObjectType, initialNumberOfObjects) {
   });
 };
 
-function cfgObjectFirstImportTest(cfgObjectType, configurationPath) {
-  test(`should import the ${cfgObjectType}`, () => {
+function cfgObjectCreationTest(cfgObjectType, configurationPath) {
+  test(`should create the ${cfgObjectType}`, () => {
     const { code, output } = mutagen(`config import ${configurationPath}`);
 
-    expect(output).toMatchSnapshot(`the ${cfgObjectType} have been imported`);
+    expect(output).toMatchSnapshot(`the ${cfgObjectType} has been created`);
     expect(code).toBe(0);
   });
 };
 
-function cfgObjectSecondImportTest(cfgObjectType, configurationPath) {
-  test(`should do nothing when the ${cfgObjectType} already exist`, () => {
+function cfgObjectUpdateTest(cfgObjectType, configurationPath) {
+  test(`should update the ${cfgObjectType}`, () => {
     const { code, output } = mutagen(`config import ${configurationPath}`);
     
-    expect(output).toMatchSnapshot(`the ${cfgObjectType} already exist and have not been imported`);
+    expect(output).toMatchSnapshot(`the ${cfgObjectType} has been updated`);
     expect(code).toBe(0);
   });
 };

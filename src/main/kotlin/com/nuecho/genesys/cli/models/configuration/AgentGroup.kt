@@ -5,7 +5,6 @@ import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgAgentGroup
 import com.nuecho.genesys.cli.core.InitializingBean
 import com.nuecho.genesys.cli.getReference
-import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectUpdateStatus.UNCHANGED
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setProperty
 import com.nuecho.genesys.cli.models.configuration.reference.AgentGroupReference
 import com.nuecho.genesys.cli.models.configuration.reference.ConfigurationObjectReference
@@ -32,22 +31,14 @@ data class AgentGroup(
     )
 
     constructor(tenant: TenantReference, name: String) : this(
-        agents = emptyList(),
         group = Group(tenant, name)
     )
 
-    override fun updateCfgObject(service: IConfService): ConfigurationObjectUpdateResult {
-        service.retrieveObject(reference)?.let {
-            return ConfigurationObjectUpdateResult(UNCHANGED, it)
-        }
-
-        CfgAgentGroup(service).let {
+    override fun updateCfgObject(service: IConfService): CfgAgentGroup =
+        (service.retrieveObject(reference) ?: CfgAgentGroup(service)).also {
             setProperty("agentDBIDs", agents?.mapNotNull { service.getObjectDbid(it) }, it)
             setProperty("groupInfo", group.toCfgGroup(service, it), it)
-
-            return ConfigurationObjectUpdateResult(ConfigurationObjectUpdateStatus.CREATED, it)
         }
-    }
 
     override fun afterPropertiesSet() = group.updateTenantReferences()
 

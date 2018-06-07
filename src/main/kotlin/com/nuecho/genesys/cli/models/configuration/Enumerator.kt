@@ -5,8 +5,6 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgEnumerator
-import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectUpdateStatus.CREATED
-import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectUpdateStatus.UNCHANGED
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setProperty
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgEnumeratorType
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgObjectState
@@ -41,12 +39,8 @@ data class Enumerator(
         userProperties = enumerator.userProperties?.asCategorizedProperties()
     )
 
-    override fun updateCfgObject(service: IConfService): ConfigurationObjectUpdateResult {
-        service.retrieveObject(reference)?.let {
-            return ConfigurationObjectUpdateResult(UNCHANGED, it)
-        }
-
-        CfgEnumerator(service).let {
+    override fun updateCfgObject(service: IConfService) =
+        (service.retrieveObject(reference) ?: CfgEnumerator(service)).also {
             setProperty("tenantDBID", service.getObjectDbid(tenant), it)
             setProperty("name", name, it)
             setProperty("displayName", displayName ?: name, it)
@@ -54,9 +48,7 @@ data class Enumerator(
             setProperty("type", toCfgEnumeratorType(type), it)
             setProperty("state", toCfgObjectState(state), it)
             setProperty("userProperties", ConfigurationObjects.toKeyValueCollection(userProperties), it)
-            return ConfigurationObjectUpdateResult(CREATED, it)
         }
-    }
 
     override fun getReferences(): Set<ConfigurationObjectReference<*>> = setOf(tenant)
 }

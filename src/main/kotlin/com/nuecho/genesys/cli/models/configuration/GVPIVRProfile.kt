@@ -8,8 +8,6 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgGVPIVRProfile
 import com.nuecho.genesys.cli.asBoolean
 import com.nuecho.genesys.cli.core.InitializingBean
 import com.nuecho.genesys.cli.getReference
-import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectUpdateStatus.CREATED
-import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectUpdateStatus.UNCHANGED
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setProperty
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgFlag
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgIVRProfileType
@@ -78,12 +76,8 @@ data class GVPIVRProfile(
         userProperties = gvpivrProfile.userProperties?.asCategorizedProperties()
     )
 
-    override fun updateCfgObject(service: IConfService): ConfigurationObjectUpdateResult {
-        service.retrieveObject(reference)?.let {
-            return ConfigurationObjectUpdateResult(UNCHANGED, it)
-        }
-
-        CfgGVPIVRProfile(service).let {
+    override fun updateCfgObject(service: IConfService) =
+        (service.retrieveObject(reference) ?: CfgGVPIVRProfile(service)).also {
             setProperty("name", name, it)
             setProperty("tenantDBID", service.getObjectDbid(tenant), it)
             setProperty("customerDBID", service.getObjectDbid(customer), it)
@@ -100,9 +94,7 @@ data class GVPIVRProfile(
 
             setProperty("userProperties", toKeyValueCollection(userProperties), it)
             setProperty("state", toCfgObjectState(state), it)
-            return ConfigurationObjectUpdateResult(CREATED, it)
         }
-    }
 
     override fun afterPropertiesSet() {
         reseller?.tenant = tenant

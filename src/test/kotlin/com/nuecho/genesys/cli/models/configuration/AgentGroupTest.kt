@@ -83,10 +83,7 @@ class AgentGroupTest : ConfigurationObjectTest(
             mockRetrieveFolder(service)
             mockRetrieveScript(service)
 
-            val (status, cfgObject) = agentGroup.updateCfgObject(service)
-            val cfgAgentGroup = cfgObject as CfgAgentGroup
-
-            status shouldBe ConfigurationObjectUpdateStatus.CREATED
+            val cfgAgentGroup = agentGroup.updateCfgObject(service)
 
             with(cfgAgentGroup) {
                 agentDBIDs shouldBe listOf(DEFAULT_OBJECT_DBID, DEFAULT_OBJECT_DBID, DEFAULT_OBJECT_DBID)

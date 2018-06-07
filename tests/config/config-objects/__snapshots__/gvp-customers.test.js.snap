@@ -1,18 +1,18 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`[mutagen gvpCustomers config import-export] should do nothing when the gvpCustomers already exist: the gvpCustomers already exist and have not been imported 1`] = `
+exports[`[mutagen gvpCustomers config import-export] should create the gvpCustomers: the gvpCustomers has been created 1`] = `
 Object {
   "stderr": "",
-  "stdout": "= gvpcustomer => cfgObjectTest
-Completed. 0 object(s) imported.
+  "stdout": "+ gvpcustomer => cfgObjectTest
+Completed. 1 object(s) imported.
 ",
 }
 `;
 
-exports[`[mutagen gvpCustomers config import-export] should import the gvpCustomers: the gvpCustomers have been imported 1`] = `
+exports[`[mutagen gvpCustomers config import-export] should update the gvpCustomers: the gvpCustomers has been updated 1`] = `
 Object {
   "stderr": "",
-  "stdout": "+ gvpcustomer => cfgObjectTest
+  "stdout": "~ gvpcustomer => cfgObjectTest
 Completed. 1 object(s) imported.
 ",
 }

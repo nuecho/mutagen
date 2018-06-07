@@ -61,7 +61,7 @@ class RawExportProcessorTest : StringSpec() {
     ) {
         val metadata = mockMetadata(RAW)
         val output = ByteArrayOutputStream()
-        val processor = RawExportProcessor(output, metadata)
+        val processor = RawExportProcessor(metadata, output)
 
         processor.begin()
         processor.beginType(type)

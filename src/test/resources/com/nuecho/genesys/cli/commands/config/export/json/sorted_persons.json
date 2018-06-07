@@ -11,17 +11,23 @@
     {
       "employeeId": "111",
       "userName": "dmorand",
-      "tenant": "tenant"
+      "tenant": "tenant",
+      "appRanks": {},
+      "agent": false
     },
     {
       "employeeId": "222",
       "userName": "fparga",
-      "tenant": "tenant"
+      "tenant": "tenant",
+      "appRanks": {},
+      "agent": false
     },
     {
       "employeeId": "333",
       "userName": "pdeschen",
-      "tenant": "tenant"
+      "tenant": "tenant",
+      "appRanks": {},
+      "agent": false
     }
   ]
 }

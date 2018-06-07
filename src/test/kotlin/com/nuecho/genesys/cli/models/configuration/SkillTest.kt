@@ -5,7 +5,6 @@ import com.genesyslab.platform.configuration.protocol.types.CfgObjectState
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_REFERENCE
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgSkill
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockKeyValueCollection
-import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectUpdateStatus.CREATED
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgObjectState
 import com.nuecho.genesys.cli.models.configuration.ConfigurationTestData.defaultProperties
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveTenant
@@ -33,10 +32,7 @@ class SkillTest : ConfigurationObjectTest(
             every { service.retrieveObject(CfgSkill::class.java, any()) } returns null
             mockRetrieveTenant(service)
 
-            val (status, cfgObject) = skill.updateCfgObject(service)
-            val cfgSkill = cfgObject as CfgSkill
-
-            status shouldBe CREATED
+            val cfgSkill = skill.updateCfgObject(service)
 
             with(cfgSkill) {
                 name shouldBe skill.name

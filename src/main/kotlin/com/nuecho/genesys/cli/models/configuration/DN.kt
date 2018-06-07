@@ -6,15 +6,15 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgDN
 import com.genesyslab.platform.applicationblocks.com.objects.CfgDNAccessNumber
-import com.genesyslab.platform.configuration.protocol.types.CfgDNRegisterFlag
-import com.genesyslab.platform.configuration.protocol.types.CfgFlag
-import com.genesyslab.platform.configuration.protocol.types.CfgRouteType
 import com.nuecho.genesys.cli.asBoolean
 import com.nuecho.genesys.cli.core.InitializingBean
 import com.nuecho.genesys.cli.getReference
-import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectUpdateStatus.CREATED
-import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectUpdateStatus.UNCHANGED
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setProperty
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgDNRegisterFlag
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgDNType
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgFlag
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgObjectState
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgRouteType
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toKeyValueCollection
 import com.nuecho.genesys.cli.models.configuration.reference.ConfigurationObjectReference
 import com.nuecho.genesys.cli.models.configuration.reference.DNGroupReference
@@ -37,16 +37,17 @@ data class DN(
     val switch: SwitchReference,
     val type: String,
 
-    val registerAll: String? = CfgDNRegisterFlag.CFGDRTrue.toShortName(),
-    val switchSpecificType: Int? = 1,
+    val registerAll: String? = null,
+    val switchSpecificType: Int? = null,
 
     val association: String? = null,
 
-    val routing: Routing? = Routing(),
+    val routeType: String? = null,
+    val destinationDNs: List<DNReference>? = null,
 
     val dnLoginID: String? = null,
     val group: DNGroupReference? = null,
-    val trunks: Int? = 0,
+    val trunks: Int? = null,
     val override: String? = null,
 
     val state: String? = null,
@@ -57,8 +58,8 @@ data class DN(
 
     val name: String? = null,
 
-    val useOverride: Boolean? = CfgFlag.CFGTrue.asBoolean(),
-    val accessNumbers: List<DNAccessNumber>? = emptyList(),
+    val useOverride: Boolean? = null,
+    val accessNumbers: List<DNAccessNumber>? = null,
 
     val site: FolderReference? = null,
     val contract: ObjectiveTableReference? = null
@@ -78,12 +79,8 @@ data class DN(
 
         association = dn.association,
 
-        routing = dn.routeType?.let {
-            Routing(
-                type = dn.routeType.toShortName(),
-                destinationDNs = dn.destDNs.map { it.getReference() }
-            )
-        },
+        routeType = dn.routeType.toShortName(),
+        destinationDNs = dn.destDNs?.map { it.getReference() },
 
         dnLoginID = dn.dnLoginID,
         group = dn.group?.getReference(),
@@ -102,26 +99,26 @@ data class DN(
         contract = dn.contract?.getReference()
     )
 
-    override fun updateCfgObject(service: IConfService): ConfigurationObjectUpdateResult {
-        service.retrieveObject(reference)?.let {
-            return ConfigurationObjectUpdateResult(UNCHANGED, it)
-        }
+    override fun updateCfgObject(service: IConfService) =
+        (service.retrieveObject(reference) ?: CfgDN(service)).also {
+            if (!it.isSaved) {
+                applyDefaultValues()
+            }
 
-        CfgDN(service).let {
             setProperty("tenantDBID", service.getObjectDbid(tenant), it)
             setProperty("number", number, it)
 
             // Switch
             setProperty("switchDBID", service.getObjectDbid(switch), it)
-            setProperty("registerAll", ConfigurationObjects.toCfgDNRegisterFlag(registerAll), it)
+            setProperty("registerAll", toCfgDNRegisterFlag(registerAll), it)
             setProperty("switchSpecificType", switchSpecificType, it)
 
-            setProperty("type", ConfigurationObjects.toCfgDNType(type), it)
+            setProperty("type", toCfgDNType(type), it)
             setProperty("association", association, it)
 
             // Routing
-            setProperty("routeType", ConfigurationObjects.toCfgRouteType(routing?.type), it)
-            setProperty("destDNDBIDs", routing?.destinationDNs?.mapNotNull { service.getObjectDbid(it) }, it)
+            setProperty("routeType", toCfgRouteType(routeType), it)
+            setProperty("destDNDBIDs", destinationDNs?.mapNotNull { service.getObjectDbid(it) }, it)
 
             setProperty("DNLoginID", dnLoginID, it)
 
@@ -129,25 +126,32 @@ data class DN(
             setProperty("trunks", trunks, it)
             setProperty("override", override, it)
 
-            setProperty("state", ConfigurationObjects.toCfgObjectState(state), it)
+            setProperty("state", toCfgObjectState(state), it)
             setProperty("userProperties", toKeyValueCollection(userProperties), it)
 
             setProperty("name", name, it)
 
-            setProperty("useOverride", ConfigurationObjects.toCfgFlag(useOverride), it)
+            setProperty("useOverride", toCfgFlag(useOverride), it)
             setProperty("accessNumbers", toCfgDNAccessNumberList(accessNumbers, it), it)
 
             setProperty("siteDBID", service.getObjectDbid(site), it)
 
             setProperty("contractDBID", service.getObjectDbid(contract), it)
-
-            return ConfigurationObjectUpdateResult(CREATED, it)
         }
+
+    override fun applyDefaultValues() {
+        // registerAll = CfgDNRegisterFlag.CFGDRTrue.toShortName()
+        // switchSpecificType  = 1
+        // routeType = CfgRouteType.CFGDirect.toShortName()
+        // destinationDNs = emptyList()
+        // trunks  = 0
+        // useOverride = CfgFlag.CFGTrue.asBoolean(),
+        // accessNumbers = emptyList(),
     }
 
     override fun afterPropertiesSet() {
         switch.tenant = tenant
-        routing?.destinationDNs?.forEach { it.tenant = tenant }
+        destinationDNs?.forEach { it.tenant = tenant }
         group?.tenant = tenant
         accessNumbers?.forEach { it.updateTenantReferences(tenant) }
         contract?.tenant = tenant
@@ -157,7 +161,7 @@ data class DN(
         referenceSetBuilder()
             .add(tenant)
             .add(switch)
-            .add(routing?.destinationDNs)
+            .add(destinationDNs)
             .add(group)
             .add(accessNumbers?.map { it.switch })
             .add(site)
@@ -178,8 +182,3 @@ fun toCfgDNAccessNumberList(accessNumbers: List<DNAccessNumber>?, dn: CfgDN) =
             cfgDNAccessNumber
         }
     }
-
-data class Routing(
-    val type: String = CfgRouteType.CFGDirect.toShortName(),
-    val destinationDNs: List<DNReference> = emptyList()
-)

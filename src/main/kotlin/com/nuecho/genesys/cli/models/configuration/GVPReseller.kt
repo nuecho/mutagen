@@ -8,8 +8,6 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgGVPReseller
 import com.nuecho.genesys.cli.asBoolean
 import com.nuecho.genesys.cli.core.InitializingBean
 import com.nuecho.genesys.cli.getReference
-import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectUpdateStatus.CREATED
-import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectUpdateStatus.UNCHANGED
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setProperty
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgFlag
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgObjectState
@@ -60,12 +58,8 @@ data class GVPReseller(
         userProperties = gvpReseller.userProperties?.asCategorizedProperties()
     )
 
-    override fun updateCfgObject(service: IConfService): ConfigurationObjectUpdateResult {
-        service.retrieveObject(reference)?.let {
-            return ConfigurationObjectUpdateResult(UNCHANGED, it)
-        }
-
-        CfgGVPReseller(service).let {
+    override fun updateCfgObject(service: IConfService) =
+        (service.retrieveObject(reference) ?: CfgGVPReseller(service)).also {
             setProperty("tenantDBID", service.getObjectDbid(tenant), it)
             setProperty("name", name, it)
             setProperty("displayName", displayName ?: name, it)
@@ -82,9 +76,7 @@ data class GVPReseller(
             }
             setProperty("userProperties", toKeyValueCollection(userProperties), it)
             setProperty("state", toCfgObjectState(state), it)
-            return ConfigurationObjectUpdateResult(CREATED, it)
         }
-    }
 
     override fun afterPropertiesSet() {
         timeZone?.tenant = tenant

@@ -51,6 +51,7 @@
     {
       "name": "MultiObjectImportDN",
       "number": "123",
+      "routeType": "default",
       "state": "enabled",
       "switch": "MultiObjectImportSwitch1",
       "switchSpecificType": 1,

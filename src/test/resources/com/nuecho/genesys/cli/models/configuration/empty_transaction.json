@@ -1,6 +1,5 @@
 {
-  "alias": "foo",
   "name": "foo",
   "tenant": "tenant",
-  "type": "notransactiontype"
+  "type": "list"
 }

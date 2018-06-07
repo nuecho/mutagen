@@ -36,7 +36,7 @@ class ExportCommandTest : StringSpec() {
 
         "exporting raw empty configuration should generate an empty JSON array for each object type" {
             val output = ByteArrayOutputStream()
-            val processor = RawExportProcessor(output, mockMetadata(RAW))
+            val processor = RawExportProcessor(mockMetadata(RAW), output)
             val service = mockConfService()
 
             exportConfiguration(processor, service)

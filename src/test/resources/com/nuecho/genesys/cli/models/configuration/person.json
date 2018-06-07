@@ -38,8 +38,10 @@
     "advisors": "user",
     "agentdesktop": "designer"
   },
+  "changePasswordOnNextLogin": false,
   "emailAddress": "emailAddress",
   "employeeId": "employeeId",
+  "externalAuth": false,
   "externalId": "externalId",
   "firstName": "firstName",
   "lastName": "lastName",

@@ -5,7 +5,7 @@ Object {
   "stderr": "",
   "stdout": "Usage: export [-?] [--format=<format>]
 Export configuration objects.
-      --format=<format>       Export format [RAW|JSON].
+      --format=<format>       Export format [RAW|JSON|COMPACT_JSON].
   -?, -h, --help              Show this help message.
 ",
 }

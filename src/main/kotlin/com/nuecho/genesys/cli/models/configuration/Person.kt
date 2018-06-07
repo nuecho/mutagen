@@ -8,8 +8,6 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgAppRank
 import com.genesyslab.platform.applicationblocks.com.objects.CfgPerson
 import com.nuecho.genesys.cli.asBoolean
 import com.nuecho.genesys.cli.core.InitializingBean
-import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectUpdateStatus.CREATED
-import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectUpdateStatus.UNCHANGED
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setProperty
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgAppType
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgFlag
@@ -70,15 +68,11 @@ data class Person(
         agentInfo = if (person.agentInfo != null) AgentInfo(person.agentInfo) else null
     )
 
-    override fun updateCfgObject(service: IConfService): ConfigurationObjectUpdateResult {
-        service.retrieveObject(reference)?.let {
-            return ConfigurationObjectUpdateResult(UNCHANGED, it)
-        }
-
-        CfgPerson(service).let {
+    override fun updateCfgObject(service: IConfService) =
+        (service.retrieveObject(reference) ?: CfgPerson(service)).also {
             setProperty("tenantDBID", service.getObjectDbid(tenant), it)
             setProperty("employeeID", employeeId, it)
-            setProperty("userName", userName ?: employeeId, it)
+            setProperty("userName", userName, it)
             setProperty("externalID", externalId, it)
             setProperty("firstName", firstName, it)
             setProperty("lastName", lastName, it)
@@ -93,9 +87,7 @@ data class Person(
             setProperty("appRanks", toCfgAppRankList(appRanks, it), it)
             setProperty("userProperties", toKeyValueCollection(userProperties), it)
             setProperty("agentInfo", agentInfo?.toCfgAgentInfo(it), it)
-            return ConfigurationObjectUpdateResult(CREATED, it)
         }
-    }
 
     override fun afterPropertiesSet() {
         agentInfo?.updateTenantReferences(tenant)
