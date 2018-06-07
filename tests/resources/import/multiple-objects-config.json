@@ -1,0 +1,84 @@
+{
+  "__metadata__": {
+    "formatName": "JSON",
+    "formatVersion": "1.0.0"
+  },
+  "physicalSwitches": [
+    {
+      "name": "physicalSwitch1",
+      "state": "enabled",
+      "type": "fujitsu",
+      "userProperties": {
+        "section": {
+          "number": 456,
+          "string": "def"
+        }
+      }
+    },
+    {
+      "name": "physicalSwitch2",
+      "state": "enabled",
+      "type": "fujitsu",
+      "userProperties": {
+        "section": {
+          "number": 456,
+          "string": "def"
+        }
+      }
+    }
+  ],
+  "switches": [
+    {
+      "dnRange": "74233-74244, 74290",
+      "linkType": "madgelink",
+      "name": "switch1",
+      "physicalSwitch": "physSwitchForSwitch",
+      "state": "enabled",
+      "switchAccessCodes": [
+      ],
+      "tenant": "Environment",
+      "tServer": "tServer",
+      "userProperties": {
+        "section": {
+          "number": 456,
+          "string": "def"
+        }
+      }
+    },
+    {
+      "dnRange": "74233-74244, 74290",
+      "linkType": "madgelink",
+      "name": "switch2",
+      "physicalSwitch": "physSwitchForSwitch",
+      "state": "enabled",
+      "switchAccessCodes": [
+      ],
+      "tenant": "Environment",
+      "tServer": "tServer",
+      "userProperties": {
+        "section": {
+          "number": 456,
+          "string": "def"
+        }
+      }
+    },
+    {
+      "dnRange": "74233-74244, 74290",
+      "linkType": "madgelink",
+      "name": "switch3",
+      "physicalSwitch": "physSwitchForSwitch",
+      "state": "enabled",
+      "switchAccessCodes": [
+      ],
+      "tenant": "Environment",
+      "tServer": "tServer",
+      "userProperties": {
+        "section": {
+          "number": 456,
+          "string": "def"
+        }
+      }
+    }
+  ]
+}
+

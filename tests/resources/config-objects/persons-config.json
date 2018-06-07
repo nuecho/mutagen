@@ -1,0 +1,28 @@
+{
+  "__metadata__": {
+    "formatName": "JSON",
+    "formatVersion": "1.0.0"
+  },
+  "persons": [
+    {
+      "tenant": "Environment",
+      "employeeId": "cfgObjectTest",
+      "externalId": "externalId",
+      "firstName": "firstName",
+      "lastName": "lastName",
+      "userName": "cfgObjectTest",
+      "password": "password",
+      "passwordHashAlgorithm": 1,
+      "passwordUpdatingDate": 20180314,
+      "changePasswordOnNextLogin": false,
+      "emailAddress": "emailAddress",
+      "state": "disabled",
+      "agent": false,
+      "externalAuth": false,
+      "appRanks": {
+        "advisors": "user",
+        "agentdesktop": "designer"
+      }
+    }
+  ]
+}

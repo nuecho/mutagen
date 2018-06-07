@@ -1,0 +1,19 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`[mutagen physicalSwitches config import-export] should do nothing when the physicalSwitches already exist: the physicalSwitches already exist and have not been imported 1`] = `
+Object {
+  "stderr": "",
+  "stdout": "= physicalswitch => cfgObjectTest
+Completed. 0 object(s) imported.
+",
+}
+`;
+
+exports[`[mutagen physicalSwitches config import-export] should import the physicalSwitches: the physicalSwitches have been imported 1`] = `
+Object {
+  "stderr": "",
+  "stdout": "+ physicalswitch => cfgObjectTest
+Completed. 1 object(s) imported.
+",
+}
+`;

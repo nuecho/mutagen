@@ -1,0 +1,19 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`[mutagen tenants config import-export] should do nothing when the tenants already exist: the tenants already exist and have not been imported 1`] = `
+Object {
+  "stderr": "",
+  "stdout": "= tenant => cfgObjectTest
+Completed. 0 object(s) imported.
+",
+}
+`;
+
+exports[`[mutagen tenants config import-export] should import the tenants: the tenants have been imported 1`] = `
+Object {
+  "stderr": "",
+  "stdout": "+ tenant => cfgObjectTest
+Completed. 1 object(s) imported.
+",
+}
+`;

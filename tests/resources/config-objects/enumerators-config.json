@@ -1,0 +1,22 @@
+{
+  "__metadata__": {
+    "formatName": "JSON",
+    "formatVersion": "1.0.0"
+  },
+  "enumerators": [
+    {
+      "description": "description",
+      "displayName": "displayName",
+      "name": "cfgObjectTest",
+      "state": "enabled",
+      "tenant": "Environment",
+      "type": "entrole",
+      "userProperties": {
+        "section": {
+          "number": 456,
+          "string": "def"
+        }
+      }
+    }
+  ]
+}

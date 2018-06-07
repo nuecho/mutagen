@@ -1,0 +1,32 @@
+{
+  "__metadata__": {
+    "formatName": "JSON",
+    "formatVersion": "1.0.0"
+  },
+  "dns": [
+    {
+      "association": "anassociation",
+      "contract": "acontract",
+      "dnLoginID": "anId",
+      "group": "dnGroup",
+      "name": "cfgObjectTest",
+      "number": "123",
+      "override": "anoverride",
+      "registerAll": "true",
+      "state": "enabled",
+      "switch": "switchForDn",
+      "switchSpecificType": 1,
+      "tenant": "Environment",
+      "trunks": 1,
+      "type": "Extension",
+      "useOverride": true,
+      "userProperties": {
+        "section": {
+          "number": 456,
+          "string": "def"
+        }
+      }
+    }
+    
+  ]
+}

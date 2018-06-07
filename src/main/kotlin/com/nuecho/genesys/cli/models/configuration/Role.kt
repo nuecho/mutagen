@@ -64,7 +64,7 @@ data class Role(
             return ConfigurationObjectUpdateResult(UNCHANGED, it)
         }
 
-        // members are not exported
+        // members are not imported
         CfgRole(service).let {
             setProperty("tenantDBID", service.getObjectDbid(tenant), it)
             setProperty("name", name, it)

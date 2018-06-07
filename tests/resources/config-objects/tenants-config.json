@@ -1,0 +1,21 @@
+{
+  "__metadata__": {
+    "formatName": "JSON",
+    "formatVersion": "1.0.0"
+  },
+  "tenants": [
+    {
+      "chargeableNumber": "123",
+      "name": "cfgObjectTest",
+      "parentTenant": "Environment",
+      "password": "password",
+      "state": "enabled",
+      "userProperties": {
+        "section": {
+          "number": 456,
+          "string": "def"
+        }
+      }
+    }
+  ]
+}
