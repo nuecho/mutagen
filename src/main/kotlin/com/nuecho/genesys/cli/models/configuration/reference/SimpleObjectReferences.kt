@@ -2,6 +2,8 @@ package com.nuecho.genesys.cli.models.configuration.reference
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
+import com.genesyslab.platform.applicationblocks.com.CfgFilterBasedQuery
+import com.genesyslab.platform.applicationblocks.com.ICfgQuery
 import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgAccessGroup
 import com.genesyslab.platform.applicationblocks.com.objects.CfgAgentGroup
@@ -9,6 +11,7 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgApplication
 import com.genesyslab.platform.applicationblocks.com.objects.CfgDNGroup
 import com.genesyslab.platform.applicationblocks.com.objects.CfgEnumerator
 import com.genesyslab.platform.applicationblocks.com.objects.CfgFolder
+import com.genesyslab.platform.applicationblocks.com.objects.CfgGVPReseller
 import com.genesyslab.platform.applicationblocks.com.objects.CfgObjectiveTable
 import com.genesyslab.platform.applicationblocks.com.objects.CfgPerson
 import com.genesyslab.platform.applicationblocks.com.objects.CfgPhysicalSwitch
@@ -20,6 +23,7 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgSkill
 import com.genesyslab.platform.applicationblocks.com.objects.CfgStatTable
 import com.genesyslab.platform.applicationblocks.com.objects.CfgSwitch
 import com.genesyslab.platform.applicationblocks.com.objects.CfgTenant
+import com.genesyslab.platform.applicationblocks.com.objects.CfgTimeZone
 import com.genesyslab.platform.applicationblocks.com.queries.CfgAccessGroupQuery
 import com.genesyslab.platform.applicationblocks.com.queries.CfgAgentGroupQuery
 import com.genesyslab.platform.applicationblocks.com.queries.CfgApplicationQuery
@@ -37,8 +41,11 @@ import com.genesyslab.platform.applicationblocks.com.queries.CfgSkillQuery
 import com.genesyslab.platform.applicationblocks.com.queries.CfgStatTableQuery
 import com.genesyslab.platform.applicationblocks.com.queries.CfgSwitchQuery
 import com.genesyslab.platform.applicationblocks.com.queries.CfgTenantQuery
+import com.genesyslab.platform.applicationblocks.com.queries.CfgTimeZoneQuery
+import com.genesyslab.platform.configuration.protocol.types.CfgObjectType
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectNotFoundException
 import com.nuecho.genesys.cli.services.getObjectDbid
+import java.util.TimeZone
 
 @JsonSerialize(using = SimpleObjectReferenceSerializer::class)
 @JsonDeserialize(using = SimpleObjectReferenceWithTenantDeserializer::class)
@@ -161,6 +168,17 @@ class SkillReference(name: String, tenant: TenantReference?) :
 
 @JsonSerialize(using = SimpleObjectReferenceSerializer::class)
 @JsonDeserialize(using = SimpleObjectReferenceWithTenantDeserializer::class)
+class GVPResellerReference(name: String, tenant: TenantReference?) :
+    SimpleObjectReferenceWithTenant<CfgGVPReseller>(CfgGVPReseller::class.java, name, tenant) {
+
+    override fun toQuery(service: IConfService): ICfgQuery = CfgFilterBasedQuery(CfgObjectType.CFGGVPReseller).apply {
+        this.setProperty("name", primaryKey)
+        this.setProperty("tenant_dbid", getTenantDbid(tenant, service))
+    }
+}
+
+@JsonSerialize(using = SimpleObjectReferenceSerializer::class)
+@JsonDeserialize(using = SimpleObjectReferenceWithTenantDeserializer::class)
 class StatTableReference(name: String, tenant: TenantReference?) :
     SimpleObjectReferenceWithTenant<CfgStatTable>(CfgStatTable::class.java, name, tenant) {
     override fun toQuery(service: IConfService) = CfgStatTableQuery(primaryKey).apply {
@@ -182,6 +200,18 @@ class SwitchReference(name: String, tenant: TenantReference?) :
 class TenantReference(name: String) :
     SimpleObjectReference<CfgTenant>(CfgTenant::class.java, name) {
     override fun toQuery(service: IConfService) = CfgTenantQuery(primaryKey).apply { allTenants = 1 }
+}
+
+@JsonSerialize(using = SimpleObjectReferenceSerializer::class)
+@JsonDeserialize(using = SimpleObjectReferenceWithTenantDeserializer::class)
+class TimeZoneReference(
+    name: String = TimeZone.getTimeZone("GMT").getDisplayName(false, TimeZone.SHORT),
+    tenant: TenantReference? = null
+) :
+    SimpleObjectReferenceWithTenant<CfgTimeZone>(CfgTimeZone::class.java, name, tenant) {
+    override fun toQuery(service: IConfService) = CfgTimeZoneQuery(primaryKey).apply {
+        tenantDbid = getTenantDbid(tenant, service)
+    }
 }
 
 private fun getTenantDbid(tenant: TenantReference?, service: IConfService) =

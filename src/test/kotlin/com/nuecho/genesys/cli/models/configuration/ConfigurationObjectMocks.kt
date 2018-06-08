@@ -9,6 +9,7 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgDN
 import com.genesyslab.platform.applicationblocks.com.objects.CfgDNGroup
 import com.genesyslab.platform.applicationblocks.com.objects.CfgEnumerator
 import com.genesyslab.platform.applicationblocks.com.objects.CfgFolder
+import com.genesyslab.platform.applicationblocks.com.objects.CfgGVPReseller
 import com.genesyslab.platform.applicationblocks.com.objects.CfgObjectiveTable
 import com.genesyslab.platform.applicationblocks.com.objects.CfgPerson
 import com.genesyslab.platform.applicationblocks.com.objects.CfgPhysicalSwitch
@@ -20,6 +21,7 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgSkillLevel
 import com.genesyslab.platform.applicationblocks.com.objects.CfgStatTable
 import com.genesyslab.platform.applicationblocks.com.objects.CfgSwitch
 import com.genesyslab.platform.applicationblocks.com.objects.CfgTenant
+import com.genesyslab.platform.applicationblocks.com.objects.CfgTimeZone
 import com.genesyslab.platform.applicationblocks.com.objects.CfgTransaction
 import com.genesyslab.platform.commons.collections.KeyValueCollection
 import com.genesyslab.platform.commons.collections.KeyValuePair
@@ -191,6 +193,7 @@ object ConfigurationObjectMocks {
     fun mockCfgTenant(name: String?) =
         mockk<CfgTenant>().also {
             every { it.name } returns name
+            every { it.dbid } returns DEFAULT_TENANT_DBID
             every { it.objectDbid } returns DEFAULT_TENANT_DBID
         }
 
@@ -199,5 +202,19 @@ object ConfigurationObjectMocks {
             every { it.name } returns name
             every { it.tenant } returns tenant
             every { it.objectDbid } returns DEFAULT_OBJECT_DBID
+        }
+
+    fun mockCfgGVPReseller(name: String?, tenant: CfgTenant = mockCfgTenant(DEFAULT_TENANT)) =
+        mockk<CfgGVPReseller>().also {
+            every { it.name } returns name
+            every { it.tenant } returns tenant
+            every { it.objectDbid } returns DEFAULT_OBJECT_DBID
+        }
+
+    fun mockCfgTimeZone(name: String?, tenant: CfgTenant = mockCfgTenant(DEFAULT_TENANT)) =
+        mockk<CfgTimeZone>().also {
+            every { it.name } returns name
+            every { it.tenant } returns tenant
+            every { it.objectDbid } returns DEFAULT_TENANT_DBID
         }
 }

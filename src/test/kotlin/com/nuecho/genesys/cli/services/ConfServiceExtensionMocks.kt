@@ -15,8 +15,9 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgSkill
 import com.genesyslab.platform.applicationblocks.com.objects.CfgStatTable
 import com.genesyslab.platform.applicationblocks.com.objects.CfgSwitch
 import com.genesyslab.platform.applicationblocks.com.objects.CfgTenant
+import com.genesyslab.platform.applicationblocks.com.objects.CfgTimeZone
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_OBJECT_DBID
-import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_DBID
 import io.mockk.every
 import io.mockk.mockk
 
@@ -131,12 +132,18 @@ object ConfServiceExtensionMocks {
         }
     }
 
-    fun mockRetrieveTenant(service: IConfService, dbid: Int = DEFAULT_TENANT_DBID) {
+    fun mockRetrieveTimeZone(service: IConfService, dbid: Int = DEFAULT_OBJECT_DBID) {
+        every { service.retrieveObject(CfgTimeZone::class.java, any()) } answers {
+            val switch = mockk<CfgTimeZone>()
+            every { switch.dbid } returns dbid
+            every { switch.objectDbid } returns dbid
+            switch
+        }
+    }
+
+    fun mockRetrieveTenant(service: IConfService) {
         every { service.retrieveObject(CfgTenant::class.java, any()) } answers {
-            val tenant = mockk<CfgTenant>()
-            every { tenant.dbid } returns dbid
-            every { tenant.objectDbid } returns dbid
-            tenant
+            ConfigurationObjectMocks.mockCfgTenant(ConfigurationObjectMocks.DEFAULT_TENANT)
         }
     }
 }
