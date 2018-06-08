@@ -1,0 +1,14 @@
+{
+  "channel": "achannel",
+  "name": "name",
+  "notes": "some notes",
+  "reseller": "areseller",
+  "state": "enabled",
+  "tenant": "tenant",
+  "userProperties": {
+    "section": {
+      "number": 456,
+      "string": "def"
+    }
+  }
+}

@@ -6,6 +6,7 @@ data class Configuration(
     val agentGroups: List<AgentGroup> = emptyList(),
     val dns: List<DN> = emptyList(),
     val enumerators: List<Enumerator> = emptyList(),
+    val gvpCustomers: List<GVPCustomer> = emptyList(),
     val gvpResellers: List<GVPReseller> = emptyList(),
     val persons: List<Person> = emptyList(),
     val physicalSwitches: List<PhysicalSwitch> = emptyList(),

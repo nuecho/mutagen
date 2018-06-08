@@ -6,6 +6,7 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgApplication
 import com.genesyslab.platform.applicationblocks.com.objects.CfgDN
 import com.genesyslab.platform.applicationblocks.com.objects.CfgDNGroup
 import com.genesyslab.platform.applicationblocks.com.objects.CfgFolder
+import com.genesyslab.platform.applicationblocks.com.objects.CfgGVPReseller
 import com.genesyslab.platform.applicationblocks.com.objects.CfgObjectiveTable
 import com.genesyslab.platform.applicationblocks.com.objects.CfgPerson
 import com.genesyslab.platform.applicationblocks.com.objects.CfgPhysicalSwitch
@@ -16,8 +17,10 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgStatTable
 import com.genesyslab.platform.applicationblocks.com.objects.CfgSwitch
 import com.genesyslab.platform.applicationblocks.com.objects.CfgTenant
 import com.genesyslab.platform.applicationblocks.com.objects.CfgTimeZone
-import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_OBJECT_DBID
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgGVPReseller
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgTenant
 import io.mockk.every
 import io.mockk.mockk
 
@@ -143,7 +146,13 @@ object ConfServiceExtensionMocks {
 
     fun mockRetrieveTenant(service: IConfService) {
         every { service.retrieveObject(CfgTenant::class.java, any()) } answers {
-            ConfigurationObjectMocks.mockCfgTenant(ConfigurationObjectMocks.DEFAULT_TENANT)
+            mockCfgTenant(DEFAULT_TENANT)
+        }
+    }
+
+    fun mockRetrieveReseller(service: IConfService) {
+        every { service.retrieveObject(CfgGVPReseller::class.java, any()) } answers {
+            mockCfgGVPReseller(DEFAULT_TENANT)
         }
     }
 }

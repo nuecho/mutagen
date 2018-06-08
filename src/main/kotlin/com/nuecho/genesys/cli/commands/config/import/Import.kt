@@ -50,6 +50,7 @@ class Import : GenesysCliCommand() {
                 importConfigurationObjects(configuration.agentGroups, service),
                 importConfigurationObjects(configuration.dns, service),
                 importConfigurationObjects(configuration.enumerators, service),
+                importConfigurationObjects(configuration.gvpCustomers, service),
                 importConfigurationObjects(configuration.gvpResellers, service),
                 importConfigurationObjects(configuration.skills, service),
                 importConfigurationObjects(configuration.roles, service),

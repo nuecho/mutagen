@@ -11,6 +11,7 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgApplication
 import com.genesyslab.platform.applicationblocks.com.objects.CfgDNGroup
 import com.genesyslab.platform.applicationblocks.com.objects.CfgEnumerator
 import com.genesyslab.platform.applicationblocks.com.objects.CfgFolder
+import com.genesyslab.platform.applicationblocks.com.objects.CfgGVPCustomer
 import com.genesyslab.platform.applicationblocks.com.objects.CfgGVPReseller
 import com.genesyslab.platform.applicationblocks.com.objects.CfgObjectiveTable
 import com.genesyslab.platform.applicationblocks.com.objects.CfgPerson
@@ -163,6 +164,16 @@ class SkillReference(name: String, tenant: TenantReference?) :
     SimpleObjectReferenceWithTenant<CfgSkill>(CfgSkill::class.java, name, tenant) {
     override fun toQuery(service: IConfService) = CfgSkillQuery(primaryKey).apply {
         tenantDbid = getTenantDbid(tenant, service)
+    }
+}
+
+@JsonSerialize(using = SimpleObjectReferenceSerializer::class)
+@JsonDeserialize(using = SimpleObjectReferenceDeserializer::class)
+class GVPCustomerReference(name: String) :
+    SimpleObjectReferenceWithTenant<CfgGVPCustomer>(CfgGVPCustomer::class.java, name) {
+
+    override fun toQuery(service: IConfService): ICfgQuery = CfgFilterBasedQuery(CfgObjectType.CFGGVPCustomer).apply {
+        this.setProperty("name", primaryKey)
     }
 }
 

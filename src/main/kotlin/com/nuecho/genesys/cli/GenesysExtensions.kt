@@ -9,6 +9,7 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgApplication
 import com.genesyslab.platform.applicationblocks.com.objects.CfgDN
 import com.genesyslab.platform.applicationblocks.com.objects.CfgDNGroup
 import com.genesyslab.platform.applicationblocks.com.objects.CfgFolder
+import com.genesyslab.platform.applicationblocks.com.objects.CfgGVPReseller
 import com.genesyslab.platform.applicationblocks.com.objects.CfgObjectiveTable
 import com.genesyslab.platform.applicationblocks.com.objects.CfgPerson
 import com.genesyslab.platform.applicationblocks.com.objects.CfgPhysicalSwitch
@@ -38,6 +39,7 @@ import com.nuecho.genesys.cli.models.configuration.reference.ApplicationReferenc
 import com.nuecho.genesys.cli.models.configuration.reference.DNGroupReference
 import com.nuecho.genesys.cli.models.configuration.reference.DNReference
 import com.nuecho.genesys.cli.models.configuration.reference.FolderReference
+import com.nuecho.genesys.cli.models.configuration.reference.GVPResellerReference
 import com.nuecho.genesys.cli.models.configuration.reference.ObjectiveTableReference
 import com.nuecho.genesys.cli.models.configuration.reference.PersonReference
 import com.nuecho.genesys.cli.models.configuration.reference.PhysicalSwitchReference
@@ -121,3 +123,4 @@ fun CfgStatTable.getReference() = StatTableReference(name, tenant.getReference()
 fun CfgSwitch.getReference() = SwitchReference(name, tenant.getReference())
 fun CfgTenant.getReference() = TenantReference(name)
 fun CfgTimeZone.getReference() = TimeZoneReference(name, tenant.getReference())
+fun CfgGVPReseller.getReference() = GVPResellerReference(name, tenant.getReference())
