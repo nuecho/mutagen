@@ -1,30 +1,32 @@
 package com.nuecho.genesys.cli.commands.audio.import
 
+import com.fasterxml.jackson.core.type.TypeReference
 import com.github.kittinunf.fuel.core.Client
 import com.github.kittinunf.fuel.core.FuelManager
-import com.github.kittinunf.fuel.core.Method
 import com.github.kittinunf.fuel.core.Request
 import com.github.kittinunf.fuel.core.Response
 import com.nuecho.genesys.cli.CliOutputCaptureWrapper
 import com.nuecho.genesys.cli.TestResources.getTestResource
-import com.nuecho.genesys.cli.commands.audio.AudioServices.APPLICATION_JSON
-import com.nuecho.genesys.cli.commands.audio.AudioServices.AUDIO_RESOURCES_PATH
-import com.nuecho.genesys.cli.commands.audio.AudioServices.CONTENT_TYPE
 import com.nuecho.genesys.cli.commands.audio.AudioServicesException
-import com.nuecho.genesys.cli.commands.audio.import.AudioImport.CREATE_MESSAGE_SUCCESS_CODE
-import com.nuecho.genesys.cli.commands.audio.import.AudioImport.LOCATION
-import com.nuecho.genesys.cli.commands.audio.import.AudioImport.UPLOAD_AUDIO_SUCCESS_CODE
-import com.nuecho.genesys.cli.commands.audio.import.AudioImport.UPLOAD_PATH
-import com.nuecho.genesys.cli.commands.audio.import.AudioImport.createMessage
+import com.nuecho.genesys.cli.commands.audio.Message
+import com.nuecho.genesys.cli.commands.audio.Personality
+import com.nuecho.genesys.cli.commands.audio.import.AudioImport.checkDuplicatedMessagesNames
+import com.nuecho.genesys.cli.commands.audio.import.AudioImport.checkMissingAudioFiles
+import com.nuecho.genesys.cli.commands.audio.import.AudioImport.checkMissingPersonalities
+import com.nuecho.genesys.cli.commands.audio.import.AudioImport.getPersonalitiesIdsMap
 import com.nuecho.genesys.cli.commands.audio.import.AudioImport.importAudios
 import com.nuecho.genesys.cli.commands.audio.import.AudioImport.readAudioData
-import com.nuecho.genesys.cli.commands.audio.import.AudioImport.uploadAudio
+import com.nuecho.genesys.cli.commands.audio.import.AudioImport.findMissingAudioFiles
+import com.nuecho.genesys.cli.commands.audio.import.AudioImport.findExistingMessagesNames
+import com.nuecho.genesys.cli.commands.audio.import.AudioImport.getMissingPersonalities
+import com.nuecho.genesys.cli.commands.audio.import.AudioImport.checkForInvalidElements
+
+import com.nuecho.genesys.cli.core.defaultJsonObjectMapper
 import com.nuecho.genesys.cli.preferences.environment.Environment
-import io.kotlintest.matchers.endWith
-import io.kotlintest.matchers.include
 import io.kotlintest.matchers.should
 import io.kotlintest.matchers.shouldBe
 import io.kotlintest.matchers.shouldThrow
+import io.kotlintest.matchers.shouldEqual
 import io.kotlintest.matchers.startWith
 import io.kotlintest.specs.StringSpec
 import java.io.ByteArrayOutputStream
@@ -33,12 +35,15 @@ import java.net.URL
 
 private const val USAGE_PREFIX = "Usage: import [-?]"
 private const val GAX_URL = "http://genesys.com"
-private const val MESSAGE_URL = "$GAX_URL/messages/1234"
 
 class AudioImportCommandTest : StringSpec() {
     init {
         val audioCsv = getTestResource("commands/audio/audios.csv")
-        val audioFile = File(getTestResource("commands/audio/audio.wav").toURI())
+
+        val personalitiesData = File(getTestResource("commands/audio/personalities_data.json").toURI())
+        val personalities: Set<Personality> = defaultJsonObjectMapper().readValue(personalitiesData.inputStream(), object : TypeReference<Set<Personality>>() {})
+        val personalitiesMap = getPersonalitiesIdsMap(personalities)
+        val newMessages = readAudioData(audioCsv.openStream()).readAll()
 
         // To disable the automatic redirection
         FuelManager.instance.removeAllResponseInterceptors()
@@ -46,77 +51,6 @@ class AudioImportCommandTest : StringSpec() {
         "executing Import with -h argument should print usage" {
             val output = CliOutputCaptureWrapper.execute("audio", "import", "-h")
             output should startWith(USAGE_PREFIX)
-        }
-
-        "readAudioData should properly deserialize audio messagesData" {
-            val audioData = readAudioData(audioCsv.openStream())
-            audioData.next() shouldBe mapOf(
-                "name" to "foo",
-                "description" to "fooscription",
-                "10014" to "foo.fr.wav",
-                "10015" to "foo.en.wav"
-            )
-
-            audioData.next()
-            audioData.next()
-            audioData.hasNextValue() shouldBe false
-        }
-
-        "createMessage should return the message url" {
-            val name = "name"
-            val description = "description"
-
-            mockHttpClient(
-                CREATE_MESSAGE_SUCCESS_CODE,
-                mapOf(LOCATION to listOf(MESSAGE_URL))
-            ) {
-                it.method shouldBe Method.POST
-                it.body() shouldBe """{"name":"$name","description":"$description","type":"ANNOUNCEMENT","privateResource":false}"""
-                it.headers[CONTENT_TYPE] shouldBe APPLICATION_JSON
-                it.path shouldBe "$GAX_URL$AUDIO_RESOURCES_PATH"
-            }
-
-            val messageUrl = createMessage("name", "description", GAX_URL)
-            messageUrl shouldBe MESSAGE_URL
-        }
-
-        "createMessage should fail if message url is missing" {
-            mockHttpClient(CREATE_MESSAGE_SUCCESS_CODE)
-            shouldThrow<AudioImportException> {
-                createMessage("name", "description", GAX_URL)
-            }
-        }
-
-        "createMessage should properly handle error" {
-            mockHttpClient(666, mapOf(LOCATION to listOf(MESSAGE_URL)))
-            shouldThrow<AudioServicesException> {
-                createMessage("name", "description", GAX_URL)
-            }
-        }
-
-        "uploadAudio should properly build the Request" {
-            val personality = "12345"
-            val callbackSequenceNumber = 1
-
-            mockHttpClient(UPLOAD_AUDIO_SUCCESS_CODE) {
-                it.method shouldBe Method.POST
-                it.body() should include(personality)
-                it.path should startWith("$MESSAGE_URL$UPLOAD_PATH")
-                it.path should endWith(callbackSequenceNumber.toString())
-            }
-
-            uploadAudio(MESSAGE_URL, audioFile, personality, callbackSequenceNumber)
-        }
-
-        "uploadAudio should properly handle error" {
-            val personality = "12345"
-            val callbackSequenceNumber = 1
-
-            mockHttpClient(666)
-
-            shouldThrow<AudioServicesException> {
-                uploadAudio(MESSAGE_URL, audioFile, personality, callbackSequenceNumber)
-            }
         }
 
         "importAudios should fail when name column is missing" {
@@ -127,6 +61,78 @@ class AudioImportCommandTest : StringSpec() {
                     File("audioDirectory")
                 )
             }
+        }
+
+        "readAudioData should properly deserialize audio messagesData" {
+            val audioData = readAudioData(audioCsv.openStream())
+            audioData.next() shouldBe mapOf(
+                "name" to "foo",
+                "description" to "fooscription",
+                "12" to "foo.fr.wav",
+                "14" to "foo.en.wav",
+                "10" to ""
+            )
+
+            audioData.next()
+            audioData.next()
+            audioData.hasNextValue() shouldBe false
+        }
+
+        "warnOfInvalidElements should return whether the list of invalid elements is empty or not" {
+            shouldThrow<AudioImportException> {
+                checkForInvalidElements(listOf("test"), "")
+            }
+        }
+
+        "checkMissingPersonalities should throw AudioImportException when there is a missing perosnality" {
+            shouldThrow<AudioImportException> {
+                checkMissingPersonalities(newMessages, personalitiesMap)
+            }
+        }
+
+        "checkDuplicatedMessagesNames should throw AudioImportException when there are duplicated messages" {
+            shouldThrow<AudioImportException> {
+                checkDuplicatedMessagesNames(newMessages, listOf(Message("foo", "", "", 0, 0, arrayListOf()))) shouldBe true
+            }
+        }
+
+        "checkMissingAudioFiles should throw AudioImportException when there are files that don't exist" {
+            shouldThrow<AudioImportException> {
+                checkMissingAudioFiles(newMessages, File(audioCsv.toURI()).parentFile)
+            }
+        }
+
+        "findMissingAudioFiles should only return files that don't exist" {
+            val audioDirectoryPath = File(audioCsv.toURI()).parent
+
+            findMissingAudioFiles(newMessages, audioDirectoryPath) shouldEqual listOf(
+                File(audioDirectoryPath, "foo.fr.wav").absolutePath,
+                File(audioDirectoryPath, "foo.en.wav").absolutePath,
+                File(audioDirectoryPath, "bar.fr.wav").absolutePath,
+                File(audioDirectoryPath, "baz.fr.wav").absolutePath,
+                File(audioDirectoryPath, "baz.en.wav").absolutePath
+            )
+        }
+
+        "findExistingMessagesNames should return file names that already exist, without case sensitivity" {
+            val messagesData = File(getTestResource("commands/audio/messages_data.json").toURI())
+            val existingMessages: List<Message> = defaultJsonObjectMapper().readValue(messagesData.inputStream(), object : TypeReference<List<Message>>() {})
+
+            findExistingMessagesNames(newMessages, existingMessages) shouldBe listOf(
+                "foo",
+                "baz"
+            )
+        }
+
+        "getPersonalitiesIdsMap should properly map the personalities' ids to their personalityIds" {
+            getPersonalitiesIdsMap(personalities) shouldBe mapOf(
+                "10" to "10002",
+                "12" to "10004"
+            )
+        }
+
+        "getMissingPersonalities should return personalities that don't exist" {
+            getMissingPersonalities(newMessages, personalitiesMap) shouldBe listOf("14")
         }
     }
 }
