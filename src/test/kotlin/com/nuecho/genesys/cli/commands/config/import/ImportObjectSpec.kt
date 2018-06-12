@@ -2,9 +2,12 @@ package com.nuecho.genesys.cli.commands.config.import
 
 import com.genesyslab.platform.applicationblocks.com.CfgObject
 import com.genesyslab.platform.applicationblocks.com.IConfService
+import com.genesyslab.platform.applicationblocks.com.objects.CfgGVPReseller
 import com.genesyslab.platform.applicationblocks.com.objects.CfgTenant
+import com.genesyslab.platform.applicationblocks.com.objects.CfgTimeZone
 import com.nuecho.genesys.cli.commands.config.import.Import.Companion.importConfigurationObjects
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObject
+import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveReseller
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveTenant
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveTimeZone
 import io.kotlintest.matchers.shouldBe
@@ -29,7 +32,7 @@ abstract class ImportObjectSpec(cfgObject: CfgObject, objects: List<Configuratio
             if (cfgObject !is CfgTenant) {
                 mockRetrieveTenant(service)
             }
-            mockRetrieveDefaultObjects(service)
+            mockRetrieveDefaultObjects(service, cfgObject)
 
             objectMockk(Import.Companion).use {
                 val count = importConfigurationObjects(objects, service)
@@ -48,7 +51,7 @@ abstract class ImportObjectSpec(cfgObject: CfgObject, objects: List<Configuratio
                     mockRetrieveTenant(service)
                 }
 
-                mockRetrieveDefaultObjects(service)
+                mockRetrieveDefaultObjects(service, cfgObject)
 
                 val count = importConfigurationObjects(objects.subList(0, 1), service)
                 count shouldBe 1
@@ -66,7 +69,7 @@ abstract class ImportObjectSpec(cfgObject: CfgObject, objects: List<Configuratio
                 if (cfgObject !is CfgTenant) {
                     mockRetrieveTenant(service)
                 }
-                mockRetrieveDefaultObjects(service)
+                mockRetrieveDefaultObjects(service, cfgObject)
 
                 val count = importConfigurationObjects(objects, service)
                 count shouldBe 2
@@ -75,7 +78,8 @@ abstract class ImportObjectSpec(cfgObject: CfgObject, objects: List<Configuratio
         }
     }
 
-    private fun mockRetrieveDefaultObjects(service: IConfService) {
-        mockRetrieveTimeZone(service)
+    private fun mockRetrieveDefaultObjects(service: IConfService, cfgObject: CfgObject) {
+        if (cfgObject !is CfgTimeZone) mockRetrieveTimeZone(service)
+        if (cfgObject !is CfgGVPReseller) mockRetrieveReseller(service)
     }
 }

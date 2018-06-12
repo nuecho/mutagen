@@ -4,56 +4,62 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.genesyslab.platform.applicationblocks.com.IConfService
-import com.genesyslab.platform.applicationblocks.com.objects.CfgGVPReseller
+import com.genesyslab.platform.applicationblocks.com.objects.CfgGVPCustomer
 import com.nuecho.genesys.cli.asBoolean
 import com.nuecho.genesys.cli.core.InitializingBean
 import com.nuecho.genesys.cli.getReference
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectUpdateStatus.CREATED
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectUpdateStatus.UNCHANGED
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setProperty
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgFlag
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgObjectState
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toKeyValueCollection
+import com.nuecho.genesys.cli.models.configuration.reference.GVPCustomerReference
 import com.nuecho.genesys.cli.models.configuration.reference.GVPResellerReference
 import com.nuecho.genesys.cli.models.configuration.reference.TenantReference
 import com.nuecho.genesys.cli.models.configuration.reference.TimeZoneReference
 import com.nuecho.genesys.cli.services.getObjectDbid
 import com.nuecho.genesys.cli.services.retrieveObject
 import com.nuecho.genesys.cli.toShortName
-import java.time.ZoneId
-import java.time.ZonedDateTime
-import java.util.Date
-import java.util.GregorianCalendar
 
 /**
- * @See https://docs.genesys.com/Documentation/PSDK/8.5.x/ConfigLayerRef/CfgGVPReseller
+ * @See https://docs.genesys.com/Documentation/PSDK/8.5.x/ConfigLayerRef/CfgGVPCustomer
  */
-data class GVPReseller(
-    val tenant: TenantReference,
+data class GVPCustomer(
     val name: String,
-    val timeZone: TimeZoneReference? = null,
-    val startDate: Date? = null,
+    val tenant: TenantReference? = null,
+    val reseller: GVPResellerReference? = null,
+    val channel: String? = null,
     val displayName: String? = null,
-    val isParentNSP: Boolean? = null,
     val notes: String? = null,
+    val isProvisioned: Boolean? = null,
+    val isAdminCustomer: Boolean? = null,
+    val timeZone: TimeZoneReference? = null,
+
     val state: String? = null,
     @JsonSerialize(using = CategorizedPropertiesSerializer::class)
     @JsonDeserialize(using = CategorizedPropertiesDeserializer::class)
     override val userProperties: CategorizedProperties? = null
 
 ) : ConfigurationObject, InitializingBean {
-
     @get:JsonIgnore
-    override val reference = GVPResellerReference(name, tenant)
+    override val reference = GVPCustomerReference(name)
 
-    constructor(gvpReseller: CfgGVPReseller) : this(
-        tenant = TenantReference(gvpReseller.tenant.name),
-        name = gvpReseller.name,
-        displayName = gvpReseller.displayName,
-        startDate = gvpReseller.startDate?.time,
-        isParentNSP = gvpReseller.isParentNSP?.asBoolean(),
-        timeZone = gvpReseller.timeZone?.getReference(),
-        notes = gvpReseller.notes,
-        state = gvpReseller.state?.toShortName(),
-        userProperties = gvpReseller.userProperties?.asCategorizedProperties()
+    constructor(gvpCustomer: CfgGVPCustomer) : this(
+        name = gvpCustomer.name,
+        tenant = TenantReference(gvpCustomer.tenant.name),
+        reseller = gvpCustomer.reseller.getReference(),
+
+        channel = gvpCustomer.channel,
+        displayName = gvpCustomer.displayName,
+        notes = gvpCustomer.notes,
+        isProvisioned = gvpCustomer.isProvisioned.asBoolean(),
+        isAdminCustomer = gvpCustomer.isAdminCustomer.asBoolean(),
+
+        timeZone = gvpCustomer.timeZone?.getReference(),
+
+        state = gvpCustomer.state?.toShortName(),
+        userProperties = gvpCustomer.userProperties?.asCategorizedProperties()
     )
 
     override fun updateCfgObject(service: IConfService): ConfigurationObjectUpdateResult {
@@ -61,30 +67,25 @@ data class GVPReseller(
             return ConfigurationObjectUpdateResult(UNCHANGED, it)
         }
 
-        CfgGVPReseller(service).let {
-            setProperty("tenantDBID", service.getObjectDbid(tenant), it)
+        CfgGVPCustomer(service).let {
             setProperty("name", name, it)
+            setProperty("channel", channel, it)
             setProperty("displayName", displayName ?: name, it)
             setProperty("notes", notes, it)
-            setProperty("timeZoneDBID", service.getObjectDbid(timeZone ?: TimeZoneReference(tenant = tenant)), it)
-            setProperty("isParentNSP", ConfigurationObjects.toCfgFlag(isParentNSP), it)
+            setProperty("isProvisioned", toCfgFlag(isProvisioned ?: false), it)
+            setProperty("isAdminCustomer", toCfgFlag(isAdminCustomer ?: false), it)
 
-            if (startDate != null) {
-                val zoneId = ZoneId.of(timeZone?.primaryKey ?: "GMT", ZoneId.SHORT_IDS)
-                val date = GregorianCalendar.from(
-                    ZonedDateTime.ofInstant(startDate.toInstant(), zoneId)
-                )
-                setProperty(
-                    "startDate", date, it
-                )
-            }
+            setProperty("timeZoneDBID", service.getObjectDbid(timeZone), it)
+            setProperty("resellerDBID", service.getObjectDbid(reseller), it)
+
             setProperty("userProperties", toKeyValueCollection(userProperties), it)
-            setProperty("state", ConfigurationObjects.toCfgObjectState(state), it)
+            setProperty("state", toCfgObjectState(state), it)
             return ConfigurationObjectUpdateResult(CREATED, it)
         }
     }
 
     override fun afterPropertiesSet() {
+        reseller?.tenant = tenant
         timeZone?.tenant = tenant
     }
 }
