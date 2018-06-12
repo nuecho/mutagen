@@ -19,7 +19,7 @@ services:
       - postgres
 
   test:
-    build: test
+    image: dr.s.nuecho.com/mutagen-integration-tests:latest
     depends_on:
       - configserver
     links:
@@ -27,7 +27,4 @@ services:
     volumes:
       - $PWD/../build/mutagen:/usr/local/bin/mutagen
       - $PWD/environments.yml:/root/.mutagen/environments.yml:ro
-      - $PWD/../package.json:/usr/src/app/package.json:ro
-      - $PWD/../package-lock.json:/usr/src/app/package-lock.json:ro
       - $PWD/../tests:/usr/src/app/tests
-      - $PWD/../docker:/usr/src/app/docker:ro
