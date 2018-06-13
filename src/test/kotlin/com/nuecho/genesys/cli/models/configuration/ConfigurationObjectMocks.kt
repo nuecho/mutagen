@@ -11,6 +11,7 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgDNGroup
 import com.genesyslab.platform.applicationblocks.com.objects.CfgEnumerator
 import com.genesyslab.platform.applicationblocks.com.objects.CfgFolder
 import com.genesyslab.platform.applicationblocks.com.objects.CfgGVPCustomer
+import com.genesyslab.platform.applicationblocks.com.objects.CfgGVPIVRProfile
 import com.genesyslab.platform.applicationblocks.com.objects.CfgGVPReseller
 import com.genesyslab.platform.applicationblocks.com.objects.CfgID
 import com.genesyslab.platform.applicationblocks.com.objects.CfgObjectiveTable
@@ -28,6 +29,7 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgTimeZone
 import com.genesyslab.platform.applicationblocks.com.objects.CfgTransaction
 import com.genesyslab.platform.commons.collections.KeyValueCollection
 import com.genesyslab.platform.commons.collections.KeyValuePair
+import com.genesyslab.platform.configuration.protocol.types.CfgIVRProfileType
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectType
 import com.nuecho.genesys.cli.models.configuration.ConfigurationTestData.CATEGORIZED_PROPERTIES_NUMBER
 import com.nuecho.genesys.cli.models.configuration.ConfigurationTestData.CATEGORIZED_PROPERTIES_STRING
@@ -40,6 +42,7 @@ object ConfigurationObjectMocks {
     const val DEFAULT_TENANT = "tenant"
     const val DEFAULT_TENANT_DBID = 1
     const val DEFAULT_OBJECT_DBID = 101
+    val DEFAULT_IVR_PROFILE_TYPE = CfgIVRProfileType.CFGIPTOutbound
     val DEFAULT_TENANT_REFERENCE = TenantReference(DEFAULT_TENANT)
 
     fun mockCfgAgentLoginInfo(loginCode: String, wrapupTime: Int): CfgAgentLoginInfo {
@@ -230,6 +233,13 @@ object ConfigurationObjectMocks {
 
     fun mockCfgGVPReseller(name: String?, tenant: CfgTenant = mockCfgTenant(DEFAULT_TENANT)) =
         mockk<CfgGVPReseller>().also {
+            every { it.name } returns name
+            every { it.tenant } returns tenant
+            every { it.objectDbid } returns DEFAULT_OBJECT_DBID
+        }
+
+    fun mockCfgGVPIVRProfile(name: String?, tenant: CfgTenant = mockCfgTenant(DEFAULT_TENANT)) =
+        mockk<CfgGVPIVRProfile>().also {
             every { it.name } returns name
             every { it.tenant } returns tenant
             every { it.objectDbid } returns DEFAULT_OBJECT_DBID

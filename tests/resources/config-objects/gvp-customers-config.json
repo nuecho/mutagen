@@ -1,0 +1,18 @@
+{
+  "__metadata__": {
+    "formatName": "JSON",
+    "formatVersion": "1.0.0"
+  },
+  "gvpCustomers": [
+    {
+      "notes": "some notes",
+      "channel": "achannel",
+      "tenant": "Environment",
+      "reseller": "areseller",
+      "name": "cfgObjectTest",
+      "state": "enabled",
+      "timeZone": "GMT"
+    }
+  ]
+}
+

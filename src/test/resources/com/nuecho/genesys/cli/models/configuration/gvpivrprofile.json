@@ -1,0 +1,21 @@
+{
+  "description": "a description",
+  "displayName": "name",
+  "endServiceDate": "2019-06-06T21:17:50.105+0000",
+  "name": "name",
+  "notes": "a note",
+  "startServiceDate": "2018-06-06T21:17:50.105+0000",
+  "state": "enabled",
+  "tenant": "tenant",
+  "tfn": [
+    "1888",
+    "1877"
+  ],
+  "type": "outbound",
+  "userProperties": {
+    "section": {
+      "number": 456,
+      "string": "def"
+    }
+  }
+}

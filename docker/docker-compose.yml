@@ -19,7 +19,7 @@ services:
       - postgres
 
   test:
-    image: dr.s.nuecho.com/mutagen-integration-tests:latest
+    image: dr.s.nuecho.com/mutagen-integration-tests:ed3718a3374a6a478d6bd3506f9f6fbfd037869e
     depends_on:
       - configserver
     links:

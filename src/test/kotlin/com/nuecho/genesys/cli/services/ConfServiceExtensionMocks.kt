@@ -6,6 +6,7 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgApplication
 import com.genesyslab.platform.applicationblocks.com.objects.CfgDN
 import com.genesyslab.platform.applicationblocks.com.objects.CfgDNGroup
 import com.genesyslab.platform.applicationblocks.com.objects.CfgFolder
+import com.genesyslab.platform.applicationblocks.com.objects.CfgGVPCustomer
 import com.genesyslab.platform.applicationblocks.com.objects.CfgGVPReseller
 import com.genesyslab.platform.applicationblocks.com.objects.CfgObjectiveTable
 import com.genesyslab.platform.applicationblocks.com.objects.CfgPerson
@@ -19,6 +20,7 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgTenant
 import com.genesyslab.platform.applicationblocks.com.objects.CfgTimeZone
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_OBJECT_DBID
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgGVPCustomer
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgGVPReseller
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgTenant
 import io.mockk.every
@@ -153,6 +155,12 @@ object ConfServiceExtensionMocks {
     fun mockRetrieveReseller(service: IConfService) {
         every { service.retrieveObject(CfgGVPReseller::class.java, any()) } answers {
             mockCfgGVPReseller(DEFAULT_TENANT)
+        }
+    }
+
+    fun mockRetrieveCustomer(service: IConfService) {
+        every { service.retrieveObject(CfgGVPCustomer::class.java, any()) } answers {
+            mockCfgGVPCustomer(DEFAULT_TENANT)
         }
     }
 }

@@ -1,0 +1,18 @@
+{
+  "__metadata__": {
+    "formatName": "JSON",
+    "formatVersion": "1.0.0"
+  },
+  "gvpIVRProfiles": [
+    {
+      "state": "enabled",
+      "type": "outbound",
+      "description": "a description",
+      "tenant": "Environment",
+      "name": "cfgObjectTest",
+      "displayName": "a display name",
+      "notes": "a note"
+    }
+  ]
+}
+
