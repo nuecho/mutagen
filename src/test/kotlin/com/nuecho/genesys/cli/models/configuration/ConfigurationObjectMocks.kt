@@ -1,5 +1,6 @@
 package com.nuecho.genesys.cli.models.configuration
 
+import com.genesyslab.platform.applicationblocks.com.objects.CfgAccessGroup
 import com.genesyslab.platform.applicationblocks.com.objects.CfgActionCode
 import com.genesyslab.platform.applicationblocks.com.objects.CfgAgentGroup
 import com.genesyslab.platform.applicationblocks.com.objects.CfgAgentLogin
@@ -11,6 +12,7 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgEnumerator
 import com.genesyslab.platform.applicationblocks.com.objects.CfgFolder
 import com.genesyslab.platform.applicationblocks.com.objects.CfgGVPCustomer
 import com.genesyslab.platform.applicationblocks.com.objects.CfgGVPReseller
+import com.genesyslab.platform.applicationblocks.com.objects.CfgID
 import com.genesyslab.platform.applicationblocks.com.objects.CfgObjectiveTable
 import com.genesyslab.platform.applicationblocks.com.objects.CfgPerson
 import com.genesyslab.platform.applicationblocks.com.objects.CfgPhysicalSwitch
@@ -26,6 +28,7 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgTimeZone
 import com.genesyslab.platform.applicationblocks.com.objects.CfgTransaction
 import com.genesyslab.platform.commons.collections.KeyValueCollection
 import com.genesyslab.platform.commons.collections.KeyValuePair
+import com.genesyslab.platform.configuration.protocol.types.CfgObjectType
 import com.nuecho.genesys.cli.models.configuration.ConfigurationTestData.CATEGORIZED_PROPERTIES_NUMBER
 import com.nuecho.genesys.cli.models.configuration.ConfigurationTestData.CATEGORIZED_PROPERTIES_STRING
 import com.nuecho.genesys.cli.models.configuration.reference.TenantReference
@@ -70,6 +73,13 @@ object ConfigurationObjectMocks {
 
         return keyValueCollection
     }
+
+    fun mockCfgAccessGroup(name: String = "name", tenant: CfgTenant = mockCfgTenant(DEFAULT_TENANT)) =
+        mockk<CfgAccessGroup>().also {
+            every { it.groupInfo.name } returns name
+            every { it.groupInfo.tenant } returns tenant
+            every { it.objectDbid } returns DEFAULT_OBJECT_DBID
+        }
 
     fun mockCfgActionCode(name: String?, tenant: CfgTenant = mockCfgTenant(DEFAULT_TENANT)) =
         mockk<CfgActionCode>().also {
@@ -127,6 +137,12 @@ object ConfigurationObjectMocks {
         mockk<CfgFolder>().also {
             every { it.name } returns name
             every { it.objectDbid } returns DEFAULT_OBJECT_DBID
+        }
+
+    fun mockCfgID(type: CfgObjectType?) =
+        mockk<CfgID>().also {
+            every { it.dbid } returns DEFAULT_OBJECT_DBID
+            every { it.type } returns type
         }
 
     fun mockCfgObjectiveTable(name: String?, tenant: CfgTenant = mockCfgTenant(DEFAULT_TENANT)) =

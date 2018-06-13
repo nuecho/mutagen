@@ -2,6 +2,7 @@ package com.nuecho.genesys.cli.models.configuration
 
 data class Configuration(
     val __metadata__: Metadata,
+    val accessGroups: List<AccessGroup> = emptyList(),
     val actionCodes: List<ActionCode> = emptyList(),
     val agentGroups: List<AgentGroup> = emptyList(),
     val dns: List<DN> = emptyList(),
@@ -18,6 +19,7 @@ data class Configuration(
     val transactions: List<Transaction> = emptyList()
 ) {
     fun toList() = listOf(
+        accessGroups,
         actionCodes,
         agentGroups,
         dns,

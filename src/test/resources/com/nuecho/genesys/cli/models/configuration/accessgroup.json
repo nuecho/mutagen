@@ -1,0 +1,20 @@
+{
+  "group": {
+    "capacityRule": "capacityRule",
+    "capacityTable": "capacityTable",
+    "contract": "contract",
+    "name": "accessGroup",
+    "quotaTable": "quotaTable",
+    "site": "site",
+    "state": "enabled",
+    "tenant": "tenant",
+    "userProperties": {
+      "section": {
+        "number": 456,
+        "string": "def"
+      }
+    }
+  },
+  "members": ["member1", "member2"],
+  "type": "defaultgroup"
+}
