@@ -13,6 +13,7 @@ import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgAct
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgObjectState
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toKeyValueCollection
 import com.nuecho.genesys.cli.models.configuration.reference.ActionCodeReference
+import com.nuecho.genesys.cli.models.configuration.reference.ConfigurationObjectReference
 import com.nuecho.genesys.cli.models.configuration.reference.TenantReference
 import com.nuecho.genesys.cli.services.getObjectDbid
 import com.nuecho.genesys.cli.services.retrieveObject
@@ -58,6 +59,8 @@ data class ActionCode(
             return ConfigurationObjectUpdateResult(CREATED, it)
         }
     }
+
+    override fun getReferences(): Set<ConfigurationObjectReference<*>> = setOf(tenant)
 }
 
 private fun toCfgSubcodeList(subcodes: Map<String, String>?, actionCode: CfgActionCode) =

@@ -14,10 +14,12 @@ import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setPrope
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgFlag
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgObjectState
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toKeyValueCollection
+import com.nuecho.genesys.cli.models.configuration.reference.ConfigurationObjectReference
 import com.nuecho.genesys.cli.models.configuration.reference.GVPCustomerReference
 import com.nuecho.genesys.cli.models.configuration.reference.GVPResellerReference
 import com.nuecho.genesys.cli.models.configuration.reference.TenantReference
 import com.nuecho.genesys.cli.models.configuration.reference.TimeZoneReference
+import com.nuecho.genesys.cli.models.configuration.reference.referenceSetBuilder
 import com.nuecho.genesys.cli.services.getObjectDbid
 import com.nuecho.genesys.cli.services.retrieveObject
 import com.nuecho.genesys.cli.toShortName
@@ -88,4 +90,11 @@ data class GVPCustomer(
         reseller?.tenant = tenant
         timeZone?.tenant = tenant
     }
+
+    override fun getReferences(): Set<ConfigurationObjectReference<*>> =
+        referenceSetBuilder()
+            .add(tenant)
+            .add(reseller)
+            .add(timeZone)
+            .toSet()
 }

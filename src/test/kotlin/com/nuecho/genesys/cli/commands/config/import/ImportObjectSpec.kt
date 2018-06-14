@@ -5,7 +5,7 @@ import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgGVPReseller
 import com.genesyslab.platform.applicationblocks.com.objects.CfgTenant
 import com.genesyslab.platform.applicationblocks.com.objects.CfgTimeZone
-import com.nuecho.genesys.cli.commands.config.import.Import.Companion.importConfigurationObjects
+import com.nuecho.genesys.cli.commands.config.import.Import.Companion.importConfigurationObject
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObject
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveReseller
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveTenant
@@ -19,11 +19,9 @@ import io.mockk.objectMockk
 import io.mockk.use
 import io.mockk.verify
 
-abstract class ImportObjectSpec(cfgObject: CfgObject, objects: List<ConfigurationObject>) : StringSpec() {
+abstract class ImportObjectSpec(cfgObject: CfgObject, configurationObject: ConfigurationObject) : StringSpec() {
     init {
-        val type = objects.first()::class.simpleName!!.toLowerCase()
-
-        assert(objects.size > 1)
+        val type = configurationObject::class.simpleName!!.toLowerCase()
 
         "importing an existing $type should do nothing" {
             val service = cfgObject.configurationService
@@ -35,8 +33,8 @@ abstract class ImportObjectSpec(cfgObject: CfgObject, objects: List<Configuratio
             mockRetrieveDefaultObjects(service, cfgObject)
 
             objectMockk(Import.Companion).use {
-                val count = importConfigurationObjects(objects, service)
-                count shouldBe 0
+                val hasImportedObject = importConfigurationObject(configurationObject, service)
+                hasImportedObject shouldBe false
                 verify(exactly = 0) { Import.save(any()) }
             }
         }
@@ -53,27 +51,9 @@ abstract class ImportObjectSpec(cfgObject: CfgObject, objects: List<Configuratio
 
                 mockRetrieveDefaultObjects(service, cfgObject)
 
-                val count = importConfigurationObjects(objects.subList(0, 1), service)
-                count shouldBe 1
+                val hasImportedObject = importConfigurationObject(configurationObject, service)
+                hasImportedObject shouldBe true
                 verify(exactly = 1) { Import.save(ofType(cfgObject.javaClass.kotlin)) }
-            }
-        }
-
-        "importing multiple $type should try to save all of them" {
-            val service = cfgObject.configurationService
-            every { service.retrieveObject(cfgObject.javaClass, any()) } returns null
-
-            objectMockk(Import.Companion).use {
-                every { Import.save(any()) } just Runs
-
-                if (cfgObject !is CfgTenant) {
-                    mockRetrieveTenant(service)
-                }
-                mockRetrieveDefaultObjects(service, cfgObject)
-
-                val count = importConfigurationObjects(objects, service)
-                count shouldBe 2
-                verify(exactly = 2) { Import.save(ofType(cfgObject.javaClass.kotlin)) }
             }
         }
     }

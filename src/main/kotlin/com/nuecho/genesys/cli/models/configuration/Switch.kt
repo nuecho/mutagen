@@ -15,9 +15,11 @@ import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgLin
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgObjectState
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toKeyValueCollection
 import com.nuecho.genesys.cli.models.configuration.reference.ApplicationReference
+import com.nuecho.genesys.cli.models.configuration.reference.ConfigurationObjectReference
 import com.nuecho.genesys.cli.models.configuration.reference.PhysicalSwitchReference
 import com.nuecho.genesys.cli.models.configuration.reference.SwitchReference
 import com.nuecho.genesys.cli.models.configuration.reference.TenantReference
+import com.nuecho.genesys.cli.models.configuration.reference.referenceSetBuilder
 import com.nuecho.genesys.cli.services.getObjectDbid
 import com.nuecho.genesys.cli.services.retrieveObject
 import com.nuecho.genesys.cli.toShortName
@@ -84,4 +86,12 @@ data class Switch(
     override fun afterPropertiesSet() {
         switchAccessCodes?.forEach { it.updateTenantReferences(tenant) }
     }
+
+    override fun getReferences(): Set<ConfigurationObjectReference<*>> =
+        referenceSetBuilder()
+            .add(tenant)
+            .add(physicalSwitch)
+            .add(tServer)
+            .add(switchAccessCodes?.mapNotNull { it.switch })
+            .toSet()
 }

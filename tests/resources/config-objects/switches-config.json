@@ -13,7 +13,6 @@
       "switchAccessCodes": [
       ],
       "tenant": "Environment",
-      "tServer": "tServer",
       "userProperties": {
         "section": {
           "number": 456,

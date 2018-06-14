@@ -11,8 +11,7 @@ Completed. 0 object(s) imported.
 
 exports[`[mutagen switches config import-export] should import the switches: the switches have been imported 1`] = `
 Object {
-  "stderr": "Cannot find application 'tServer'
-",
+  "stderr": "",
   "stdout": "+ switch => Environment/cfgObjectTest
 Completed. 1 object(s) imported.
 ",

@@ -7,8 +7,5 @@ import com.nuecho.genesys.cli.services.ServiceMocks.mockConfService
 
 class ImportEnumeratorTest : ImportObjectSpec(
     CfgEnumerator(mockConfService()),
-    listOf(
-        Enumerator(tenant = DEFAULT_TENANT_REFERENCE, name = "enumerator1"),
-        Enumerator(tenant = DEFAULT_TENANT_REFERENCE, name = "enumerator2")
-    )
+    Enumerator(tenant = DEFAULT_TENANT_REFERENCE, name = "enumerator1")
 )

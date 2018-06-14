@@ -6,5 +6,5 @@ import com.nuecho.genesys.cli.services.ServiceMocks.mockConfService
 
 class ImportGVPCustomerTest : ImportObjectSpec(
     CfgGVPCustomer(mockConfService()),
-    listOf(GVPCustomer(name = "foo"), GVPCustomer(name = "bar"))
+    GVPCustomer(name = "foo")
 )

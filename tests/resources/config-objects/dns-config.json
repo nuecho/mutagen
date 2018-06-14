@@ -6,9 +6,7 @@
   "dns": [
     {
       "association": "anassociation",
-      "contract": "acontract",
       "dnLoginID": "anId",
-      "group": "dnGroup",
       "name": "cfgObjectTest",
       "number": "123",
       "override": "anoverride",

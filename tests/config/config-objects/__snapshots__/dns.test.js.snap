@@ -11,9 +11,7 @@ Completed. 0 object(s) imported.
 
 exports[`[mutagen dns config import-export] should import the dns: the dns have been imported 1`] = `
 Object {
-  "stderr": "Cannot find dngroup 'Environment/dnGroup'
-Cannot find objectivetable 'Environment/acontract'
-",
+  "stderr": "",
   "stdout": "+ dn => number: '123', switch: 'switchForDn', type: 'Extension', name: 'cfgObjectTest', tenant: 'Environment'
 Completed. 1 object(s) imported.
 ",

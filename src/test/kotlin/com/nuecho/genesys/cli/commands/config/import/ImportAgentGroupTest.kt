@@ -8,8 +8,5 @@ import com.nuecho.genesys.cli.services.ServiceMocks.mockConfService
 
 class ImportAgentGroupTest : ImportObjectSpec(
     CfgAgentGroup(mockConfService()),
-    listOf(
-        AgentGroup(group = Group(tenant = DEFAULT_TENANT_REFERENCE, name = "group1")),
-        AgentGroup(group = Group(tenant = DEFAULT_TENANT_REFERENCE, name = "group2"))
-    )
+    AgentGroup(group = Group(tenant = DEFAULT_TENANT_REFERENCE, name = "group1"))
 )

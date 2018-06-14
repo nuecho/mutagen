@@ -7,8 +7,5 @@ import com.nuecho.genesys.cli.services.ServiceMocks.mockConfService
 
 class ImportScriptTest : ImportObjectSpec(
     CfgScript(mockConfService()),
-    listOf(
-        Script(tenant = DEFAULT_TENANT_REFERENCE, name = "foo"),
-        Script(tenant = DEFAULT_TENANT_REFERENCE, name = "bar")
-    )
+    Script(tenant = DEFAULT_TENANT_REFERENCE, name = "foo")
 )

@@ -1,5 +1,6 @@
 package com.nuecho.genesys.cli.models.configuration
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.genesyslab.platform.applicationblocks.com.objects.CfgAgentInfo
@@ -7,6 +8,7 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgPerson
 import com.genesyslab.platform.applicationblocks.com.objects.CfgSkillLevel
 import com.nuecho.genesys.cli.getReference
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setProperty
+import com.nuecho.genesys.cli.models.configuration.reference.ConfigurationObjectReference
 import com.nuecho.genesys.cli.models.configuration.reference.FolderReference
 import com.nuecho.genesys.cli.models.configuration.reference.ObjectiveTableReference
 import com.nuecho.genesys.cli.models.configuration.reference.PlaceReference
@@ -15,6 +17,7 @@ import com.nuecho.genesys.cli.models.configuration.reference.SimpleObjectReferen
 import com.nuecho.genesys.cli.models.configuration.reference.SimpleObjectReferenceWithTenantKeyDeserializer
 import com.nuecho.genesys.cli.models.configuration.reference.SkillReference
 import com.nuecho.genesys.cli.models.configuration.reference.TenantReference
+import com.nuecho.genesys.cli.models.configuration.reference.referenceSetBuilder
 import com.nuecho.genesys.cli.services.getObjectDbid
 
 data class AgentInfo(
@@ -49,6 +52,18 @@ data class AgentInfo(
 
         return agentInfo
     }
+
+    @JsonIgnore
+    @Suppress("DataClassContainsFunctions")
+    fun getReferences(): Set<ConfigurationObjectReference<*>> =
+        referenceSetBuilder()
+            .add(capacityRule)
+            .add(contract)
+            .add(place)
+            .add(site)
+            .add(skillLevels?.keys)
+            .add(agentLogins?.flatMap { it.getReferences() })
+            .toSet()
 }
 
 fun AgentInfo.updateTenantReferences(tenant: TenantReference) {

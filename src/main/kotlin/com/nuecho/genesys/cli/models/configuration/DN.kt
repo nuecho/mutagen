@@ -16,12 +16,14 @@ import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectUpdateStat
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectUpdateStatus.UNCHANGED
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setProperty
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toKeyValueCollection
+import com.nuecho.genesys.cli.models.configuration.reference.ConfigurationObjectReference
 import com.nuecho.genesys.cli.models.configuration.reference.DNGroupReference
 import com.nuecho.genesys.cli.models.configuration.reference.DNReference
 import com.nuecho.genesys.cli.models.configuration.reference.FolderReference
 import com.nuecho.genesys.cli.models.configuration.reference.ObjectiveTableReference
 import com.nuecho.genesys.cli.models.configuration.reference.SwitchReference
 import com.nuecho.genesys.cli.models.configuration.reference.TenantReference
+import com.nuecho.genesys.cli.models.configuration.reference.referenceSetBuilder
 import com.nuecho.genesys.cli.services.getObjectDbid
 import com.nuecho.genesys.cli.services.retrieveObject
 import com.nuecho.genesys.cli.toShortName
@@ -150,6 +152,17 @@ data class DN(
         accessNumbers?.forEach { it.updateTenantReferences(tenant) }
         contract?.tenant = tenant
     }
+
+    override fun getReferences(): Set<ConfigurationObjectReference<*>> =
+        referenceSetBuilder()
+            .add(tenant)
+            .add(switch)
+            .add(routing?.destinationDNs)
+            .add(group)
+            .add(accessNumbers?.map { it.switch })
+            .add(site)
+            .add(contract)
+            .toSet()
 }
 
 fun toCfgDNAccessNumberList(accessNumbers: List<DNAccessNumber>?, dn: CfgDN) =

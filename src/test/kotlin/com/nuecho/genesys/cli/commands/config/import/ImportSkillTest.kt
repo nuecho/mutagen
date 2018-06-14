@@ -7,8 +7,5 @@ import com.nuecho.genesys.cli.services.ServiceMocks.mockConfService
 
 class ImportSkillTest : ImportObjectSpec(
     CfgSkill(mockConfService()),
-    listOf(
-        Skill(tenant = DEFAULT_TENANT_REFERENCE, name = "foo"),
-        Skill(tenant = DEFAULT_TENANT_REFERENCE, name = "bar")
-    )
+    Skill(tenant = DEFAULT_TENANT_REFERENCE, name = "foo")
 )

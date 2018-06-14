@@ -13,6 +13,7 @@ import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setPrope
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgObjectState
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgScriptType
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toKeyValueCollection
+import com.nuecho.genesys.cli.models.configuration.reference.ConfigurationObjectReference
 import com.nuecho.genesys.cli.models.configuration.reference.ScriptReference
 import com.nuecho.genesys.cli.models.configuration.reference.TenantReference
 import com.nuecho.genesys.cli.services.getObjectDbid
@@ -59,4 +60,6 @@ data class Script(
             return ConfigurationObjectUpdateResult(CREATED, it)
         }
     }
+
+    override fun getReferences(): Set<ConfigurationObjectReference<*>> = setOf(tenant)
 }

@@ -11,6 +11,7 @@ import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setPrope
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgObjectState
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgSwitchType
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toKeyValueCollection
+import com.nuecho.genesys.cli.models.configuration.reference.ConfigurationObjectReference
 import com.nuecho.genesys.cli.models.configuration.reference.PhysicalSwitchReference
 import com.nuecho.genesys.cli.services.retrieveObject
 import com.nuecho.genesys.cli.toShortName
@@ -49,4 +50,6 @@ data class PhysicalSwitch(
             return ConfigurationObjectUpdateResult(CREATED, it)
         }
     }
+
+    override fun getReferences(): Set<ConfigurationObjectReference<*>> = setOf()
 }

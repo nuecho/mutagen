@@ -4,11 +4,10 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgDN
 import com.genesyslab.platform.applicationblocks.com.objects.CfgSwitch
 import com.genesyslab.platform.applicationblocks.com.objects.CfgTenant
 import com.genesyslab.platform.configuration.protocol.types.CfgDNType
-import com.nuecho.genesys.cli.commands.config.import.Import.Companion.importConfigurationObjects
+import com.nuecho.genesys.cli.commands.config.import.Import.Companion.importConfigurationObject
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_DBID
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_REFERENCE
-import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgSwitch
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgTenant
 import com.nuecho.genesys.cli.models.configuration.DN
 import com.nuecho.genesys.cli.models.configuration.reference.SwitchReference
@@ -62,11 +61,9 @@ class ImportDNTest : StringSpec() {
             every { service.retrieveObject(CfgDN::class.java, any()) } returns cfgDn
             every { service.retrieveObject(CfgSwitch::class.java, any()) } returns cfgSwitch
 
-            val dns = listOf(DN1)
-
             objectMockk(Import.Companion).use {
-                val count = importConfigurationObjects(dns, service)
-                count shouldBe 0
+                val hasImportedObject = importConfigurationObject(DN1, service)
+                hasImportedObject shouldBe false
                 verify(exactly = 0) { Import.save(any()) }
             }
         }
@@ -85,27 +82,9 @@ class ImportDNTest : StringSpec() {
                     every { service.getObjectDbid(ofType(TenantReference::class)) } returns DEFAULT_TENANT_DBID
                     every { Import.save(any()) } just Runs
 
-                    val count = importConfigurationObjects(listOf(DN1), service)
-                    count shouldBe 1
+                    val hasImportedObject = importConfigurationObject(DN1, service)
+                    hasImportedObject shouldBe true
                     verify(exactly = 1) { Import.save(ofType(CfgDN::class)) }
-                }
-            }
-        }
-
-        "importing multiple DNs should try to save all of them" {
-            val switch = mockCfgSwitch("aswitch")
-
-            objectMockk(Import.Companion).use {
-                staticMockk("com.nuecho.genesys.cli.services.ConfServiceExtensionsKt").use {
-                    val service = mockConfService()
-                    every { service.retrieveObject(CfgDN::class.java, any()) } returns null
-                    every { service.retrieveObject(CfgSwitch::class.java, any()) } returns switch
-                    every { service.getObjectDbid(ofType(TenantReference::class)) } returns DEFAULT_TENANT_DBID
-                    every { Import.save(any()) } just Runs
-
-                    val count = importConfigurationObjects(listOf(DN1, DN2), service)
-                    count shouldBe 2
-                    verify(exactly = 2) { Import.save(ofType(CfgDN::class)) }
                 }
             }
         }

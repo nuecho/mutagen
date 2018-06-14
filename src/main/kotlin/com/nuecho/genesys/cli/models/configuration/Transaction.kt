@@ -11,6 +11,7 @@ import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectUpdateStat
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setProperty
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgTransactionType
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toKeyValueCollection
+import com.nuecho.genesys.cli.models.configuration.reference.ConfigurationObjectReference
 import com.nuecho.genesys.cli.models.configuration.reference.TenantReference
 import com.nuecho.genesys.cli.models.configuration.reference.TransactionReference
 import com.nuecho.genesys.cli.services.getObjectDbid
@@ -62,4 +63,6 @@ data class Transaction(
             return ConfigurationObjectUpdateResult(CREATED, it)
         }
     }
+
+    override fun getReferences(): Set<ConfigurationObjectReference<*>> = setOf(tenant)
 }

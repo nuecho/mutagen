@@ -6,5 +6,5 @@ import com.nuecho.genesys.cli.services.ServiceMocks.mockConfService
 
 class ImportPhysicalSwitchTest : ImportObjectSpec(
     CfgPhysicalSwitch(mockConfService()),
-    listOf(PhysicalSwitch("foo"), PhysicalSwitch("bar"))
+    PhysicalSwitch("foo")
 )

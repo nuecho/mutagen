@@ -7,8 +7,5 @@ import com.nuecho.genesys.cli.services.ServiceMocks.mockConfService
 
 class ImportPersonTest : ImportObjectSpec(
     CfgPerson(mockConfService()),
-    listOf(
-        Person(tenant = DEFAULT_TENANT_REFERENCE, employeeId = "employee1", userName = "username1"),
-        Person(tenant = DEFAULT_TENANT_REFERENCE, employeeId = "employee2", userName = "username2")
-    )
+    Person(tenant = DEFAULT_TENANT_REFERENCE, employeeId = "employee1", userName = "username1")
 )
