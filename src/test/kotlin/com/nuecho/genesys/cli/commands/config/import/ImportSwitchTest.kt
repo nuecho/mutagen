@@ -7,8 +7,5 @@ import com.nuecho.genesys.cli.services.ServiceMocks.mockConfService
 
 class ImportSwitchTest : ImportObjectSpec(
     CfgSwitch(mockConfService()),
-    listOf(
-        Switch(tenant = DEFAULT_TENANT_REFERENCE, name = "foo"),
-        Switch(tenant = DEFAULT_TENANT_REFERENCE, name = "bar")
-    )
+    Switch(tenant = DEFAULT_TENANT_REFERENCE, name = "foo")
 )

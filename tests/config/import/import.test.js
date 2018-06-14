@@ -1,6 +1,8 @@
 const INVALID_TENANT_CONFIGURATION_PATH = getResourcePath("import/switch-with-invalid-tenant-config.json");
 const MULTIPLE_OBJECTS_CONFIGURATION_PATH = getResourcePath("import/multiple-objects-config.json");
 const REPEATED_KEYS_CONFIGURATION_PATH = getResourcePath("import/same-key-switches-config.json");
+const CYCLE_CONFIGURATION_PATH = getResourcePath("import/cycle-config.json");
+const MISSING_DEPENDENCY_CONFIGURATION_PATH = getResourcePath("import/missing-dependency-config.json");
 const SWITCH_DEPENDENCIES_CONFIGURATION_PATH = getResourcePath(
   "config-objects/switch-dependencies-config.json"
 );
@@ -39,4 +41,18 @@ test(`[mutagen config import file] should only import objects with a unique key`
 
   expect(output).toMatchSnapshot("only one object with the key has been imported");
   expect(code).toBe(0);
+});
+
+test(`[mutagen config import file] should not import any object if there's a cycle between object dependencies`, () => {
+  const { code, output } = mutagen(`config import ${CYCLE_CONFIGURATION_PATH}`);
+
+  expect(output).toMatchSnapshot("cycle detected");
+  expect(code).toBe(1);
+});
+
+test(`[mutagen config import file] should not import any object if some dependencies cannot be resolved`, () => {
+  const { code, output } = mutagen(`config import ${MISSING_DEPENDENCY_CONFIGURATION_PATH}`);
+
+  expect(output).toMatchSnapshot("found missing dependency");
+  expect(code).toBe(1);
 });

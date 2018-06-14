@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgTenant
 import com.nuecho.genesys.cli.asBoolean
+import com.nuecho.genesys.cli.core.InitializingBean
 import com.nuecho.genesys.cli.getReference
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectUpdateStatus.CREATED
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectUpdateStatus.UNCHANGED
@@ -13,9 +14,11 @@ import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setPrope
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgFlag
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgObjectState
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toKeyValueCollection
+import com.nuecho.genesys.cli.models.configuration.reference.ConfigurationObjectReference
 import com.nuecho.genesys.cli.models.configuration.reference.ObjectiveTableReference
 import com.nuecho.genesys.cli.models.configuration.reference.ScriptReference
 import com.nuecho.genesys.cli.models.configuration.reference.TenantReference
+import com.nuecho.genesys.cli.models.configuration.reference.referenceSetBuilder
 import com.nuecho.genesys.cli.services.getObjectDbid
 import com.nuecho.genesys.cli.services.retrieveObject
 import com.nuecho.genesys.cli.toShortName
@@ -33,7 +36,7 @@ data class Tenant(
     @JsonDeserialize(using = CategorizedPropertiesDeserializer::class)
     override val userProperties: CategorizedProperties? = null
 
-) : ConfigurationObject {
+) : ConfigurationObject, InitializingBean {
     @get:JsonIgnore
     override val reference = TenantReference(name)
 
@@ -68,4 +71,16 @@ data class Tenant(
             return ConfigurationObjectUpdateResult(CREATED, it)
         }
     }
+
+    override fun afterPropertiesSet() {
+        defaultContract?.tenant = reference
+        defaultCapacityRule?.tenant = reference
+    }
+
+    override fun getReferences(): Set<ConfigurationObjectReference<*>> =
+        referenceSetBuilder()
+            .add(defaultContract)
+            .add(defaultCapacityRule)
+            .add(parentTenant)
+            .toSet()
 }

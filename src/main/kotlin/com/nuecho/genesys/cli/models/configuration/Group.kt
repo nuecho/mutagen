@@ -1,5 +1,6 @@
 package com.nuecho.genesys.cli.models.configuration
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.genesyslab.platform.applicationblocks.com.CfgObject
@@ -8,6 +9,7 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgGroup
 import com.nuecho.genesys.cli.getReference
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setProperty
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toKeyValueCollection
+import com.nuecho.genesys.cli.models.configuration.reference.ConfigurationObjectReference
 import com.nuecho.genesys.cli.models.configuration.reference.DNReference
 import com.nuecho.genesys.cli.models.configuration.reference.FolderReference
 import com.nuecho.genesys.cli.models.configuration.reference.ObjectiveTableReference
@@ -15,9 +17,11 @@ import com.nuecho.genesys.cli.models.configuration.reference.PersonReference
 import com.nuecho.genesys.cli.models.configuration.reference.ScriptReference
 import com.nuecho.genesys.cli.models.configuration.reference.StatTableReference
 import com.nuecho.genesys.cli.models.configuration.reference.TenantReference
+import com.nuecho.genesys.cli.models.configuration.reference.referenceSetBuilder
 import com.nuecho.genesys.cli.services.getObjectDbid
 import com.nuecho.genesys.cli.toShortName
 
+@Suppress("DataClassContainsFunctions")
 data class Group(
     val tenant: TenantReference,
     val name: String,
@@ -62,7 +66,6 @@ data class Group(
             setProperty("contractDBID", service.getObjectDbid(contract), it)
         }
 
-    @Suppress("DataClassContainsFunctions")
     fun updateTenantReferences() {
         managers?.forEach { it.tenant = tenant }
         routeDNs?.forEach { it.tenant = tenant }
@@ -71,4 +74,17 @@ data class Group(
         capacityRule?.tenant = tenant
         contract?.tenant = tenant
     }
+
+    @JsonIgnore
+    fun getReferences(): Set<ConfigurationObjectReference<*>> =
+        referenceSetBuilder()
+            .add(tenant)
+            .add(managers)
+            .add(routeDNs)
+            .add(capacityTable)
+            .add(quotaTable)
+            .add(capacityRule)
+            .add(site)
+            .add(contract)
+            .toSet()
 }

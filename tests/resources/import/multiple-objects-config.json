@@ -5,79 +5,59 @@
   },
   "physicalSwitches": [
     {
-      "name": "physicalSwitch1",
+      "name": "MultiObjectImportPhysicalSwitch1",
       "state": "enabled",
-      "type": "fujitsu",
-      "userProperties": {
-        "section": {
-          "number": 456,
-          "string": "def"
-        }
-      }
+      "type": "fujitsu"
     },
     {
-      "name": "physicalSwitch2",
+      "name": "MultiObjectImportPhysicalSwitch2",
       "state": "enabled",
-      "type": "fujitsu",
-      "userProperties": {
-        "section": {
-          "number": 456,
-          "string": "def"
-        }
-      }
+      "type": "fujitsu"
     }
   ],
   "switches": [
     {
       "dnRange": "74233-74244, 74290",
       "linkType": "madgelink",
-      "name": "switch1",
-      "physicalSwitch": "physSwitchForSwitch",
+      "name": "MultiObjectImportSwitch1",
+      "physicalSwitch": "MultiObjectImportPhysicalSwitch1",
       "state": "enabled",
       "switchAccessCodes": [
       ],
-      "tenant": "Environment",
-      "tServer": "tServer",
-      "userProperties": {
-        "section": {
-          "number": 456,
-          "string": "def"
-        }
-      }
+      "tenant": "Environment"
     },
     {
       "dnRange": "74233-74244, 74290",
       "linkType": "madgelink",
-      "name": "switch2",
-      "physicalSwitch": "physSwitchForSwitch",
+      "name": "MultiObjectImportSwitch2",
+      "physicalSwitch": "MultiObjectImportPhysicalSwitch1",
       "state": "enabled",
       "switchAccessCodes": [
       ],
-      "tenant": "Environment",
-      "tServer": "tServer",
-      "userProperties": {
-        "section": {
-          "number": 456,
-          "string": "def"
-        }
-      }
+      "tenant": "Environment"
     },
     {
       "dnRange": "74233-74244, 74290",
       "linkType": "madgelink",
-      "name": "switch3",
-      "physicalSwitch": "physSwitchForSwitch",
+      "name": "MultiObjectImportSwitch3",
+      "physicalSwitch": "MultiObjectImportPhysicalSwitch2",
       "state": "enabled",
       "switchAccessCodes": [
       ],
+      "tenant": "Environment"
+    }
+  ],
+  "dns": [
+    {
+      "name": "MultiObjectImportDN",
+      "number": "123",
+      "state": "enabled",
+      "switch": "MultiObjectImportSwitch1",
+      "switchSpecificType": 1,
       "tenant": "Environment",
-      "tServer": "tServer",
-      "userProperties": {
-        "section": {
-          "number": 456,
-          "string": "def"
-        }
-      }
+      "trunks": 1,
+      "type": "Extension",
+      "useOverride": true
     }
   ]
 }

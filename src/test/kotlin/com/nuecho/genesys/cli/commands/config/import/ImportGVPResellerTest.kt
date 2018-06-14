@@ -7,8 +7,5 @@ import com.nuecho.genesys.cli.services.ServiceMocks.mockConfService
 
 class ImportGVPResellerTest : ImportObjectSpec(
     CfgGVPReseller(mockConfService()),
-    listOf(
-        GVPReseller(tenant = DEFAULT_TENANT_REFERENCE, name = "foo"),
-        GVPReseller(tenant = DEFAULT_TENANT_REFERENCE, name = "bar")
-    )
+    GVPReseller(tenant = DEFAULT_TENANT_REFERENCE, name = "foo")
 )

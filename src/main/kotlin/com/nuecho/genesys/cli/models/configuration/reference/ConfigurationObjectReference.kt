@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import com.genesyslab.platform.applicationblocks.com.ICfgObject
 import com.genesyslab.platform.applicationblocks.com.ICfgQuery
 import com.genesyslab.platform.applicationblocks.com.IConfService
+import com.nuecho.genesys.cli.core.setBuilder
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.getCfgObjectType
 
 abstract class ConfigurationObjectReference<T : ICfgObject>(
@@ -19,3 +20,5 @@ abstract class ConfigurationObjectReference<T : ICfgObject>(
     override fun compareTo(other: ConfigurationObjectReference<*>) =
         getCfgObjectType().name().compareTo(other.getCfgObjectType().name())
 }
+
+fun referenceSetBuilder() = setBuilder<ConfigurationObjectReference<*>>()

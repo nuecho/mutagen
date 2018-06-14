@@ -13,24 +13,40 @@ Object {
 
 exports[`[mutagen config import file] should import multiple objects of different types: every object has been imported 1`] = `
 Object {
-  "stderr": "Cannot find application 'tServer'
-Cannot find application 'tServer'
-Cannot find application 'tServer'
+  "stderr": "",
+  "stdout": "+ physicalswitch => MultiObjectImportPhysicalSwitch1
++ physicalswitch => MultiObjectImportPhysicalSwitch2
++ switch => Environment/MultiObjectImportSwitch1
++ switch => Environment/MultiObjectImportSwitch2
++ switch => Environment/MultiObjectImportSwitch3
++ dn => number: '123', switch: 'MultiObjectImportSwitch1', type: 'Extension', name: 'MultiObjectImportDN', tenant: 'Environment'
+Completed. 6 object(s) imported.
 ",
-  "stdout": "+ physicalswitch => physicalSwitch1
-+ physicalswitch => physicalSwitch2
-+ switch => Environment/switch1
-+ switch => Environment/switch2
-+ switch => Environment/switch3
-Completed. 5 object(s) imported.
+}
+`;
+
+exports[`[mutagen config import file] should not import any object if some dependencies cannot be resolved: found missing dependency 1`] = `
+Object {
+  "stderr": "Cannot find script 'MissingDependencyTenant1/NonExistingScript1' (referenced by 'MissingDependencyTenant1')
+Cannot find script 'MissingDependencyTenant2/NonExistingScript2' (referenced by 'MissingDependencyTenant2')
+Cannot import configuration: some configuration object dependency could not be found.
 ",
+  "stdout": "",
+}
+`;
+
+exports[`[mutagen config import file] should not import any object if there's a cycle between object dependencies: cycle detected 1`] = `
+Object {
+  "stderr": "Cannot import configuration: dependency cycles is not yet supported.
+",
+  "stdout": "",
 }
 `;
 
 exports[`[mutagen config import file] should not import the object if it has an invalid tenant: no object has been imported 1`] = `
 Object {
-  "stderr": "Cannot find tenant 'Invalid tenant'
-Cannot find configuration object: 'Invalid tenant'
+  "stderr": "Cannot find tenant 'Invalid tenant' (referenced by 'Invalid tenant/switchWithInvalidTenant')
+Cannot import configuration: some configuration object dependency could not be found.
 ",
   "stdout": "",
 }
@@ -38,11 +54,8 @@ Cannot find configuration object: 'Invalid tenant'
 
 exports[`[mutagen config import file] should only import objects with a unique key: only one object with the key has been imported 1`] = `
 Object {
-  "stderr": "Cannot find application 'tServer'
-",
+  "stderr": "",
   "stdout": "+ switch => Environment/sameSwitch
-= switch => Environment/sameSwitch
-= switch => Environment/sameSwitch
 Completed. 1 object(s) imported.
 ",
 }

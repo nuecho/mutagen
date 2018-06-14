@@ -12,9 +12,11 @@ import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectUpdateStat
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectUpdateStatus.UNCHANGED
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setProperty
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toKeyValueCollection
+import com.nuecho.genesys.cli.models.configuration.reference.ConfigurationObjectReference
 import com.nuecho.genesys.cli.models.configuration.reference.GVPResellerReference
 import com.nuecho.genesys.cli.models.configuration.reference.TenantReference
 import com.nuecho.genesys.cli.models.configuration.reference.TimeZoneReference
+import com.nuecho.genesys.cli.models.configuration.reference.referenceSetBuilder
 import com.nuecho.genesys.cli.services.getObjectDbid
 import com.nuecho.genesys.cli.services.retrieveObject
 import com.nuecho.genesys.cli.toShortName
@@ -87,4 +89,10 @@ data class GVPReseller(
     override fun afterPropertiesSet() {
         timeZone?.tenant = tenant
     }
+
+    override fun getReferences(): Set<ConfigurationObjectReference<*>> =
+        referenceSetBuilder()
+            .add(tenant)
+            .add(timeZone)
+            .toSet()
 }

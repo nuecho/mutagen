@@ -7,8 +7,5 @@ import com.nuecho.genesys.cli.services.ServiceMocks.mockConfService
 
 class ImportTransactionTest : ImportObjectSpec(
     CfgTransaction(mockConfService()),
-    listOf(
-        Transaction(tenant = DEFAULT_TENANT_REFERENCE, name = "foo"),
-        Transaction(tenant = DEFAULT_TENANT_REFERENCE, name = "bar")
-    )
+    Transaction(tenant = DEFAULT_TENANT_REFERENCE, name = "foo")
 )

@@ -1,0 +1,30 @@
+{
+  "__metadata__": {
+    "formatName": "JSON",
+    "formatVersion": "1.0.0"
+  },
+  "physicalSwitches": [
+    {
+      "name": "CycleConfigPhysicalSwitch",
+      "state": "enabled",
+      "type": "fujitsu"
+    }
+  ],
+  "scripts": [
+    {
+      "name": "CycleConfigScript",
+      "state": "enabled",
+      "tenant": "CycleConfigTenant",
+      "type": "schedule"
+    }
+  ],
+  "tenants" : [
+    {
+      "name" : "CycleConfigTenant",
+      "state" : "enabled",
+      "serviceProvider" : true,
+      "defaultCapacityRule": "CycleConfigScript"
+    }
+  ]
+}
+

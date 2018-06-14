@@ -16,6 +16,7 @@ import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgFla
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgObjectState
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgRank
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toKeyValueCollection
+import com.nuecho.genesys.cli.models.configuration.reference.ConfigurationObjectReference
 import com.nuecho.genesys.cli.models.configuration.reference.PersonReference
 import com.nuecho.genesys.cli.models.configuration.reference.TenantReference
 import com.nuecho.genesys.cli.services.getObjectDbid
@@ -99,6 +100,8 @@ data class Person(
     override fun afterPropertiesSet() {
         agentInfo?.updateTenantReferences(tenant)
     }
+
+    override fun getReferences(): Set<ConfigurationObjectReference<*>> = setOf(tenant)
 }
 
 private fun toCfgAppRankList(appRankMap: Map<String, String>?, person: CfgPerson) =

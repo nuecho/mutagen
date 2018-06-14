@@ -3,7 +3,8 @@ package com.nuecho.genesys.cli.commands.config.import
 import com.genesyslab.platform.applicationblocks.com.CfgObject
 import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.nuecho.genesys.cli.GenesysCliCommand
-import com.nuecho.genesys.cli.Logging
+import com.nuecho.genesys.cli.Logging.info
+import com.nuecho.genesys.cli.Logging.warn
 import com.nuecho.genesys.cli.commands.config.Config
 import com.nuecho.genesys.cli.core.defaultJsonObjectMapper
 import com.nuecho.genesys.cli.models.configuration.Configuration
@@ -11,7 +12,13 @@ import com.nuecho.genesys.cli.models.configuration.ConfigurationObject
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectUpdateStatus.CREATED
 import com.nuecho.genesys.cli.models.configuration.reference.ConfigurationObjectReference
 import com.nuecho.genesys.cli.services.ConfService
+import com.nuecho.genesys.cli.services.retrieveObject
 import com.nuecho.genesys.cli.toShortName
+import org.jgrapht.Graph
+import org.jgrapht.alg.cycle.CycleDetector
+import org.jgrapht.graph.DefaultDirectedGraph
+import org.jgrapht.graph.DefaultEdge
+import org.jgrapht.traverse.TopologicalOrderIterator
 import picocli.CommandLine
 import java.io.File
 
@@ -43,51 +50,71 @@ class Import : GenesysCliCommand() {
     companion object {
         fun importConfiguration(configuration: Configuration, service: ConfService) {
 
-            Logging.info { "Beginning import." }
+            info { "Preparing import." }
 
-            val count = intArrayOf(
-                importConfigurationObjects(configuration.actionCodes, service),
-                importConfigurationObjects(configuration.agentGroups, service),
-                importConfigurationObjects(configuration.dns, service),
-                importConfigurationObjects(configuration.enumerators, service),
-                importConfigurationObjects(configuration.gvpCustomers, service),
-                importConfigurationObjects(configuration.gvpResellers, service),
-                importConfigurationObjects(configuration.skills, service),
-                importConfigurationObjects(configuration.roles, service),
-                importConfigurationObjects(configuration.persons, service),
-                importConfigurationObjects(configuration.physicalSwitches, service),
-                importConfigurationObjects(configuration.scripts, service),
-                importConfigurationObjects(configuration.switches, service),
-                importConfigurationObjects(configuration.tenants, service),
-                importConfigurationObjects(configuration.transactions, service)
-            ).sum()
+            val configurationObjects = prepareImportOperation(configuration, service)
+
+            info { "Beginning import." }
+
+            val count = configurationObjects
+                .map { importConfigurationObject(it, service) }
+                .filter { it }
+                .count()
 
             println("Completed. $count object(s) imported.")
         }
 
-        internal fun importConfigurationObjects(
-            objects: Collection<ConfigurationObject>,
-            service: IConfService
-        ): Int {
-            var count = 0
+        internal fun prepareImportOperation(configuration: Configuration, service: ConfService):
+                List<ConfigurationObject> {
+            val objectDependencyGraph: Graph<ConfigurationObject, DefaultEdge> =
+                DefaultDirectedGraph(DefaultEdge::class.java)
 
-            objects.forEach {
-                val primaryKey = it.reference
-                val (status, cfgObject) = it.updateCfgObject(service)
-                val type = cfgObject.objectType.toShortName()
+            val configurationObjectsByReference = configuration.toMapByReference()
 
-                if (status != CREATED) {
-                    objectImportProgress(type, primaryKey, true)
-                    return@forEach
+            // We need to add graph vertex before we connect them together
+            configurationObjectsByReference.values.forEach { objectDependencyGraph.addVertex(it) }
+
+            var foundMissingObject = false
+            for (configurationObject in configurationObjectsByReference.values) {
+                for (dependency in configurationObject.getReferences()) {
+                    // If the dependency is part of the configuration we are trying to import, add it to the
+                    // dependency graph. Else, make sure the dependency actually exists on the configuration server.
+                    if (configurationObjectsByReference.containsKey(dependency)) {
+                        objectDependencyGraph.addEdge(configurationObjectsByReference[dependency], configurationObject)
+                    } else if (service.retrieveObject(dependency) == null) {
+                        warn {
+                            "Cannot find ${dependency.getCfgObjectType().toShortName()} '$dependency' " +
+                                    "(referenced by '${configurationObject.reference}')"
+                        }
+                        foundMissingObject = true
+                    }
                 }
-
-                Logging.info { "Creating $type '$primaryKey'." }
-                save(cfgObject)
-                objectImportProgress(type, primaryKey)
-                count++
             }
 
-            return count
+            if (foundMissingObject) throw UnresolvedConfigurationObjectReferenceException()
+            if (CycleDetector(objectDependencyGraph).detectCycles()) throw ConfigurationObjectCycleException()
+
+            return TopologicalOrderIterator(objectDependencyGraph).asSequence().toList()
+        }
+
+        internal fun importConfigurationObject(
+            configurationObject: ConfigurationObject,
+            service: IConfService
+        ): Boolean {
+            val reference = configurationObject.reference
+            val (status, cfgObject) = configurationObject.updateCfgObject(service)
+            val type = cfgObject.objectType.toShortName()
+
+            if (status != CREATED) {
+                objectImportProgress(type, reference, true)
+                return false
+            }
+
+            info { "Creating $type '$reference'." }
+            save(cfgObject)
+            objectImportProgress(type, reference)
+
+            return true
         }
 
         private fun objectImportProgress(
@@ -102,3 +129,11 @@ class Import : GenesysCliCommand() {
         internal fun save(cfgObject: CfgObject) = cfgObject.save()
     }
 }
+
+class UnresolvedConfigurationObjectReferenceException : Exception(
+    "Cannot import configuration: some configuration object dependency could not be found."
+)
+
+class ConfigurationObjectCycleException : Exception(
+    "Cannot import configuration: dependency cycles is not yet supported."
+)

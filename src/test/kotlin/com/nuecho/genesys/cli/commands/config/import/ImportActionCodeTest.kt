@@ -9,8 +9,5 @@ import com.nuecho.genesys.cli.toShortName
 
 class ImportActionCodeTest : ImportObjectSpec(
     CfgActionCode(mockConfService()),
-    listOf(
-        ActionCode(tenant = DEFAULT_TENANT_REFERENCE, name = "actionCode1", type = CFGTransfer.toShortName()),
-        ActionCode(tenant = DEFAULT_TENANT_REFERENCE, name = "actionCode2", type = CFGTransfer.toShortName())
-    )
+    ActionCode(tenant = DEFAULT_TENANT_REFERENCE, name = "actionCode1", type = CFGTransfer.toShortName())
 )

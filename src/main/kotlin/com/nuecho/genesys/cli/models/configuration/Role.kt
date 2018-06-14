@@ -13,6 +13,7 @@ import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectUpdateStat
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setProperty
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgObjectState
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toKeyValueCollection
+import com.nuecho.genesys.cli.models.configuration.reference.ConfigurationObjectReference
 import com.nuecho.genesys.cli.models.configuration.reference.RoleReference
 import com.nuecho.genesys.cli.models.configuration.reference.TenantReference
 import com.nuecho.genesys.cli.services.getObjectDbid
@@ -74,4 +75,6 @@ data class Role(
             return ConfigurationObjectUpdateResult(CREATED, it)
         }
     }
+
+    override fun getReferences(): Set<ConfigurationObjectReference<*>> = setOf(tenant)
 }

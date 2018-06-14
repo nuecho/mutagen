@@ -6,5 +6,5 @@ import com.nuecho.genesys.cli.services.ServiceMocks.mockConfService
 
 class ImportTenantTest : ImportObjectSpec(
     CfgTenant(mockConfService()),
-    listOf(Tenant("foo"), Tenant("bar"))
+    Tenant("foo")
 )

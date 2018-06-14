@@ -7,8 +7,5 @@ import com.nuecho.genesys.cli.services.ServiceMocks.mockConfService
 
 class ImportRoleTest : ImportObjectSpec(
     CfgRole(mockConfService()),
-    listOf(
-        Role(tenant = DEFAULT_TENANT_REFERENCE, name = "role1"),
-        Role(tenant = DEFAULT_TENANT_REFERENCE, name = "role2")
-    )
+    Role(tenant = DEFAULT_TENANT_REFERENCE, name = "role1")
 )
