@@ -48,10 +48,10 @@ data class AccessGroup(
             val cfgAccessGroup = it
             setProperty(
                 "memberIDs",
-                members?.map {
-                    CfgID(service, cfgAccessGroup).apply {
-                        dbid = service.getObjectDbid(it)
-                        type = CFGPerson
+                members?.map { person ->
+                    CfgID(service, cfgAccessGroup).also {
+                        setProperty("DBID", service.getObjectDbid(person), it)
+                        setProperty("type", CFGPerson, it)
                     }
                 },
                 cfgAccessGroup

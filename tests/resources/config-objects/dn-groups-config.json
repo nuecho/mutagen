@@ -1,0 +1,33 @@
+{
+  "__metadata__": {
+    "formatName": "JSON",
+    "formatVersion": "1.0.0"
+  },
+  "dnGroups": [
+    {
+      "group": {
+        "name": "cfgObjectTest",
+        "state": "enabled",
+        "tenant": "Environment",
+        "userProperties": {
+          "section": {
+            "number": 456,
+            "string": "def"
+          }
+        }
+      },
+      "type": "acdqueues",
+      "dns": [
+        {
+          "dn": {
+            "name": "dnForDnGroup",
+            "number": "dnForDnGroup",
+            "switch": "switchForDn",
+            "type": "acdqueue"
+          },
+          "trunks": 0
+        }
+      ]
+    }
+  ]
+}

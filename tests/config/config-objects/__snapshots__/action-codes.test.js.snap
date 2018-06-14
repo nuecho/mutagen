@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`[mutagen actionCodes config import-export] should create the actionCodes: the actionCodes has been created 1`] = `
+exports[`[mutagen actionCodes config import-export] should create the actionCodes: the actionCodes have been created 1`] = `
 Object {
   "stderr": "",
   "stdout": "+ actioncode => name: 'cfgObjectTest', type: 'transfer', tenant: 'Environment'
@@ -9,7 +9,7 @@ Completed. 1 object(s) imported.
 }
 `;
 
-exports[`[mutagen actionCodes config import-export] should update the actionCodes: the actionCodes has been updated 1`] = `
+exports[`[mutagen actionCodes config import-export] should update the actionCodes: the actionCodes have been updated 1`] = `
 Object {
   "stderr": "",
   "stdout": "~ actioncode => name: 'cfgObjectTest', type: 'transfer', tenant: 'Environment'

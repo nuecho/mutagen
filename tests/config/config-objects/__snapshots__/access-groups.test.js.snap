@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`[mutagen accessGroups config import-export] should create the accessGroups: the accessGroups has been created 1`] = `
+exports[`[mutagen accessGroups config import-export] should create the accessGroups: the accessGroups have been created 1`] = `
 Object {
   "stderr": "",
   "stdout": "+ accessgroup => Environment/cfgObjectTest
@@ -9,7 +9,7 @@ Completed. 1 object(s) imported.
 }
 `;
 
-exports[`[mutagen accessGroups config import-export] should update the accessGroups: the accessGroups has been updated 1`] = `
+exports[`[mutagen accessGroups config import-export] should update the accessGroups: the accessGroups have been updated 1`] = `
 Object {
   "stderr": "",
   "stdout": "~ accessgroup => Environment/cfgObjectTest

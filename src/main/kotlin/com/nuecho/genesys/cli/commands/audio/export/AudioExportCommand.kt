@@ -97,7 +97,7 @@ object AudioExport {
         if (withAudios) {
             val missingPersonalitiesIds = getMissingPersonalitiesIds(personalities, selectedPersonalitiesIds)
             if (missingPersonalitiesIds.isNotEmpty()) {
-                warn { "$missingPersonalitiesIds do(es) not refer to existing personalitie(s)" }
+                warn { "$missingPersonalitiesIds do not refer to existing personalities" }
             }
 
             val audioFilesInfos = getAudioMap(messages, selectedPersonalitiesIds, audioDirectory.path)

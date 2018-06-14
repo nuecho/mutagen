@@ -8,6 +8,7 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgAgentLoginInfo
 import com.genesyslab.platform.applicationblocks.com.objects.CfgApplication
 import com.genesyslab.platform.applicationblocks.com.objects.CfgDN
 import com.genesyslab.platform.applicationblocks.com.objects.CfgDNGroup
+import com.genesyslab.platform.applicationblocks.com.objects.CfgDNInfo
 import com.genesyslab.platform.applicationblocks.com.objects.CfgEnumerator
 import com.genesyslab.platform.applicationblocks.com.objects.CfgFolder
 import com.genesyslab.platform.applicationblocks.com.objects.CfgGVPCustomer
@@ -127,6 +128,12 @@ object ConfigurationObjectMocks {
             every { it.groupInfo.name } returns name
             every { it.groupInfo.tenant } returns tenant
             every { it.objectDbid } returns DEFAULT_OBJECT_DBID
+        }
+
+    fun mockCfgDNInfo(trunks: Int = 0) =
+        mockk<CfgDNInfo>().also {
+            every { it.dndbid } returns DEFAULT_OBJECT_DBID
+            every { it.trunks } returns trunks
         }
 
     fun mockCfgEnumerator(name: String?, tenant: CfgTenant = mockCfgTenant(DEFAULT_TENANT)) =

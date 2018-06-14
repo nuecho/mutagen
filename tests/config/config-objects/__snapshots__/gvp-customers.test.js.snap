@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`[mutagen gvpCustomers config import-export] should create the gvpCustomers: the gvpCustomers has been created 1`] = `
+exports[`[mutagen gvpCustomers config import-export] should create the gvpCustomers: the gvpCustomers have been created 1`] = `
 Object {
   "stderr": "",
   "stdout": "+ gvpcustomer => cfgObjectTest
@@ -9,7 +9,7 @@ Completed. 1 object(s) imported.
 }
 `;
 
-exports[`[mutagen gvpCustomers config import-export] should update the gvpCustomers: the gvpCustomers has been updated 1`] = `
+exports[`[mutagen gvpCustomers config import-export] should update the gvpCustomers: the gvpCustomers have been updated 1`] = `
 Object {
   "stderr": "",
   "stdout": "~ gvpcustomer => cfgObjectTest

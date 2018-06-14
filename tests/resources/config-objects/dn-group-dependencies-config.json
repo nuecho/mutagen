@@ -1,0 +1,30 @@
+{
+  "__metadata__": {
+    "formatName": "JSON",
+    "formatVersion": "1.0.0"
+  },
+  "dns": [
+    {
+      "association": "anassociation",
+      "dnLoginID": "anotherId",
+      "name": "dnForDnGroup",
+      "number": "dnForDnGroup",
+      "override": "anotheroverride",
+      "registerAll": "true",
+      "routeType": "default",
+      "state": "enabled",
+      "switch": "switchForDn",
+      "switchSpecificType": 1,
+      "tenant": "Environment",
+      "trunks": 1,
+      "type": "acdqueue",
+      "useOverride": true,
+      "userProperties": {
+        "section": {
+          "number": 456,
+          "string": "def"
+        }
+      }
+    }
+  ]
+}
