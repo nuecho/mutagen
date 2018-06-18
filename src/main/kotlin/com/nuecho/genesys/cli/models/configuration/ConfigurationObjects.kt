@@ -5,6 +5,7 @@ import com.genesyslab.platform.applicationblocks.com.ICfgObject
 import com.genesyslab.platform.commons.GEnum
 import com.genesyslab.platform.commons.collections.KeyValueCollection
 import com.genesyslab.platform.commons.collections.KeyValuePair
+import com.genesyslab.platform.configuration.protocol.types.CfgAccessGroupType
 import com.genesyslab.platform.configuration.protocol.types.CfgActionCodeType
 import com.genesyslab.platform.configuration.protocol.types.CfgAppType
 import com.genesyslab.platform.configuration.protocol.types.CfgDNRegisterFlag
@@ -74,6 +75,7 @@ object ConfigurationObjects {
         if (flag == null) null
         else GEnum.getValue(CfgDNRegisterFlag::class.java, "$CFG_DN_REGISTER_FLAG_PREFIX$flag") as CfgDNRegisterFlag
 
+    fun toCfgAccessGroupType(type: String?) = toGEnum(type, CfgAccessGroupType::class.java) as CfgAccessGroupType?
     fun toCfgActionCodeType(type: String?) = toGEnum(type, CfgActionCodeType::class.java) as CfgActionCodeType?
     fun toCfgAppType(type: String?) = toGEnum(type, CfgAppType::class.java) as CfgAppType?
     fun toCfgDNType(type: String?) = toGEnum(type, CfgDNType::class.java) as CfgDNType?

@@ -1,6 +1,7 @@
 package com.nuecho.genesys.cli.models.configuration
 
 import com.genesyslab.platform.applicationblocks.com.ICfgObject
+import com.genesyslab.platform.applicationblocks.com.objects.CfgAccessGroup
 import com.genesyslab.platform.applicationblocks.com.objects.CfgActionCode
 import com.genesyslab.platform.applicationblocks.com.objects.CfgAgentGroup
 import com.genesyslab.platform.applicationblocks.com.objects.CfgDN
@@ -17,6 +18,7 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgTenant
 import com.genesyslab.platform.applicationblocks.com.objects.CfgTransaction
 
 class ConfigurationBuilder {
+    private val accessGroups = ArrayList<AccessGroup>()
     private val actionCodes = ArrayList<ActionCode>()
     private val agentGroups = ArrayList<AgentGroup>()
     private val dns = ArrayList<DN>()
@@ -34,6 +36,7 @@ class ConfigurationBuilder {
 
     fun add(cfgObject: ICfgObject) =
         when (cfgObject) {
+            is CfgAccessGroup -> accessGroups += AccessGroup(cfgObject)
             is CfgActionCode -> actionCodes += ActionCode(cfgObject)
             is CfgAgentGroup -> agentGroups += AgentGroup(cfgObject)
             is CfgDN -> dns += DN(cfgObject)
@@ -53,6 +56,7 @@ class ConfigurationBuilder {
 
     fun build(metadata: Metadata) = Configuration(
         metadata,
+        accessGroups.sorted(),
         actionCodes.sorted(),
         agentGroups.sorted(),
         dns.sorted(),
