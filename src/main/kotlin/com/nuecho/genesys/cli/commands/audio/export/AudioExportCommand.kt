@@ -62,11 +62,9 @@ class AudioExportCommand : GenesysCliCommand() {
     override fun getGenesysCli(): GenesysCli = audio!!.getGenesysCli()
 
     override fun execute() {
-
         AudioExport.exportAudios(
             getGenesysCli().loadEnvironment(),
-            outputFile!!.outputStream(),
-            outputFile!!.parentFile.path,
+            outputFile!!,
             withAudios,
             personalitiesIds
         )
@@ -77,8 +75,7 @@ object AudioExport {
 
     fun exportAudios(
         environment: Environment,
-        audioData: OutputStream,
-        audioDirectoryPath: String,
+        outputFile: File,
         withAudios: Boolean,
         selectedPersonalitiesIds: Set<String>?
     ) {
@@ -93,7 +90,9 @@ object AudioExport {
         val personalities = getPersonalities(gaxUrl)
         val csvSchemaBuilder = getSchemaBuilder(personalities)
         val messages = getMessagesData(gaxUrl)
-        writeAudioData(messages, csvSchemaBuilder, audioData)
+        val audioDirectory = (outputFile.parentFile ?: File(System.getProperty("user.dir"))).apply { createDirectory() }
+
+        writeAudioData(messages, csvSchemaBuilder, outputFile.outputStream())
 
         if (withAudios) {
             val missingPersonalitiesIds = getMissingPersonalitiesIds(personalities, selectedPersonalitiesIds)
@@ -101,7 +100,7 @@ object AudioExport {
                 warn { "$missingPersonalitiesIds do(es) not refer to existing personalitie(s)" }
             }
 
-            val audioFilesInfos = getAudioMap(messages, selectedPersonalitiesIds, audioDirectoryPath)
+            val audioFilesInfos = getAudioMap(messages, selectedPersonalitiesIds, audioDirectory.path)
             downloadAudioFiles(gaxUrl, audioFilesInfos)
         }
     }
