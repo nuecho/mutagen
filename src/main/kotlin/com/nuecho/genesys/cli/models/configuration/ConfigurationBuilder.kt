@@ -7,6 +7,7 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgAgentGroup
 import com.genesyslab.platform.applicationblocks.com.objects.CfgDN
 import com.genesyslab.platform.applicationblocks.com.objects.CfgEnumerator
 import com.genesyslab.platform.applicationblocks.com.objects.CfgGVPCustomer
+import com.genesyslab.platform.applicationblocks.com.objects.CfgGVPIVRProfile
 import com.genesyslab.platform.applicationblocks.com.objects.CfgGVPReseller
 import com.genesyslab.platform.applicationblocks.com.objects.CfgPerson
 import com.genesyslab.platform.applicationblocks.com.objects.CfgPhysicalSwitch
@@ -25,6 +26,7 @@ class ConfigurationBuilder {
     private val enumerators = ArrayList<Enumerator>()
     private val gvpCustomers = ArrayList<GVPCustomer>()
     private val gvpResellers = ArrayList<GVPReseller>()
+    private val gvpIVRProfiles = ArrayList<GVPIVRProfile>()
     private val persons = ArrayList<Person>()
     private val physicalSwitches = ArrayList<PhysicalSwitch>()
     private val roles = ArrayList<Role>()
@@ -42,6 +44,7 @@ class ConfigurationBuilder {
             is CfgDN -> dns += DN(cfgObject)
             is CfgEnumerator -> enumerators += Enumerator(cfgObject)
             is CfgGVPCustomer -> gvpCustomers += GVPCustomer(cfgObject)
+            is CfgGVPIVRProfile -> gvpIVRProfiles += GVPIVRProfile(cfgObject)
             is CfgGVPReseller -> gvpResellers += GVPReseller(cfgObject)
             is CfgPerson -> persons += Person(cfgObject)
             is CfgPhysicalSwitch -> physicalSwitches += PhysicalSwitch(cfgObject)
@@ -62,6 +65,7 @@ class ConfigurationBuilder {
         dns.sorted(),
         enumerators.sorted(),
         gvpCustomers.sorted(),
+        gvpIVRProfiles.sorted(),
         gvpResellers.sorted(),
         persons.sorted(),
         physicalSwitches.sorted(),

@@ -12,6 +12,7 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgDNGroup
 import com.genesyslab.platform.applicationblocks.com.objects.CfgEnumerator
 import com.genesyslab.platform.applicationblocks.com.objects.CfgFolder
 import com.genesyslab.platform.applicationblocks.com.objects.CfgGVPCustomer
+import com.genesyslab.platform.applicationblocks.com.objects.CfgGVPIVRProfile
 import com.genesyslab.platform.applicationblocks.com.objects.CfgGVPReseller
 import com.genesyslab.platform.applicationblocks.com.objects.CfgObjectiveTable
 import com.genesyslab.platform.applicationblocks.com.objects.CfgPerson
@@ -31,6 +32,7 @@ import com.genesyslab.platform.applicationblocks.com.queries.CfgApplicationQuery
 import com.genesyslab.platform.applicationblocks.com.queries.CfgDNGroupQuery
 import com.genesyslab.platform.applicationblocks.com.queries.CfgEnumeratorQuery
 import com.genesyslab.platform.applicationblocks.com.queries.CfgFolderQuery
+import com.genesyslab.platform.applicationblocks.com.queries.CfgGVPIVRProfileQuery
 import com.genesyslab.platform.applicationblocks.com.queries.CfgObjectiveTableQuery
 import com.genesyslab.platform.applicationblocks.com.queries.CfgPersonQuery
 import com.genesyslab.platform.applicationblocks.com.queries.CfgPhysicalSwitchQuery
@@ -169,8 +171,15 @@ class SkillReference(name: String, tenant: TenantReference?) :
 
 @JsonSerialize(using = SimpleObjectReferenceSerializer::class)
 @JsonDeserialize(using = SimpleObjectReferenceDeserializer::class)
+class GVPIVRProfileReference(name: String) :
+    SimpleObjectReference<CfgGVPIVRProfile>(CfgGVPIVRProfile::class.java, name) {
+    override fun toQuery(service: IConfService) = CfgGVPIVRProfileQuery(primaryKey)
+}
+
+@JsonSerialize(using = SimpleObjectReferenceSerializer::class)
+@JsonDeserialize(using = SimpleObjectReferenceDeserializer::class)
 class GVPCustomerReference(name: String) :
-    SimpleObjectReferenceWithTenant<CfgGVPCustomer>(CfgGVPCustomer::class.java, name) {
+    SimpleObjectReference<CfgGVPCustomer>(CfgGVPCustomer::class.java, name) {
 
     override fun toQuery(service: IConfService): ICfgQuery = CfgFilterBasedQuery(CfgObjectType.CFGGVPCustomer).apply {
         this.setProperty("name", primaryKey)

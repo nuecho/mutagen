@@ -11,6 +11,8 @@ import com.nuecho.genesys.cli.getReference
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectUpdateStatus.CREATED
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectUpdateStatus.UNCHANGED
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setProperty
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgFlag
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgObjectState
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toKeyValueCollection
 import com.nuecho.genesys.cli.models.configuration.reference.ConfigurationObjectReference
 import com.nuecho.genesys.cli.models.configuration.reference.GVPResellerReference
@@ -69,19 +71,17 @@ data class GVPReseller(
             setProperty("displayName", displayName ?: name, it)
             setProperty("notes", notes, it)
             setProperty("timeZoneDBID", service.getObjectDbid(timeZone ?: TimeZoneReference(tenant = tenant)), it)
-            setProperty("isParentNSP", ConfigurationObjects.toCfgFlag(isParentNSP), it)
+            setProperty("isParentNSP", toCfgFlag(isParentNSP ?: false), it)
 
             if (startDate != null) {
                 val zoneId = ZoneId.of(timeZone?.primaryKey ?: "GMT", ZoneId.SHORT_IDS)
                 val date = GregorianCalendar.from(
                     ZonedDateTime.ofInstant(startDate.toInstant(), zoneId)
                 )
-                setProperty(
-                    "startDate", date, it
-                )
+                setProperty("startDate", date, it)
             }
             setProperty("userProperties", toKeyValueCollection(userProperties), it)
-            setProperty("state", ConfigurationObjects.toCfgObjectState(state), it)
+            setProperty("state", toCfgObjectState(state), it)
             return ConfigurationObjectUpdateResult(CREATED, it)
         }
     }

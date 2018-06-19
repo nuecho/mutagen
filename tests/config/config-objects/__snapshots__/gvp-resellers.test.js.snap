@@ -1,0 +1,19 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`[mutagen gvpResellers config import-export] should do nothing when the gvpResellers already exist: the gvpResellers already exist and have not been imported 1`] = `
+Object {
+  "stderr": "",
+  "stdout": "= gvpreseller => Environment/cfgObjectTest
+Completed. 0 object(s) imported.
+",
+}
+`;
+
+exports[`[mutagen gvpResellers config import-export] should import the gvpResellers: the gvpResellers have been imported 1`] = `
+Object {
+  "stderr": "",
+  "stdout": "+ gvpreseller => Environment/cfgObjectTest
+Completed. 1 object(s) imported.
+",
+}
+`;

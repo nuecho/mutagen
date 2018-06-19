@@ -9,6 +9,7 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgApplication
 import com.genesyslab.platform.applicationblocks.com.objects.CfgDN
 import com.genesyslab.platform.applicationblocks.com.objects.CfgDNGroup
 import com.genesyslab.platform.applicationblocks.com.objects.CfgFolder
+import com.genesyslab.platform.applicationblocks.com.objects.CfgGVPCustomer
 import com.genesyslab.platform.applicationblocks.com.objects.CfgGVPReseller
 import com.genesyslab.platform.applicationblocks.com.objects.CfgObjectiveTable
 import com.genesyslab.platform.applicationblocks.com.objects.CfgPerson
@@ -25,13 +26,17 @@ import com.genesyslab.platform.commons.GEnum
 import com.genesyslab.platform.commons.protocol.Endpoint
 import com.genesyslab.platform.configuration.protocol.types.CfgDNRegisterFlag
 import com.genesyslab.platform.configuration.protocol.types.CfgFlag
+import com.genesyslab.platform.configuration.protocol.types.CfgIVRProfileType
 import com.genesyslab.platform.configuration.protocol.types.CfgTransactionType
 import com.genesyslab.platform.reporting.protocol.statserver.AgentStatus
 import com.genesyslab.platform.reporting.protocol.statserver.DnActions
 import com.genesyslab.platform.reporting.protocol.statserver.DnActionsMask
 import com.genesyslab.platform.reporting.protocol.statserver.DnStatus
 import com.genesyslab.platform.reporting.protocol.statserver.DnStatusesCollection
-import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.CFG_DN_REGISTER_FLAG_PREFIX
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.CFG_IVR_PROFILE_PREFIX
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.CFG_PREFIX
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.CFG_TRANSACTION_PREFIX
 import com.nuecho.genesys.cli.models.configuration.reference.AccessGroupReference
 import com.nuecho.genesys.cli.models.configuration.reference.AgentGroupReference
 import com.nuecho.genesys.cli.models.configuration.reference.AgentLoginReference
@@ -39,6 +44,7 @@ import com.nuecho.genesys.cli.models.configuration.reference.ApplicationReferenc
 import com.nuecho.genesys.cli.models.configuration.reference.DNGroupReference
 import com.nuecho.genesys.cli.models.configuration.reference.DNReference
 import com.nuecho.genesys.cli.models.configuration.reference.FolderReference
+import com.nuecho.genesys.cli.models.configuration.reference.GVPCustomerReference
 import com.nuecho.genesys.cli.models.configuration.reference.GVPResellerReference
 import com.nuecho.genesys.cli.models.configuration.reference.ObjectiveTableReference
 import com.nuecho.genesys.cli.models.configuration.reference.PersonReference
@@ -89,13 +95,16 @@ fun CfgTimeZone.toTimeZoneId(): String =
     TimeZone.getTimeZone(ZoneId.of(this.name, ZoneId.SHORT_IDS)).getDisplayName(false, TimeZone.SHORT)
 
 fun GEnum.toShortName(): String =
-    this.name().replace(ConfigurationObjects.CFG_PREFIX, "").toLowerCase()
+    this.name().replace(CFG_PREFIX, "").toLowerCase()
+
+fun CfgIVRProfileType.toShortName(): String =
+    this.name().replace(CFG_IVR_PROFILE_PREFIX, "").toLowerCase()
 
 fun CfgTransactionType.toShortName(): String =
-    this.name().replace(ConfigurationObjects.CFG_TRANSACTION_PREFIX, "").toLowerCase()
+    this.name().replace(CFG_TRANSACTION_PREFIX, "").toLowerCase()
 
 fun CfgDNRegisterFlag.toShortName(): String =
-    this.name().replace(ConfigurationObjects.CFG_DN_REGISTER_FLAG_PREFIX, "").toLowerCase()
+    this.name().replace(CFG_DN_REGISTER_FLAG_PREFIX, "").toLowerCase()
 
 fun CfgFlag.asBoolean(): Boolean? =
     when (this) {
@@ -124,3 +133,4 @@ fun CfgSwitch.getReference() = SwitchReference(name, tenant.getReference())
 fun CfgTenant.getReference() = TenantReference(name)
 fun CfgTimeZone.getReference() = TimeZoneReference(name, tenant.getReference())
 fun CfgGVPReseller.getReference() = GVPResellerReference(name, tenant.getReference())
+fun CfgGVPCustomer.getReference() = GVPCustomerReference(name)

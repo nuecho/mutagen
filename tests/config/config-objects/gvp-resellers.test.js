@@ -1,0 +1,1 @@
+cfgObjectTests("gvpResellers", "config-objects/gvp-resellers-config.json");

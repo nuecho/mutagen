@@ -15,6 +15,7 @@ import com.genesyslab.platform.configuration.protocol.types.CfgFlag
 import com.genesyslab.platform.configuration.protocol.types.CfgFlag.CFGFalse
 import com.genesyslab.platform.configuration.protocol.types.CfgFlag.CFGNoFlag
 import com.genesyslab.platform.configuration.protocol.types.CfgFlag.CFGTrue
+import com.genesyslab.platform.configuration.protocol.types.CfgIVRProfileType
 import com.genesyslab.platform.configuration.protocol.types.CfgLinkType
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectState
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectType
@@ -32,6 +33,7 @@ object ConfigurationObjects {
     const val CFG_PREFIX = "CFG"
     const val CFG_TRANSACTION_PREFIX = "${CFG_PREFIX}TRT"
     const val CFG_DN_REGISTER_FLAG_PREFIX = "${CFG_PREFIX}DR"
+    const val CFG_IVR_PROFILE_PREFIX = "${CFG_PREFIX}IPT"
 
     fun getCfgObjectTypes(): Set<CfgObjectType> {
         val types = GEnum.valuesBy(CfgObjectType::class.java).toMutableSet()
@@ -87,6 +89,11 @@ object ConfigurationObjects {
     fun toCfgScriptType(type: String?) = toGEnum(type, CfgScriptType::class.java) as CfgScriptType?
     fun toCfgSwitchType(type: String?) = toGEnum(type, CfgSwitchType::class.java) as CfgSwitchType?
     fun toCfgTargetType(type: String?) = toGEnum(type, CfgTargetType::class.java) as CfgTargetType?
+
+    fun toCfgIVRProfileType(type: String?) =
+        if (type == null) null
+        else GEnum.getValue(CfgIVRProfileType::class.java, "$CFG_IVR_PROFILE_PREFIX$type")
+                as CfgIVRProfileType
 
     fun toCfgTransactionType(transactionType: String?) =
         if (transactionType == null) null
