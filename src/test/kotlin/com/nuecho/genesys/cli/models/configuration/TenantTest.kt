@@ -30,6 +30,7 @@ private val tenant = Tenant(
     password = "password",
     parentTenant = TenantReference("parent"),
     state = CFGEnabled.toShortName(),
+    serviceProvider = false,
     userProperties = defaultProperties()
 )
 
@@ -42,10 +43,7 @@ class TenantTest : ConfigurationObjectTest(tenant, Tenant("foo"), Tenant(mockCfg
             mockRetrieveObjectiveTable(service)
             mockRetrieveScript(service)
 
-            val (status, cfgObject) = tenant.updateCfgObject(service)
-            val cfgTenant = cfgObject as CfgTenant
-
-            status shouldBe ConfigurationObjectUpdateStatus.CREATED
+            val cfgTenant = tenant.updateCfgObject(service)
 
             with(cfgTenant) {
                 name shouldBe tenant.name

@@ -23,26 +23,12 @@ abstract class ImportObjectSpec(cfgObject: CfgObject, configurationObject: Confi
     init {
         val type = configurationObject::class.simpleName!!.toLowerCase()
 
-        "importing an existing $type should do nothing" {
+        fun testImportConfigurationObject(create: Boolean) {
+            val retrieveObjectResult = if (create) null else cfgObject
             val service = cfgObject.configurationService
-            every { service.retrieveObject(cfgObject.javaClass, any()) } returns cfgObject
-
-            if (cfgObject !is CfgTenant) {
-                mockRetrieveTenant(service)
-            }
-            mockRetrieveDefaultObjects(service, cfgObject)
 
             objectMockk(Import.Companion).use {
-                val hasImportedObject = importConfigurationObject(configurationObject, service)
-                hasImportedObject shouldBe false
-                verify(exactly = 0) { Import.save(any()) }
-            }
-        }
-
-        "importing a new $type should try to save it" {
-            objectMockk(Import.Companion).use {
-                val service = cfgObject.configurationService
-                every { service.retrieveObject(cfgObject.javaClass, any()) } returns null
+                every { service.retrieveObject(cfgObject.javaClass, any()) } returns retrieveObjectResult
                 every { Import.save(any()) } just Runs
 
                 if (cfgObject !is CfgTenant) {
@@ -50,16 +36,23 @@ abstract class ImportObjectSpec(cfgObject: CfgObject, configurationObject: Confi
                 }
 
                 mockRetrieveDefaultObjects(service, cfgObject)
-
                 val hasImportedObject = importConfigurationObject(configurationObject, service)
                 hasImportedObject shouldBe true
-                verify(exactly = 1) { Import.save(ofType(cfgObject.javaClass.kotlin)) }
+                verify(exactly = 1) { Import.save(any()) }
             }
         }
-    }
 
-    private fun mockRetrieveDefaultObjects(service: IConfService, cfgObject: CfgObject) {
-        if (cfgObject !is CfgTimeZone) mockRetrieveTimeZone(service)
-        if (cfgObject !is CfgGVPReseller) mockRetrieveReseller(service)
+        "importing an existing $type should try to save it" {
+            testImportConfigurationObject(false)
+        }
+
+        "importing a new $type should try to save it" {
+            testImportConfigurationObject(true)
+        }
     }
+}
+
+private fun mockRetrieveDefaultObjects(service: IConfService, cfgObject: CfgObject) {
+    if (cfgObject !is CfgTimeZone) mockRetrieveTimeZone(service)
+    if (cfgObject !is CfgGVPReseller) mockRetrieveReseller(service)
 }

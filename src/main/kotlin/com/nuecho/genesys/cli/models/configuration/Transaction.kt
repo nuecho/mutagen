@@ -5,9 +5,6 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgTransaction
-import com.genesyslab.platform.configuration.protocol.types.CfgTransactionType
-import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectUpdateStatus.CREATED
-import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectUpdateStatus.UNCHANGED
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setProperty
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgTransactionType
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toKeyValueCollection
@@ -21,11 +18,11 @@ import com.nuecho.genesys.cli.toShortName
 data class Transaction(
     val tenant: TenantReference,
     val name: String,
-    val alias: String? = name,
-    val description: String? = "",
-    val recordPeriod: Int? = 0,
+    val type: String,
+    val alias: String? = null,
+    val description: String? = null,
+    val recordPeriod: Int? = null,
     val state: String? = null,
-    val type: String = CfgTransactionType.CFGTRTNoTransactionType.toShortName(),
     @JsonSerialize(using = CategorizedPropertiesSerializer::class)
     @JsonDeserialize(using = CategorizedPropertiesDeserializer::class)
     override val userProperties: CategorizedProperties? = null
@@ -45,12 +42,12 @@ data class Transaction(
         userProperties = transaction.userProperties?.asCategorizedProperties()
     )
 
-    override fun updateCfgObject(service: IConfService): ConfigurationObjectUpdateResult {
-        service.retrieveObject(reference)?.let {
-            return ConfigurationObjectUpdateResult(UNCHANGED, it)
-        }
+    override fun updateCfgObject(service: IConfService) =
+        (service.retrieveObject(reference) ?: CfgTransaction(service)).also {
+            if (!it.isSaved) {
+                applyDefaultValues()
+            }
 
-        CfgTransaction(service).let {
             setProperty("tenantDBID", service.getObjectDbid(tenant), it)
             setProperty("alias", alias, it)
             setProperty("description", description, it)
@@ -60,8 +57,13 @@ data class Transaction(
             setProperty("name", name, it)
             setProperty("userProperties", toKeyValueCollection(userProperties), it)
             setProperty("state", ConfigurationObjects.toCfgObjectState(state), it)
-            return ConfigurationObjectUpdateResult(CREATED, it)
         }
+
+    override fun applyDefaultValues() {
+        // alias = name
+        // description = ""
+        // recordPeriod = 0
+        // type = CfgTransactionType.CFGTRTNoTransactionType.toShortName()
     }
 
     override fun getReferences(): Set<ConfigurationObjectReference<*>> = setOf(tenant)

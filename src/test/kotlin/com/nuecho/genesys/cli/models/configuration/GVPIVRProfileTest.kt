@@ -5,7 +5,6 @@ import com.genesyslab.platform.configuration.protocol.types.CfgObjectState
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_IVR_PROFILE_TYPE
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_REFERENCE
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockKeyValueCollection
-import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectUpdateStatus.CREATED
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgFlag
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgObjectState
 import com.nuecho.genesys.cli.models.configuration.ConfigurationTestData.defaultProperties
@@ -51,10 +50,7 @@ class GVPIVRProfileTest : ConfigurationObjectTest(
             mockRetrieveCustomer(service)
             mockRetrieveReseller(service)
 
-            val (status, cfgObject) = gvpIVRProfile.updateCfgObject(service)
-            val cfgGVPIVRProfile = cfgObject as CfgGVPIVRProfile
-
-            status shouldBe CREATED
+            val cfgGVPIVRProfile = gvpIVRProfile.updateCfgObject(service)
 
             with(cfgGVPIVRProfile) {
                 name shouldBe gvpIVRProfile.name

@@ -10,7 +10,6 @@ import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFA
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgPerson
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgRole
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockKeyValueCollection
-import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectUpdateStatus.CREATED
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgObjectState
 import com.nuecho.genesys.cli.models.configuration.ConfigurationTestData.defaultProperties
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveTenant
@@ -60,10 +59,7 @@ class RoleTest : ConfigurationObjectTest(
             every { service.retrieveObject(CfgRole::class.java, any()) } returns null
             mockRetrieveTenant(service)
 
-            val (status, cfgObject) = role.updateCfgObject(service)
-            val cfgRole = cfgObject as CfgRole
-
-            status shouldBe CREATED
+            val cfgRole = role.updateCfgObject(service)
 
             with(cfgRole) {
                 name shouldBe role.name

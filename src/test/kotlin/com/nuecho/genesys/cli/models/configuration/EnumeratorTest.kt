@@ -37,10 +37,7 @@ class EnumeratorTest : ConfigurationObjectTest(
             every { service.retrieveObject(CfgEnumerator::class.java, any()) } returns null
             mockRetrieveTenant(service)
 
-            val (status, cfgObject) = enumerator.updateCfgObject(service)
-            val cfgEnumerator = cfgObject as CfgEnumerator
-
-            status shouldBe ConfigurationObjectUpdateStatus.CREATED
+            val cfgEnumerator = enumerator.updateCfgObject(service)
 
             with(cfgEnumerator) {
                 name shouldBe enumerator.name
@@ -57,8 +54,7 @@ class EnumeratorTest : ConfigurationObjectTest(
             every { service.retrieveObject(CfgEnumerator::class.java, any()) } returns null
             mockRetrieveTenant(service)
 
-            val (_, cfgObject) = Enumerator(DEFAULT_TENANT_REFERENCE, NAME).updateCfgObject(service)
-            val cfgEnumerator = cfgObject as CfgEnumerator
+            val cfgEnumerator = Enumerator(DEFAULT_TENANT_REFERENCE, NAME).updateCfgObject(service)
 
             with(cfgEnumerator) {
                 name shouldBe NAME

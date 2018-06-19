@@ -1,18 +1,18 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`[mutagen dns config import-export] should do nothing when the dns already exist: the dns already exist and have not been imported 1`] = `
+exports[`[mutagen dns config import-export] should create the dns: the dns has been created 1`] = `
 Object {
   "stderr": "",
-  "stdout": "= dn => number: '123', switch: 'switchForDn', type: 'Extension', name: 'cfgObjectTest', tenant: 'Environment'
-Completed. 0 object(s) imported.
+  "stdout": "+ dn => number: '123', switch: 'switchForDn', type: 'Extension', name: 'cfgObjectTest', tenant: 'Environment'
+Completed. 1 object(s) imported.
 ",
 }
 `;
 
-exports[`[mutagen dns config import-export] should import the dns: the dns have been imported 1`] = `
+exports[`[mutagen dns config import-export] should update the dns: the dns has been updated 1`] = `
 Object {
   "stderr": "",
-  "stdout": "+ dn => number: '123', switch: 'switchForDn', type: 'Extension', name: 'cfgObjectTest', tenant: 'Environment'
+  "stdout": "~ dn => number: '123', switch: 'switchForDn', type: 'Extension', name: 'cfgObjectTest', tenant: 'Environment'
 Completed. 1 object(s) imported.
 ",
 }

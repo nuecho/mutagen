@@ -17,7 +17,6 @@ import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mock
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgScript
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgSkillLevel
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockKeyValueCollection
-import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectUpdateStatus.CREATED
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgFlag
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgObjectState
 import com.nuecho.genesys.cli.models.configuration.ConfigurationTestData.defaultProperties
@@ -99,10 +98,7 @@ class PersonTest : ConfigurationObjectTest(
             mockRetrieveScript(service)
             mockRetrieveSkill(service)
 
-            val (status, cfgObject) = person.updateCfgObject(service)
-            val cfgPerson = cfgObject as CfgPerson
-
-            status shouldBe CREATED
+            val cfgPerson = person.updateCfgObject(service)
 
             with(cfgPerson) {
                 employeeID shouldBe person.employeeId
@@ -137,12 +133,10 @@ class PersonTest : ConfigurationObjectTest(
             every { service.retrieveObject(CfgPerson::class.java, any()) } returns null
             mockRetrieveTenant(service)
 
-            val (_, cfgObject) = Person(DEFAULT_TENANT_REFERENCE, EMPLOYEE_ID).updateCfgObject(service)
-            val cfgPerson = cfgObject as CfgPerson
+            val cfgPerson = Person(DEFAULT_TENANT_REFERENCE, EMPLOYEE_ID).updateCfgObject(service)
 
             with(cfgPerson) {
                 employeeID shouldBe EMPLOYEE_ID
-                userName shouldBe EMPLOYEE_ID
             }
         }
     }

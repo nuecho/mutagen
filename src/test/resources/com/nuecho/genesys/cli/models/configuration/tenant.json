@@ -11,5 +11,6 @@
       "number": 456,
       "string": "def"
     }
-  }
+  },
+  "serviceProvider": false
 }

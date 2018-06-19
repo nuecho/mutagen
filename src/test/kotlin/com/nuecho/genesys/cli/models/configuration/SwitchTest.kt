@@ -11,7 +11,6 @@ import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mock
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgPhysicalSwitch
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgSwitch
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockKeyValueCollection
-import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectUpdateStatus.CREATED
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgLinkType
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgObjectState
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgRouteType
@@ -88,10 +87,7 @@ class SwitchTest : ConfigurationObjectTest(
                 mockRetrievePhysicalSwitch(service)
                 mockRetrieveApplication(service)
 
-                val (status, cfgObject) = mainSwitch.updateCfgObject(service)
-                val cfgSwitch = cfgObject as CfgSwitch
-
-                status shouldBe CREATED
+                val cfgSwitch = mainSwitch.updateCfgObject(service)
 
                 with(cfgSwitch) {
                     name shouldBe mainSwitch.name

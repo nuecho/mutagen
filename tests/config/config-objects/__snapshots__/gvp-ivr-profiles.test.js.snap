@@ -1,18 +1,18 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`[mutagen gvpIVRProfiles config import-export] should do nothing when the gvpIVRProfiles already exist: the gvpIVRProfiles already exist and have not been imported 1`] = `
+exports[`[mutagen gvpIVRProfiles config import-export] should create the gvpIVRProfiles: the gvpIVRProfiles has been created 1`] = `
 Object {
   "stderr": "",
-  "stdout": "= gvpivrprofile => cfgObjectTest
-Completed. 0 object(s) imported.
+  "stdout": "+ gvpivrprofile => cfgObjectTest
+Completed. 1 object(s) imported.
 ",
 }
 `;
 
-exports[`[mutagen gvpIVRProfiles config import-export] should import the gvpIVRProfiles: the gvpIVRProfiles have been imported 1`] = `
+exports[`[mutagen gvpIVRProfiles config import-export] should update the gvpIVRProfiles: the gvpIVRProfiles has been updated 1`] = `
 Object {
   "stderr": "",
-  "stdout": "+ gvpivrprofile => cfgObjectTest
+  "stdout": "~ gvpivrprofile => cfgObjectTest
 Completed. 1 object(s) imported.
 ",
 }

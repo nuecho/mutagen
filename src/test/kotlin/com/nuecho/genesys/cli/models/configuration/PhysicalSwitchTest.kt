@@ -5,7 +5,6 @@ import com.genesyslab.platform.configuration.protocol.types.CfgObjectState.CFGEn
 import com.genesyslab.platform.configuration.protocol.types.CfgSwitchType.CFGFujitsu
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgPhysicalSwitch
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockKeyValueCollection
-import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectUpdateStatus.CREATED
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgObjectState
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgSwitchType
 import com.nuecho.genesys.cli.models.configuration.ConfigurationTestData.defaultProperties
@@ -32,10 +31,7 @@ class PhysicalSwitchTest : ConfigurationObjectTest(
         "PhysicalSwitch.updateCfgObject should properly create CfgPhysicalSwitch" {
             every { service.retrieveObject(CfgPhysicalSwitch::class.java, any()) } returns null
 
-            val (status, cfgObject) = physicalSwitch.updateCfgObject(service)
-            val cfgPhysicalSwitch = cfgObject as CfgPhysicalSwitch
-
-            status shouldBe CREATED
+            val cfgPhysicalSwitch = physicalSwitch.updateCfgObject(service)
 
             with(cfgPhysicalSwitch) {
                 name shouldBe physicalSwitch.name

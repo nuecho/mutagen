@@ -4,7 +4,6 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgGVPReseller
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectState
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_REFERENCE
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockKeyValueCollection
-import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectUpdateStatus.CREATED
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgObjectState
 import com.nuecho.genesys.cli.models.configuration.ConfigurationTestData.defaultProperties
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveTenant
@@ -39,10 +38,7 @@ class GVPResellerTest : ConfigurationObjectTest(
             mockRetrieveTenant(service)
             mockRetrieveTimeZone(service)
 
-            val (status, cfgObject) = gvpReseller.updateCfgObject(service)
-            val cfgGVPReseller = cfgObject as CfgGVPReseller
-
-            status shouldBe CREATED
+            val cfgGVPReseller = gvpReseller.updateCfgObject(service)
 
             with(cfgGVPReseller) {
                 name shouldBe gvpReseller.name

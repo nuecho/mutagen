@@ -5,7 +5,6 @@ import com.genesyslab.platform.configuration.protocol.types.CfgObjectState
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_REFERENCE
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgGVPCustomer
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockKeyValueCollection
-import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectUpdateStatus.CREATED
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgFlag
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgObjectState
 import com.nuecho.genesys.cli.models.configuration.ConfigurationTestData.defaultProperties
@@ -42,10 +41,7 @@ class GVPCustomerTest : ConfigurationObjectTest(
             mockRetrieveReseller(service)
             mockRetrieveTimeZone(service)
 
-            val (status, cfgObject) = gvpCustomer.updateCfgObject(service)
-            val cfgGVPCustomer = cfgObject as CfgGVPCustomer
-
-            status shouldBe CREATED
+            val cfgGVPCustomer = gvpCustomer.updateCfgObject(service)
 
             with(cfgGVPCustomer) {
                 name shouldBe gvpCustomer.name

@@ -1,18 +1,18 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`[mutagen scripts config import-export] should do nothing when the scripts already exist: the scripts already exist and have not been imported 1`] = `
+exports[`[mutagen scripts config import-export] should create the scripts: the scripts has been created 1`] = `
 Object {
   "stderr": "",
-  "stdout": "= script => Environment/cfgObjectTest
-Completed. 0 object(s) imported.
+  "stdout": "+ script => Environment/cfgObjectTest
+Completed. 1 object(s) imported.
 ",
 }
 `;
 
-exports[`[mutagen scripts config import-export] should import the scripts: the scripts have been imported 1`] = `
+exports[`[mutagen scripts config import-export] should update the scripts: the scripts has been updated 1`] = `
 Object {
   "stderr": "",
-  "stdout": "+ script => Environment/cfgObjectTest
+  "stdout": "~ script => Environment/cfgObjectTest
 Completed. 1 object(s) imported.
 ",
 }

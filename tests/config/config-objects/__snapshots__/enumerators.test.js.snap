@@ -1,18 +1,18 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`[mutagen enumerators config import-export] should do nothing when the enumerators already exist: the enumerators already exist and have not been imported 1`] = `
+exports[`[mutagen enumerators config import-export] should create the enumerators: the enumerators has been created 1`] = `
 Object {
   "stderr": "",
-  "stdout": "= enumerator => Environment/cfgObjectTest
-Completed. 0 object(s) imported.
+  "stdout": "+ enumerator => Environment/cfgObjectTest
+Completed. 1 object(s) imported.
 ",
 }
 `;
 
-exports[`[mutagen enumerators config import-export] should import the enumerators: the enumerators have been imported 1`] = `
+exports[`[mutagen enumerators config import-export] should update the enumerators: the enumerators has been updated 1`] = `
 Object {
   "stderr": "",
-  "stdout": "+ enumerator => Environment/cfgObjectTest
+  "stdout": "~ enumerator => Environment/cfgObjectTest
 Completed. 1 object(s) imported.
 ",
 }

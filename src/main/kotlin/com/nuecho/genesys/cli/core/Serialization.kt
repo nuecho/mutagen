@@ -23,10 +23,26 @@ import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import java.io.OutputStream
 
-private val jsonObjectMapper = jacksonObjectMapper()
-    .setSerializationInclusion(JsonInclude.Include.NON_NULL) // do not serialize null
+private val defaultJsonObjectMapper = jsonObjectMapperBase()
+
+private val compactJsonObjectMapper = jsonObjectMapperBase()
     .setSerializationInclusion(JsonInclude.Include.NON_EMPTY) // both empty arrays and object won't be serialized
     .setSerializationInclusion(JsonInclude.Include.NON_DEFAULT) // do not serialize false, 0,
+
+val yamlObjectMapper = ObjectMapper(YAMLFactory()).registerModule(KotlinModule())
+
+fun defaultJsonObjectMapper(): ObjectMapper = defaultJsonObjectMapper
+fun compactJsonObjectMapper(): ObjectMapper = compactJsonObjectMapper
+fun defaultYamlObjectMapper(): ObjectMapper = yamlObjectMapper
+
+fun defaultJsonGenerator(outputStream: OutputStream = System.out): JsonGenerator =
+    jsonGeneratorBase(outputStream).setCodec(defaultJsonObjectMapper)
+
+fun compactJsonGenerator(outputStream: OutputStream = System.out): JsonGenerator =
+    jsonGeneratorBase(outputStream).setCodec(compactJsonObjectMapper)
+
+private fun jsonObjectMapperBase() = jacksonObjectMapper()
+    .setSerializationInclusion(JsonInclude.Include.NON_NULL) // do not serialize null
     .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
     .setDateFormat(StdDateFormat())
     .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
@@ -34,14 +50,8 @@ private val jsonObjectMapper = jacksonObjectMapper()
     .configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, true) // consistent output
     .registerModule(SimpleModule().setDeserializerModifier(InitializingBeanDeserializerModifier())) // InitializingBean
 
-val yamlObjectMapper = ObjectMapper(YAMLFactory()).registerModule(KotlinModule())
-
-fun defaultJsonObjectMapper(): ObjectMapper = jsonObjectMapper
-fun defaultYamlObjectMapper(): ObjectMapper = yamlObjectMapper
-
-fun defaultJsonGenerator(outputStream: OutputStream = System.out): JsonGenerator = JsonFactory()
+private fun jsonGeneratorBase(outputStream: OutputStream): JsonGenerator = JsonFactory()
     .createGenerator(outputStream, JsonEncoding.UTF8)
-    .setCodec(defaultJsonObjectMapper())
     .setPrettyPrinter(DefaultPrettyPrinter())
 
 private class InitializingBeanDeserializerModifier : BeanDeserializerModifier() {

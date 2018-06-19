@@ -1,18 +1,18 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`[mutagen agentGroups config import-export] should do nothing when the agentGroups already exist: the agentGroups already exist and have not been imported 1`] = `
+exports[`[mutagen agentGroups config import-export] should create the agentGroups: the agentGroups has been created 1`] = `
 Object {
   "stderr": "",
-  "stdout": "= agentgroup => Environment/cfgObjectTest
-Completed. 0 object(s) imported.
+  "stdout": "+ agentgroup => Environment/cfgObjectTest
+Completed. 1 object(s) imported.
 ",
 }
 `;
 
-exports[`[mutagen agentGroups config import-export] should import the agentGroups: the agentGroups have been imported 1`] = `
+exports[`[mutagen agentGroups config import-export] should update the agentGroups: the agentGroups has been updated 1`] = `
 Object {
   "stderr": "",
-  "stdout": "+ agentgroup => Environment/cfgObjectTest
+  "stdout": "~ agentgroup => Environment/cfgObjectTest
 Completed. 1 object(s) imported.
 ",
 }

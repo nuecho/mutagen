@@ -9,7 +9,6 @@ import com.nuecho.genesys.cli.commands.config.Config
 import com.nuecho.genesys.cli.core.defaultJsonObjectMapper
 import com.nuecho.genesys.cli.models.configuration.Configuration
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObject
-import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectUpdateStatus.CREATED
 import com.nuecho.genesys.cli.models.configuration.reference.ConfigurationObjectReference
 import com.nuecho.genesys.cli.services.ConfService
 import com.nuecho.genesys.cli.services.retrieveObject
@@ -102,27 +101,24 @@ class Import : GenesysCliCommand() {
             service: IConfService
         ): Boolean {
             val reference = configurationObject.reference
-            val (status, cfgObject) = configurationObject.updateCfgObject(service)
+            val cfgObject = configurationObject.updateCfgObject(service)
             val type = cfgObject.objectType.toShortName()
 
-            if (status != CREATED) {
-                objectImportProgress(type, reference, true)
-                return false
-            }
-
-            info { "Creating $type '$reference'." }
+            info { "Processing $type '$reference'." }
+            val create = !cfgObject.isSaved
             save(cfgObject)
-            objectImportProgress(type, reference)
+            objectImportProgress(type, reference, create)
 
+            // TODO This should eventually return false if the object was identical and therefore not updated
             return true
         }
 
         private fun objectImportProgress(
             type: String,
             reference: ConfigurationObjectReference<*>,
-            skip: Boolean = false
+            create: Boolean
         ) {
-            val prefix = if (skip) "=" else "+"
+            val prefix = if (create) "+" else "~"
             println("$prefix $type => $reference")
         }
 

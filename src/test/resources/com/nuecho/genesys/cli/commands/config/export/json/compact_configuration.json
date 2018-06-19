@@ -1,0 +1,17 @@
+{
+  "__metadata__": {
+    "date": "now",
+    "formatName": "COMPACT_JSON",
+    "formatVersion": "1.1.1",
+    "host": "localhost",
+    "mutagenVersion": "2.2.2",
+    "user": "mutagen"
+  },
+  "persons": [
+    {
+      "employeeId": "333",
+      "userName": "pdeschen",
+      "tenant": "tenant"
+    }
+  ]
+}

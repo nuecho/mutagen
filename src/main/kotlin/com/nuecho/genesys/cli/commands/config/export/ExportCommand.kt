@@ -11,6 +11,11 @@ import com.nuecho.genesys.cli.Logging.info
 import com.nuecho.genesys.cli.commands.config.Config
 import com.nuecho.genesys.cli.commands.config.export.Export.createExportProcessor
 import com.nuecho.genesys.cli.commands.config.export.Export.exportConfiguration
+import com.nuecho.genesys.cli.commands.config.export.ExportFormat.COMPACT_JSON
+import com.nuecho.genesys.cli.commands.config.export.ExportFormat.JSON
+import com.nuecho.genesys.cli.commands.config.export.ExportFormat.RAW
+import com.nuecho.genesys.cli.core.compactJsonGenerator
+import com.nuecho.genesys.cli.core.defaultJsonGenerator
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects
 import com.nuecho.genesys.cli.models.configuration.Metadata
 import com.nuecho.genesys.cli.preferences.environment.Environment
@@ -28,9 +33,9 @@ class ExportCommand : GenesysCliCommand() {
 
     @CommandLine.Option(
         names = ["--format"],
-        description = ["Export format [RAW|JSON]."]
+        description = ["Export format [RAW|JSON|COMPACT_JSON]."]
     )
-    private var format: ExportFormat? = ExportFormat.RAW
+    private var format: ExportFormat? = RAW
 
     override fun execute() {
         val environment = getGenesysCli().loadEnvironment()
@@ -69,8 +74,9 @@ object Export {
     internal fun createExportProcessor(format: ExportFormat, environment: Environment, output: OutputStream) =
         Metadata.create(format, environment).let {
             when (format) {
-                ExportFormat.RAW -> RawExportProcessor(output, it)
-                ExportFormat.JSON -> JsonExportProcessor(output, it)
+                RAW -> RawExportProcessor(it, output)
+                JSON -> JsonExportProcessor(it, defaultJsonGenerator(output))
+                COMPACT_JSON -> JsonExportProcessor(it, compactJsonGenerator(output))
             }
         }
 

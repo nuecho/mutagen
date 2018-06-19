@@ -8,7 +8,6 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgPerson
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectType.CFGPerson
 import com.nuecho.genesys.cli.core.InitializingBean
 import com.nuecho.genesys.cli.getReference
-import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectUpdateStatus.UNCHANGED
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setProperty
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgAccessGroupType
 import com.nuecho.genesys.cli.models.configuration.reference.AccessGroupReference
@@ -41,16 +40,12 @@ data class AccessGroup(
     )
 
     constructor(tenant: TenantReference, name: String) : this(
-        group = Group(tenant, name),
-        members = emptyList()
+        group = Group(tenant, name)
     )
 
-    override fun updateCfgObject(service: IConfService): ConfigurationObjectUpdateResult {
-        service.retrieveObject(reference)?.let {
-            return ConfigurationObjectUpdateResult(UNCHANGED, it)
-        }
-
-        CfgAccessGroup(service).let { cfgAccessGroup ->
+    override fun updateCfgObject(service: IConfService) =
+        (service.retrieveObject(reference) ?: CfgAccessGroup(service)).also {
+            val cfgAccessGroup = it
             setProperty(
                 "memberIDs",
                 members?.map {
@@ -63,10 +58,7 @@ data class AccessGroup(
             )
             setProperty("groupInfo", group.toCfgGroup(service, cfgAccessGroup), cfgAccessGroup)
             setProperty("type", toCfgAccessGroupType(type), cfgAccessGroup)
-
-            return ConfigurationObjectUpdateResult(ConfigurationObjectUpdateStatus.CREATED, cfgAccessGroup)
         }
-    }
 
     override fun afterPropertiesSet() {
         group.updateTenantReferences()

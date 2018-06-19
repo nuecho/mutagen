@@ -1,7 +1,9 @@
 package com.nuecho.genesys.cli.models.configuration
 
 import com.genesyslab.platform.applicationblocks.com.objects.CfgDN
-import com.genesyslab.platform.configuration.protocol.types.CfgDNType
+import com.genesyslab.platform.configuration.protocol.types.CfgDNType.CFGACDQueue
+import com.genesyslab.platform.configuration.protocol.types.CfgDNType.CFGNoDN
+import com.genesyslab.platform.configuration.protocol.types.CfgDNType.CFGRoutingQueue
 import com.genesyslab.platform.configuration.protocol.types.CfgFlag
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectState
 import com.genesyslab.platform.configuration.protocol.types.CfgRouteType
@@ -14,7 +16,6 @@ import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mock
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgObjectiveTable
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgSwitch
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockKeyValueCollection
-import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectUpdateStatus.CREATED
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgDNRegisterFlag
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgDNType
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgFlag
@@ -41,18 +42,17 @@ private val dn = DN(
     tenant = DEFAULT_TENANT_REFERENCE,
     number = NUMBER,
     switch = SwitchReference(SWITCH_NAME, DEFAULT_TENANT_REFERENCE),
-    type = CfgDNType.CFGNoDN.toShortName(),
+    type = CFGNoDN.toShortName(),
     group = DNGroupReference("dnGroup", DEFAULT_TENANT_REFERENCE),
+    accessNumbers = emptyList(),
     association = "anassociation",
-    routing = Routing(
-        CfgRouteType.CFGDirect.toShortName(),
-        listOf(
-            DNReference(
-                number = "1234",
-                switch = "aswitch",
-                type = CfgDNType.CFGACDQueue,
-                tenant = DEFAULT_TENANT_REFERENCE
-            )
+    routeType = CfgRouteType.CFGDirect.toShortName(),
+    destinationDNs = listOf(
+        DNReference(
+            number = "1234",
+            switch = "aswitch",
+            type = CFGACDQueue,
+            tenant = DEFAULT_TENANT_REFERENCE
         )
     ),
     dnLoginID = "anId",
@@ -71,7 +71,7 @@ class DNTest : ConfigurationObjectTest(
         tenant = DEFAULT_TENANT_REFERENCE,
         number = "123",
         switch = SwitchReference("aswitch", DEFAULT_TENANT_REFERENCE),
-        type = CfgDNType.CFGNoDN.toShortName()
+        type = CFGRoutingQueue.toShortName()
     ), DN(mockCfgDN())
 ) {
     init {
@@ -85,10 +85,7 @@ class DNTest : ConfigurationObjectTest(
             mockRetrieveFolder(service)
             mockRetrieveObjectiveTable(service)
 
-            val (status, cfgObject) = dn.updateCfgObject(service)
-            val cfgDN = cfgObject as CfgDN
-
-            status shouldBe CREATED
+            val cfgDN = dn.updateCfgObject(service)
 
             with(cfgDN) {
                 name shouldBe dn.name
@@ -108,9 +105,9 @@ private fun mockCfgDN(): CfgDN {
     val cfgDNGroup = mockCfgDNGroup(dn.group!!.primaryKey)
     val cfgSwitch = mockCfgSwitch(dn.switch.primaryKey)
     val cfgSite = mockCfgFolder(dn.site!!.primaryKey)
-    val cfgDestDN = mockCfgDN(dn.routing!!.destinationDNs.first().number).apply {
+    val cfgDestDN = mockCfgDN(dn.destinationDNs!!.first().number).apply {
         every { switch } returns cfgSwitch
-        every { type } returns CfgDNType.CFGACDQueue
+        every { type } returns CFGACDQueue
         every { name } returns null
     }
     val cfgObjectiveTable = mockCfgObjectiveTable(dn.contract!!.primaryKey)
@@ -125,7 +122,7 @@ private fun mockCfgDN(): CfgDN {
         every { type } returns toCfgDNType(dn.type)
         every { association } returns dn.association
 
-        every { routeType } returns toCfgRouteType(dn.routing?.type)
+        every { routeType } returns toCfgRouteType(dn.routeType)
         every { destDNs } returns listOf(cfgDestDN)
         every { dnLoginID } returns dn.dnLoginID
         every { trunks } returns dn.trunks

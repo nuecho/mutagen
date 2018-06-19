@@ -4,13 +4,10 @@ import com.fasterxml.jackson.core.JsonGenerator
 import com.genesyslab.platform.applicationblocks.com.ICfgObject
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectType
 import com.nuecho.genesys.cli.Logging.debug
-import com.nuecho.genesys.cli.core.defaultJsonGenerator
 import com.nuecho.genesys.cli.models.configuration.ConfigurationBuilder
 import com.nuecho.genesys.cli.models.configuration.Metadata
-import java.io.OutputStream
 
-class JsonExportProcessor(output: OutputStream, val metadata: Metadata) : ExportProcessor {
-    private val jsonGenerator: JsonGenerator = defaultJsonGenerator(output)
+class JsonExportProcessor(val metadata: Metadata, val jsonGenerator: JsonGenerator) : ExportProcessor {
     private val configurationBuilder = ConfigurationBuilder()
 
     override fun begin() {}

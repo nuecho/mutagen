@@ -1,18 +1,18 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`[mutagen persons config import-export] should do nothing when the persons already exist: the persons already exist and have not been imported 1`] = `
+exports[`[mutagen persons config import-export] should create the persons: the persons has been created 1`] = `
 Object {
   "stderr": "",
-  "stdout": "= person => Environment/cfgObjectTest
-Completed. 0 object(s) imported.
+  "stdout": "+ person => Environment/cfgObjectTest
+Completed. 1 object(s) imported.
 ",
 }
 `;
 
-exports[`[mutagen persons config import-export] should import the persons: the persons have been imported 1`] = `
+exports[`[mutagen persons config import-export] should update the persons: the persons has been updated 1`] = `
 Object {
   "stderr": "",
-  "stdout": "+ person => Environment/cfgObjectTest
+  "stdout": "~ person => Environment/cfgObjectTest
 Completed. 1 object(s) imported.
 ",
 }

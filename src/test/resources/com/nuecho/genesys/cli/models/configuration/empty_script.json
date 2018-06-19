@@ -1,5 +1,4 @@
 {
   "name": "name",
-  "tenant": "tenant",
-  "type": "noscript"
+  "tenant": "tenant"
 }

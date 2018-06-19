@@ -5,10 +5,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgScript
-import com.genesyslab.platform.configuration.protocol.types.CfgScriptType
 import com.nuecho.genesys.cli.Logging.warn
-import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectUpdateStatus.CREATED
-import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectUpdateStatus.UNCHANGED
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setProperty
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgObjectState
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgScriptType
@@ -23,8 +20,8 @@ import com.nuecho.genesys.cli.toShortName
 data class Script(
     val tenant: TenantReference,
     val name: String,
-    val type: String = CfgScriptType.CFGNoScript.toShortName(),
-    val index: Int = 0,
+    val type: String? = null,
+    val index: Int? = null,
     val state: String? = null,
     @JsonSerialize(using = CategorizedPropertiesSerializer::class)
     @JsonDeserialize(using = CategorizedPropertiesDeserializer::class)
@@ -37,7 +34,7 @@ data class Script(
     constructor(script: CfgScript) : this(
         tenant = TenantReference(script.tenant.name),
         name = script.name,
-        type = script.type.toShortName(),
+        type = script.type?.toShortName(),
         index = script.index,
         state = script.state?.toShortName(),
         userProperties = script.userProperties?.asCategorizedProperties()
@@ -45,20 +42,23 @@ data class Script(
         script.resources?.let { warn { "Unsupported ResourceObject collection. Ignoring." } }
     }
 
-    override fun updateCfgObject(service: IConfService): ConfigurationObjectUpdateResult {
-        service.retrieveObject(reference)?.let {
-            return ConfigurationObjectUpdateResult(UNCHANGED, it)
-        }
+    override fun updateCfgObject(service: IConfService) =
+        (service.retrieveObject(reference) ?: CfgScript(service)).also {
+            if (!it.isSaved) {
+                applyDefaultValues()
+            }
 
-        CfgScript(service).let {
             setProperty("tenantDBID", service.getObjectDbid(tenant), it)
             setProperty("name", name, it)
             setProperty("type", toCfgScriptType(type), it)
             setProperty("index", index, it)
             setProperty("state", toCfgObjectState(state), it)
             setProperty("userProperties", toKeyValueCollection(userProperties), it)
-            return ConfigurationObjectUpdateResult(CREATED, it)
         }
+
+    override fun applyDefaultValues() {
+        // type = CfgScriptType.CFGNoScript.toShortName()
+        // index = 0
     }
 
     override fun getReferences(): Set<ConfigurationObjectReference<*>> = setOf(tenant)

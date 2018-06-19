@@ -2,9 +2,10 @@
   "alias": "bar",
   "description": "some description",
   "name": "foo",
+  "recordPeriod": 0,
   "state": "enabled",
   "tenant": "tenant",
-  "type": "notransactiontype",
+  "type": "list",
   "userProperties": {
     "section": {
       "number": 456,

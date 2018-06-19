@@ -1,26 +1,23 @@
 {
+  "accessNumbers": [],
   "association": "anassociation",
   "contract": "acontract",
+  "destinationDNs": [
+    {
+      "number": "1234",
+      "switch": "aswitch",
+      "type": "acdqueue"
+    }
+  ],
   "dnLoginID": "anId",
   "group": "dnGroup",
   "name": "aname",
   "number": "123",
   "override": "anoverride",
-  "registerAll": "true",
-  "routing": {
-    "destinationDNs": [
-      {
-        "number": "1234",
-        "switch": "aswitch",
-        "type": "acdqueue"
-      }
-    ],
-    "type": "direct"
-  },
+  "routeType": "direct",
   "site": "abc",
   "state": "enabled",
   "switch": "aswitch",
-  "switchSpecificType": 1,
   "tenant": "tenant",
   "trunks": 1,
   "type": "nodn",

@@ -20,7 +20,7 @@ private const val XMLNS = "xmlns"
 private const val VALUE_KEY = "value"
 private const val METADATA_KEY = "__metadata__"
 
-class RawExportProcessor(output: OutputStream, val metadata: Metadata) : ExportProcessor {
+class RawExportProcessor(val metadata: Metadata, output: OutputStream) : ExportProcessor {
     private val xmlTransformer = TransformerFactory.newInstance().newTransformer()
     private val objectMapper = defaultJsonObjectMapper()
     private val jsonGenerator: JsonGenerator = defaultJsonGenerator(output)

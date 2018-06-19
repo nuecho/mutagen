@@ -2,7 +2,7 @@
   "name": "name",
   "state": "enabled",
   "tenant": "tenant",
-  "type": "noscript",
+  "type": "businessprocess",
   "userProperties": {
     "section": {
       "number": 456,

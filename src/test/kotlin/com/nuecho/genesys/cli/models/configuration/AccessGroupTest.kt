@@ -23,7 +23,6 @@ import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mock
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgStatTable
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgSwitch
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockKeyValueCollection
-import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectUpdateStatus.CREATED
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgObjectState
 import com.nuecho.genesys.cli.models.configuration.reference.FolderReference
 import com.nuecho.genesys.cli.models.configuration.reference.ObjectiveTableReference
@@ -92,14 +91,11 @@ class AccessGroupTest : ConfigurationObjectTest(
                 every { service.retrieveObject(CfgAccessGroup::class.java, any()) } returns null
                 every { service.getObjectDbid(any()) } answers { DEFAULT_OBJECT_DBID }
 
-                val (status, cfgObject) = accessGroup.updateCfgObject(service)
-                val cfgAccessGroup = cfgObject as CfgAccessGroup
-
-                status shouldBe CREATED
+                val cfgAccessGroup = accessGroup.updateCfgObject(service)
 
                 val cfgId = CfgID(service, cfgAccessGroup)
-                    cfgId.dbid = DEFAULT_OBJECT_DBID
-                    cfgId.type = CFGPerson
+                cfgId.dbid = DEFAULT_OBJECT_DBID
+                cfgId.type = CFGPerson
 
                 with(cfgAccessGroup) {
                     type shouldBe CFGDefaultGroup
