@@ -1,0 +1,19 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`[mutagen dnGroups config import-export] should create the dnGroups: the dnGroups have been created 1`] = `
+Object {
+  "stderr": "",
+  "stdout": "+ dngroup => Environment/cfgObjectTest
+Completed. 1 object(s) imported.
+",
+}
+`;
+
+exports[`[mutagen dnGroups config import-export] should update the dnGroups: the dnGroups have been updated 1`] = `
+Object {
+  "stderr": "",
+  "stdout": "~ dngroup => Environment/cfgObjectTest
+Completed. 1 object(s) imported.
+",
+}
+`;

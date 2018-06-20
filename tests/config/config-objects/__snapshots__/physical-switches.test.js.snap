@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`[mutagen physicalSwitches config import-export] should create the physicalSwitches: the physicalSwitches has been created 1`] = `
+exports[`[mutagen physicalSwitches config import-export] should create the physicalSwitches: the physicalSwitches have been created 1`] = `
 Object {
   "stderr": "",
   "stdout": "+ physicalswitch => cfgObjectTest
@@ -9,7 +9,7 @@ Completed. 1 object(s) imported.
 }
 `;
 
-exports[`[mutagen physicalSwitches config import-export] should update the physicalSwitches: the physicalSwitches has been updated 1`] = `
+exports[`[mutagen physicalSwitches config import-export] should update the physicalSwitches: the physicalSwitches have been updated 1`] = `
 Object {
   "stderr": "",
   "stdout": "~ physicalswitch => cfgObjectTest

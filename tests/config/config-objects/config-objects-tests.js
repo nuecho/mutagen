@@ -33,7 +33,7 @@ function cfgObjectCreationTest(cfgObjectType, configurationPath) {
   test(`should create the ${cfgObjectType}`, () => {
     const { code, output } = mutagen(`config import ${configurationPath}`);
 
-    expect(output).toMatchSnapshot(`the ${cfgObjectType} has been created`);
+    expect(output).toMatchSnapshot(`the ${cfgObjectType} have been created`);
     expect(code).toBe(0);
   });
 };
@@ -42,7 +42,7 @@ function cfgObjectUpdateTest(cfgObjectType, configurationPath) {
   test(`should update the ${cfgObjectType}`, () => {
     const { code, output } = mutagen(`config import ${configurationPath}`);
     
-    expect(output).toMatchSnapshot(`the ${cfgObjectType} has been updated`);
+    expect(output).toMatchSnapshot(`the ${cfgObjectType} have been updated`);
     expect(code).toBe(0);
   });
 };

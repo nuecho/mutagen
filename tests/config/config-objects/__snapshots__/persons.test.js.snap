@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`[mutagen persons config import-export] should create the persons: the persons has been created 1`] = `
+exports[`[mutagen persons config import-export] should create the persons: the persons have been created 1`] = `
 Object {
   "stderr": "",
   "stdout": "+ person => Environment/cfgObjectTest
@@ -9,7 +9,7 @@ Completed. 1 object(s) imported.
 }
 `;
 
-exports[`[mutagen persons config import-export] should update the persons: the persons has been updated 1`] = `
+exports[`[mutagen persons config import-export] should update the persons: the persons have been updated 1`] = `
 Object {
   "stderr": "",
   "stdout": "~ person => Environment/cfgObjectTest

@@ -1,0 +1,7 @@
+{
+  "group": {
+    "name": "dnGroup",
+    "tenant": "tenant"
+  },
+  "type": "acdqueues"
+}

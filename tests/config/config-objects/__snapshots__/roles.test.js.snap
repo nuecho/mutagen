@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`[mutagen roles config import-export] should create the roles: the roles has been created 1`] = `
+exports[`[mutagen roles config import-export] should create the roles: the roles have been created 1`] = `
 Object {
   "stderr": "",
   "stdout": "+ role => cfgObjectTest
@@ -9,7 +9,7 @@ Completed. 1 object(s) imported.
 }
 `;
 
-exports[`[mutagen roles config import-export] should update the roles: the roles has been updated 1`] = `
+exports[`[mutagen roles config import-export] should update the roles: the roles have been updated 1`] = `
 Object {
   "stderr": "",
   "stdout": "~ role => cfgObjectTest

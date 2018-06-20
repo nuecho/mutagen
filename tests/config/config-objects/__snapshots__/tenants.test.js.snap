@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`[mutagen tenants config import-export] should create the tenants: the tenants has been created 1`] = `
+exports[`[mutagen tenants config import-export] should create the tenants: the tenants have been created 1`] = `
 Object {
   "stderr": "",
   "stdout": "+ tenant => cfgObjectTest
@@ -9,7 +9,7 @@ Completed. 1 object(s) imported.
 }
 `;
 
-exports[`[mutagen tenants config import-export] should update the tenants: the tenants has been updated 1`] = `
+exports[`[mutagen tenants config import-export] should update the tenants: the tenants have been updated 1`] = `
 Object {
   "stderr": "",
   "stdout": "~ tenant => cfgObjectTest

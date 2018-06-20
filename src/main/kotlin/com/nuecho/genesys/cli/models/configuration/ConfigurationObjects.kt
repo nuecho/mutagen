@@ -8,6 +8,7 @@ import com.genesyslab.platform.commons.collections.KeyValuePair
 import com.genesyslab.platform.configuration.protocol.types.CfgAccessGroupType
 import com.genesyslab.platform.configuration.protocol.types.CfgActionCodeType
 import com.genesyslab.platform.configuration.protocol.types.CfgAppType
+import com.genesyslab.platform.configuration.protocol.types.CfgDNGroupType
 import com.genesyslab.platform.configuration.protocol.types.CfgDNRegisterFlag
 import com.genesyslab.platform.configuration.protocol.types.CfgDNType
 import com.genesyslab.platform.configuration.protocol.types.CfgEnumeratorType
@@ -80,6 +81,7 @@ object ConfigurationObjects {
     fun toCfgAccessGroupType(type: String?) = toGEnum(type, CfgAccessGroupType::class.java) as CfgAccessGroupType?
     fun toCfgActionCodeType(type: String?) = toGEnum(type, CfgActionCodeType::class.java) as CfgActionCodeType?
     fun toCfgAppType(type: String?) = toGEnum(type, CfgAppType::class.java) as CfgAppType?
+    fun toCfgDNGroupType(type: String?) = toGEnum(type, CfgDNGroupType::class.java) as CfgDNGroupType?
     fun toCfgDNType(type: String?) = toGEnum(type, CfgDNType::class.java) as CfgDNType?
     fun toCfgEnumeratorType(type: String?) = toGEnum(type, CfgEnumeratorType::class.java) as CfgEnumeratorType?
     fun toCfgLinkType(type: String?) = toGEnum(type, CfgLinkType::class.java) as CfgLinkType?

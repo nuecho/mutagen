@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`[mutagen skills config import-export] should create the skills: the skills has been created 1`] = `
+exports[`[mutagen skills config import-export] should create the skills: the skills have been created 1`] = `
 Object {
   "stderr": "",
   "stdout": "+ skill => Environment/cfgObjectTest
@@ -9,7 +9,7 @@ Completed. 1 object(s) imported.
 }
 `;
 
-exports[`[mutagen skills config import-export] should update the skills: the skills has been updated 1`] = `
+exports[`[mutagen skills config import-export] should update the skills: the skills have been updated 1`] = `
 Object {
   "stderr": "",
   "stdout": "~ skill => Environment/cfgObjectTest

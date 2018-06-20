@@ -1,0 +1,39 @@
+{
+  "dns": [
+    {
+      "dn": {
+        "name": "name",
+        "number": "number1",
+        "switch": "switch",
+        "type": "acdqueue"
+      },
+      "trunks": 0
+    },
+    {
+      "dn": {
+        "name": "name",
+        "number": "number2",
+        "switch": "switch",
+        "type": "acdqueue"
+      },
+      "trunks": 0
+    }
+  ],
+  "group": {
+    "capacityRule": "capacityRule",
+    "capacityTable": "capacityTable",
+    "contract": "contract",
+    "name": "dnGroup",
+    "quotaTable": "quotaTable",
+    "site": "site",
+    "state": "enabled",
+    "tenant": "tenant",
+    "userProperties": {
+      "section": {
+        "number": 456,
+        "string": "def"
+      }
+    }
+  },
+  "type": "acdqueues"
+}

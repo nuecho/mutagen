@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`[mutagen transactions config import-export] should create the transactions: the transactions has been created 1`] = `
+exports[`[mutagen transactions config import-export] should create the transactions: the transactions have been created 1`] = `
 Object {
   "stderr": "",
   "stdout": "+ transaction => name: 'cfgObjectTest', type: 'callData', tenant: 'Environment'
@@ -9,7 +9,7 @@ Completed. 1 object(s) imported.
 }
 `;
 
-exports[`[mutagen transactions config import-export] should update the transactions: the transactions has been updated 1`] = `
+exports[`[mutagen transactions config import-export] should update the transactions: the transactions have been updated 1`] = `
 Object {
   "stderr": "",
   "stdout": "~ transaction => name: 'cfgObjectTest', type: 'callData', tenant: 'Environment'

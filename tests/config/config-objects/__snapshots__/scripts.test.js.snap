@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`[mutagen scripts config import-export] should create the scripts: the scripts has been created 1`] = `
+exports[`[mutagen scripts config import-export] should create the scripts: the scripts have been created 1`] = `
 Object {
   "stderr": "",
   "stdout": "+ script => Environment/cfgObjectTest
@@ -9,7 +9,7 @@ Completed. 1 object(s) imported.
 }
 `;
 
-exports[`[mutagen scripts config import-export] should update the scripts: the scripts has been updated 1`] = `
+exports[`[mutagen scripts config import-export] should update the scripts: the scripts have been updated 1`] = `
 Object {
   "stderr": "",
   "stdout": "~ script => Environment/cfgObjectTest

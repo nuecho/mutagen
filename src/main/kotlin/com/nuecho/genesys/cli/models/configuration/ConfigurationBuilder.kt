@@ -5,6 +5,7 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgAccessGroup
 import com.genesyslab.platform.applicationblocks.com.objects.CfgActionCode
 import com.genesyslab.platform.applicationblocks.com.objects.CfgAgentGroup
 import com.genesyslab.platform.applicationblocks.com.objects.CfgDN
+import com.genesyslab.platform.applicationblocks.com.objects.CfgDNGroup
 import com.genesyslab.platform.applicationblocks.com.objects.CfgEnumerator
 import com.genesyslab.platform.applicationblocks.com.objects.CfgGVPCustomer
 import com.genesyslab.platform.applicationblocks.com.objects.CfgGVPIVRProfile
@@ -22,6 +23,7 @@ class ConfigurationBuilder {
     private val accessGroups = ArrayList<AccessGroup>()
     private val actionCodes = ArrayList<ActionCode>()
     private val agentGroups = ArrayList<AgentGroup>()
+    private val dnGroups = ArrayList<DNGroup>()
     private val dns = ArrayList<DN>()
     private val enumerators = ArrayList<Enumerator>()
     private val gvpCustomers = ArrayList<GVPCustomer>()
@@ -41,6 +43,7 @@ class ConfigurationBuilder {
             is CfgAccessGroup -> accessGroups += AccessGroup(cfgObject)
             is CfgActionCode -> actionCodes += ActionCode(cfgObject)
             is CfgAgentGroup -> agentGroups += AgentGroup(cfgObject)
+            is CfgDNGroup -> dnGroups += DNGroup(cfgObject)
             is CfgDN -> dns += DN(cfgObject)
             is CfgEnumerator -> enumerators += Enumerator(cfgObject)
             is CfgGVPCustomer -> gvpCustomers += GVPCustomer(cfgObject)
@@ -62,6 +65,7 @@ class ConfigurationBuilder {
         accessGroups.sorted(),
         actionCodes.sorted(),
         agentGroups.sorted(),
+        dnGroups.sorted(),
         dns.sorted(),
         enumerators.sorted(),
         gvpCustomers.sorted(),
