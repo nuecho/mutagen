@@ -65,7 +65,7 @@ class ImportDNTest : StringSpec() {
             }
         }
 
-        "importing an existing DN try to save it" {
+        "importing an existing DN should try to save it" {
             testImportConfigurationObject(false)
         }
 

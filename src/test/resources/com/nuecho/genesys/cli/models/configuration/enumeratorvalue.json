@@ -1,0 +1,15 @@
+{
+  "default": false,
+  "description": "description",
+  "displayName": "displayName",
+  "enumerator": "enumerator",
+  "name": "enumeratorValue",
+  "state": "enabled",
+  "tenant": "tenant",
+  "userProperties": {
+    "section": {
+      "number": 456,
+      "string": "def"
+    }
+  }
+}
