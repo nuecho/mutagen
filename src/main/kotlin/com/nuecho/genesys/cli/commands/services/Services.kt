@@ -11,7 +11,6 @@ import com.nuecho.genesys.cli.Logging.debug
 import com.nuecho.genesys.cli.Logging.info
 import com.nuecho.genesys.cli.core.defaultJsonGenerator
 import com.nuecho.genesys.cli.getDefaultEndpoint
-import com.nuecho.genesys.cli.services.ConfService
 import com.nuecho.genesys.cli.toShortName
 import picocli.CommandLine
 import java.net.InetSocketAddress
@@ -51,16 +50,18 @@ class Services : GenesysCliCommand() {
     )
     private var socketTimeout: Int = DEFAULT_SOCKET_TIMEOUT
 
-    override fun execute() {
+    override fun execute(): Int {
         info { "Discovering services" }
-        val service = ConfService(getGenesysCli().loadEnvironment())
-        service.open()
-        val applications = service.retrieveMultipleObjects(
-            CfgApplication::class.java,
-            CfgApplicationQuery()
-        ) ?: emptyList()
+        withEnvironmentConfService {
+            val applications = it.retrieveMultipleObjects(
+                CfgApplication::class.java,
+                CfgApplicationQuery()
+            ) ?: emptyList()
 
-        writeServices(applications)
+            writeServices(applications)
+        }
+
+        return 0
     }
 
     internal fun writeServices(

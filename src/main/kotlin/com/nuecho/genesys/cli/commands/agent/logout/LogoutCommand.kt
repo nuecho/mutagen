@@ -53,10 +53,12 @@ class LogoutCommand : GenesysCliCommand() {
     )
     private var employeeId: String? = null
 
-    override fun execute() {
+    override fun execute(): Int {
         withEnvironmentConfService {
             Logout.logoutAgent(it, StatService(Endpoint(statHost!!, statPort!!)), employeeId!!)
         }
+
+        return 0
     }
 
     override fun getGenesysCli(): GenesysCli = agent!!.getGenesysCli()

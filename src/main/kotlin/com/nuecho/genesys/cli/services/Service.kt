@@ -5,10 +5,10 @@ interface Service {
     fun close()
 }
 
-fun withService(service: Service, function: (service: Service) -> Any?) {
+fun <T> withService(service: Service, function: (service: Service) -> T): T {
     service.open()
     try {
-        function(service)
+        return function(service)
     } finally {
         service.close()
     }

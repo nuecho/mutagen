@@ -61,13 +61,15 @@ class AudioExportCommand : GenesysCliCommand() {
 
     override fun getGenesysCli(): GenesysCli = audio!!.getGenesysCli()
 
-    override fun execute() {
+    override fun execute(): Int {
         AudioExport.exportAudios(
             getGenesysCli().loadEnvironment(),
             outputFile!!,
             withAudios,
             personalitiesIds
         )
+
+        return 0
     }
 }
 

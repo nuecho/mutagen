@@ -44,12 +44,14 @@ class AudioImportCommand : GenesysCliCommand() {
 
     override fun getGenesysCli(): GenesysCli = audio!!.getGenesysCli()
 
-    override fun execute() {
+    override fun execute(): Int {
         AudioImport.importAudios(
             getGenesysCli().loadEnvironment(),
             inputFile!!.inputStream(),
             inputFile!!.absoluteFile.parentFile
         )
+
+        return 0
     }
 }
 

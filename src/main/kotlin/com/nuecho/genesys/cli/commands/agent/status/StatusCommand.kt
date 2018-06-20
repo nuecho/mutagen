@@ -83,9 +83,11 @@ class StatusCommand : GenesysCliCommand() {
     )
     private var employeeId: String? = null
 
-    override fun execute() {
+    override fun execute(): Int {
         val statService = StatService(Endpoint(statHost!!, statPort!!))
         withEnvironmentConfService { println(Status.getAgentStatus(it, statService, employeeId!!).toConsoleString()) }
+
+        return 0
     }
 
     override fun getGenesysCli(): GenesysCli = agent!!.getGenesysCli()

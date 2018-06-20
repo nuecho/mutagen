@@ -3,9 +3,10 @@
 exports[`[mutagen config import --help] should print import usage: import usage 1`] = `
 Object {
   "stderr": "",
-  "stdout": "Usage: import [-?] inputFile
+  "stdout": "Usage: import [-?] [--auto-confirm] inputFile
 [INCUBATION] Import configuration objects.
       inputFile               Input configuration file.
+      --auto-confirm          Skip interactive approval before applying.
   -?, -h, --help              Show this help message.
 ",
 }
@@ -21,6 +22,22 @@ Object {
 + switch => Environment/MultiObjectImportSwitch3
 + dn => number: '123', switch: 'MultiObjectImportSwitch1', type: 'Extension', name: 'MultiObjectImportDN', tenant: 'Environment'
 Completed. 6 object(s) imported.
+",
+}
+`;
+
+exports[`[mutagen config import file] should import the objects if the user confirms the changes: changes applied 1`] = `
+Object {
+  "stderr": "",
+  "stdout": "The following changes are going to be applied:
++ physicalswitch => AcceptChangesPhysicalSwitch
++ switch => Environment/AcceptChangesSwitch
++ dn => number: '123', switch: 'AcceptChangesSwitch', type: 'Extension', name: 'AcceptChangesDN', tenant: 'Environment'
+
+Please confirm [y|n]: + physicalswitch => AcceptChangesPhysicalSwitch
++ switch => Environment/AcceptChangesSwitch
++ dn => number: '123', switch: 'AcceptChangesSwitch', type: 'Extension', name: 'AcceptChangesDN', tenant: 'Environment'
+Completed. 3 object(s) imported.
 ",
 }
 `;
@@ -49,6 +66,19 @@ Object {
 Cannot import configuration: some configuration object dependency could not be found.
 ",
   "stdout": "",
+}
+`;
+
+exports[`[mutagen config import file] should not import the objects if the user does not confirm the changes: changes not applied 1`] = `
+Object {
+  "stderr": "",
+  "stdout": "The following changes are going to be applied:
++ physicalswitch => RejectChangesPhysicalSwitch
++ switch => Environment/RejectChangesSwitch
++ dn => number: '123', switch: 'RejectChangesSwitch', type: 'Extension', name: 'RejectChangesDN', tenant: 'Environment'
+
+Please confirm [y|n]: Import cancelled.
+",
 }
 `;
 

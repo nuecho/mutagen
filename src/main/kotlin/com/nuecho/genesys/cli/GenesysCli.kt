@@ -43,7 +43,7 @@ open class GenesysCli : GenesysCliCommand() {
         @Suppress("PrintStackTrace")
         fun execute(genesysCli: GenesysCli, vararg args: String): Int {
             try {
-                CommandLine.run(genesysCli, System.out, *args)
+                return CommandLine.call(genesysCli, System.out, *args) ?: 0
             } catch (exception: CommandLine.InitializationException) {
                 exception.printStackTrace()
                 return 1
@@ -59,8 +59,6 @@ open class GenesysCli : GenesysCliCommand() {
 
                 return 1
             }
-
-            return 0
         }
     }
 
@@ -96,8 +94,10 @@ open class GenesysCli : GenesysCliCommand() {
     )
     private var versionRequested = false
 
-    override fun execute() {
+    override fun execute(): Int {
         CommandLine.usage(GenesysCliWithBanner(), System.out)
+
+        return 0
     }
 
     override fun getGenesysCli() = this

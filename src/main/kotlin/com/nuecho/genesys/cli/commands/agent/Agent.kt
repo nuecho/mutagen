@@ -15,8 +15,10 @@ class Agent : GenesysCliCommand() {
     @CommandLine.ParentCommand
     private var genesysCli: GenesysCli? = null
 
-    override fun execute() {
+    override fun execute(): Int {
         CommandLine.usage(this, System.out)
+
+        return 0
     }
 
     override fun getGenesysCli(): GenesysCli = genesysCli!!

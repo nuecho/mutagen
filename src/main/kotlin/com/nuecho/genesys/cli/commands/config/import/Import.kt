@@ -6,6 +6,8 @@ import com.nuecho.genesys.cli.GenesysCliCommand
 import com.nuecho.genesys.cli.Logging.info
 import com.nuecho.genesys.cli.Logging.warn
 import com.nuecho.genesys.cli.commands.config.Config
+import com.nuecho.genesys.cli.commands.config.import.ImportOperationType.CREATE
+import com.nuecho.genesys.cli.commands.config.import.ImportOperationType.UPDATE
 import com.nuecho.genesys.cli.core.defaultJsonObjectMapper
 import com.nuecho.genesys.cli.models.configuration.Configuration
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObject
@@ -20,6 +22,9 @@ import org.jgrapht.graph.DefaultEdge
 import org.jgrapht.traverse.TopologicalOrderIterator
 import picocli.CommandLine
 import java.io.File
+
+const val YES: String = "y"
+const val NO: String = "n"
 
 @CommandLine.Command(
     name = "import",
@@ -37,21 +42,37 @@ class Import : GenesysCliCommand() {
     )
     private var inputFile: File? = null
 
+    @CommandLine.Option(
+        names = ["--auto-confirm"],
+        description = ["Skip interactive approval before applying."]
+    )
+    private var autoConfirm: Boolean = false
+
     override fun getGenesysCli() = config!!.getGenesysCli()
 
-    override fun execute() {
-        withEnvironmentConfService {
+    override fun execute(): Int {
+        val result = withEnvironmentConfService {
             val configuration = defaultJsonObjectMapper().readValue(inputFile, Configuration::class.java)
-            importConfiguration(configuration, it)
+            importConfiguration(configuration, it, autoConfirm)
         }
+        return if (result) 0 else 1
     }
 
     companion object {
-        fun importConfiguration(configuration: Configuration, service: ConfService) {
+        fun importConfiguration(configuration: Configuration, service: ConfService, autoConfirm: Boolean): Boolean {
 
             info { "Preparing import." }
 
-            val configurationObjects = prepareImportOperation(configuration, service)
+            val configurationObjects = extractTopologicalSequence(configuration, service)
+
+            if (!autoConfirm) {
+                printPlan(configurationObjects, service)
+
+                if (!confirm()) {
+                    println("Import cancelled.")
+                    return false
+                }
+            }
 
             info { "Beginning import." }
 
@@ -61,9 +82,10 @@ class Import : GenesysCliCommand() {
                 .count()
 
             println("Completed. $count object(s) imported.")
+            return true
         }
 
-        internal fun prepareImportOperation(configuration: Configuration, service: ConfService):
+        internal fun extractTopologicalSequence(configuration: Configuration, service: ConfService):
                 List<ConfigurationObject> {
             val objectDependencyGraph: Graph<ConfigurationObject, DefaultEdge> =
                 DefaultDirectedGraph(DefaultEdge::class.java)
@@ -96,6 +118,27 @@ class Import : GenesysCliCommand() {
             return TopologicalOrderIterator(objectDependencyGraph).asSequence().toList()
         }
 
+        internal fun printPlan(configurationObjects: Collection<ConfigurationObject>, service: ConfService) {
+            println("The following changes are going to be applied:")
+            configurationObjects.forEach {
+                // Those objects will be fetched again later... A better modelization of the plan & operations
+                // could prevent us from fetching the objects multiple times.
+                val operationType = if (service.retrieveObject(it.reference) == null) CREATE else UPDATE
+                printObjectImportStatus(it.reference, operationType)
+            }
+            println()
+        }
+
+        internal fun confirm(): Boolean {
+            var confirmed: String
+            do {
+                print("Please confirm [$YES|$NO]: ")
+                confirmed = readLine()?.toLowerCase() ?: ""
+            } while (confirmed != YES && confirmed != NO)
+
+            return confirmed == YES
+        }
+
         internal fun importConfigurationObject(
             configurationObject: ConfigurationObject,
             service: IConfService
@@ -105,21 +148,19 @@ class Import : GenesysCliCommand() {
             val type = cfgObject.objectType.toShortName()
 
             info { "Processing $type '$reference'." }
-            val create = !cfgObject.isSaved
+            val status = if (cfgObject.isSaved) UPDATE else CREATE
             save(cfgObject)
-            objectImportProgress(type, reference, create)
+            printObjectImportStatus(reference, status)
 
             // TODO This should eventually return false if the object was identical and therefore not updated
             return true
         }
 
-        private fun objectImportProgress(
-            type: String,
+        private fun printObjectImportStatus(
             reference: ConfigurationObjectReference<*>,
-            create: Boolean
+            status: ImportOperationType
         ) {
-            val prefix = if (create) "+" else "~"
-            println("$prefix $type => $reference")
+            println("$status ${reference.getCfgObjectType().toShortName()} => $reference")
         }
 
         internal fun save(cfgObject: CfgObject) = cfgObject.save()
@@ -133,3 +174,9 @@ class UnresolvedConfigurationObjectReferenceException : Exception(
 class ConfigurationObjectCycleException : Exception(
     "Cannot import configuration: dependency cycles is not yet supported."
 )
+
+enum class ImportOperationType(val symbol: String) {
+    CREATE("+"), UPDATE("~"), SKIP("=");
+
+    override fun toString() = symbol
+}

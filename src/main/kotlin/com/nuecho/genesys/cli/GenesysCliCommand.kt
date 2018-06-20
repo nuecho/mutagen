@@ -4,8 +4,9 @@ import com.nuecho.genesys.cli.services.ConfService
 import com.nuecho.genesys.cli.services.Service
 import com.nuecho.genesys.cli.services.withService
 import picocli.CommandLine
+import java.util.concurrent.Callable
 
-abstract class GenesysCliCommand : Runnable {
+abstract class GenesysCliCommand : Callable<Int> {
     @Suppress("unused")
     @CommandLine.Option(
         names = ["-?", "-h", "--help"],
@@ -15,14 +16,14 @@ abstract class GenesysCliCommand : Runnable {
     private var usageRequested = false
 
     @Suppress("UNCHECKED_CAST")
-    internal fun withEnvironmentConfService(function: (service: ConfService) -> Any?) =
-        withService(ConfService(getGenesysCli().loadEnvironment()), function as (service: Service) -> Any?)
+    internal fun <T> withEnvironmentConfService(function: (service: ConfService) -> T): T =
+        withService(ConfService(getGenesysCli().loadEnvironment()), function as (service: Service) -> T)
 
-    abstract fun execute()
+    abstract fun execute(): Int
 
     abstract fun getGenesysCli(): GenesysCli
 
-    override fun run() {
+    override fun call(): Int {
         val genesysCli = getGenesysCli()
 
         if (genesysCli.debug) {
@@ -31,6 +32,6 @@ abstract class GenesysCliCommand : Runnable {
             Logging.setToInfo()
         }
 
-        execute()
+        return execute()
     }
 }
