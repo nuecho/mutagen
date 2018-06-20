@@ -1,22 +1,39 @@
 version: '3.2'
 services:
 
-  postgres:
+  postgres_configserver:
     image: postgres:9.2 
     environment:
       - POSTGRES_PASSWORD=mysecretpassword
     volumes:
-      - $PWD/sql_scripts/init_with_copy.sql:/docker-entrypoint-initdb.d/init_with_copy.sql
+      - $PWD/sql_scripts/configserver/:/docker-entrypoint-initdb.d/
 
   configserver:
-    image: dr.s.nuecho.com/configserver:d6f87b568191880e9970e67db382db12b1399878
+    image: dr.s.nuecho.com/configserver:0.2.0
     restart: on-failure
     environment:
       - PGPASSWORD=mysecretpassword
     depends_on:
-      - postgres
+      - postgres_configserver
     links:
-      - postgres
+      - postgres_configserver:postgres
+
+  postgres_gax:
+    image: postgres:9.2
+    environment:
+      - POSTGRES_PASSWORD=mysecretpassword
+    volumes:
+      - $PWD/sql_scripts/gax/:/docker-entrypoint-initdb.d/
+
+  gax:
+    image: dr.s.nuecho.com/gax:0.2.0
+    hostname: gax # Gax installer will automatically creates cfgHost object with that name
+    depends_on:
+      - postgres_gax
+      - configserver
+    links:
+      - postgres_gax:postgres
+      - configserver
 
   test:
     image: dr.s.nuecho.com/mutagen-integration-tests:07ca1f476a193cfe0d8a77e292d99bedbf05f983
