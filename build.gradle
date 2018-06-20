@@ -135,11 +135,11 @@ dependencies {
     compile 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.9.+'
     compile 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.9.+'
 
-    compile 'com.genesyslab.platform:comappblock:+'
-    compile 'com.genesyslab.platform:commons:+'
-    compile 'com.genesyslab.platform:configurationprotocol:+'
-    compile 'com.genesyslab.platform:reportingprotocol:+'
-    compile 'com.genesyslab.platform:voiceprotocol:+'
+    compile 'com.genesyslab.platform:comappblock:812.+'
+    compile 'com.genesyslab.platform:commons:812.+'
+    compile 'com.genesyslab.platform:configurationprotocol:812.+'
+    compile 'com.genesyslab.platform:reportingprotocol:812.+'
+    compile 'com.genesyslab.platform:voiceprotocol:812.+'
 
     compile 'ch.qos.logback:logback-classic:1.2.+'
     compile 'com.github.kittinunf.fuel:fuel:1.12.+'
