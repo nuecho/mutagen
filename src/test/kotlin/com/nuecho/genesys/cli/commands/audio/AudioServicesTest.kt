@@ -18,13 +18,13 @@ import com.nuecho.genesys.cli.commands.audio.AudioServices.LOCATION
 import com.nuecho.genesys.cli.commands.audio.AudioServices.LOGIN_PATH
 import com.nuecho.genesys.cli.commands.audio.AudioServices.LOGIN_SUCCESS_CODE
 import com.nuecho.genesys.cli.commands.audio.AudioServices.PERSONALITIES_PATH
-import com.nuecho.genesys.cli.commands.audio.AudioServices.getPersonalities
-import com.nuecho.genesys.cli.commands.audio.AudioServices.login
 import com.nuecho.genesys.cli.commands.audio.AudioServices.SUCCESS_CODE
 import com.nuecho.genesys.cli.commands.audio.AudioServices.UPLOAD_PATH
 import com.nuecho.genesys.cli.commands.audio.AudioServices.createMessage
 import com.nuecho.genesys.cli.commands.audio.AudioServices.downloadAudioFile
 import com.nuecho.genesys.cli.commands.audio.AudioServices.getMessagesData
+import com.nuecho.genesys.cli.commands.audio.AudioServices.getPersonalities
+import com.nuecho.genesys.cli.commands.audio.AudioServices.login
 import com.nuecho.genesys.cli.commands.audio.AudioServices.uploadAudio
 import com.nuecho.genesys.cli.commands.audio.export.AudioExport.downloadAudioFiles
 import com.nuecho.genesys.cli.commands.audio.export.AudioExport.writeAudioData
@@ -272,6 +272,8 @@ private fun mockHttpClient(
     }
 
     FuelManager.instance.client = client
+    // Disabling auto-redirect
+    FuelManager.instance.removeAllResponseInterceptors()
 }
 
 private fun Request.body() = ByteArrayOutputStream().also {

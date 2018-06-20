@@ -29,8 +29,8 @@
       "targetType": "targetagentgroup"
     }
   ],
-  "tenant": "tenant",
   "tServer": "tServer",
+  "tenant": "tenant",
   "userProperties": {
     "section": {
       "number": 456,

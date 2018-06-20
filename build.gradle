@@ -135,11 +135,22 @@ dependencies {
     compile 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.9.+'
     compile 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.9.+'
 
-    compile 'com.genesyslab.platform:comappblock:812.+'
-    compile 'com.genesyslab.platform:commons:812.+'
-    compile 'com.genesyslab.platform:configurationprotocol:812.+'
-    compile 'com.genesyslab.platform:reportingprotocol:812.+'
-    compile 'com.genesyslab.platform:voiceprotocol:812.+'
+    compile 'com.genesyslab.platform:comappblock:853.+'
+    compile 'com.genesyslab.platform:commons:853.+'
+    compile 'com.genesyslab.platform:configurationprotocol:853.+'
+    compile 'com.genesyslab.platform:reportingprotocol:853.+'
+    compile 'com.genesyslab.platform:voiceprotocol:853.+'
+
+    // XXX the following are transitive dependencies from genesys
+    // which are not currently handled by the associated
+    // maven repo publishing
+    compile 'com.genesyslab.platform:commonsappblock:853.+'
+    compile 'com.genesyslab.platform:connection:853.+'
+    compile 'com.genesyslab.platform:kvlistbinding:853.+'
+    compile 'com.genesyslab.platform:kvlists:853.+'
+    compile 'com.genesyslab.platform:protocol:853.+'
+    compile 'com.genesyslab.platform:system:853.+'
+    runtime 'io.netty:netty:3.9.4.Final'
 
     compile 'ch.qos.logback:logback-classic:1.2.+'
     compile 'com.github.kittinunf.fuel:fuel:1.12.+'

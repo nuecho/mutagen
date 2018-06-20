@@ -3,7 +3,6 @@ package com.nuecho.genesys.cli.models.configuration.reference
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.genesyslab.platform.applicationblocks.com.CfgFilterBasedQuery
-import com.genesyslab.platform.applicationblocks.com.ICfgQuery
 import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgAccessGroup
 import com.genesyslab.platform.applicationblocks.com.objects.CfgAgentGroup
@@ -192,9 +191,10 @@ class GVPIVRProfileReference(name: String) :
 class GVPCustomerReference(name: String) :
     SimpleObjectReference<CfgGVPCustomer>(CfgGVPCustomer::class.java, name) {
 
-    override fun toQuery(service: IConfService): ICfgQuery = CfgFilterBasedQuery(CfgObjectType.CFGGVPCustomer).apply {
-        this.setProperty("name", primaryKey)
-    }
+    override fun toQuery(service: IConfService) =
+        CfgFilterBasedQuery<CfgGVPCustomer>(CfgObjectType.CFGGVPCustomer).apply {
+            this.setProperty("name", primaryKey)
+        }
 }
 
 @JsonSerialize(using = SimpleObjectReferenceSerializer::class)
@@ -202,10 +202,11 @@ class GVPCustomerReference(name: String) :
 class GVPResellerReference(name: String, tenant: TenantReference?) :
     SimpleObjectReferenceWithTenant<CfgGVPReseller>(CfgGVPReseller::class.java, name, tenant) {
 
-    override fun toQuery(service: IConfService): ICfgQuery = CfgFilterBasedQuery(CfgObjectType.CFGGVPReseller).apply {
-        this.setProperty("name", primaryKey)
-        this.setProperty("tenant_dbid", getTenantDbid(tenant, service))
-    }
+    override fun toQuery(service: IConfService) =
+        CfgFilterBasedQuery<CfgGVPReseller>(CfgObjectType.CFGGVPReseller).apply {
+            this.setProperty("name", primaryKey)
+            this.setProperty("tenant_dbid", getTenantDbid(tenant, service))
+        }
 }
 
 @JsonSerialize(using = SimpleObjectReferenceSerializer::class)
