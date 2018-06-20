@@ -29,9 +29,10 @@ function cfgObjectInitialExportTest(cfgObjectType, initialNumberOfObjects) {
   });
 };
 
+
 function cfgObjectCreationTest(cfgObjectType, configurationPath) {
   test(`should create the ${cfgObjectType}`, () => {
-    const { code, output } = mutagen(`config import ${configurationPath}`);
+    const { code, output } = mutagen(`config import --auto-confirm ${configurationPath}`);
 
     expect(output).toMatchSnapshot(`the ${cfgObjectType} have been created`);
     expect(code).toBe(0);
@@ -40,7 +41,7 @@ function cfgObjectCreationTest(cfgObjectType, configurationPath) {
 
 function cfgObjectUpdateTest(cfgObjectType, configurationPath) {
   test(`should update the ${cfgObjectType}`, () => {
-    const { code, output } = mutagen(`config import ${configurationPath}`);
+    const { code, output } = mutagen(`config import --auto-confirm ${configurationPath}`);
     
     expect(output).toMatchSnapshot(`the ${cfgObjectType} have been updated`);
     expect(code).toBe(0);
@@ -63,7 +64,7 @@ function cfgObjectExportTest(cfgObjectType, checkKey = null) {
   });
 };
 
-const importDependencies = (dependenciesFile) => {mutagen(`config import ${getResourcePath(dependenciesFile)}`);}
+const importDependencies = (dependenciesFile) => {mutagen(`config import --auto-confirm ${getResourcePath(dependenciesFile)}`);}
 
 module.exports = {
   cfgObjectTests,

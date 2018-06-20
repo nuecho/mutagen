@@ -43,12 +43,16 @@ const Configserver = {
 
 const getResourcePath = (filePath = "") => path.join(RESOURCES_PATH, filePath);
 
-const mutagen = (args = "", callback) =>
-  formatResponse(sh.exec(`${MUTAGEN_PATH} ${args}`, callback));
+const mutagen = (args = "") =>
+  formatResponse(sh.exec(`${MUTAGEN_PATH} ${args}`));
+
+const mutagenAsync = (args = "", callback) =>
+  sh.exec(`${MUTAGEN_PATH} ${args}`, (code, stdout, stderr) => callback(formatResponse({code, stdout, stderr})));
 
 const formatResponse = ({ code, stdout, stderr }) => ({
   code,
   output: { stdout, stderr }
 });
 
-module.exports = { Configserver, getResourcePath, mutagen };
+
+module.exports = { Configserver, getResourcePath, mutagen, mutagenAsync };

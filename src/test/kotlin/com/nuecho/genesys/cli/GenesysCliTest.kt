@@ -84,7 +84,7 @@ class GenesysCliTest : StringSpec() {
         val command = spyk(GenesysCli())
 
         every {
-            command.run()
+            command.call()
         } throws RuntimeException(message)
 
         val (returnCode, output) = captureOutput { GenesysCli.execute(command, *args) }
@@ -100,6 +100,7 @@ class GenesysCliTest : StringSpec() {
         } answers {
             debug { DEBUG_LOG_ENTRY }
             info { INFO_LOG_ENTRY }
+            0
         }
 
         val (returnCode, output) = captureOutput { GenesysCli.execute(command, *args) }

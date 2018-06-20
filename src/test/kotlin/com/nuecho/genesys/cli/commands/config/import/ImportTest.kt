@@ -1,12 +1,14 @@
 package com.nuecho.genesys.cli.commands.config.import
 
+import com.genesyslab.platform.applicationblocks.com.objects.CfgPhysicalSwitch
 import com.genesyslab.platform.applicationblocks.com.objects.CfgTenant
 import com.genesyslab.platform.configuration.protocol.types.CfgDNType.CFGCP
 import com.nuecho.genesys.cli.CliOutputCaptureWrapper.execute
 import com.nuecho.genesys.cli.commands.config.ConfigMocks.mockMetadata
 import com.nuecho.genesys.cli.commands.config.export.ExportFormat.JSON
+import com.nuecho.genesys.cli.commands.config.import.Import.Companion.confirm
+import com.nuecho.genesys.cli.commands.config.import.Import.Companion.extractTopologicalSequence
 import com.nuecho.genesys.cli.commands.config.import.Import.Companion.importConfiguration
-import com.nuecho.genesys.cli.commands.config.import.Import.Companion.prepareImportOperation
 import com.nuecho.genesys.cli.models.configuration.Configuration
 import com.nuecho.genesys.cli.models.configuration.ConfigurationBuilder
 import com.nuecho.genesys.cli.models.configuration.DN
@@ -27,8 +29,11 @@ import io.kotlintest.matchers.shouldBe
 import io.kotlintest.matchers.shouldThrow
 import io.kotlintest.matchers.startWith
 import io.kotlintest.specs.StringSpec
+import io.mockk.Runs
 import io.mockk.every
+import io.mockk.just
 import io.mockk.objectMockk
+import io.mockk.staticMockk
 import io.mockk.use
 import io.mockk.verify
 
@@ -47,8 +52,48 @@ class ImportTest : StringSpec() {
             val service = mockConfService()
 
             objectMockk(Import.Companion).use {
-                importConfiguration(configuration, service)
+                importConfiguration(configuration, service, true)
                 verify(exactly = 0) { Import.save(any()) }
+            }
+        }
+
+        "refusing to apply plan should abort the import" {
+            val service = mockConfService()
+
+            val configuration = Configuration(
+                __metadata__ = mockMetadata(JSON),
+                physicalSwitches = listOf(PhysicalSwitch("physSwitch"))
+            )
+
+            staticMockk("kotlin.io.ConsoleKt").use {
+                every { readLine() } returns "n"
+                every { service.retrieveObject(CfgPhysicalSwitch::class.java, any()) } returns null
+
+                objectMockk(Import.Companion).use {
+                    importConfiguration(configuration, service, false)
+                    verify(exactly = 0) { Import.save(any()) }
+                }
+            }
+        }
+
+        "accepting to apply plan should perform the import" {
+            val service = mockConfService()
+
+            val configuration = Configuration(
+                __metadata__ = mockMetadata(JSON),
+                physicalSwitches = listOf(PhysicalSwitch("physSwitch"))
+            )
+
+            staticMockk("kotlin.io.ConsoleKt").use {
+                every { readLine() } returns "y"
+                every { service.retrieveObject(CfgPhysicalSwitch::class.java, any()) } returns null
+
+                objectMockk(Import.Companion).use {
+                    every { Import.save(any()) } just Runs
+
+                    importConfiguration(configuration, service, false)
+                    verify(exactly = 1) { Import.save(any()) }
+                }
             }
         }
 
@@ -69,7 +114,7 @@ class ImportTest : StringSpec() {
             )
 
             shouldThrow<ConfigurationObjectCycleException> {
-                importConfiguration(configuration, service)
+                importConfiguration(configuration, service, true)
             }
         }
 
@@ -84,7 +129,7 @@ class ImportTest : StringSpec() {
             every { service.retrieveObject(CfgTenant::class.java, any()) } returns null
 
             shouldThrow<UnresolvedConfigurationObjectReferenceException> {
-                importConfiguration(configuration, service)
+                importConfiguration(configuration, service, true)
             }
         }
 
@@ -110,7 +155,7 @@ class ImportTest : StringSpec() {
                 dns = listOf(dn)
             )
 
-            val sortedConfigurationObjects = prepareImportOperation(configuration, mockConfService())
+            val sortedConfigurationObjects = extractTopologicalSequence(configuration, mockConfService())
 
             sortedConfigurationObjects should haveSize(4)
 
@@ -118,6 +163,29 @@ class ImportTest : StringSpec() {
             sortedConfigurationObjects.subList(0, 2) should containsAll(physicalSwitch, tenant)
             sortedConfigurationObjects[2] shouldBe switch
             sortedConfigurationObjects[3] shouldBe dn
+        }
+
+        "confirm should return true when user enters y" {
+            staticMockk("kotlin.io.ConsoleKt").use {
+                every { readLine() } returns "y" andThen "Y"
+                confirm() shouldBe true
+                confirm() shouldBe true
+            }
+        }
+
+        "confirm should return false when user enters n" {
+            staticMockk("kotlin.io.ConsoleKt").use {
+                every { readLine() } returns "n" andThen "N"
+                confirm() shouldBe false
+                confirm() shouldBe false
+            }
+        }
+
+        "confirm should keep prompting until user enters a valid answer" {
+            staticMockk("kotlin.io.ConsoleKt").use {
+                every { readLine() } returns "q" andThen "t" andThen "Y"
+                confirm() shouldBe true
+            }
         }
     }
 }

@@ -37,13 +37,15 @@ class ExportCommand : GenesysCliCommand() {
     )
     private var format: ExportFormat? = RAW
 
-    override fun execute() {
+    override fun execute(): Int {
         val environment = getGenesysCli().loadEnvironment()
 
         exportConfiguration(
             createExportProcessor(format!!, environment, System.out),
             ConfService(environment)
         )
+
+        return 0
     }
 
     override fun getGenesysCli() = config!!.getGenesysCli()

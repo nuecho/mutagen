@@ -1,0 +1,40 @@
+{
+  "__metadata__": {
+    "formatName": "JSON",
+    "formatVersion": "1.0.0"
+  },
+  "physicalSwitches": [
+    {
+      "name": "AcceptChangesPhysicalSwitch",
+      "state": "enabled",
+      "type": "fujitsu"
+    }
+  ],
+  "switches": [
+    {
+      "dnRange": "74233-74244, 74290",
+      "linkType": "madgelink",
+      "name": "AcceptChangesSwitch",
+      "physicalSwitch": "AcceptChangesPhysicalSwitch",
+      "state": "enabled",
+      "switchAccessCodes": [
+      ],
+      "tenant": "Environment"
+    }
+  ],
+  "dns": [
+    {
+      "name": "AcceptChangesDN",
+      "number": "123",
+      "routeType": "default",
+      "state": "enabled",
+      "switch": "AcceptChangesSwitch",
+      "switchSpecificType": 1,
+      "tenant": "Environment",
+      "trunks": 1,
+      "type": "Extension",
+      "useOverride": true
+    }
+  ]
+}
+

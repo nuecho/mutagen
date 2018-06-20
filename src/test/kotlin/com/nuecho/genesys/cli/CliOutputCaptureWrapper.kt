@@ -21,7 +21,7 @@ object CliOutputCaptureWrapper {
     }
 
     fun execute(vararg args: String): String {
-        val (_, output) = captureOutput { CommandLine.run(GenesysCli(), System.out, *args) }
+        val (_, output) = captureOutput { CommandLine.call(GenesysCli(), System.out, *args) }
         return output
     }
 }

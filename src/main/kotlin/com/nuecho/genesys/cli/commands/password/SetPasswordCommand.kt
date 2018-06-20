@@ -16,7 +16,7 @@ class SetPasswordCommand : GenesysCliCommand() {
     @CommandLine.ParentCommand
     private var genesysCli: GenesysCli? = null
 
-    override fun execute() {
+    override fun execute(): Int {
         val environmentName = getGenesysCli().environmentName
         val environmentsFile = Preferences.findEnvironmentFile()
         val environments = Environments.load(environmentsFile)
@@ -29,6 +29,8 @@ class SetPasswordCommand : GenesysCliCommand() {
 
         debug { "Saving encrypted password to environment file." }
         environments.saveToFile(environmentsFile)
+
+        return 0
     }
 
     override fun getGenesysCli() = genesysCli!!
