@@ -3,6 +3,7 @@ package com.nuecho.genesys.cli.models.configuration.reference
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.genesyslab.platform.applicationblocks.com.CfgFilterBasedQuery
+import com.genesyslab.platform.applicationblocks.com.CfgObject
 import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgAccessGroup
 import com.genesyslab.platform.applicationblocks.com.objects.CfgAgentGroup
@@ -13,6 +14,7 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgEnumerator
 import com.genesyslab.platform.applicationblocks.com.objects.CfgGVPCustomer
 import com.genesyslab.platform.applicationblocks.com.objects.CfgGVPIVRProfile
 import com.genesyslab.platform.applicationblocks.com.objects.CfgGVPReseller
+import com.genesyslab.platform.applicationblocks.com.objects.CfgID
 import com.genesyslab.platform.applicationblocks.com.objects.CfgIVR
 import com.genesyslab.platform.applicationblocks.com.objects.CfgObjectiveTable
 import com.genesyslab.platform.applicationblocks.com.objects.CfgPerson
@@ -126,6 +128,11 @@ class PersonReference(employeeId: String, tenant: TenantReference?) :
     override fun toQuery(service: IConfService) = CfgPersonQuery().apply {
         employeeId = primaryKey
         tenantDbid = getTenantDbid(tenant, service)
+    }
+
+    fun toCfgID(service: IConfService, parent: CfgObject) = CfgID(service, parent).apply {
+        dbid = service.getObjectDbid(this@PersonReference)
+        type = CfgObjectType.CFGPerson
     }
 }
 
