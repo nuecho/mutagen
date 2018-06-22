@@ -44,8 +44,7 @@ data class AccessGroup(
     )
 
     override fun updateCfgObject(service: IConfService) =
-        (service.retrieveObject(reference) ?: CfgAccessGroup(service)).also {
-            val cfgAccessGroup = it
+        (service.retrieveObject(reference) ?: CfgAccessGroup(service)).also { cfgAccessGroup ->
             setProperty(
                 "memberIDs",
                 members?.map { person ->

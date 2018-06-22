@@ -70,7 +70,7 @@ class SimpleObjectReferenceTest : StringSpec() {
         }
 
         "SimpleObjectReference.toString should generate the proper String" {
-            TenantReference(DEFAULT_TENANT).toString() shouldBe "$DEFAULT_TENANT"
+            TenantReference(DEFAULT_TENANT).toString() shouldBe DEFAULT_TENANT
         }
 
         "SimpleObjectReferenceWithTenant.toString should generate the proper String" {

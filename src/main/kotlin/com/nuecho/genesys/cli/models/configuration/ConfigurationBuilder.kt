@@ -7,6 +7,7 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgAgentGroup
 import com.genesyslab.platform.applicationblocks.com.objects.CfgDN
 import com.genesyslab.platform.applicationblocks.com.objects.CfgDNGroup
 import com.genesyslab.platform.applicationblocks.com.objects.CfgEnumerator
+import com.genesyslab.platform.applicationblocks.com.objects.CfgEnumeratorValue
 import com.genesyslab.platform.applicationblocks.com.objects.CfgGVPCustomer
 import com.genesyslab.platform.applicationblocks.com.objects.CfgGVPIVRProfile
 import com.genesyslab.platform.applicationblocks.com.objects.CfgGVPReseller
@@ -26,6 +27,7 @@ class ConfigurationBuilder {
     private val dnGroups = ArrayList<DNGroup>()
     private val dns = ArrayList<DN>()
     private val enumerators = ArrayList<Enumerator>()
+    private val enumeratorValues = ArrayList<EnumeratorValue>()
     private val gvpCustomers = ArrayList<GVPCustomer>()
     private val gvpResellers = ArrayList<GVPReseller>()
     private val gvpIVRProfiles = ArrayList<GVPIVRProfile>()
@@ -46,6 +48,7 @@ class ConfigurationBuilder {
             is CfgDNGroup -> dnGroups += DNGroup(cfgObject)
             is CfgDN -> dns += DN(cfgObject)
             is CfgEnumerator -> enumerators += Enumerator(cfgObject)
+            is CfgEnumeratorValue -> enumeratorValues += EnumeratorValue(cfgObject)
             is CfgGVPCustomer -> gvpCustomers += GVPCustomer(cfgObject)
             is CfgGVPIVRProfile -> gvpIVRProfiles += GVPIVRProfile(cfgObject)
             is CfgGVPReseller -> gvpResellers += GVPReseller(cfgObject)
@@ -68,6 +71,7 @@ class ConfigurationBuilder {
         dnGroups.sorted(),
         dns.sorted(),
         enumerators.sorted(),
+        enumeratorValues.sorted(),
         gvpCustomers.sorted(),
         gvpIVRProfiles.sorted(),
         gvpResellers.sorted(),

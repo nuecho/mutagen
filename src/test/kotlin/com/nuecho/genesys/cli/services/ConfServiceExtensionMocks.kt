@@ -5,6 +5,7 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgAgentLogin
 import com.genesyslab.platform.applicationblocks.com.objects.CfgApplication
 import com.genesyslab.platform.applicationblocks.com.objects.CfgDN
 import com.genesyslab.platform.applicationblocks.com.objects.CfgDNGroup
+import com.genesyslab.platform.applicationblocks.com.objects.CfgEnumerator
 import com.genesyslab.platform.applicationblocks.com.objects.CfgFolder
 import com.genesyslab.platform.applicationblocks.com.objects.CfgGVPCustomer
 import com.genesyslab.platform.applicationblocks.com.objects.CfgGVPReseller
@@ -18,6 +19,7 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgStatTable
 import com.genesyslab.platform.applicationblocks.com.objects.CfgSwitch
 import com.genesyslab.platform.applicationblocks.com.objects.CfgTenant
 import com.genesyslab.platform.applicationblocks.com.objects.CfgTimeZone
+import com.genesyslab.platform.configuration.protocol.types.CfgObjectType.CFGEnumerator
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_OBJECT_DBID
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgGVPCustomer
@@ -116,6 +118,16 @@ object ConfServiceExtensionMocks {
             every { dnGroup.dbid } returns dbid
             every { dnGroup.objectDbid } returns dbid
             dnGroup
+        }
+    }
+
+    fun mockRetrieveEnumerator(service: IConfService, name: String?, dbid: Int = DEFAULT_OBJECT_DBID) {
+        every { service.retrieveObject(CFGEnumerator, any()) } answers {
+            val enumerator = mockk<CfgEnumerator>()
+            every { enumerator.name } returns name
+            every { enumerator.dbid } returns dbid
+            every { enumerator.objectDbid } returns dbid
+            enumerator
         }
     }
 

@@ -1,0 +1,19 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`[mutagen enumeratorValues config import-export] should create the enumeratorValues: the enumeratorValues have been created 1`] = `
+Object {
+  "stderr": "",
+  "stdout": "+ enumeratorvalue => name: 'cfgObjectTest', enumerator: 'Environment/MediaType'
+Completed. 1 object(s) imported.
+",
+}
+`;
+
+exports[`[mutagen enumeratorValues config import-export] should update the enumeratorValues: the enumeratorValues have been updated 1`] = `
+Object {
+  "stderr": "",
+  "stdout": "~ enumeratorvalue => name: 'cfgObjectTest', enumerator: 'Environment/MediaType'
+Completed. 1 object(s) imported.
+",
+}
+`;

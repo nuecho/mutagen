@@ -10,6 +10,7 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgDN
 import com.genesyslab.platform.applicationblocks.com.objects.CfgDNGroup
 import com.genesyslab.platform.applicationblocks.com.objects.CfgDNInfo
 import com.genesyslab.platform.applicationblocks.com.objects.CfgEnumerator
+import com.genesyslab.platform.applicationblocks.com.objects.CfgEnumeratorValue
 import com.genesyslab.platform.applicationblocks.com.objects.CfgFolder
 import com.genesyslab.platform.applicationblocks.com.objects.CfgGVPCustomer
 import com.genesyslab.platform.applicationblocks.com.objects.CfgGVPIVRProfile
@@ -141,6 +142,15 @@ object ConfigurationObjectMocks {
             every { it.tenant } returns tenant
             every { it.name } returns name
             every { it.objectDbid } returns DEFAULT_OBJECT_DBID
+        }
+
+    fun mockCfgEnumeratorValue(
+        name: String?,
+        enumerator: CfgEnumerator = mockCfgEnumerator("enumerator", mockCfgTenant(DEFAULT_TENANT))
+    ) =
+        mockk<CfgEnumeratorValue>().also {
+            every { it.name } returns name
+            every { it.enumerator } returns enumerator
         }
 
     fun mockCfgFolder(name: String?) =
