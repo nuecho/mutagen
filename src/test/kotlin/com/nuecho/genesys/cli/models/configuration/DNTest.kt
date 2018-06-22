@@ -33,8 +33,9 @@ import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveSwi
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveTenant
 import com.nuecho.genesys.cli.services.ServiceMocks.mockConfService
 import com.nuecho.genesys.cli.toShortName
-import io.kotlintest.matchers.shouldBe
 import io.mockk.every
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
 
 private const val NUMBER = "123"
 private const val SWITCH_NAME = "aswitch"
@@ -74,27 +75,26 @@ class DNTest : ConfigurationObjectTest(
         type = CFGRoutingQueue.toShortName()
     ), DN(mockCfgDN())
 ) {
-    init {
 
-        "DN.updateCfgObject should properly create CfgDN" {
-            val service = mockConfService()
-            every { service.retrieveObject(CfgDN::class.java, any()) } returns null
-            mockRetrieveTenant(service)
-            mockRetrieveDNGroup(service)
-            mockRetrieveSwitch(service)
-            mockRetrieveFolder(service)
-            mockRetrieveObjectiveTable(service)
+    @Test
+    fun `updateCfgObject should properly create CfgDN`() {
+        val service = mockConfService()
+        every { service.retrieveObject(CfgDN::class.java, any()) } returns null
+        mockRetrieveTenant(service)
+        mockRetrieveDNGroup(service)
+        mockRetrieveSwitch(service)
+        mockRetrieveFolder(service)
+        mockRetrieveObjectiveTable(service)
 
-            val cfgDN = dn.updateCfgObject(service)
+        val cfgDN = dn.updateCfgObject(service)
 
-            with(cfgDN) {
-                name shouldBe dn.name
-                switchDBID shouldBe DEFAULT_OBJECT_DBID
-                registerAll shouldBe toCfgDNRegisterFlag(dn.registerAll)
-                switchSpecificType shouldBe dn.switchSpecificType
-                state shouldBe toCfgObjectState(dn.state)
-                userProperties.asCategorizedProperties() shouldBe dn.userProperties
-            }
+        with(cfgDN) {
+            assertEquals(name, dn.name)
+            assertEquals(switchDBID, DEFAULT_OBJECT_DBID)
+            assertEquals(registerAll, toCfgDNRegisterFlag(dn.registerAll))
+            assertEquals(switchSpecificType, dn.switchSpecificType)
+            assertEquals(state, toCfgObjectState(dn.state))
+            assertEquals(userProperties.asCategorizedProperties(), dn.userProperties)
         }
     }
 }

@@ -4,12 +4,12 @@ import com.nuecho.genesys.cli.TestResources.loadEnvironments
 import com.nuecho.genesys.cli.services.GenesysServices.DEFAULT_APPLICATION_NAME
 import com.nuecho.genesys.cli.services.GenesysServices.DEFAULT_SERVER_PORT
 import com.nuecho.genesys.cli.services.GenesysServices.DEFAULT_USE_TLS
-import io.kotlintest.matchers.shouldBe
-import io.kotlintest.matchers.shouldThrow
-import io.kotlintest.specs.StringSpec
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.Assertions.assertThrows
 import java.io.File
 
-class EnvironmentTest : StringSpec() {
+class EnvironmentTest {
     companion object {
         val defaultTestEnvironment = Environment(
             host = "localhost",
@@ -30,29 +30,31 @@ class EnvironmentTest : StringSpec() {
         )
     }
 
-    init {
-        "omitting optional selectedEnvironment properties should give default values" {
-            val environments = loadEnvironments("environments.yml")
+    @Test
+    fun `omitting optional selectedEnvironment properties should give default values`() {
+        val environments = loadEnvironments("environments.yml")
 
-            environments["default"] shouldBe defaultTestEnvironment
+        assertEquals(environments["default"], defaultTestEnvironment)
+    }
+
+    @Test
+    fun `providing optional selectedEnvironment properties should override default values`() {
+        val environments = loadEnvironments("environments.yml")
+
+        assertEquals(environments["override"], overrideTestEnvironment)
+    }
+
+    @Test
+    fun `loading an invalid environments file should throw an exception`() {
+        assertThrows(EnvironmentException::class.java) {
+            loadEnvironments("invalid_environments.yml")
         }
+    }
 
-        "providing optional selectedEnvironment properties should override default values" {
-            val environments = loadEnvironments("environments.yml")
-
-            environments["override"] shouldBe overrideTestEnvironment
-        }
-
-        "loading an invalid environments file should throw an exception" {
-            shouldThrow<EnvironmentException> {
-                loadEnvironments("invalid_environments.yml")
-            }
-        }
-
-        "loading a non-existing environments file should throw an exception" {
-            shouldThrow<EnvironmentException> {
-                Environments.load(File(""))
-            }
+    @Test
+    fun `loading a non-existing environments file should throw an exception`() {
+        assertThrows(EnvironmentException::class.java) {
+            Environments.load(File(""))
         }
     }
 }

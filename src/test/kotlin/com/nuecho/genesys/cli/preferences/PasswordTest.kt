@@ -1,36 +1,40 @@
 package com.nuecho.genesys.cli.preferences
 
-import io.kotlintest.matchers.shouldBe
-import io.kotlintest.matchers.shouldThrow
-import io.kotlintest.specs.StringSpec
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.Assertions.assertThrows
 
-class PasswordTest : StringSpec() {
+class PasswordTest {
 
     private val encryptedPassword = "9ndcYhfWmeljq9P5aY7dUcbIIIpvS/VBWFiKq0g7mKwCOJPm+/yJC67BAOWyK8Sk"
     private val clearPassword = "password"
 
-    init {
-        "calling isEncrypted should say if the string is encrypted like we do" {
+    @Test
+    fun `calling isEncrypted should say if the string is encrypted like we do`() {
 
-            Password.isEncrypted("password") shouldBe false
-            Password.isEncrypted("niuavlhefa78in28908yrhlsdal;") shouldBe false
+        assertFalse(Password.isEncrypted("password"))
+        assertFalse(Password.isEncrypted("niuavlhefa78in28908yrhlsdal;"))
 
-            Password.isEncrypted(encryptedPassword) shouldBe true
-            Password.isEncrypted("W544hT5DtdEbsxN565b9mGGsjVK7Sb12GuYJ8fqE04e8uHl/WL5HPzAagqOqJ8db") shouldBe true
-        }
+        assertTrue(Password.isEncrypted(encryptedPassword))
+        assertTrue(Password.isEncrypted("W544hT5DtdEbsxN565b9mGGsjVK7Sb12GuYJ8fqE04e8uHl/WL5HPzAagqOqJ8db"))
+    }
 
-        "calling decrypt should return clear text" {
-            Password.decrypt(encryptedPassword) shouldBe clearPassword
-        }
+    @Test
+    fun `calling decrypt should return clear text`() {
+        assertEquals(Password.decrypt(encryptedPassword), clearPassword)
+    }
 
-        "calling encryptAndDigest should return encrypted text with digest" {
-            Password.encryptAndDigest(clearPassword) shouldBe encryptedPassword
-        }
+    @Test
+    fun `calling encryptAndDigest should return encrypted text with digest`() {
+        assertEquals(Password.encryptAndDigest(clearPassword), encryptedPassword)
+    }
 
-        "calling promptPassword with no console attached should throw" {
-            shouldThrow<IllegalStateException> {
-                Password.promptForPassword()
-            }
+    @Test
+    fun `calling promptPassword with no console attached should throw`() {
+        assertThrows(IllegalStateException::class.java) {
+            Password.promptForPassword()
         }
     }
 }

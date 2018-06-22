@@ -12,8 +12,9 @@ import com.nuecho.genesys.cli.models.configuration.ConfigurationTestData.default
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveTenant
 import com.nuecho.genesys.cli.services.ServiceMocks.mockConfService
 import com.nuecho.genesys.cli.toShortName
-import io.kotlintest.matchers.shouldBe
 import io.mockk.every
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
 
 private const val NAME = "name"
 private val enumerator = Enumerator(
@@ -31,35 +32,35 @@ class EnumeratorTest : ConfigurationObjectTest(
     Enumerator(tenant = DEFAULT_TENANT_REFERENCE, name = NAME),
     Enumerator(mockCfgEnumerator())
 ) {
-    init {
-        "Enumerator.updateCfgObject should properly create CfgEnumerator" {
-            val service = mockConfService()
-            every { service.retrieveObject(CfgEnumerator::class.java, any()) } returns null
-            mockRetrieveTenant(service)
+    @Test
+    fun `updateCfgObject should properly create CfgEnumerator`() {
+        val service = mockConfService()
+        every { service.retrieveObject(CfgEnumerator::class.java, any()) } returns null
+        mockRetrieveTenant(service)
 
-            val cfgEnumerator = enumerator.updateCfgObject(service)
+        val cfgEnumerator = enumerator.updateCfgObject(service)
 
-            with(cfgEnumerator) {
-                name shouldBe enumerator.name
-                displayName shouldBe enumerator.displayName
-                description shouldBe enumerator.description
-                type shouldBe toCfgEnumeratorType(enumerator.type)
-                state shouldBe toCfgObjectState(enumerator.state)
-                userProperties.asCategorizedProperties() shouldBe enumerator.userProperties
-            }
+        with(cfgEnumerator) {
+            assertEquals(enumerator.name, name)
+            assertEquals(enumerator.displayName, displayName)
+            assertEquals(enumerator.description, description)
+            assertEquals(toCfgEnumeratorType(enumerator.type), type)
+            assertEquals(toCfgObjectState(enumerator.state), state)
+            assertEquals(enumerator.userProperties, userProperties.asCategorizedProperties())
         }
+    }
 
-        "Enumerator.updateCfgObject should use name when displayName is not specified" {
-            val service = mockConfService()
-            every { service.retrieveObject(CfgEnumerator::class.java, any()) } returns null
-            mockRetrieveTenant(service)
+    @Test
+    fun `updateCfgObject should use name when displayName is not specified`() {
+        val service = mockConfService()
+        every { service.retrieveObject(CfgEnumerator::class.java, any()) } returns null
+        mockRetrieveTenant(service)
 
-            val cfgEnumerator = Enumerator(DEFAULT_TENANT_REFERENCE, NAME).updateCfgObject(service)
+        val cfgEnumerator = Enumerator(DEFAULT_TENANT_REFERENCE, NAME).updateCfgObject(service)
 
-            with(cfgEnumerator) {
-                name shouldBe NAME
-                displayName shouldBe NAME
-            }
+        with(cfgEnumerator) {
+            assertEquals(NAME, name)
+            assertEquals(NAME, displayName)
         }
     }
 }

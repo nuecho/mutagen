@@ -12,60 +12,61 @@ import com.nuecho.genesys.cli.commands.config.export.ExportFormat.RAW
 import com.nuecho.genesys.cli.core.defaultJsonObjectMapper
 import com.nuecho.genesys.cli.preferences.environment.Environment
 import com.nuecho.genesys.cli.services.ConfService
-import io.kotlintest.matchers.should
-import io.kotlintest.matchers.shouldBe
-import io.kotlintest.matchers.shouldThrow
-import io.kotlintest.matchers.startWith
-import io.kotlintest.specs.StringSpec
 import io.mockk.Runs
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.slot
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.Assertions.assertThrows
 import java.io.ByteArrayOutputStream
 
 private const val USAGE_PREFIX = "Usage: export [-?]"
 
-class ExportCommandTest : StringSpec() {
-    init {
-        "executing Export with -h argument should print usage" {
-            val output = execute("config", "export", "-h")
+class ExportCommandTest {
+    @Test
+    fun `executing Export with -h argument should print usage`() {
+        val output = execute("config", "export", "-h")
 
-            output should startWith(USAGE_PREFIX)
-        }
+        assertTrue(output.startsWith(USAGE_PREFIX))
+    }
 
-        "exporting raw empty configuration should generate an empty JSON array for each object type" {
-            val output = ByteArrayOutputStream()
-            val processor = RawExportProcessor(mockMetadata(RAW), output)
-            val service = mockConfService()
+    @Test
+    fun `exporting raw empty configuration should generate an empty JSON array for each object type`() {
+        val output = ByteArrayOutputStream()
+        val processor = RawExportProcessor(mockMetadata(RAW), output)
+        val service = mockConfService()
 
+        exportConfiguration(processor, service)
+
+        val result = defaultJsonObjectMapper().readTree(String(output.toByteArray()))
+        assertEquals(result, loadRawConfiguration("commands/config/export/raw/empty_configuration.json"))
+    }
+
+    @Test
+    fun `failing while exporting should result in an ExportException`() {
+        val processor = mockk<ExportProcessor>()
+        every { processor.begin() } throws RuntimeException()
+        val service = mockConfService()
+
+        assertThrows(ExportException::class.java) {
             exportConfiguration(processor, service)
-
-            val result = defaultJsonObjectMapper().readTree(String(output.toByteArray()))
-            result shouldBe loadRawConfiguration("commands/config/export/raw/empty_configuration.json")
         }
+    }
 
-        "failing while exporting should result in an ExportException" {
-            val processor = mockk<ExportProcessor>()
-            every { processor.begin() } throws RuntimeException()
-            val service = mockConfService()
+    @Test
+    fun `createExportProcessor should properly create Metadata based on ExpoetFormat`() {
+        val environment = Environment(host = "host", user = "user", rawPassword = "password")
 
-            shouldThrow<ExportException> {
-                exportConfiguration(processor, service)
-            }
-        }
+        val rawExportProcessor = createExportProcessor(RAW, environment, System.out) as RawExportProcessor
+        assertEquals(rawExportProcessor.metadata.formatName, RAW.name)
+        assertEquals(rawExportProcessor.metadata.formatVersion, RAW.version)
 
-        "createExportProcessor should properly create Metadata based on ExpoetFormat" {
-            val environment = Environment(host = "host", user = "user", rawPassword = "password")
-
-            val rawExportProcessor = createExportProcessor(RAW, environment, System.out) as RawExportProcessor
-            rawExportProcessor.metadata.formatName shouldBe RAW.name
-            rawExportProcessor.metadata.formatVersion shouldBe RAW.version
-
-            val jsonExportProcessor = createExportProcessor(JSON, environment, System.out) as JsonExportProcessor
-            jsonExportProcessor.metadata.formatName shouldBe JSON.name
-            jsonExportProcessor.metadata.formatVersion shouldBe JSON.version
-        }
+        val jsonExportProcessor = createExportProcessor(JSON, environment, System.out) as JsonExportProcessor
+        assertEquals(jsonExportProcessor.metadata.formatName, JSON.name)
+        assertEquals(jsonExportProcessor.metadata.formatVersion, JSON.version)
     }
 }
 

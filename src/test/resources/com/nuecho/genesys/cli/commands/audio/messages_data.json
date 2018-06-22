@@ -1,86 +1,86 @@
 [
-    {
-        "name": "Test",
-        "description": "Test description",
+  {
+    "name": "Test",
+    "description": "Test description",
+    "id": 10001,
+    "arId": 1000,
+    "tenantId": 1,
+    "ownResourceFiles": [
+      {
         "id": 10001,
-        "arId": 1000,
-        "tenantId": 1,
-        "ownResourceFiles": [
-            {
-                "id": 10001,
-                "originalFilename": "Test.wav",
-                "personality": {
-                    "id": 10002,
-                    "personalityId": 10
-                }
-            }
-        ]
-    },
-    {
-        "name": "Enter Password",
-        "description": "Now enter your password, followed by pound",
-        "id": 10002,
-        "arId": 1001,
-        "tenantId": 1,
-        "ownResourceFiles": [
-            {
-                "id": 10003,
-                "originalFilename": "Test.wav",
-                "personality": {
-                    "id": 10002,
-                    "personalityId": 10
-                }
-            }
-        ]
-    },
-    {
-        "name": "foo",
-        "description": "foo",
+        "originalFilename": "Test.wav",
+        "personality": {
+          "id": 10002,
+          "personalityId": 10
+        }
+      }
+    ]
+  },
+  {
+    "name": "Enter Password",
+    "description": "Now enter your password, followed by pound",
+    "id": 10002,
+    "arId": 1001,
+    "tenantId": 1,
+    "ownResourceFiles": [
+      {
         "id": 10003,
-        "arId": 1002,
-        "tenantId": 1,
-        "ownResourceFiles": [
-            {
-                "id": 10008,
-                "originalFilename": "foo.wav",
-                "personality": {
-                    "id": 10004,
-                    "personalityId": 12
-                }
-            },
-            {
-                "id": 10004,
-                "originalFilename": "foo.wav",
-                "personality": {
-                    "id": 10002,
-                    "personalityId": 10
-                }
-            }
-        ]
-    },
-    {
-        "name": "BAZ",
-        "description": "baz",
+        "originalFilename": "Test.wav",
+        "personality": {
+          "id": 10002,
+          "personalityId": 10
+        }
+      }
+    ]
+  },
+  {
+    "name": "foo",
+    "description": "foo",
+    "id": 10003,
+    "arId": 1002,
+    "tenantId": 1,
+    "ownResourceFiles": [
+      {
+        "id": 10008,
+        "originalFilename": "foo.wav",
+        "personality": {
+          "id": 10004,
+          "personalityId": 12
+        }
+      },
+      {
         "id": 10004,
-        "arId": 1005,
-        "tenantId": 1,
-        "ownResourceFiles": [
-            {
-                "id": 10009,
-                "originalFilename": "baz.wav",
-                "personality": {
-                    "id": 10004,
-                    "personalityId": 12
-                }
-            },
-            {
-                "id": 10005,
-                "originalFilename": "baz.wav",
-                "personality": {
-                    "id": 10002,
-                    "personalityId": 10
-                }
-            }
-        ]
-    }
+        "originalFilename": "foo.wav",
+        "personality": {
+          "id": 10002,
+          "personalityId": 10
+        }
+      }
+    ]
+  },
+  {
+    "name": "BAZ",
+    "description": "baz",
+    "id": 10004,
+    "arId": 1005,
+    "tenantId": 1,
+    "ownResourceFiles": [
+      {
+        "id": 10009,
+        "originalFilename": "baz.wav",
+        "personality": {
+          "id": 10004,
+          "personalityId": 12
+        }
+      },
+      {
+        "id": 10005,
+        "originalFilename": "baz.wav",
+        "personality": {
+          "id": 10002,
+          "personalityId": 10
+        }
+      }
+    ]
+  }
 ]

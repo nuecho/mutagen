@@ -13,8 +13,9 @@ import com.nuecho.genesys.cli.models.configuration.ConfigurationTestData.default
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveTenant
 import com.nuecho.genesys.cli.services.ServiceMocks.mockConfService
 import com.nuecho.genesys.cli.toShortName
-import io.kotlintest.matchers.shouldBe
 import io.mockk.every
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
 
 private const val NAME = "name"
 private val TYPE = CFGTransfer.toShortName()
@@ -37,30 +38,27 @@ class ActionCodeTest : ConfigurationObjectTest(
     ActionCode(tenant = DEFAULT_TENANT_REFERENCE, name = NAME, type = TYPE),
     ActionCode(mockCfgActionCode())
 ) {
-    init {
-        "ActionCode.updateCfgObject should properly create CfgActionCode" {
-            val service = mockConfService()
-            every { service.retrieveObject(CfgActionCode::class.java, any()) } returns null
-            mockRetrieveTenant(service)
+    @Test
+    fun `updateCfgObject should properly create CfgActionCode`() {
+        val service = mockConfService()
+        every { service.retrieveObject(CfgActionCode::class.java, any()) } returns null
+        mockRetrieveTenant(service)
 
-            val type = toCfgActionCodeType(actionCode.type)
-            val state = toCfgObjectState(actionCode.state)
-            val cfgActionCode = actionCode.updateCfgObject(service)
+        val cfgActionCode = actionCode.updateCfgObject(service)
 
-            with(cfgActionCode) {
-                name shouldBe actionCode.name
-                type shouldBe type
-                code shouldBe actionCode.code
-                subcodes.size shouldBe 1
+        with(cfgActionCode) {
+            assertEquals(actionCode.name, name)
+            assertEquals(toCfgActionCodeType(actionCode.type), type)
+            assertEquals(actionCode.code, code)
+            assertEquals(1, subcodes.size)
 
-                with(subcodes.iterator().next()) {
-                    name shouldBe SUBNAME
-                    code shouldBe SUBCODE
-                }
-
-                state shouldBe state
-                userProperties.asCategorizedProperties() shouldBe actionCode.userProperties
+            with(subcodes.iterator().next()) {
+                assertEquals(SUBNAME, name)
+                assertEquals(SUBCODE, code)
             }
+
+            assertEquals(toCfgObjectState(actionCode.state), state)
+            assertEquals(actionCode.userProperties, userProperties.asCategorizedProperties())
         }
     }
 }

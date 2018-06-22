@@ -12,8 +12,9 @@ import com.nuecho.genesys.cli.models.configuration.ConfigurationTestData.default
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveTenant
 import com.nuecho.genesys.cli.services.ServiceMocks.mockConfService
 import com.nuecho.genesys.cli.toShortName
-import io.kotlintest.matchers.shouldBe
 import io.mockk.every
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
 
 private const val NAME = "foo"
 private val TYPE = CFGTRTList
@@ -33,23 +34,22 @@ class TransactionTest : ConfigurationObjectTest(
     Transaction(tenant = DEFAULT_TENANT_REFERENCE, name = NAME, type = TYPE.toShortName()),
     Transaction(mockCfgTransaction())
 ) {
-    init {
-        "Transaction.updateCfgObject should properly create CfgTransaction" {
-            val service = mockConfService()
-            every { service.retrieveObject(CfgTransaction::class.java, any()) } returns null
-            mockRetrieveTenant(service)
+    @Test
+    fun `updateCfgObject should properly create CfgTransaction`() {
+        val service = mockConfService()
+        every { service.retrieveObject(CfgTransaction::class.java, any()) } returns null
+        mockRetrieveTenant(service)
 
-            val cfgTransaction = transaction.updateCfgObject(service)
+        val cfgTransaction = transaction.updateCfgObject(service)
 
-            with(cfgTransaction) {
-                name shouldBe transaction.name
-                alias shouldBe transaction.alias
-                type shouldBe toCfgTransactionType(transaction.type)
-                recordPeriod shouldBe transaction.recordPeriod
-                description shouldBe transaction.description
-                state shouldBe toCfgObjectState(transaction.state)
-                userProperties.asCategorizedProperties() shouldBe transaction.userProperties
-            }
+        with(cfgTransaction) {
+            assertEquals(transaction.name, name)
+            assertEquals(transaction.alias, alias)
+            assertEquals(toCfgTransactionType(transaction.type), type)
+            assertEquals(transaction.recordPeriod, recordPeriod)
+            assertEquals(transaction.description, description)
+            assertEquals(toCfgObjectState(transaction.state), state)
+            assertEquals(transaction.userProperties, userProperties.asCategorizedProperties())
         }
     }
 }

@@ -10,8 +10,9 @@ import com.nuecho.genesys.cli.models.configuration.ConfigurationTestData.default
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveTenant
 import com.nuecho.genesys.cli.services.ServiceMocks.mockConfService
 import com.nuecho.genesys.cli.toShortName
-import io.kotlintest.matchers.shouldBe
 import io.mockk.every
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
 
 private const val NAME = "name"
 private val skill = Skill(
@@ -26,19 +27,18 @@ class SkillTest : ConfigurationObjectTest(
     Skill(tenant = DEFAULT_TENANT_REFERENCE, name = NAME),
     Skill(mockCfgSkill())
 ) {
-    init {
-        "Skill.updateCfgObject should properly create CfgSkill" {
-            val service = mockConfService()
-            every { service.retrieveObject(CfgSkill::class.java, any()) } returns null
-            mockRetrieveTenant(service)
+    @Test
+    fun `updateCfgObject should properly create CfgSkill`() {
+        val service = mockConfService()
+        every { service.retrieveObject(CfgSkill::class.java, any()) } returns null
+        mockRetrieveTenant(service)
 
-            val cfgSkill = skill.updateCfgObject(service)
+        val cfgSkill = skill.updateCfgObject(service)
 
-            with(cfgSkill) {
-                name shouldBe skill.name
-                state shouldBe ConfigurationObjects.toCfgObjectState(skill.state)
-                userProperties.asCategorizedProperties() shouldBe skill.userProperties
-            }
+        with(cfgSkill) {
+            assertEquals(skill.name, name)
+            assertEquals(ConfigurationObjects.toCfgObjectState(skill.state), state)
+            assertEquals(skill.userProperties, userProperties.asCategorizedProperties())
         }
     }
 }

@@ -30,8 +30,9 @@ import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveSta
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveTenant
 import com.nuecho.genesys.cli.services.ServiceMocks
 import com.nuecho.genesys.cli.toShortName
-import io.kotlintest.matchers.shouldBe
 import io.mockk.every
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
 
 private const val NAME = "name"
 private val agentGroup = AgentGroup(
@@ -67,39 +68,38 @@ class AgentGroupTest : ConfigurationObjectTest(
     AgentGroup(tenant = DEFAULT_TENANT_REFERENCE, name = NAME),
     AgentGroup(mockCfgAgentGroup())
 ) {
-    init {
-        val service = ServiceMocks.mockConfService()
+    val service = ServiceMocks.mockConfService()
 
-        "AgentGroup.updateCfgObject should properly create CfgAgentGroup" {
-            val cfgSwitch = mockCfgSwitch("switch")
-            every { service.retrieveObject(CfgAgentGroup::class.java, any()) } returns null
-            every { service.retrieveObject(CfgSwitch::class.java, any()) } returns cfgSwitch
+    @Test
+    fun `updateCfgObject should properly create CfgAgentGroup`() {
+        val cfgSwitch = mockCfgSwitch("switch")
+        every { service.retrieveObject(CfgAgentGroup::class.java, any()) } returns null
+        every { service.retrieveObject(CfgSwitch::class.java, any()) } returns cfgSwitch
 
-            mockRetrieveTenant(service)
-            mockRetrievePerson(service)
-            mockRetrieveDN(service, cfgSwitch)
-            mockRetrieveObjectiveTable(service)
-            mockRetrieveStatTable(service)
-            mockRetrieveFolder(service)
-            mockRetrieveScript(service)
+        mockRetrieveTenant(service)
+        mockRetrievePerson(service)
+        mockRetrieveDN(service, cfgSwitch)
+        mockRetrieveObjectiveTable(service)
+        mockRetrieveStatTable(service)
+        mockRetrieveFolder(service)
+        mockRetrieveScript(service)
 
-            val cfgAgentGroup = agentGroup.updateCfgObject(service)
+        val cfgAgentGroup = agentGroup.updateCfgObject(service)
 
-            with(cfgAgentGroup) {
-                agentDBIDs shouldBe listOf(DEFAULT_OBJECT_DBID, DEFAULT_OBJECT_DBID, DEFAULT_OBJECT_DBID)
+        with(cfgAgentGroup) {
+            assertEquals(listOf(DEFAULT_OBJECT_DBID, DEFAULT_OBJECT_DBID, DEFAULT_OBJECT_DBID), agentDBIDs)
 
-                with(groupInfo) {
-                    name shouldBe agentGroup.group.name
-                    managerDBIDs shouldBe listOf(DEFAULT_OBJECT_DBID, DEFAULT_OBJECT_DBID)
-                    routeDNDBIDs shouldBe listOf(DEFAULT_OBJECT_DBID, DEFAULT_OBJECT_DBID, DEFAULT_OBJECT_DBID)
-                    capacityTableDBID shouldBe DEFAULT_OBJECT_DBID
-                    quotaTableDBID shouldBe DEFAULT_OBJECT_DBID
-                    state shouldBe toCfgObjectState(agentGroup.group.state)
-                    userProperties.asCategorizedProperties() shouldBe agentGroup.userProperties
-                    capacityRuleDBID shouldBe DEFAULT_OBJECT_DBID
-                    siteDBID shouldBe DEFAULT_OBJECT_DBID
-                    contractDBID shouldBe DEFAULT_OBJECT_DBID
-                }
+            with(groupInfo) {
+                assertEquals(agentGroup.group.name, name)
+                assertEquals(listOf(DEFAULT_OBJECT_DBID, DEFAULT_OBJECT_DBID), managerDBIDs)
+                assertEquals(listOf(DEFAULT_OBJECT_DBID, DEFAULT_OBJECT_DBID, DEFAULT_OBJECT_DBID), routeDNDBIDs)
+                assertEquals(DEFAULT_OBJECT_DBID, capacityTableDBID)
+                assertEquals(DEFAULT_OBJECT_DBID, quotaTableDBID)
+                assertEquals(toCfgObjectState(agentGroup.group.state), state)
+                assertEquals(agentGroup.userProperties, userProperties.asCategorizedProperties())
+                assertEquals(DEFAULT_OBJECT_DBID, capacityRuleDBID)
+                assertEquals(DEFAULT_OBJECT_DBID, siteDBID)
+                assertEquals(DEFAULT_OBJECT_DBID, contractDBID)
             }
         }
     }

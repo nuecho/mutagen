@@ -2,27 +2,36 @@ package com.nuecho.genesys.cli.models.configuration
 
 import com.fasterxml.jackson.databind.module.SimpleModule
 import com.nuecho.genesys.cli.core.defaultJsonObjectMapper
-import io.kotlintest.matchers.shouldBe
-import io.kotlintest.matchers.shouldThrow
-import io.kotlintest.specs.StringSpec
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Assertions.assertThrows
+import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestInstance
+import org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS
 
-class CategorizedPropertiesDeserializerTest : StringSpec() {
+@TestInstance(PER_CLASS)
+class CategorizedPropertiesDeserializerTest {
 
-    init {
-        val mapper = defaultJsonObjectMapper().copy()
-        val module = SimpleModule().apply { addDeserializer(Map::class.java, CategorizedPropertiesDeserializer()) }
+    val mapper = defaultJsonObjectMapper().copy()
+    val module = SimpleModule().apply { addDeserializer(Map::class.java, CategorizedPropertiesDeserializer()) }
+
+    @BeforeAll
+    fun init() {
         mapper.registerModule(module)
+    }
 
-        "CategorizedProperties should deserialize properly" {
-            val expected = mapOf(
-                "section" to mapOf(
-                    "number" to 456,
-                    "string" to "def",
-                    "bytes" to "def".toByteArray()
-                )
+    @Test
+    fun `CategorizedProperties should deserialize properly`() {
+        val expected = mapOf(
+            "section" to mapOf(
+                "number" to 456,
+                "string" to "def",
+                "bytes" to "def".toByteArray()
             )
+        )
 
-            val jsonObject = """
+        val jsonObject = """
                 {
                     "section": {
                         "number": 456,
@@ -34,34 +43,34 @@ class CategorizedPropertiesDeserializerTest : StringSpec() {
                 }
             """
 
-            @Suppress("UNCHECKED_CAST")
-            val actual = mapper.readValue(jsonObject, Map::class.java) as CategorizedProperties
+        @Suppress("UNCHECKED_CAST")
+        val actual = mapper.readValue(jsonObject, Map::class.java) as CategorizedProperties
 
-            actual["section"]?.get("number") shouldBe expected["section"]?.get("number")
-            actual["section"]?.get("string") shouldBe expected["section"]?.get("string")
-            checkUserProperties(actual, expected)
-        }
+        assertEquals(actual["section"]?.get("number"), expected["section"]?.get("number"))
+        assertEquals(actual["section"]?.get("string"), expected["section"]?.get("string"))
+        checkUserProperties(actual, expected)
+    }
 
-        "CategorizedProperties with no section should throw" {
-            val jsonObject = """
+    @Test
+    fun `CategorizedProperties with no section should throw`() {
+        val jsonObject = """
                 {
                     "toto": "tata"
                 }
             """
 
-            shouldThrow<InvalidKeyValueCollectionException> {
-                mapper.readValue(jsonObject, Map::class.java)
-            }
+        assertThrows(InvalidKeyValueCollectionException::class.java) {
+            mapper.readValue(jsonObject, Map::class.java)
         }
     }
+}
 
-    private fun checkUserProperties(
-        expectedUserProperties: CategorizedProperties,
-        actualUserProperties: CategorizedProperties
-    ) {
-        // Ensure that byte arrays are properly deserialized (GC-60)
-        val actualByteArray = actualUserProperties["section"]?.get("bytes") as ByteArray
-        val expectedByteArray = expectedUserProperties["section"]?.get("bytes") as ByteArray
-        actualByteArray.contentEquals(expectedByteArray) shouldBe true
-    }
+private fun checkUserProperties(
+    expectedUserProperties: CategorizedProperties,
+    actualUserProperties: CategorizedProperties
+) {
+    // Ensure that byte arrays are properly deserialized (GC-60)
+    val actualByteArray = actualUserProperties["section"]?.get("bytes") as ByteArray
+    val expectedByteArray = expectedUserProperties["section"]?.get("bytes") as ByteArray
+    assertTrue(actualByteArray.contentEquals(expectedByteArray))
 }

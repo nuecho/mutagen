@@ -19,8 +19,9 @@ import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveObj
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveScript
 import com.nuecho.genesys.cli.services.ServiceMocks.mockConfService
 import com.nuecho.genesys.cli.toShortName
-import io.kotlintest.matchers.shouldBe
 import io.mockk.every
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
 
 private val tenant = Tenant(
     name = "foo",
@@ -35,26 +36,25 @@ private val tenant = Tenant(
 )
 
 class TenantTest : ConfigurationObjectTest(tenant, Tenant("foo"), Tenant(mockCfgTenant())) {
-    init {
-        "Tenant.updateCfgObject should properly create CfgTenant" {
-            val defaultTenant = mockCfgTenant(DEFAULT_TENANT)
-            val service = mockConfService()
-            every { service.retrieveObject(CfgTenant::class.java, any()) } returns null andThen defaultTenant
-            mockRetrieveObjectiveTable(service)
-            mockRetrieveScript(service)
+    @Test
+    fun `updateCfgObject should properly create CfgTenant`() {
+        val defaultTenant = mockCfgTenant(DEFAULT_TENANT)
+        val service = mockConfService()
+        every { service.retrieveObject(CfgTenant::class.java, any()) } returns null andThen defaultTenant
+        mockRetrieveObjectiveTable(service)
+        mockRetrieveScript(service)
 
-            val cfgTenant = tenant.updateCfgObject(service)
+        val cfgTenant = tenant.updateCfgObject(service)
 
-            with(cfgTenant) {
-                name shouldBe tenant.name
-                defaultCapacityRuleDBID shouldBe DEFAULT_OBJECT_DBID
-                defaultContractDBID shouldBe DEFAULT_OBJECT_DBID
-                chargeableNumber shouldBe tenant.chargeableNumber
-                parentTenantDBID shouldBe DEFAULT_TENANT_DBID
-                password shouldBe tenant.password
-                state shouldBe ConfigurationObjects.toCfgObjectState(tenant.state)
-                userProperties.asCategorizedProperties() shouldBe tenant.userProperties
-            }
+        with(cfgTenant) {
+            assertEquals(tenant.name, name)
+            assertEquals(DEFAULT_OBJECT_DBID, defaultCapacityRuleDBID)
+            assertEquals(defaultContractDBID, DEFAULT_OBJECT_DBID)
+            assertEquals(chargeableNumber, tenant.chargeableNumber)
+            assertEquals(parentTenantDBID, DEFAULT_TENANT_DBID)
+            assertEquals(password, tenant.password)
+            assertEquals(state, ConfigurationObjects.toCfgObjectState(tenant.state))
+            assertEquals(userProperties.asCategorizedProperties(), tenant.userProperties)
         }
     }
 }

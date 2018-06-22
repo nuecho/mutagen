@@ -36,9 +36,10 @@ import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveSki
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveTenant
 import com.nuecho.genesys.cli.services.ServiceMocks.mockConfService
 import com.nuecho.genesys.cli.toShortName
-import io.kotlintest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.mockk
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
 
 private const val EMPLOYEE_ID = "employeeId"
 private val SWITCH_REFERENCE = SwitchReference("switch", DEFAULT_TENANT_REFERENCE)
@@ -85,59 +86,59 @@ class PersonTest : ConfigurationObjectTest(
     Person(tenant = DEFAULT_TENANT_REFERENCE, employeeId = EMPLOYEE_ID),
     Person(mockCfgPerson())
 ) {
-    init {
-        "Person.updateCfgObject should properly create CfgPerson" {
-            val service = mockConfService()
+    @Test
+    fun `updateCfgObject should properly create CfgPerson`() {
+        val service = mockConfService()
 
-            every { service.retrieveObject(CfgPerson::class.java, any()) } returns null
-            mockRetrieveTenant(service)
-            mockRetrieveAgentLogin(service)
-            mockRetrieveFolder(service)
-            mockRetrieveObjectiveTable(service)
-            mockRetrievePlace(service)
-            mockRetrieveScript(service)
-            mockRetrieveSkill(service)
+        every { service.retrieveObject(CfgPerson::class.java, any()) } returns null
+        mockRetrieveTenant(service)
+        mockRetrieveAgentLogin(service)
+        mockRetrieveFolder(service)
+        mockRetrieveObjectiveTable(service)
+        mockRetrievePlace(service)
+        mockRetrieveScript(service)
+        mockRetrieveSkill(service)
 
-            val cfgPerson = person.updateCfgObject(service)
+        val cfgPerson = person.updateCfgObject(service)
 
-            with(cfgPerson) {
-                employeeID shouldBe person.employeeId
-                externalID shouldBe person.externalId
-                firstName shouldBe person.firstName
-                lastName shouldBe person.lastName
-                userName shouldBe person.userName
-                password shouldBe person.password
-                passwordHashAlgorithm shouldBe person.passwordHashAlgorithm
-                passwordUpdatingDate shouldBe person.passwordUpdatingDate
-                changePasswordOnNextLogin shouldBe toCfgFlag(person.changePasswordOnNextLogin)
-                emailAddress shouldBe person.emailAddress
-                state shouldBe toCfgObjectState(person.state)
-                isAgent shouldBe toCfgFlag(person.agent)
-                isExternalAuth shouldBe toCfgFlag(person.externalAuth)
-                appRanks.size shouldBe 2
-                userProperties.asCategorizedProperties() shouldBe person.userProperties
-            }
-
-            with(cfgPerson.agentInfo) {
-                siteDBID shouldBe DEFAULT_OBJECT_DBID
-                placeDBID shouldBe DEFAULT_OBJECT_DBID
-                contractDBID shouldBe DEFAULT_OBJECT_DBID
-                capacityRuleDBID shouldBe DEFAULT_OBJECT_DBID
-                skillLevels.size shouldBe 3
-                agentLogins.size shouldBe 0
-            }
+        with(cfgPerson) {
+            assertEquals(person.employeeId, employeeID)
+            assertEquals(person.externalId, externalID)
+            assertEquals(person.firstName, firstName)
+            assertEquals(person.lastName, lastName)
+            assertEquals(person.userName, userName)
+            assertEquals(person.password, password)
+            assertEquals(person.passwordHashAlgorithm, passwordHashAlgorithm)
+            assertEquals(person.passwordUpdatingDate, passwordUpdatingDate)
+            assertEquals(toCfgFlag(person.changePasswordOnNextLogin), changePasswordOnNextLogin)
+            assertEquals(person.emailAddress, emailAddress)
+            assertEquals(toCfgObjectState(person.state), state)
+            assertEquals(toCfgFlag(person.agent), isAgent)
+            assertEquals(toCfgFlag(person.externalAuth), isExternalAuth)
+            assertEquals(2, appRanks.size)
+            assertEquals(person.userProperties, userProperties.asCategorizedProperties())
         }
 
-        "Person.updateCfgObject should use employeeId when username is not specified" {
-            val service = mockConfService()
-            every { service.retrieveObject(CfgPerson::class.java, any()) } returns null
-            mockRetrieveTenant(service)
+        with(cfgPerson.agentInfo) {
+            assertEquals(DEFAULT_OBJECT_DBID, siteDBID)
+            assertEquals(DEFAULT_OBJECT_DBID, placeDBID)
+            assertEquals(DEFAULT_OBJECT_DBID, contractDBID)
+            assertEquals(DEFAULT_OBJECT_DBID, capacityRuleDBID)
+            assertEquals(3, skillLevels.size)
+            assertEquals(0, agentLogins.size)
+        }
+    }
 
-            val cfgPerson = Person(DEFAULT_TENANT_REFERENCE, EMPLOYEE_ID).updateCfgObject(service)
+    @Test
+    fun `updateCfgObject should use employeeId when username is not specified`() {
+        val service = mockConfService()
+        every { service.retrieveObject(CfgPerson::class.java, any()) } returns null
+        mockRetrieveTenant(service)
 
-            with(cfgPerson) {
-                employeeID shouldBe EMPLOYEE_ID
-            }
+        val cfgPerson = Person(DEFAULT_TENANT_REFERENCE, EMPLOYEE_ID).updateCfgObject(service)
+
+        with(cfgPerson) {
+            assertEquals(EMPLOYEE_ID, employeeID)
         }
     }
 }

@@ -34,11 +34,12 @@ import com.nuecho.genesys.cli.services.ServiceMocks.mockConfService
 import com.nuecho.genesys.cli.services.getObjectDbid
 import com.nuecho.genesys.cli.services.retrieveObject
 import com.nuecho.genesys.cli.toShortName
-import io.kotlintest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.objectMockk
 import io.mockk.staticMockk
 import io.mockk.use
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
 
 private const val DN_GROUP = "dnGroup"
 private const val SWITCH = "switch"
@@ -60,66 +61,66 @@ private val dnGroup = DNGroup(
         contract = ObjectiveTableReference("contract", DEFAULT_TENANT_REFERENCE)
     ),
     dns = listOf(
-        DNInfo( dn = DNReference(NUMBER1, SWITCH, CFGACDQueue, NAME)),
-        DNInfo( dn = DNReference(NUMBER2, SWITCH, CFGACDQueue, NAME), trunks = 2)
+        DNInfo(dn = DNReference(NUMBER1, SWITCH, CFGACDQueue, NAME)),
+        DNInfo(dn = DNReference(NUMBER2, SWITCH, CFGACDQueue, NAME), trunks = 2)
     ),
     type = CFGACDQueues.toShortName()
 )
 
-class DNGroupTest : ConfigurationObjectTest(
+class DNGroupTest : GroupConfigurationObjectTest(
     dnGroup,
     DNGroup(tenant = DEFAULT_TENANT_REFERENCE, name = DN_GROUP, shortNameType = CFGACDQueues.toShortName())
 ) {
-    init {
 
-        "CfgDNGroup initialized Group should properly serialize" {
-            val service = mockConfService()
-            val dn1 = mockCfgDN(NUMBER1, DEFAULT_OBJECT_DBID)
-            val dn2 = mockCfgDN(NUMBER2, OTHER_DBID)
+    @Test
+    fun `CfgDNGroup initialized Group should properly serialize`() {
+        val service = mockConfService()
+        val dn1 = mockCfgDN(NUMBER1, DEFAULT_OBJECT_DBID)
+        val dn2 = mockCfgDN(NUMBER2, OTHER_DBID)
 
-            objectMockk(ConfigurationObjects).use {
-                every {
-                    service.retrieveObject(CFGDN, any())
-                } returns dn1 andThen dn2
+        objectMockk(ConfigurationObjects).use {
+            every {
+                service.retrieveObject(CFGDN, any())
+            } returns dn1 andThen dn2
 
-                val dnGroup = DNGroup(mockCfgDNGroup(service))
-                checkSerialization(dnGroup, "dngroup_with_trunks")
-            }
+            val dnGroup = DNGroup(mockCfgDNGroup(service))
+            checkSerialization(dnGroup, "dngroup_with_trunks")
         }
+    }
 
-        "DNGroup.updateCfgObject should properly create CfgDNGroup" {
-            val dn1 = mockCfgDN(NUMBER1, DEFAULT_OBJECT_DBID)
-            val dn2 = mockCfgDN(NUMBER2, OTHER_DBID)
+    @Test
+    fun `updateCfgObject should properly create CfgDNGroup`() {
+        val dn1 = mockCfgDN(NUMBER1, DEFAULT_OBJECT_DBID)
+        val dn2 = mockCfgDN(NUMBER2, OTHER_DBID)
 
-            staticMockk("com.nuecho.genesys.cli.services.ConfServiceExtensionsKt").use {
-                val service = mockConfService()
-                every { service.getObjectDbid(any()) } answers { DEFAULT_OBJECT_DBID }
-                every { service.retrieveObject(CfgDNGroup::class.java, any()) } returns null
-                every { service.retrieveObject(DNReference(NUMBER1, SWITCH, CFGACDQueue, NAME)) } returns dn1
-                every { service.retrieveObject(DNReference(NUMBER2, SWITCH, CFGACDQueue, NAME)) } returns dn2
+        staticMockk("com.nuecho.genesys.cli.services.ConfServiceExtensionsKt").use {
+            val service = mockConfService()
+            every { service.getObjectDbid(any()) } answers { DEFAULT_OBJECT_DBID }
+            every { service.retrieveObject(CfgDNGroup::class.java, any()) } returns null
+            every { service.retrieveObject(DNReference(NUMBER1, SWITCH, CFGACDQueue, NAME)) } returns dn1
+            every { service.retrieveObject(DNReference(NUMBER2, SWITCH, CFGACDQueue, NAME)) } returns dn2
 
-                val cfgDNGroup = dnGroup.updateCfgObject(service)
+            val cfgDNGroup = dnGroup.updateCfgObject(service)
 
-                with(cfgDNGroup) {
-                    type shouldBe CFGACDQueues
-                    dNs.size shouldBe 2
-                    dNs.toList()[0].trunks shouldBe null
-                    dNs.toList()[0].dndbid shouldBe DEFAULT_OBJECT_DBID
-                    dNs.toList()[1].trunks shouldBe 2
-                    dNs.toList()[1].dndbid shouldBe 102
+            with(cfgDNGroup) {
+                assertEquals(type, CFGACDQueues)
+                assertEquals(dNs.size, 2)
+                assertEquals(dNs.toList()[0].trunks, null)
+                assertEquals(dNs.toList()[0].dndbid, DEFAULT_OBJECT_DBID)
+                assertEquals(dNs.toList()[1].trunks, 2)
+                assertEquals(dNs.toList()[1].dndbid, 102)
 
-                    with(groupInfo) {
-                        name shouldBe dnGroup.group.name
-                        managerDBIDs shouldBe null
-                        routeDNDBIDs shouldBe null
-                        capacityTableDBID shouldBe DEFAULT_OBJECT_DBID
-                        quotaTableDBID shouldBe DEFAULT_OBJECT_DBID
-                        state shouldBe toCfgObjectState(dnGroup.group.state)
-                        userProperties.asCategorizedProperties() shouldBe dnGroup.userProperties
-                        capacityRuleDBID shouldBe DEFAULT_OBJECT_DBID
-                        siteDBID shouldBe DEFAULT_OBJECT_DBID
-                        contractDBID shouldBe DEFAULT_OBJECT_DBID
-                    }
+                with(groupInfo) {
+                    assertEquals(name, dnGroup.group.name)
+                    assertEquals(managerDBIDs, null)
+                    assertEquals(routeDNDBIDs, null)
+                    assertEquals(capacityTableDBID, DEFAULT_OBJECT_DBID)
+                    assertEquals(quotaTableDBID, DEFAULT_OBJECT_DBID)
+                    assertEquals(state, toCfgObjectState(dnGroup.group.state))
+                    assertEquals(userProperties.asCategorizedProperties(), dnGroup.userProperties)
+                    assertEquals(capacityRuleDBID, DEFAULT_OBJECT_DBID)
+                    assertEquals(siteDBID, DEFAULT_OBJECT_DBID)
+                    assertEquals(contractDBID, DEFAULT_OBJECT_DBID)
                 }
             }
         }

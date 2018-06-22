@@ -10,8 +10,9 @@ import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveTen
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveTimeZone
 import com.nuecho.genesys.cli.services.ServiceMocks.mockConfService
 import com.nuecho.genesys.cli.toShortName
-import io.kotlintest.matchers.shouldBe
 import io.mockk.every
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
 import java.text.SimpleDateFormat
 import java.time.ZoneId
 import java.time.ZonedDateTime
@@ -31,20 +32,19 @@ class GVPResellerTest : ConfigurationObjectTest(
     GVPReseller(tenant = DEFAULT_TENANT_REFERENCE, name = NAME),
     GVPReseller(mockCfgGVPReseller())
 ) {
-    init {
-        "GVPReseller.updateCfgObject should properly create CfgGVPReseller" {
-            val service = mockConfService()
-            every { service.retrieveObject(CfgGVPReseller::class.java, any()) } returns null
-            mockRetrieveTenant(service)
-            mockRetrieveTimeZone(service)
+    @Test
+    fun `updateCfgObject should properly create CfgGVPReseller`() {
+        val service = mockConfService()
+        every { service.retrieveObject(CfgGVPReseller::class.java, any()) } returns null
+        mockRetrieveTenant(service)
+        mockRetrieveTimeZone(service)
 
-            val cfgGVPReseller = gvpReseller.updateCfgObject(service)
+        val cfgGVPReseller = gvpReseller.updateCfgObject(service)
 
-            with(cfgGVPReseller) {
-                name shouldBe gvpReseller.name
-                state shouldBe ConfigurationObjects.toCfgObjectState(gvpReseller.state)
-                userProperties.asCategorizedProperties() shouldBe gvpReseller.userProperties
-            }
+        with(cfgGVPReseller) {
+            assertEquals(name, gvpReseller.name)
+            assertEquals(state, ConfigurationObjects.toCfgObjectState(gvpReseller.state))
+            assertEquals(userProperties.asCategorizedProperties(), gvpReseller.userProperties)
         }
     }
 }

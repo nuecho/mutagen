@@ -14,8 +14,9 @@ import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveTen
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveTimeZone
 import com.nuecho.genesys.cli.services.ServiceMocks.mockConfService
 import com.nuecho.genesys.cli.toShortName
-import io.kotlintest.matchers.shouldBe
 import io.mockk.every
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
 
 private const val NAME = "name"
 private val gvpCustomer = GVPCustomer(
@@ -33,21 +34,20 @@ class GVPCustomerTest : ConfigurationObjectTest(
     GVPCustomer(name = NAME),
     GVPCustomer(mockCfgGVPCustomer())
 ) {
-    init {
-        "GVPCustomer.updateCfgObject should properly create CfgGVPCustomer" {
-            val service = mockConfService()
-            every { service.retrieveObject(CfgGVPCustomer::class.java, any()) } returns null
-            mockRetrieveTenant(service)
-            mockRetrieveReseller(service)
-            mockRetrieveTimeZone(service)
+    @Test
+    fun `updateCfgObject should properly create CfgGVPCustomer`() {
+        val service = mockConfService()
+        every { service.retrieveObject(CfgGVPCustomer::class.java, any()) } returns null
+        mockRetrieveTenant(service)
+        mockRetrieveReseller(service)
+        mockRetrieveTimeZone(service)
 
-            val cfgGVPCustomer = gvpCustomer.updateCfgObject(service)
+        val cfgGVPCustomer = gvpCustomer.updateCfgObject(service)
 
-            with(cfgGVPCustomer) {
-                name shouldBe gvpCustomer.name
-                state shouldBe ConfigurationObjects.toCfgObjectState(gvpCustomer.state)
-                userProperties.asCategorizedProperties() shouldBe gvpCustomer.userProperties
-            }
+        with(cfgGVPCustomer) {
+            assertEquals(name, gvpCustomer.name)
+            assertEquals(state, ConfigurationObjects.toCfgObjectState(gvpCustomer.state))
+            assertEquals(userProperties.asCategorizedProperties(), gvpCustomer.userProperties)
         }
     }
 }
