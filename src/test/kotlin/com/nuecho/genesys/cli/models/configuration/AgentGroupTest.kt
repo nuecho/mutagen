@@ -5,7 +5,10 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgSwitch
 import com.genesyslab.platform.configuration.protocol.types.CfgDNType
 import com.genesyslab.platform.configuration.protocol.types.CfgDNType.CFGCP
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectState
+import com.genesyslab.platform.configuration.protocol.types.CfgObjectType.CFGFolder
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_OBJECT_DBID
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_SITE
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_SITE_REFERENCE
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_REFERENCE
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgDN
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgFolder
@@ -16,13 +19,13 @@ import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mock
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgSwitch
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgObjectState
 import com.nuecho.genesys.cli.models.configuration.reference.DNReference
-import com.nuecho.genesys.cli.models.configuration.reference.FolderReference
 import com.nuecho.genesys.cli.models.configuration.reference.ObjectiveTableReference
 import com.nuecho.genesys.cli.models.configuration.reference.PersonReference
 import com.nuecho.genesys.cli.models.configuration.reference.ScriptReference
 import com.nuecho.genesys.cli.models.configuration.reference.StatTableReference
+import com.nuecho.genesys.cli.services.ConfServiceCache
+import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveDN
-import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveFolder
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveObjectiveTable
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrievePerson
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveScript
@@ -31,6 +34,8 @@ import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveTen
 import com.nuecho.genesys.cli.services.ServiceMocks
 import com.nuecho.genesys.cli.toShortName
 import io.mockk.every
+import io.mockk.objectMockk
+import io.mockk.use
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
@@ -58,7 +63,7 @@ private val agentGroup = AgentGroup(
         state = CfgObjectState.CFGEnabled.toShortName(),
         userProperties = ConfigurationTestData.defaultProperties(),
         capacityRule = ScriptReference("capacityRule", DEFAULT_TENANT_REFERENCE),
-        site = FolderReference("site"),
+        site = DEFAULT_SITE_REFERENCE,
         contract = ObjectiveTableReference("contract", DEFAULT_TENANT_REFERENCE)
     )
 )
@@ -81,25 +86,27 @@ class AgentGroupTest : ConfigurationObjectTest(
         mockRetrieveDN(service, cfgSwitch)
         mockRetrieveObjectiveTable(service)
         mockRetrieveStatTable(service)
-        mockRetrieveFolder(service)
         mockRetrieveScript(service)
 
-        val cfgAgentGroup = agentGroup.updateCfgObject(service)
+        objectMockk(ConfServiceCache).use {
+            ConfServiceExtensionMocks.mockCfgFolderCache()
+            val cfgAgentGroup = agentGroup.updateCfgObject(service)
 
-        with(cfgAgentGroup) {
-            assertEquals(listOf(DEFAULT_OBJECT_DBID, DEFAULT_OBJECT_DBID, DEFAULT_OBJECT_DBID), agentDBIDs)
+            with(cfgAgentGroup) {
+                assertEquals(listOf(DEFAULT_OBJECT_DBID, DEFAULT_OBJECT_DBID, DEFAULT_OBJECT_DBID), agentDBIDs)
 
-            with(groupInfo) {
-                assertEquals(agentGroup.group.name, name)
-                assertEquals(listOf(DEFAULT_OBJECT_DBID, DEFAULT_OBJECT_DBID), managerDBIDs)
-                assertEquals(listOf(DEFAULT_OBJECT_DBID, DEFAULT_OBJECT_DBID, DEFAULT_OBJECT_DBID), routeDNDBIDs)
-                assertEquals(DEFAULT_OBJECT_DBID, capacityTableDBID)
-                assertEquals(DEFAULT_OBJECT_DBID, quotaTableDBID)
-                assertEquals(toCfgObjectState(agentGroup.group.state), state)
-                assertEquals(agentGroup.userProperties, userProperties.asCategorizedProperties())
-                assertEquals(DEFAULT_OBJECT_DBID, capacityRuleDBID)
-                assertEquals(DEFAULT_OBJECT_DBID, siteDBID)
-                assertEquals(DEFAULT_OBJECT_DBID, contractDBID)
+                with(groupInfo) {
+                    assertEquals(agentGroup.group.name, name)
+                    assertEquals(listOf(DEFAULT_OBJECT_DBID, DEFAULT_OBJECT_DBID), managerDBIDs)
+                    assertEquals(listOf(DEFAULT_OBJECT_DBID, DEFAULT_OBJECT_DBID, DEFAULT_OBJECT_DBID), routeDNDBIDs)
+                    assertEquals(DEFAULT_OBJECT_DBID, capacityTableDBID)
+                    assertEquals(DEFAULT_OBJECT_DBID, quotaTableDBID)
+                    assertEquals(toCfgObjectState(agentGroup.group.state), state)
+                    assertEquals(agentGroup.userProperties, userProperties.asCategorizedProperties())
+                    assertEquals(DEFAULT_OBJECT_DBID, capacityRuleDBID)
+                    assertEquals(DEFAULT_OBJECT_DBID, siteDBID)
+                    assertEquals(DEFAULT_OBJECT_DBID, contractDBID)
+                }
             }
         }
     }
@@ -122,7 +129,7 @@ private fun mockCfgAgentGroup(): CfgAgentGroup {
     val capacityTableMock = mockCfgStatTable(agentGroup.group.capacityTable!!.primaryKey)
     val quotaTableMock = mockCfgStatTable(agentGroup.group.quotaTable!!.primaryKey)
     val capacityRuleMock = mockCfgScript(agentGroup.group.capacityRule!!.primaryKey)
-    val siteMock = mockCfgFolder(agentGroup.group.site!!.primaryKey)
+    val siteMock = mockCfgFolder(DEFAULT_SITE, CFGFolder)
     val contractMock = mockCfgObjectiveTable(agentGroup.group.contract!!.primaryKey)
 
     return ConfigurationObjectMocks.mockCfgAgentGroup(agentGroup.group.name).apply {

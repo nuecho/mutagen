@@ -86,6 +86,7 @@ object ConfigurationObjects {
     fun toCfgEnumeratorType(type: String?) = toGEnum(type, CfgEnumeratorType::class.java) as CfgEnumeratorType?
     fun toCfgLinkType(type: String?) = toGEnum(type, CfgLinkType::class.java) as CfgLinkType?
     fun toCfgObjectState(state: String?) = toGEnum(state, CfgObjectState::class.java) as CfgObjectState?
+    fun toCfgObjectType(type: String?) = toGEnum(type, CfgObjectType::class.java) as CfgObjectType?
     fun toCfgRank(rank: String?) = toGEnum(rank, CfgRank::class.java) as CfgRank?
     fun toCfgRouteType(type: String?) = toGEnum(type, CfgRouteType::class.java) as CfgRouteType?
     fun toCfgScriptType(type: String?) = toGEnum(type, CfgScriptType::class.java) as CfgScriptType?

@@ -8,12 +8,13 @@ import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgAccessGroup
 import com.genesyslab.platform.applicationblocks.com.objects.CfgAgentGroup
 import com.genesyslab.platform.applicationblocks.com.objects.CfgApplication
+import com.genesyslab.platform.applicationblocks.com.objects.CfgCampaign
 import com.genesyslab.platform.applicationblocks.com.objects.CfgDNGroup
 import com.genesyslab.platform.applicationblocks.com.objects.CfgEnumerator
-import com.genesyslab.platform.applicationblocks.com.objects.CfgFolder
 import com.genesyslab.platform.applicationblocks.com.objects.CfgGVPCustomer
 import com.genesyslab.platform.applicationblocks.com.objects.CfgGVPIVRProfile
 import com.genesyslab.platform.applicationblocks.com.objects.CfgGVPReseller
+import com.genesyslab.platform.applicationblocks.com.objects.CfgIVR
 import com.genesyslab.platform.applicationblocks.com.objects.CfgObjectiveTable
 import com.genesyslab.platform.applicationblocks.com.objects.CfgPerson
 import com.genesyslab.platform.applicationblocks.com.objects.CfgPhysicalSwitch
@@ -29,10 +30,11 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgTimeZone
 import com.genesyslab.platform.applicationblocks.com.queries.CfgAccessGroupQuery
 import com.genesyslab.platform.applicationblocks.com.queries.CfgAgentGroupQuery
 import com.genesyslab.platform.applicationblocks.com.queries.CfgApplicationQuery
+import com.genesyslab.platform.applicationblocks.com.queries.CfgCampaignQuery
 import com.genesyslab.platform.applicationblocks.com.queries.CfgDNGroupQuery
 import com.genesyslab.platform.applicationblocks.com.queries.CfgEnumeratorQuery
-import com.genesyslab.platform.applicationblocks.com.queries.CfgFolderQuery
 import com.genesyslab.platform.applicationblocks.com.queries.CfgGVPIVRProfileQuery
+import com.genesyslab.platform.applicationblocks.com.queries.CfgIVRQuery
 import com.genesyslab.platform.applicationblocks.com.queries.CfgObjectiveTableQuery
 import com.genesyslab.platform.applicationblocks.com.queries.CfgPersonQuery
 import com.genesyslab.platform.applicationblocks.com.queries.CfgPhysicalSwitchQuery
@@ -77,6 +79,15 @@ class ApplicationReference(name: String) :
 
 @JsonSerialize(using = SimpleObjectReferenceSerializer::class)
 @JsonDeserialize(using = SimpleObjectReferenceWithTenantDeserializer::class)
+class CampaignReference(name: String, tenant: TenantReference?) :
+    SimpleObjectReferenceWithTenant<CfgCampaign>(CfgCampaign::class.java, name, tenant) {
+    override fun toQuery(service: IConfService) = CfgCampaignQuery(primaryKey).apply {
+        tenantDbid = getTenantDbid(tenant, service)
+    }
+}
+
+@JsonSerialize(using = SimpleObjectReferenceSerializer::class)
+@JsonDeserialize(using = SimpleObjectReferenceWithTenantDeserializer::class)
 class DNGroupReference(name: String, tenant: TenantReference?) :
     SimpleObjectReferenceWithTenant<CfgDNGroup>(CfgDNGroup::class.java, name, tenant) {
     override fun toQuery(service: IConfService) = CfgDNGroupQuery(primaryKey).apply {
@@ -95,9 +106,9 @@ class EnumeratorReference(name: String, tenant: TenantReference?) :
 
 @JsonSerialize(using = SimpleObjectReferenceSerializer::class)
 @JsonDeserialize(using = SimpleObjectReferenceDeserializer::class)
-class FolderReference(name: String) :
-    SimpleObjectReference<CfgFolder>(CfgFolder::class.java, name) {
-    override fun toQuery(service: IConfService) = CfgFolderQuery(primaryKey)
+class IVRReference(name: String) :
+    SimpleObjectReference<CfgIVR>(CfgIVR::class.java, name) {
+    override fun toQuery(service: IConfService) = CfgIVRQuery(primaryKey)
 }
 
 @JsonSerialize(using = SimpleObjectReferenceSerializer::class)

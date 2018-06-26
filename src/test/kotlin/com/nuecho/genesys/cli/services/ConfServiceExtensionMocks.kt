@@ -6,7 +6,6 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgApplication
 import com.genesyslab.platform.applicationblocks.com.objects.CfgDN
 import com.genesyslab.platform.applicationblocks.com.objects.CfgDNGroup
 import com.genesyslab.platform.applicationblocks.com.objects.CfgEnumerator
-import com.genesyslab.platform.applicationblocks.com.objects.CfgFolder
 import com.genesyslab.platform.applicationblocks.com.objects.CfgGVPCustomer
 import com.genesyslab.platform.applicationblocks.com.objects.CfgGVPReseller
 import com.genesyslab.platform.applicationblocks.com.objects.CfgObjectiveTable
@@ -19,12 +18,15 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgStatTable
 import com.genesyslab.platform.applicationblocks.com.objects.CfgSwitch
 import com.genesyslab.platform.applicationblocks.com.objects.CfgTenant
 import com.genesyslab.platform.applicationblocks.com.objects.CfgTimeZone
+import com.genesyslab.platform.configuration.protocol.types.CfgObjectType
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectType.CFGEnumerator
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_OBJECT_DBID
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgFolder
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgGVPCustomer
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgGVPReseller
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgTenant
+import com.nuecho.genesys.cli.models.configuration.reference.FolderReference
 import io.mockk.every
 import io.mockk.mockk
 
@@ -69,13 +71,12 @@ object ConfServiceExtensionMocks {
             place
         }
 
-    fun mockRetrieveFolder(service: IConfService, dbid: Int = DEFAULT_OBJECT_DBID) =
-        every { service.retrieveObject(CfgFolder::class.java, any()) } answers {
-            val folder = mockk<CfgFolder>()
-            every { folder.dbid } returns dbid
-            every { folder.objectDbid } returns dbid
-            folder
-        }
+    fun mockCfgFolderCache() {
+        val cfgFolder = mockCfgFolder("site", CfgObjectType.CFGFolder)
+        every { ConfServiceCache.containsKey(any()) } returns false
+        every { ConfServiceCache.containsKey(ofType(FolderReference::class)) } returns true
+        every { ConfServiceCache[ofType(FolderReference::class)] } returns cfgFolder
+    }
 
     fun mockRetrieveSkill(service: IConfService, dbid: Int = DEFAULT_OBJECT_DBID) =
         every { service.retrieveObject(CfgSkill::class.java, any()) } answers {

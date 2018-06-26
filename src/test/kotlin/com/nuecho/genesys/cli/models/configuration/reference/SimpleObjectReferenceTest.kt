@@ -2,7 +2,6 @@ package com.nuecho.genesys.cli.models.configuration.reference
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
-import com.genesyslab.platform.applicationblocks.com.queries.CfgFolderQuery
 import com.genesyslab.platform.applicationblocks.com.queries.CfgObjectiveTableQuery
 import com.genesyslab.platform.applicationblocks.com.queries.CfgPersonQuery
 import com.genesyslab.platform.applicationblocks.com.queries.CfgPlaceQuery
@@ -17,9 +16,9 @@ import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveTen
 import com.nuecho.genesys.cli.services.ServiceMocks.mockConfService
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS
-import org.junit.jupiter.api.Test
 
 @TestInstance(PER_CLASS)
 class SimpleObjectReferenceTest {
@@ -84,14 +83,6 @@ class SimpleObjectReferenceTest {
     fun `SimpleObjectReferenceWithTenant toString() should generate the proper String`() {
         val employeeId = "employeeId"
         assertEquals(PersonReference(employeeId, DEFAULT_TENANT_REFERENCE).toString(), "$DEFAULT_TENANT/$employeeId")
-    }
-
-    @Test
-    fun `FolderReference toQuery should create the proper query`() {
-        val folderName = "folder"
-        val actual = FolderReference(folderName).toQuery(service)
-        assertEquals(CfgFolderQuery::class.java, actual.javaClass)
-        assertEquals(folderName, actual.name)
     }
 
     @Test

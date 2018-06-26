@@ -20,6 +20,7 @@ import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects
 import com.nuecho.genesys.cli.models.configuration.Metadata
 import com.nuecho.genesys.cli.preferences.environment.Environment
 import com.nuecho.genesys.cli.services.ConfService
+import com.nuecho.genesys.cli.services.ConfServiceCache
 import picocli.CommandLine
 import java.io.OutputStream
 
@@ -39,11 +40,18 @@ class ExportCommand : GenesysCliCommand() {
 
     override fun execute(): Int {
         val environment = getGenesysCli().loadEnvironment()
+        val service = ConfService(environment)
+        service.open()
+        ConfServiceCache.populateCache(service)
 
-        exportConfiguration(
-            createExportProcessor(format!!, environment, System.out),
-            ConfService(environment)
-        )
+        try {
+            exportConfiguration(
+                createExportProcessor(format!!, environment, System.out),
+                service
+            )
+        } finally {
+            service.close()
+        }
 
         return 0
     }
@@ -54,7 +62,6 @@ class ExportCommand : GenesysCliCommand() {
 object Export {
     fun exportConfiguration(processor: ExportProcessor, service: ConfService) {
         try {
-            service.open()
             processor.begin()
 
             val types = ConfigurationObjects.getCfgObjectTypes()
@@ -68,8 +75,6 @@ object Export {
             processor.end()
         } catch (exception: Exception) {
             throw ExportException("Error occured while exporting configuration.", exception)
-        } finally {
-            service.close()
         }
     }
 

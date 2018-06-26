@@ -6,9 +6,12 @@ import com.genesyslab.platform.configuration.protocol.types.CfgDNType.CFGNoDN
 import com.genesyslab.platform.configuration.protocol.types.CfgDNType.CFGRoutingQueue
 import com.genesyslab.platform.configuration.protocol.types.CfgFlag
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectState
+import com.genesyslab.platform.configuration.protocol.types.CfgObjectType.CFGFolder
 import com.genesyslab.platform.configuration.protocol.types.CfgRouteType
 import com.nuecho.genesys.cli.asBoolean
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_OBJECT_DBID
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_SITE
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_SITE_REFERENCE
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_REFERENCE
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgDN
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgDNGroup
@@ -23,17 +26,19 @@ import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgObj
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgRouteType
 import com.nuecho.genesys.cli.models.configuration.reference.DNGroupReference
 import com.nuecho.genesys.cli.models.configuration.reference.DNReference
-import com.nuecho.genesys.cli.models.configuration.reference.FolderReference
 import com.nuecho.genesys.cli.models.configuration.reference.ObjectiveTableReference
 import com.nuecho.genesys.cli.models.configuration.reference.SwitchReference
+import com.nuecho.genesys.cli.services.ConfServiceCache
+import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockCfgFolderCache
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveDNGroup
-import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveFolder
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveObjectiveTable
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveSwitch
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveTenant
 import com.nuecho.genesys.cli.services.ServiceMocks.mockConfService
 import com.nuecho.genesys.cli.toShortName
 import io.mockk.every
+import io.mockk.objectMockk
+import io.mockk.use
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
@@ -61,7 +66,7 @@ private val dn = DN(
     override = "anoverride",
     name = "aname",
     useOverride = CfgFlag.CFGTrue.asBoolean(),
-    site = FolderReference("abc"),
+    site = DEFAULT_SITE_REFERENCE,
     contract = ObjectiveTableReference("acontract", DEFAULT_TENANT_REFERENCE),
     userProperties = ConfigurationTestData.defaultProperties(),
     state = CfgObjectState.CFGEnabled.toShortName()
@@ -83,18 +88,20 @@ class DNTest : ConfigurationObjectTest(
         mockRetrieveTenant(service)
         mockRetrieveDNGroup(service)
         mockRetrieveSwitch(service)
-        mockRetrieveFolder(service)
         mockRetrieveObjectiveTable(service)
 
-        val cfgDN = dn.updateCfgObject(service)
+        objectMockk(ConfServiceCache).use {
+            mockCfgFolderCache()
+            val cfgDN = dn.updateCfgObject(service)
 
-        with(cfgDN) {
-            assertEquals(name, dn.name)
-            assertEquals(switchDBID, DEFAULT_OBJECT_DBID)
-            assertEquals(registerAll, toCfgDNRegisterFlag(dn.registerAll))
-            assertEquals(switchSpecificType, dn.switchSpecificType)
-            assertEquals(state, toCfgObjectState(dn.state))
-            assertEquals(userProperties.asCategorizedProperties(), dn.userProperties)
+            with(cfgDN) {
+                assertEquals(name, dn.name)
+                assertEquals(switchDBID, DEFAULT_OBJECT_DBID)
+                assertEquals(registerAll, toCfgDNRegisterFlag(dn.registerAll))
+                assertEquals(switchSpecificType, dn.switchSpecificType)
+                assertEquals(state, toCfgObjectState(dn.state))
+                assertEquals(userProperties.asCategorizedProperties(), dn.userProperties)
+            }
         }
     }
 }
@@ -104,7 +111,7 @@ private fun mockCfgDN(): CfgDN {
     val cfgState = toCfgObjectState(dn.state)
     val cfgDNGroup = mockCfgDNGroup(dn.group!!.primaryKey)
     val cfgSwitch = mockCfgSwitch(dn.switch.primaryKey)
-    val cfgSite = mockCfgFolder(dn.site!!.primaryKey)
+    val cfgSite = mockCfgFolder(DEFAULT_SITE, CFGFolder)
     val cfgDestDN = mockCfgDN(dn.destinationDNs!!.first().number).apply {
         every { switch } returns cfgSwitch
         every { type } returns CFGACDQueue

@@ -9,14 +9,17 @@ import com.genesyslab.platform.configuration.protocol.types.CfgDNType.CFGCP
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectState
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectState.CFGEnabled
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectType.CFGDN
+import com.genesyslab.platform.configuration.protocol.types.CfgObjectType.CFGFolder
 import com.nuecho.genesys.cli.getReference
 import com.nuecho.genesys.cli.models.configuration.ConfigurationAsserts.checkSerialization
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_OBJECT_DBID
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_SITE
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_SITE_REFERENCE
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_REFERENCE
-import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgDNGroup
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgDN
-import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgFolder
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgDNGroup
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgDNInfo
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgFolder
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgObjectiveTable
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgPerson
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgScript
@@ -25,7 +28,6 @@ import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mock
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockKeyValueCollection
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgObjectState
 import com.nuecho.genesys.cli.models.configuration.reference.DNReference
-import com.nuecho.genesys.cli.models.configuration.reference.FolderReference
 import com.nuecho.genesys.cli.models.configuration.reference.ObjectiveTableReference
 import com.nuecho.genesys.cli.models.configuration.reference.ScriptReference
 import com.nuecho.genesys.cli.models.configuration.reference.StatTableReference
@@ -57,7 +59,7 @@ private val dnGroup = DNGroup(
         state = CfgObjectState.CFGEnabled.toShortName(),
         userProperties = ConfigurationTestData.defaultProperties(),
         capacityRule = ScriptReference("capacityRule", DEFAULT_TENANT_REFERENCE),
-        site = FolderReference("site"),
+        site = DEFAULT_SITE_REFERENCE,
         contract = ObjectiveTableReference("contract", DEFAULT_TENANT_REFERENCE)
     ),
     dns = listOf(
@@ -160,7 +162,7 @@ private fun mockCfgDNGroup(service: IConfService): CfgDNGroup {
     val capacityTableMock = mockCfgStatTable(dnGroup.group.capacityTable!!.primaryKey)
     val quotaTableMock = mockCfgStatTable(dnGroup.group.quotaTable!!.primaryKey)
     val capacityRuleMock = mockCfgScript(dnGroup.group.capacityRule!!.primaryKey)
-    val siteMock = mockCfgFolder(dnGroup.group.site!!.primaryKey)
+    val siteMock = mockCfgFolder(DEFAULT_SITE, CFGFolder)
     val contractMock = mockCfgObjectiveTable(dnGroup.group.contract!!.primaryKey)
 
     return cfgDNGroup.apply {
