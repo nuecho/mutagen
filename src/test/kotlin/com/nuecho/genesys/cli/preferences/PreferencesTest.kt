@@ -12,9 +12,10 @@ import com.nuecho.genesys.cli.preferences.environment.EnvironmentTest
 import io.mockk.every
 import io.mockk.objectMockk
 import io.mockk.use
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Test
+import org.hamcrest.MatcherAssert.assertThat
+import org.hamcrest.Matchers.equalTo
 import org.junit.jupiter.api.Assertions.assertThrows
+import org.junit.jupiter.api.Test
 import java.io.File
 import java.io.FileNotFoundException
 
@@ -26,7 +27,7 @@ class PreferencesTest {
     fun `loadEnvironment with no environment specified should return the environment named default`() {
 
         val environment = TestResources.loadEnvironments("environments.yml")[Preferences.DEFAULT_ENVIRONMENT]
-        assertEquals(environment, EnvironmentTest.defaultTestEnvironment)
+        assertThat(environment, equalTo(EnvironmentTest.defaultTestEnvironment))
     }
 
     @Test
@@ -66,7 +67,7 @@ class PreferencesTest {
             val environment = loadEnvironment(
                 environmentsFile = toPreferenceFile("environments_nopassword.yml")
             )
-            assertEquals(environment.password, PASSWORD)
+            assertThat(environment.password, equalTo(PASSWORD))
         }
     }
 }

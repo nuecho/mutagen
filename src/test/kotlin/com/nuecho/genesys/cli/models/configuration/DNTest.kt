@@ -39,7 +39,8 @@ import com.nuecho.genesys.cli.toShortName
 import io.mockk.every
 import io.mockk.objectMockk
 import io.mockk.use
-import org.junit.jupiter.api.Assertions.assertEquals
+import org.hamcrest.MatcherAssert.assertThat
+import org.hamcrest.Matchers.equalTo
 import org.junit.jupiter.api.Test
 
 private const val NUMBER = "123"
@@ -95,12 +96,12 @@ class DNTest : ConfigurationObjectTest(
             val cfgDN = dn.updateCfgObject(service)
 
             with(cfgDN) {
-                assertEquals(name, dn.name)
-                assertEquals(switchDBID, DEFAULT_OBJECT_DBID)
-                assertEquals(registerAll, toCfgDNRegisterFlag(dn.registerAll))
-                assertEquals(switchSpecificType, dn.switchSpecificType)
-                assertEquals(state, toCfgObjectState(dn.state))
-                assertEquals(userProperties.asCategorizedProperties(), dn.userProperties)
+                assertThat(name, equalTo(dn.name))
+                assertThat(switchDBID, equalTo(DEFAULT_OBJECT_DBID))
+                assertThat(registerAll, equalTo(toCfgDNRegisterFlag(dn.registerAll)))
+                assertThat(switchSpecificType, equalTo(dn.switchSpecificType))
+                assertThat(state, equalTo(toCfgObjectState(dn.state)))
+                assertThat(userProperties.asCategorizedProperties(), equalTo(dn.userProperties))
             }
         }
     }

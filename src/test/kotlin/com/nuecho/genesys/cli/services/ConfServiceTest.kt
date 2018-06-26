@@ -6,7 +6,8 @@ import com.genesyslab.platform.configuration.protocol.confserver.ConfServerProto
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
-import org.junit.jupiter.api.Assertions.assertTrue
+import org.hamcrest.MatcherAssert.assertThat
+import org.hamcrest.Matchers.`is`
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS
@@ -30,7 +31,7 @@ class ConfServiceTest {
         service.close()
 
         verify { protocol.close() }
-        assertTrue(service.isDisposed)
+        assertThat(service.isDisposed, `is`(true))
     }
 
     @Test
@@ -41,7 +42,7 @@ class ConfServiceTest {
         service.close()
 
         verify { protocol.close() }
-        assertTrue(service.isDisposed)
+        assertThat(service.isDisposed, `is`(true))
     }
 }
 

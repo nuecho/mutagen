@@ -29,10 +29,12 @@ import io.mockk.objectMockk
 import io.mockk.staticMockk
 import io.mockk.use
 import io.mockk.verify
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertFalse
+import org.hamcrest.MatcherAssert.assertThat
+import org.hamcrest.Matchers.`is`
+import org.hamcrest.Matchers.equalTo
+import org.hamcrest.Matchers.hasSize
+import org.hamcrest.Matchers.startsWith
 import org.junit.jupiter.api.Assertions.assertThrows
-import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
 private const val USAGE_PREFIX = "Usage: import [-?]"
@@ -41,7 +43,7 @@ class ImportTest {
     @Test
     fun `executing Import with -h argument should print usage`() {
         val output = execute("config", "import", "-h")
-        assertTrue(output.startsWith(USAGE_PREFIX))
+        assertThat(output, startsWith(USAGE_PREFIX))
     }
 
     @Test
@@ -161,20 +163,20 @@ class ImportTest {
 
         val sortedConfigurationObjects = extractTopologicalSequence(configuration, mockConfService())
 
-        assertEquals(sortedConfigurationObjects.size, 4)
+        assertThat(sortedConfigurationObjects, hasSize(4))
 
         // physicalSwitch and tenant can legally be in any order
         sortedConfigurationObjects.subList(0, 2).containsAll(listOf(physicalSwitch, tenant))
-        assertEquals(sortedConfigurationObjects[2], switch)
-        assertEquals(sortedConfigurationObjects[3], dn)
+        assertThat(sortedConfigurationObjects[2] as Switch, equalTo(switch))
+        assertThat(sortedConfigurationObjects[3] as DN, equalTo(dn))
     }
 
     @Test
     fun `confirm should return true when user enters y`() {
         staticMockk("kotlin.io.ConsoleKt").use {
             every { readLine() } returns "y" andThen "Y"
-            assertTrue(confirm())
-            assertTrue(confirm())
+            assertThat(confirm(), `is`(true))
+            assertThat(confirm(), `is`(true))
         }
     }
 
@@ -182,8 +184,8 @@ class ImportTest {
     fun `confirm should return false when user enters n`() {
         staticMockk("kotlin.io.ConsoleKt").use {
             every { readLine() } returns "n" andThen "N"
-            assertFalse(confirm())
-            assertFalse(confirm())
+            assertThat(confirm(), `is`(false))
+            assertThat(confirm(), `is`(false))
         }
     }
 
@@ -191,7 +193,7 @@ class ImportTest {
     fun `confirm should keep prompting until user enters a valid answer`() {
         staticMockk("kotlin.io.ConsoleKt").use {
             every { readLine() } returns "q" andThen "t" andThen "Y"
-            assertTrue(confirm())
+            assertThat(confirm(), `is`(true))
         }
     }
 }

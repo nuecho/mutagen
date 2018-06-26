@@ -20,7 +20,8 @@ import com.nuecho.genesys.cli.preferences.environment.Environment
 import com.nuecho.genesys.cli.services.ConfService
 import io.mockk.every
 import io.mockk.spyk
-import org.junit.jupiter.api.Assertions.assertEquals
+import org.hamcrest.MatcherAssert.assertThat
+import org.hamcrest.Matchers.equalTo
 import org.junit.jupiter.api.Test
 import java.io.ByteArrayOutputStream
 
@@ -84,7 +85,7 @@ private fun checkExportOutput(
     processObjects(processor, type, objects)
 
     val result = defaultJsonObjectMapper().readValue(String(output.toByteArray()), Configuration::class.java)
-    assertEquals(result, loadJsonConfiguration("commands/config/export/json/$expectedOutputFile"))
+    assertThat(result, equalTo(loadJsonConfiguration("commands/config/export/json/$expectedOutputFile")))
 }
 
 private fun checkCompactExportOutput(
@@ -99,7 +100,7 @@ private fun checkCompactExportOutput(
     processObjects(processor, type, objects)
 
     val result = compactJsonObjectMapper().readValue(String(output.toByteArray()), Configuration::class.java)
-    assertEquals(result, loadJsonConfiguration("commands/config/export/json/$expectedOutputFile"))
+    assertThat(result, equalTo(loadJsonConfiguration("commands/config/export/json/$expectedOutputFile")))
 }
 
 private fun processObjects(processor: JsonExportProcessor, type: CfgObjectType, objects: Array<out ICfgObject>) {

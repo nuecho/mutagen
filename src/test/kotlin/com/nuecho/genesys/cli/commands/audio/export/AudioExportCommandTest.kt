@@ -16,17 +16,20 @@ import com.nuecho.genesys.cli.commands.audio.AudioServices.getMessagesData
 import com.nuecho.genesys.cli.commands.audio.AudioServicesException
 import com.nuecho.genesys.cli.commands.audio.Message
 import com.nuecho.genesys.cli.commands.audio.Personality
-import com.nuecho.genesys.cli.commands.audio.export.AudioExport.getSchemaBuilder
-import com.nuecho.genesys.cli.commands.audio.export.AudioExport.getMissingPersonalitiesIds
 import com.nuecho.genesys.cli.commands.audio.export.AudioExport.getAudioMap
+import com.nuecho.genesys.cli.commands.audio.export.AudioExport.getMissingPersonalitiesIds
+import com.nuecho.genesys.cli.commands.audio.export.AudioExport.getSchemaBuilder
 import com.nuecho.genesys.cli.commands.audio.export.AudioExport.isSelectedPersonality
 import com.nuecho.genesys.cli.commands.audio.export.AudioExport.writeAudioData
 import com.nuecho.genesys.cli.core.defaultJsonObjectMapper
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertFalse
+import org.hamcrest.MatcherAssert.assertThat
+import org.hamcrest.Matchers.`is`
+import org.hamcrest.Matchers.containsString
+import org.hamcrest.Matchers.empty
+import org.hamcrest.Matchers.equalTo
+import org.hamcrest.Matchers.startsWith
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.BeforeAll
-import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS
@@ -63,13 +66,13 @@ class AudioExportCommandTest {
     @Test
     fun `executing Export with -h argument should print usage`() {
         val output = CliOutputCaptureWrapper.execute("audio", "export", "-h")
-        assertTrue(output.startsWith(USAGE_PREFIX))
+        assertThat(output, startsWith(USAGE_PREFIX))
     }
 
     @Test
     fun `executing Export with wrong argument should print usage`() {
         val output = CliOutputCaptureWrapper.execute("audio", "export", "audioOutput.csv", "--with")
-        assertTrue(output.contains(USAGE_PREFIX))
+        assertThat(output, containsString(USAGE_PREFIX))
     }
 
     @Test
@@ -91,30 +94,31 @@ class AudioExportCommandTest {
 
     @Test
     fun `getMissingPersonalitiesIds should return personalities that don't exist`() {
-        assertEquals(setOf(INVALID_PERSONALITY_ID), getMissingPersonalitiesIds(personalities, setOf(INVALID_PERSONALITY_ID, FRANK_ID)))
-        assertTrue(getMissingPersonalitiesIds(personalities, null).isEmpty())
+        assertThat(getMissingPersonalitiesIds(personalities, setOf(INVALID_PERSONALITY_ID, FRANK_ID)), equalTo(setOf(INVALID_PERSONALITY_ID)))
+        assertThat(getMissingPersonalitiesIds(personalities, null), `is`(empty()))
     }
 
     @Test
     fun `isSelectedPersonalities should return whether the personality is in the list or not`() {
-        assertTrue(isSelectedPersonality(FRANK_ID, setOf(FRANK_ID, JOELLA_ID)))
-        assertTrue(isSelectedPersonality(JOELLA_ID, setOf(FRANK_ID, JOELLA_ID)))
-        assertFalse(isSelectedPersonality(INVALID_PERSONALITY_ID, setOf(FRANK_ID, JOELLA_ID)))
-        assertTrue(isSelectedPersonality(FRANK_ID, null))
+        assertThat(isSelectedPersonality(FRANK_ID, setOf(FRANK_ID, JOELLA_ID)), `is`(true))
+        assertThat(isSelectedPersonality(JOELLA_ID, setOf(FRANK_ID, JOELLA_ID)), `is`(true))
+        assertThat(isSelectedPersonality(INVALID_PERSONALITY_ID, setOf(FRANK_ID, JOELLA_ID)), `is`(false))
+        assertThat(isSelectedPersonality(FRANK_ID, null), `is`(true))
     }
 
     @Test
     fun `getAudioMap should return map including exclusively existing personality id keys`() {
         val audioMap = getAudioMap(existingMessages, setOf(INVALID_PERSONALITY_ID, FRANK_ID), parentFile.path)
 
-        assertEquals(
-            mapOf(
-                "${parentFile.path}/$FRANK_ID/Test.wav" to AudioRequestInfo("10001", "10001"),
-                "${parentFile.path}/$FRANK_ID/Enter Password.wav" to AudioRequestInfo("10002", "10003"),
-                "${parentFile.path}/$FRANK_ID/foo.wav" to AudioRequestInfo("10003", "10004"),
-                "${parentFile.path}/$FRANK_ID/BAZ.wav" to AudioRequestInfo("10004", "10005")
-            ),
-            audioMap
+        assertThat(
+            audioMap, equalTo(
+                mapOf(
+                    "${parentFile.path}/$FRANK_ID/Test.wav" to AudioRequestInfo("10001", "10001"),
+                    "${parentFile.path}/$FRANK_ID/Enter Password.wav" to AudioRequestInfo("10002", "10003"),
+                    "${parentFile.path}/$FRANK_ID/foo.wav" to AudioRequestInfo("10003", "10004"),
+                    "${parentFile.path}/$FRANK_ID/BAZ.wav" to AudioRequestInfo("10004", "10005")
+                )
+            )
         )
     }
 
@@ -122,19 +126,19 @@ class AudioExportCommandTest {
     fun `getSchemaBuilder should properly build csv schema builder from personalities`() {
         val schemaBuilder = getSchemaBuilder(personalities)
 
-        assertTrue(schemaBuilder.hasColumn(NAME))
-        assertTrue(schemaBuilder.hasColumn(DESCRIPTION))
-        assertTrue(schemaBuilder.hasColumn(MESSAGE_AR_ID))
-        assertTrue(schemaBuilder.hasColumn(TENANT_ID))
-        assertTrue(schemaBuilder.hasColumn(FRANK_ID))
-        assertTrue(schemaBuilder.hasColumn(JOELLA_ID))
+        assertThat(schemaBuilder.hasColumn(NAME), `is`(true))
+        assertThat(schemaBuilder.hasColumn(DESCRIPTION), `is`(true))
+        assertThat(schemaBuilder.hasColumn(MESSAGE_AR_ID), `is`(true))
+        assertThat(schemaBuilder.hasColumn(TENANT_ID), `is`(true))
+        assertThat(schemaBuilder.hasColumn(FRANK_ID), `is`(true))
+        assertThat(schemaBuilder.hasColumn(JOELLA_ID), `is`(true))
     }
 
     @Test
     fun `writeCsvFile should properly write in csv file`() {
         val output = ByteArrayOutputStream()
         writeAudioData(existingMessages, getSchemaBuilder(personalities), output)
-        assertEquals(expectedAudioCsv.readText(), output.toString())
+        assertThat(output.toString(), equalTo(expectedAudioCsv.readText()))
     }
 }
 

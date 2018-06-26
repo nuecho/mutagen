@@ -13,7 +13,8 @@ import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveTen
 import com.nuecho.genesys.cli.services.ServiceMocks.mockConfService
 import com.nuecho.genesys.cli.toShortName
 import io.mockk.every
-import org.junit.jupiter.api.Assertions.assertEquals
+import org.hamcrest.MatcherAssert.assertThat
+import org.hamcrest.Matchers.equalTo
 import org.junit.jupiter.api.Test
 
 private const val NAME = "foo"
@@ -43,13 +44,13 @@ class TransactionTest : ConfigurationObjectTest(
         val cfgTransaction = transaction.updateCfgObject(service)
 
         with(cfgTransaction) {
-            assertEquals(transaction.name, name)
-            assertEquals(transaction.alias, alias)
-            assertEquals(toCfgTransactionType(transaction.type), type)
-            assertEquals(transaction.recordPeriod, recordPeriod)
-            assertEquals(transaction.description, description)
-            assertEquals(toCfgObjectState(transaction.state), state)
-            assertEquals(transaction.userProperties, userProperties.asCategorizedProperties())
+            assertThat(name, equalTo(transaction.name))
+            assertThat(alias, equalTo(transaction.alias))
+            assertThat(type, equalTo(toCfgTransactionType(transaction.type)))
+            assertThat(recordPeriod, equalTo(transaction.recordPeriod))
+            assertThat(description, equalTo(transaction.description))
+            assertThat(state, equalTo(toCfgObjectState(transaction.state)))
+            assertThat(userProperties.asCategorizedProperties(), equalTo(transaction.userProperties))
         }
     }
 }

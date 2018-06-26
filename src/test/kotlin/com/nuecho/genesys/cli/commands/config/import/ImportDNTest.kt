@@ -20,7 +20,8 @@ import io.mockk.objectMockk
 import io.mockk.staticMockk
 import io.mockk.use
 import io.mockk.verify
-import org.junit.jupiter.api.Assertions.assertTrue
+import org.hamcrest.MatcherAssert.assertThat
+import org.hamcrest.Matchers.`is`
 import org.junit.jupiter.api.Test
 
 class ImportDNTest {
@@ -58,7 +59,7 @@ class ImportDNTest {
                 every { Import.save(any()) } just Runs
 
                 val hasImportedObject = importConfigurationObject(DN1, service)
-                assertTrue(hasImportedObject)
+                assertThat(hasImportedObject, `is`(true))
                 verify(exactly = 1) { Import.save(ofType(CfgDN::class)) }
             }
         }

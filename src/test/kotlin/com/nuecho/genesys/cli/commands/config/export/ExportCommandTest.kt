@@ -17,10 +17,11 @@ import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.slot
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertTrue
-import org.junit.jupiter.api.Test
+import org.hamcrest.MatcherAssert.assertThat
+import org.hamcrest.Matchers.equalTo
+import org.hamcrest.Matchers.startsWith
 import org.junit.jupiter.api.Assertions.assertThrows
+import org.junit.jupiter.api.Test
 import java.io.ByteArrayOutputStream
 
 private const val USAGE_PREFIX = "Usage: export [-?]"
@@ -30,7 +31,7 @@ class ExportCommandTest {
     fun `executing Export with -h argument should print usage`() {
         val output = execute("config", "export", "-h")
 
-        assertTrue(output.startsWith(USAGE_PREFIX))
+        assertThat(output, startsWith(USAGE_PREFIX))
     }
 
     @Test
@@ -42,7 +43,7 @@ class ExportCommandTest {
         exportConfiguration(processor, service)
 
         val result = defaultJsonObjectMapper().readTree(String(output.toByteArray()))
-        assertEquals(result, loadRawConfiguration("commands/config/export/raw/empty_configuration.json"))
+        assertThat(result, equalTo(loadRawConfiguration("commands/config/export/raw/empty_configuration.json")))
     }
 
     @Test
@@ -61,12 +62,12 @@ class ExportCommandTest {
         val environment = Environment(host = "host", user = "user", rawPassword = "password")
 
         val rawExportProcessor = createExportProcessor(RAW, environment, System.out) as RawExportProcessor
-        assertEquals(rawExportProcessor.metadata.formatName, RAW.name)
-        assertEquals(rawExportProcessor.metadata.formatVersion, RAW.version)
+        assertThat(rawExportProcessor.metadata.formatName, equalTo(RAW.name))
+        assertThat(rawExportProcessor.metadata.formatVersion, equalTo(RAW.version))
 
         val jsonExportProcessor = createExportProcessor(JSON, environment, System.out) as JsonExportProcessor
-        assertEquals(jsonExportProcessor.metadata.formatName, JSON.name)
-        assertEquals(jsonExportProcessor.metadata.formatVersion, JSON.version)
+        assertThat(jsonExportProcessor.metadata.formatName, equalTo(JSON.name))
+        assertThat(jsonExportProcessor.metadata.formatVersion, equalTo(JSON.version))
     }
 }
 

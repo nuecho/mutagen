@@ -18,7 +18,9 @@ import com.nuecho.genesys.cli.toShortName
 import io.mockk.every
 import io.mockk.objectMockk
 import io.mockk.use
-import org.junit.jupiter.api.Assertions.assertEquals
+import org.hamcrest.MatcherAssert.assertThat
+import org.hamcrest.Matchers.equalTo
+import org.hamcrest.Matchers.hasSize
 import org.junit.jupiter.api.Test
 
 private const val NAME = "name"
@@ -34,7 +36,7 @@ private val role = Role(
     userProperties = defaultProperties()
 )
 
-class RoleTest : GroupConfigurationObjectTest(
+class RoleTest : NoImportedObjectConfigurationObjectTest(
     role,
     Role(tenant = DEFAULT_TENANT_REFERENCE, name = NAME)
 ) {
@@ -64,11 +66,11 @@ class RoleTest : GroupConfigurationObjectTest(
         val cfgRole = role.updateCfgObject(service)
 
         with(cfgRole) {
-            assertEquals(role.name, name)
-            assertEquals(role.description, description)
-            assertEquals(toCfgObjectState(role.state), state)
-            assertEquals(0, members.size)
-            assertEquals(role.userProperties, userProperties.asCategorizedProperties())
+            assertThat(name, equalTo(role.name))
+            assertThat(description, equalTo(role.description))
+            assertThat(state, equalTo(toCfgObjectState(role.state)))
+            assertThat(members, hasSize(0))
+            assertThat(userProperties.asCategorizedProperties(), equalTo(role.userProperties))
         }
     }
 }

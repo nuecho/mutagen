@@ -18,9 +18,10 @@ import io.mockk.just
 import io.mockk.mockk
 import io.mockk.slot
 import kotlinx.coroutines.experimental.launch
-import org.junit.jupiter.api.Assertions.assertEquals
+import org.hamcrest.MatcherAssert.assertThat
+import org.hamcrest.Matchers.equalTo
+import org.hamcrest.Matchers.startsWith
 import org.junit.jupiter.api.Assertions.assertThrows
-import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
 private const val MISSING_REQUIRED_OPTIONS = "Missing required options [--stat-host=<statHost>, --stat-port=<statPort>, params[0]=employeeId]"
@@ -31,13 +32,13 @@ class StatusCommandTest {
     @Test
     fun `executing Status with no arguments should print usage`() {
         val output = execute("agent", "status")
-        assertTrue(output.startsWith(MISSING_REQUIRED_OPTIONS))
+        assertThat(output, startsWith(MISSING_REQUIRED_OPTIONS))
     }
 
     @Test
     fun `executing Status with -h argument should print usage`() {
         val output = execute("agent", "status", "-h")
-        assertTrue(output.startsWith(USAGE_PREFIX))
+        assertThat(output, startsWith(USAGE_PREFIX))
     }
 
     @Test
@@ -50,8 +51,8 @@ class StatusCommandTest {
 
         val output = Status.getAgentStatus(statServiceMock, agent, TEST_TIMEOUT)
 
-        assertEquals(output.agentId, agentId)
-        assertEquals(output.status, agentStatus.asInteger())
+        assertThat(output.agentId, equalTo(agentId))
+        assertThat(output.status, equalTo(agentStatus.asInteger()))
     }
 
     @Test

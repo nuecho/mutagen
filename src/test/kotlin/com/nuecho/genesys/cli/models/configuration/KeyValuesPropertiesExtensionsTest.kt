@@ -1,7 +1,8 @@
 package com.nuecho.genesys.cli.models.configuration
 
 import com.genesyslab.platform.commons.collections.KeyValueCollection
-import org.junit.jupiter.api.Assertions.assertEquals
+import org.hamcrest.MatcherAssert.assertThat
+import org.hamcrest.Matchers.equalTo
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
 
@@ -13,11 +14,13 @@ class KeyValuesPropertiesExtensionsTest {
             this.addObject("section2", KeyValueCollection().apply { addInt("int", 1) })
         }
 
-        assertEquals(
+        assertThat(
             actual.asCategorizedProperties(),
-            mapOf(
-                "section1" to mapOf("string" to "string"),
-                "section2" to mapOf("int" to 1)
+            equalTo(
+                mapOf(
+                    "section1" to mapOf("string" to "string"),
+                    "section2" to mapOf("int" to 1)
+                )
             )
         )
     }

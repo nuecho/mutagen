@@ -10,7 +10,9 @@ import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mock
 import com.nuecho.genesys.cli.services.ServiceMocks
 import com.nuecho.genesys.cli.services.getObjectDbid
 import io.mockk.every
-import org.junit.jupiter.api.Assertions.assertEquals
+import org.hamcrest.MatcherAssert.assertThat
+import org.hamcrest.Matchers.contains
+import org.hamcrest.Matchers.equalTo
 import org.junit.jupiter.api.Test
 
 private const val DBID = 102
@@ -36,8 +38,8 @@ class EnumeratorValueReferenceTest {
             EnumeratorValueReference::class.java
         )
 
-        assertEquals(deserializedEnumeratorValueReference.enumerator, EnumeratorReference(ENUMERATOR, null))
-        assertEquals(deserializedEnumeratorValueReference.name, NAME)
+        assertThat(deserializedEnumeratorValueReference.enumerator, equalTo(EnumeratorReference(ENUMERATOR, null)))
+        assertThat(deserializedEnumeratorValueReference.name, equalTo(NAME))
     }
 
     @Test
@@ -50,13 +52,13 @@ class EnumeratorValueReferenceTest {
         every { service.retrieveObject(ENUMERATOR_REFERENCE.cfgObjectClass, any()) } answers { CfgEnumerator(service).apply { dbid = DBID } }
 
         val query = enumeratorValueReference.toQuery(service)
-        assertEquals(query.enumeratorDbid, DBID)
-        assertEquals(query.name, NAME)
+        assertThat(query.enumeratorDbid, equalTo(DBID))
+        assertThat(query.name, equalTo(NAME))
     }
 
     @Test
     fun `EnumeratorValueReference toString() should generate the proper String`() {
-        assertEquals(enumeratorValueReference.toString(), "name: '$NAME', enumerator: '$ENUMERATOR_REFERENCE'")
+        assertThat("name: '$NAME', enumerator: '$ENUMERATOR_REFERENCE'", equalTo(enumeratorValueReference.toString()))
     }
 
     @Test
@@ -92,8 +94,8 @@ class EnumeratorValueReferenceTest {
             enumeratorValueReference2,
             enumeratorValueReference1
         ).sorted()
-        assertEquals(
-            sortedList, listOf(
+        assertThat(
+            sortedList, contains(
                 enumeratorValueReference1,
                 enumeratorValueReference2,
                 enumeratorValueReference3,

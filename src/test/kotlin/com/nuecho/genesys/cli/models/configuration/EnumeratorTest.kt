@@ -13,7 +13,8 @@ import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveTen
 import com.nuecho.genesys.cli.services.ServiceMocks.mockConfService
 import com.nuecho.genesys.cli.toShortName
 import io.mockk.every
-import org.junit.jupiter.api.Assertions.assertEquals
+import org.hamcrest.MatcherAssert.assertThat
+import org.hamcrest.Matchers.equalTo
 import org.junit.jupiter.api.Test
 
 private const val NAME = "name"
@@ -41,12 +42,12 @@ class EnumeratorTest : ConfigurationObjectTest(
         val cfgEnumerator = enumerator.updateCfgObject(service)
 
         with(cfgEnumerator) {
-            assertEquals(enumerator.name, name)
-            assertEquals(enumerator.displayName, displayName)
-            assertEquals(enumerator.description, description)
-            assertEquals(toCfgEnumeratorType(enumerator.type), type)
-            assertEquals(toCfgObjectState(enumerator.state), state)
-            assertEquals(enumerator.userProperties, userProperties.asCategorizedProperties())
+            assertThat(name, equalTo(enumerator.name))
+            assertThat(displayName, equalTo(enumerator.displayName))
+            assertThat(description, equalTo(enumerator.description))
+            assertThat(type, equalTo(toCfgEnumeratorType(enumerator.type)))
+            assertThat(state, equalTo(toCfgObjectState(enumerator.state)))
+            assertThat(userProperties.asCategorizedProperties(), equalTo(enumerator.userProperties))
         }
     }
 
@@ -59,8 +60,8 @@ class EnumeratorTest : ConfigurationObjectTest(
         val cfgEnumerator = Enumerator(DEFAULT_TENANT_REFERENCE, NAME).updateCfgObject(service)
 
         with(cfgEnumerator) {
-            assertEquals(NAME, name)
-            assertEquals(NAME, displayName)
+            assertThat(name, equalTo(NAME))
+            assertThat(displayName, equalTo(NAME))
         }
     }
 }

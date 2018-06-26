@@ -10,6 +10,7 @@ import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFA
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_SITE
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_SITE_REFERENCE
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_REFERENCE
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgAgentGroup
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgDN
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgFolder
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgObjectiveTable
@@ -36,7 +37,9 @@ import com.nuecho.genesys.cli.toShortName
 import io.mockk.every
 import io.mockk.objectMockk
 import io.mockk.use
-import org.junit.jupiter.api.Assertions.assertEquals
+import org.hamcrest.MatcherAssert.assertThat
+import org.hamcrest.Matchers.contains
+import org.hamcrest.Matchers.equalTo
 import org.junit.jupiter.api.Test
 
 private const val NAME = "name"
@@ -93,19 +96,19 @@ class AgentGroupTest : ConfigurationObjectTest(
             val cfgAgentGroup = agentGroup.updateCfgObject(service)
 
             with(cfgAgentGroup) {
-                assertEquals(listOf(DEFAULT_OBJECT_DBID, DEFAULT_OBJECT_DBID, DEFAULT_OBJECT_DBID), agentDBIDs)
+                assertThat(agentDBIDs, contains(DEFAULT_OBJECT_DBID, DEFAULT_OBJECT_DBID, DEFAULT_OBJECT_DBID))
 
                 with(groupInfo) {
-                    assertEquals(agentGroup.group.name, name)
-                    assertEquals(listOf(DEFAULT_OBJECT_DBID, DEFAULT_OBJECT_DBID), managerDBIDs)
-                    assertEquals(listOf(DEFAULT_OBJECT_DBID, DEFAULT_OBJECT_DBID, DEFAULT_OBJECT_DBID), routeDNDBIDs)
-                    assertEquals(DEFAULT_OBJECT_DBID, capacityTableDBID)
-                    assertEquals(DEFAULT_OBJECT_DBID, quotaTableDBID)
-                    assertEquals(toCfgObjectState(agentGroup.group.state), state)
-                    assertEquals(agentGroup.userProperties, userProperties.asCategorizedProperties())
-                    assertEquals(DEFAULT_OBJECT_DBID, capacityRuleDBID)
-                    assertEquals(DEFAULT_OBJECT_DBID, siteDBID)
-                    assertEquals(DEFAULT_OBJECT_DBID, contractDBID)
+                    assertThat(name, equalTo(agentGroup.group.name))
+                    assertThat(managerDBIDs, contains(DEFAULT_OBJECT_DBID, DEFAULT_OBJECT_DBID))
+                    assertThat(routeDNDBIDs, contains(DEFAULT_OBJECT_DBID, DEFAULT_OBJECT_DBID, DEFAULT_OBJECT_DBID))
+                    assertThat(capacityTableDBID, equalTo(DEFAULT_OBJECT_DBID))
+                    assertThat(quotaTableDBID, equalTo(DEFAULT_OBJECT_DBID))
+                    assertThat(state, equalTo(toCfgObjectState(agentGroup.group.state)))
+                    assertThat(userProperties.asCategorizedProperties(), equalTo(agentGroup.userProperties))
+                    assertThat(capacityRuleDBID, equalTo(DEFAULT_OBJECT_DBID))
+                    assertThat(siteDBID, equalTo(DEFAULT_OBJECT_DBID))
+                    assertThat(contractDBID, equalTo(DEFAULT_OBJECT_DBID))
                 }
             }
         }

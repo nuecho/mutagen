@@ -13,7 +13,8 @@ import com.nuecho.genesys.cli.preferences.environment.Environment
 import com.nuecho.genesys.cli.services.ConfService
 import io.mockk.every
 import io.mockk.spyk
-import org.junit.jupiter.api.Assertions.assertEquals
+import org.hamcrest.MatcherAssert.assertThat
+import org.hamcrest.Matchers.equalTo
 import org.junit.jupiter.api.Test
 import java.io.ByteArrayOutputStream
 
@@ -71,5 +72,5 @@ private fun checkExportOutput(
     processor.end()
 
     val result = defaultJsonObjectMapper().readTree(String(output.toByteArray()))
-    assertEquals(result, loadRawConfiguration("commands/config/export/raw/$expectedOutputFile"))
+    assertThat(result, equalTo(loadRawConfiguration("commands/config/export/raw/$expectedOutputFile")))
 }

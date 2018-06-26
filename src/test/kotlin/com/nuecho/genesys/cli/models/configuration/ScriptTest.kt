@@ -13,7 +13,8 @@ import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveTen
 import com.nuecho.genesys.cli.services.ServiceMocks.mockConfService
 import com.nuecho.genesys.cli.toShortName
 import io.mockk.every
-import org.junit.jupiter.api.Assertions.assertEquals
+import org.hamcrest.MatcherAssert.assertThat
+import org.hamcrest.Matchers.equalTo
 import org.junit.jupiter.api.Test
 
 private const val NAME = "name"
@@ -39,11 +40,11 @@ class ScriptTest : ConfigurationObjectTest(
         val cfgScript = script.updateCfgObject(service)
 
         with(cfgScript) {
-            assertEquals(script.name, name)
-            assertEquals(script.index, index)
-            assertEquals(toCfgObjectState(script.state), state)
-            assertEquals(toCfgScriptType(script.type), type)
-            assertEquals(script.userProperties, userProperties.asCategorizedProperties())
+            assertThat(name, equalTo(script.name))
+            assertThat(index, equalTo(script.index))
+            assertThat(state, equalTo(toCfgObjectState(script.state)))
+            assertThat(type, equalTo(toCfgScriptType(script.type)))
+            assertThat(userProperties.asCategorizedProperties(), equalTo(script.userProperties))
         }
     }
 }

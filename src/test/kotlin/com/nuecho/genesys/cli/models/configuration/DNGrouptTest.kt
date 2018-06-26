@@ -40,7 +40,11 @@ import io.mockk.every
 import io.mockk.objectMockk
 import io.mockk.staticMockk
 import io.mockk.use
-import org.junit.jupiter.api.Assertions.assertEquals
+import org.hamcrest.MatcherAssert.assertThat
+import org.hamcrest.Matchers.`is`
+import org.hamcrest.Matchers.equalTo
+import org.hamcrest.Matchers.hasSize
+import org.hamcrest.Matchers.nullValue
 import org.junit.jupiter.api.Test
 
 private const val DN_GROUP = "dnGroup"
@@ -69,7 +73,7 @@ private val dnGroup = DNGroup(
     type = CFGACDQueues.toShortName()
 )
 
-class DNGroupTest : GroupConfigurationObjectTest(
+class DNGrouptTest : NoImportedObjectConfigurationObjectTest(
     dnGroup,
     DNGroup(tenant = DEFAULT_TENANT_REFERENCE, name = DN_GROUP, shortNameType = CFGACDQueues.toShortName())
 ) {
@@ -105,24 +109,24 @@ class DNGroupTest : GroupConfigurationObjectTest(
             val cfgDNGroup = dnGroup.updateCfgObject(service)
 
             with(cfgDNGroup) {
-                assertEquals(type, CFGACDQueues)
-                assertEquals(dNs.size, 2)
-                assertEquals(dNs.toList()[0].trunks, null)
-                assertEquals(dNs.toList()[0].dndbid, DEFAULT_OBJECT_DBID)
-                assertEquals(dNs.toList()[1].trunks, 2)
-                assertEquals(dNs.toList()[1].dndbid, 102)
+                assertThat(type, equalTo(CFGACDQueues))
+                assertThat(dNs, hasSize(2))
+                assertThat(dNs.toList()[0].trunks, `is`(nullValue()))
+                assertThat(dNs.toList()[0].dndbid, equalTo(DEFAULT_OBJECT_DBID))
+                assertThat(dNs.toList()[1].trunks, equalTo(2))
+                assertThat(dNs.toList()[1].dndbid, equalTo(102))
 
                 with(groupInfo) {
-                    assertEquals(name, dnGroup.group.name)
-                    assertEquals(managerDBIDs, null)
-                    assertEquals(routeDNDBIDs, null)
-                    assertEquals(capacityTableDBID, DEFAULT_OBJECT_DBID)
-                    assertEquals(quotaTableDBID, DEFAULT_OBJECT_DBID)
-                    assertEquals(state, toCfgObjectState(dnGroup.group.state))
-                    assertEquals(userProperties.asCategorizedProperties(), dnGroup.userProperties)
-                    assertEquals(capacityRuleDBID, DEFAULT_OBJECT_DBID)
-                    assertEquals(siteDBID, DEFAULT_OBJECT_DBID)
-                    assertEquals(contractDBID, DEFAULT_OBJECT_DBID)
+                    assertThat(name, equalTo(dnGroup.group.name))
+                    assertThat(managerDBIDs, `is`(nullValue()))
+                    assertThat(routeDNDBIDs, `is`(nullValue()))
+                    assertThat(capacityTableDBID, equalTo(DEFAULT_OBJECT_DBID))
+                    assertThat(quotaTableDBID, equalTo(DEFAULT_OBJECT_DBID))
+                    assertThat(state, equalTo(toCfgObjectState(dnGroup.group.state)))
+                    assertThat(userProperties.asCategorizedProperties(), equalTo(dnGroup.userProperties))
+                    assertThat(capacityRuleDBID, equalTo(DEFAULT_OBJECT_DBID))
+                    assertThat(siteDBID, equalTo(DEFAULT_OBJECT_DBID))
+                    assertThat(contractDBID, equalTo(DEFAULT_OBJECT_DBID))
                 }
             }
         }

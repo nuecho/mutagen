@@ -14,7 +14,8 @@ import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveTen
 import com.nuecho.genesys.cli.services.ServiceMocks.mockConfService
 import com.nuecho.genesys.cli.toShortName
 import io.mockk.every
-import org.junit.jupiter.api.Assertions.assertEquals
+import org.hamcrest.MatcherAssert.assertThat
+import org.hamcrest.Matchers.equalTo
 import org.junit.jupiter.api.Test
 import java.text.SimpleDateFormat
 import java.time.ZoneId
@@ -54,9 +55,9 @@ class GVPIVRProfileTest : ConfigurationObjectTest(
         val cfgGVPIVRProfile = gvpIVRProfile.updateCfgObject(service)
 
         with(cfgGVPIVRProfile) {
-            assertEquals(name, gvpIVRProfile.name)
-            assertEquals(state, ConfigurationObjects.toCfgObjectState(gvpIVRProfile.state))
-            assertEquals(userProperties.asCategorizedProperties(), gvpIVRProfile.userProperties)
+            assertThat(name, equalTo(gvpIVRProfile.name))
+            assertThat(state, equalTo(ConfigurationObjects.toCfgObjectState(gvpIVRProfile.state)))
+            assertThat(userProperties.asCategorizedProperties(), equalTo(gvpIVRProfile.userProperties))
         }
     }
 }

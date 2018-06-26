@@ -11,7 +11,11 @@ import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mock
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgTenant
 import com.nuecho.genesys.cli.services.ServiceMocks.mockConfService
 import io.mockk.every
-import org.junit.jupiter.api.Assertions.assertEquals
+import org.hamcrest.MatcherAssert.assertThat
+import org.hamcrest.Matchers.`is`
+import org.hamcrest.Matchers.contains
+import org.hamcrest.Matchers.equalTo
+import org.hamcrest.Matchers.nullValue
 import org.junit.jupiter.api.Test
 
 private const val LOGIN_CODE = "loginCode"
@@ -36,9 +40,9 @@ class AgentLoginReferenceTest {
             AgentLoginReference::class.java
         )
 
-        assertEquals(LOGIN_CODE, deserializedAgentLoginReference.loginCode)
-        assertEquals(SWITCH, deserializedAgentLoginReference.switch.primaryKey)
-        assertEquals(null, deserializedAgentLoginReference.switch.tenant)
+        assertThat(deserializedAgentLoginReference.loginCode, equalTo(LOGIN_CODE))
+        assertThat(deserializedAgentLoginReference.switch.primaryKey, equalTo(SWITCH))
+        assertThat(deserializedAgentLoginReference.switch.tenant, `is`(nullValue()))
     }
 
     @Test
@@ -51,13 +55,13 @@ class AgentLoginReferenceTest {
         every { service.retrieveObject(CfgSwitch::class.java, any()) } returns cfgSwitch
 
         val query = agentLoginReference.toQuery(service)
-        assertEquals(LOGIN_CODE, query.loginCode)
-        assertEquals(DEFAULT_OBJECT_DBID, query.switchDbid)
+        assertThat(query.loginCode, equalTo(LOGIN_CODE))
+        assertThat(query.switchDbid, equalTo(DEFAULT_OBJECT_DBID))
     }
 
     @Test
     fun `toString should generate the proper string`() {
-        assertEquals(agentLoginReference.toString(), "loginCode: '$LOGIN_CODE', switch: '$DEFAULT_TENANT/$SWITCH'")
+        assertThat("loginCode: '$LOGIN_CODE', switch: '$DEFAULT_TENANT/$SWITCH'", equalTo(agentLoginReference.toString()))
     }
 
     @Test
@@ -88,6 +92,6 @@ class AgentLoginReferenceTest {
         )
 
         val sortedList = listOf(agentLoginReference5, agentLoginReference4, agentLoginReference3, agentLoginReference2, agentLoginReference1).sorted()
-        assertEquals(listOf(agentLoginReference1, agentLoginReference2, agentLoginReference3, agentLoginReference4, agentLoginReference5), sortedList)
+        assertThat(sortedList, contains(agentLoginReference1, agentLoginReference2, agentLoginReference3, agentLoginReference4, agentLoginReference5))
     }
 }

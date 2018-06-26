@@ -26,10 +26,12 @@ import com.nuecho.genesys.cli.commands.audio.AudioServices.getMessagesData
 import com.nuecho.genesys.cli.commands.audio.AudioServices.getPersonalities
 import com.nuecho.genesys.cli.commands.audio.AudioServices.login
 import com.nuecho.genesys.cli.commands.audio.AudioServices.uploadAudio
-import com.nuecho.genesys.cli.commands.audio.export.AudioExport.downloadAudioFiles
 import com.nuecho.genesys.cli.commands.audio.export.AudioExport.writeAudioData
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertTrue
+import org.hamcrest.CoreMatchers.startsWith
+import org.hamcrest.MatcherAssert.assertThat
+import org.hamcrest.Matchers.containsString
+import org.hamcrest.Matchers.endsWith
+import org.hamcrest.Matchers.equalTo
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
 import java.io.ByteArrayInputStream
@@ -41,7 +43,6 @@ import java.net.URL
 private const val GAX_URL = "http://genesys.com"
 private const val MESSAGE_URL = "$GAX_URL/messages/1234"
 private const val INTERNAL_SERVER_ERROR = 500
-private const val FRANK_ID = "10"
 
 class AudioServicesTest {
     val personalitiesData = File(getTestResource("commands/audio/personalities_data.json").toURI())
@@ -55,10 +56,10 @@ class AudioServicesTest {
         val callbackSequenceNumber = 1
 
         mockHttpClient(SUCCESS_CODE) {
-            assertEquals(Method.POST, it.method)
-            assertTrue(it.body().contains(personality))
-            assertTrue(it.path.startsWith("$MESSAGE_URL$UPLOAD_PATH"))
-            assertTrue(it.path.endsWith(callbackSequenceNumber.toString()))
+            assertThat(it.method, equalTo(Method.POST))
+            assertThat(it.body(), containsString(personality))
+            assertThat(it.path, startsWith("$MESSAGE_URL$UPLOAD_PATH"))
+            assertThat(it.path, endsWith(callbackSequenceNumber.toString()))
         }
 
         uploadAudio(MESSAGE_URL, audioWav, personality, callbackSequenceNumber)
@@ -82,10 +83,10 @@ class AudioServicesTest {
         val password = "password"
 
         mockHttpClient(LOGIN_SUCCESS_CODE) {
-            assertEquals(Method.POST, it.method)
-            assertEquals("""{"username":"$user","password":"$password","isPasswordEncrypted":false}""", it.body())
-            assertEquals(APPLICATION_JSON, it.headers[CONTENT_TYPE])
-            assertEquals("$GAX_URL$LOGIN_PATH", it.path)
+            assertThat(it.method, equalTo(Method.POST))
+            assertThat(it.body(), equalTo("""{"username":"$user","password":"$password","isPasswordEncrypted":false}"""))
+            assertThat(it.headers[CONTENT_TYPE], equalTo(APPLICATION_JSON))
+            assertThat(it.path, equalTo("$GAX_URL$LOGIN_PATH"))
         }
 
         login(user, password, false, GAX_URL)
@@ -114,9 +115,9 @@ class AudioServicesTest {
             SUCCESS_CODE,
             messagesData.inputStream()
         ) {
-            assertEquals(Method.GET, it.method)
-            assertEquals(APPLICATION_JSON, it.headers[CONTENT_TYPE])
-            assertEquals("$GAX_URL$AUDIO_MESSAGES_PATH", it.path)
+            assertThat(it.method, equalTo(Method.GET))
+            assertThat(it.headers[CONTENT_TYPE], equalTo(APPLICATION_JSON))
+            assertThat(it.path, equalTo("$GAX_URL$AUDIO_MESSAGES_PATH"))
         }
 
         writeAudioData(
@@ -129,8 +130,8 @@ class AudioServicesTest {
     @Test
     fun `downloadAudioFile should properly build the request`() {
         mockHttpClient(SUCCESS_CODE) {
-            assertEquals(Method.GET, it.method)
-            assertEquals("$GAX_URL${AudioServices.AUDIO_RESOURCES_PATH}/10001$FILES_PATH/10001$AUDIO_PATH", it.path)
+            assertThat(it.method, equalTo(Method.GET))
+            assertThat(it.path, equalTo("$GAX_URL${AudioServices.AUDIO_RESOURCES_PATH}/10001$FILES_PATH/10001$AUDIO_PATH"))
         }
 
         val file = File("${parentFile.path}test.wav")
@@ -143,30 +144,6 @@ class AudioServicesTest {
         )
 
         file.delete()
-    }
-
-    @Test
-    fun `downloadAudioFiles should properly write in audio files`() {
-        val audioMap = mapOf(
-            "${parentFile.path}/$FRANK_ID/Test.wav" to AudioRequestInfo("10001", "10001"),
-            "${parentFile.path}/$FRANK_ID/Enter Password.wav" to AudioRequestInfo("10002", "10003"),
-            "${parentFile.path}/$FRANK_ID/foo.wav" to AudioRequestInfo("10003", "10004"),
-            "${parentFile.path}/$FRANK_ID/BAZ.wav" to AudioRequestInfo("10004", "10005")
-        )
-
-        mockHttpClient(
-            SUCCESS_CODE,
-            audioWav.inputStream()
-        )
-
-        downloadAudioFiles(
-            GAX_URL,
-            audioMap
-        )
-
-        audioMap.forEach { filePath, _ ->
-            assertEquals(File(filePath).readText(Charsets.UTF_8), audioWav.readText(Charsets.UTF_8))
-        }
     }
 
     @Test
@@ -185,9 +162,9 @@ class AudioServicesTest {
         mockHttpClient(
             SUCCESS_CODE, personalitiesData.inputStream()
         ) {
-            assertEquals(it.method, Method.GET)
-            assertEquals(it.headers[CONTENT_TYPE], APPLICATION_JSON)
-            assertEquals(it.path, "$GAX_URL$PERSONALITIES_PATH")
+            assertThat(it.method, equalTo(Method.GET))
+            assertThat(it.headers[CONTENT_TYPE], equalTo(APPLICATION_JSON))
+            assertThat(it.path, equalTo("$GAX_URL$PERSONALITIES_PATH"))
         }
 
         getPersonalities(GAX_URL)
@@ -209,9 +186,9 @@ class AudioServicesTest {
         mockHttpClient(
             SUCCESS_CODE, messagesData.inputStream()
         ) {
-            assertEquals(it.method, Method.GET)
-            assertEquals(it.headers[CONTENT_TYPE], APPLICATION_JSON)
-            assertEquals(it.path, "$GAX_URL$AUDIO_MESSAGES_PATH")
+            assertThat(it.method, equalTo(Method.GET))
+            assertThat(it.headers[CONTENT_TYPE], equalTo(APPLICATION_JSON))
+            assertThat(it.path, equalTo("$GAX_URL$AUDIO_MESSAGES_PATH"))
         }
 
         getMessagesData(GAX_URL)
@@ -226,14 +203,14 @@ class AudioServicesTest {
             statusCode = CREATE_MESSAGE_SUCCESS_CODE,
             headers = mapOf(LOCATION to listOf(MESSAGE_URL))
         ) {
-            assertEquals(it.method, Method.POST)
-            assertEquals(it.body(), """{"name":"$name","description":"$description","type":"ANNOUNCEMENT","privateResource":false}""")
-            assertEquals(it.headers[CONTENT_TYPE], APPLICATION_JSON)
-            assertEquals(it.path, "$GAX_URL$AUDIO_RESOURCES_PATH")
+            assertThat(it.method, equalTo(Method.POST))
+            assertThat(it.body(), equalTo("""{"name":"$name","description":"$description","type":"ANNOUNCEMENT","privateResource":false}"""))
+            assertThat(it.headers[CONTENT_TYPE], equalTo(APPLICATION_JSON))
+            assertThat(it.path, equalTo("$GAX_URL$AUDIO_RESOURCES_PATH"))
         }
 
         val messageUrl = createMessage("name", "description", GAX_URL)
-        assertEquals(messageUrl, MESSAGE_URL)
+        assertThat(messageUrl, equalTo(MESSAGE_URL))
     }
 
     @Test

@@ -20,7 +20,8 @@ import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveScr
 import com.nuecho.genesys.cli.services.ServiceMocks.mockConfService
 import com.nuecho.genesys.cli.toShortName
 import io.mockk.every
-import org.junit.jupiter.api.Assertions.assertEquals
+import org.hamcrest.MatcherAssert.assertThat
+import org.hamcrest.Matchers.equalTo
 import org.junit.jupiter.api.Test
 
 private val tenant = Tenant(
@@ -47,14 +48,14 @@ class TenantTest : ConfigurationObjectTest(tenant, Tenant("foo"), Tenant(mockCfg
         val cfgTenant = tenant.updateCfgObject(service)
 
         with(cfgTenant) {
-            assertEquals(tenant.name, name)
-            assertEquals(DEFAULT_OBJECT_DBID, defaultCapacityRuleDBID)
-            assertEquals(defaultContractDBID, DEFAULT_OBJECT_DBID)
-            assertEquals(chargeableNumber, tenant.chargeableNumber)
-            assertEquals(parentTenantDBID, DEFAULT_TENANT_DBID)
-            assertEquals(password, tenant.password)
-            assertEquals(state, ConfigurationObjects.toCfgObjectState(tenant.state))
-            assertEquals(userProperties.asCategorizedProperties(), tenant.userProperties)
+            assertThat(name, equalTo(tenant.name))
+            assertThat(defaultCapacityRuleDBID, equalTo(DEFAULT_OBJECT_DBID))
+            assertThat(defaultContractDBID, equalTo(DEFAULT_OBJECT_DBID))
+            assertThat(chargeableNumber, equalTo(tenant.chargeableNumber))
+            assertThat(parentTenantDBID, equalTo(DEFAULT_TENANT_DBID))
+            assertThat(password, equalTo(tenant.password))
+            assertThat(state, equalTo(ConfigurationObjects.toCfgObjectState(tenant.state)))
+            assertThat(userProperties.asCategorizedProperties(), equalTo(tenant.userProperties))
         }
     }
 }
