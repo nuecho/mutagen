@@ -12,8 +12,9 @@ import com.nuecho.genesys.cli.models.configuration.ConfigurationTestData.default
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveTenant
 import com.nuecho.genesys.cli.services.ServiceMocks.mockConfService
 import com.nuecho.genesys.cli.toShortName
-import io.kotlintest.matchers.shouldBe
 import io.mockk.every
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
 
 private const val NAME = "name"
 private val script = Script(
@@ -29,21 +30,20 @@ class ScriptTest : ConfigurationObjectTest(
     Script(tenant = DEFAULT_TENANT_REFERENCE, name = NAME),
     Script(mockCfgScript())
 ) {
-    init {
-        "Script.updateCfgObject should properly create CfgScript" {
-            val service = mockConfService()
-            every { service.retrieveObject(CfgScript::class.java, any()) } returns null
-            mockRetrieveTenant(service)
+    @Test
+    fun `updateCfgObject should properly create CfgScript`() {
+        val service = mockConfService()
+        every { service.retrieveObject(CfgScript::class.java, any()) } returns null
+        mockRetrieveTenant(service)
 
-            val cfgScript = script.updateCfgObject(service)
+        val cfgScript = script.updateCfgObject(service)
 
-            with(cfgScript) {
-                name shouldBe script.name
-                index shouldBe script.index
-                state shouldBe toCfgObjectState(script.state)
-                type shouldBe toCfgScriptType(script.type)
-                userProperties.asCategorizedProperties() shouldBe script.userProperties
-            }
+        with(cfgScript) {
+            assertEquals(script.name, name)
+            assertEquals(script.index, index)
+            assertEquals(toCfgObjectState(script.state), state)
+            assertEquals(toCfgScriptType(script.type), type)
+            assertEquals(script.userProperties, userProperties.asCategorizedProperties())
         }
     }
 }

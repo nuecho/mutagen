@@ -17,10 +17,11 @@ import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveEnu
 import com.nuecho.genesys.cli.services.ServiceMocks.mockConfService
 import com.nuecho.genesys.cli.services.getObjectDbid
 import com.nuecho.genesys.cli.toShortName
-import io.kotlintest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.staticMockk
 import io.mockk.use
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
 
 private const val NAME = "enumeratorValue"
 private const val ENUMERATOR = "enumerator"
@@ -39,7 +40,7 @@ private val enumeratorValue = EnumeratorValue(
     userProperties = ConfigurationTestData.defaultProperties()
 )
 
-class EnumeratorValueTest : ConfigurationObjectTest(
+class EnumeratorValueTest : GroupConfigurationObjectTest(
     enumeratorValue,
     EnumeratorValue(
         default = false,
@@ -48,35 +49,35 @@ class EnumeratorValueTest : ConfigurationObjectTest(
         name = NAME
     )
 ) {
-    init {
 
-        "CfgEnumeratorValue initialized EnumeratorValue should properly serialize" {
+    @Test
+    fun `CfgEnumeratorValue initialized EnumeratorValue should properly serialize`() {
+        val service = mockConfService()
+        mockRetrieveEnumerator(service, ENUMERATOR)
+
+        val enumeratorValue = EnumeratorValue(mockCfgEnumeratorValue(service))
+        checkSerialization(enumeratorValue, "enumeratorvalue")
+    }
+
+    @Test
+    fun `updateCfgObject should properly create CfgEnumeratorValue`() {
+
+        staticMockk("com.nuecho.genesys.cli.services.ConfServiceExtensionsKt").use {
             val service = mockConfService()
+            every { service.getObjectDbid(any()) } answers { DEFAULT_OBJECT_DBID }
+            every { service.retrieveObject(CfgEnumeratorValue::class.java, any()) } returns null
             mockRetrieveEnumerator(service, ENUMERATOR)
 
-            val enumeratorValue = EnumeratorValue(mockCfgEnumeratorValue(service))
-            checkSerialization(enumeratorValue, "enumeratorvalue")
-        }
+            val cfgEnumeratorValue = enumeratorValue.updateCfgObject(service)
 
-        "EnumeratorValue.updateCfgObject should properly create CfgEnumeratorValue" {
-
-            staticMockk("com.nuecho.genesys.cli.services.ConfServiceExtensionsKt").use {
-                val service = mockConfService()
-                every { service.getObjectDbid(any()) } answers { DEFAULT_OBJECT_DBID }
-                every { service.retrieveObject(CfgEnumeratorValue::class.java, any()) } returns null
-                mockRetrieveEnumerator(service, ENUMERATOR)
-
-                val cfgEnumeratorValue = enumeratorValue.updateCfgObject(service)
-
-                with(cfgEnumeratorValue) {
-                    name shouldBe enumeratorValue.name
-                    displayName shouldBe enumeratorValue.displayName
-                    description shouldBe enumeratorValue.description
-                    enumeratorDBID shouldBe DEFAULT_OBJECT_DBID
-                    isDefault shouldBe toCfgFlag(enumeratorValue.default)
-                    userProperties.asCategorizedProperties() shouldBe enumeratorValue.userProperties
-                    state shouldBe toCfgObjectState(enumeratorValue.state)
-                }
+            with(cfgEnumeratorValue) {
+                assertEquals(name, enumeratorValue.name)
+                assertEquals(displayName, enumeratorValue.displayName)
+                assertEquals(description, enumeratorValue.description)
+                assertEquals(enumeratorDBID, DEFAULT_OBJECT_DBID)
+                assertEquals(isDefault, toCfgFlag(enumeratorValue.default))
+                assertEquals(userProperties.asCategorizedProperties(), enumeratorValue.userProperties)
+                assertEquals(state, toCfgObjectState(enumeratorValue.state))
             }
         }
     }

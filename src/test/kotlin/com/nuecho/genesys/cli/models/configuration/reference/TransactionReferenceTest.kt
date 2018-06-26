@@ -11,85 +11,88 @@ import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFA
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgTenant
 import com.nuecho.genesys.cli.services.ServiceMocks.mockConfService
 import com.nuecho.genesys.cli.toShortName
-import io.kotlintest.matchers.shouldBe
-import io.kotlintest.specs.StringSpec
 import io.mockk.every
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
 
 private const val NAME = "transaction"
 private val TYPE = CFGTRTMacro
 
-class TransactionReferenceTest : StringSpec() {
+class TransactionReferenceTest {
     private val transactionReference = TransactionReference(
         name = NAME,
         type = TYPE,
         tenant = DEFAULT_TENANT_REFERENCE
     )
 
-    init {
-        "TransactionReference should be serialized as a JSON Object without tenant references" {
-            checkSerialization(transactionReference, "reference/transaction_reference")
-        }
+    @Test
+    fun `TransactionReference should be serialized as a JSON Object without tenant references`() {
+        checkSerialization(transactionReference, "reference/transaction_reference")
+    }
 
-        "TransactionReference should properly deserialize" {
-            val deserializedTransactionReference = loadJsonConfiguration(
-                "models/configuration/reference/transaction_reference.json",
-                TransactionReference::class.java
-            )
+    @Test
+    fun `TransactionReference should properly deserialize`() {
+        val deserializedTransactionReference = loadJsonConfiguration(
+            "models/configuration/reference/transaction_reference.json",
+            TransactionReference::class.java
+        )
 
-            deserializedTransactionReference.tenant shouldBe null
-            deserializedTransactionReference.type shouldBe TYPE.toShortName()
-            deserializedTransactionReference.name shouldBe NAME
-        }
+        assertEquals(null, deserializedTransactionReference.tenant)
+        assertEquals(TYPE.toShortName(), deserializedTransactionReference.type)
+        assertEquals(NAME, deserializedTransactionReference.name)
+    }
 
-        "TransactionReference should create the proper query" {
-            val cfgTenant = mockCfgTenant(ConfigurationObjectMocks.DEFAULT_TENANT)
+    @Test
+    fun `TransactionReference toQuery should create the proper query`() {
+        val cfgTenant = mockCfgTenant(ConfigurationObjectMocks.DEFAULT_TENANT)
 
-            val service = mockConfService()
-            every { service.retrieveObject(CfgTenant::class.java, any()) } returns cfgTenant
+        val service = mockConfService()
+        every { service.retrieveObject(CfgTenant::class.java, any()) } returns cfgTenant
 
-            val query = transactionReference.toQuery(service)
-            query.tenantDbid shouldBe DEFAULT_TENANT_DBID
-            query.objectType shouldBe TYPE
-            query.name shouldBe NAME
-        }
+        val query = transactionReference.toQuery(service)
+        assertEquals(DEFAULT_TENANT_DBID, query.tenantDbid)
+        assertEquals(TYPE, query.objectType)
+        assertEquals(NAME, query.name)
+    }
 
-        "TransactionReference.toString" {
-            transactionReference.toString() shouldBe "name: '$NAME', type: '${TYPE.toShortName()}', tenant: '${ConfigurationObjectMocks.DEFAULT_TENANT}'"
-        }
+    @Test
+    fun `toString should generate the proper string`() {
+        assertEquals("name: '$NAME', type: '${TYPE.toShortName()}', tenant: '${ConfigurationObjectMocks.DEFAULT_TENANT}'", transactionReference.toString())
+    }
 
-        "TransactionReference should be sorted properly" {
-            val transactionReference1 = TransactionReference(
-                name = "aaa",
-                type = CFGTRTMacro,
-                tenant = TenantReference("aaaTenant")
-            )
+    @Test
+    fun `TransactionReference should be sorted properly`() {
+        val transactionReference1 = TransactionReference(
+            name = "aaa",
+            type = CFGTRTMacro,
+            tenant = TenantReference("aaaTenant")
+        )
 
-            val transactionReference2 = TransactionReference(
-                name = "aaa",
-                type = CFGTRTMacro,
-                tenant = DEFAULT_TENANT_REFERENCE
-            )
+        val transactionReference2 = TransactionReference(
+            name = "aaa",
+            type = CFGTRTMacro,
+            tenant = DEFAULT_TENANT_REFERENCE
+        )
 
-            val transactionReference3 = TransactionReference(
-                name = "aaa",
-                type = CFGTRTStatType,
-                tenant = DEFAULT_TENANT_REFERENCE
-            )
+        val transactionReference3 = TransactionReference(
+            name = "aaa",
+            type = CFGTRTStatType,
+            tenant = DEFAULT_TENANT_REFERENCE
+        )
 
-            val transactionReference4 = TransactionReference(
-                name = "bbb",
-                type = CFGTRTStatType,
-                tenant = DEFAULT_TENANT_REFERENCE
-            )
+        val transactionReference4 = TransactionReference(
+            name = "bbb",
+            type = CFGTRTStatType,
+            tenant = DEFAULT_TENANT_REFERENCE
+        )
 
-            val transactionReference5 = TransactionReference(
-                name = "ccc",
-                type = CFGTRTStatType,
-                tenant = DEFAULT_TENANT_REFERENCE
-            )
+        val transactionReference5 = TransactionReference(
+            name = "ccc",
+            type = CFGTRTStatType,
+            tenant = DEFAULT_TENANT_REFERENCE
+        )
 
-            val sortedList = listOf(transactionReference5, transactionReference4, transactionReference3, transactionReference2, transactionReference1).sorted()
-            sortedList shouldBe listOf(transactionReference1, transactionReference2, transactionReference3, transactionReference4, transactionReference5)
-        }
+        val sortedList = listOf(transactionReference5, transactionReference4, transactionReference3, transactionReference2, transactionReference1).sorted()
+        assertEquals(listOf(transactionReference1, transactionReference2, transactionReference3, transactionReference4, transactionReference5), sortedList)
     }
 }

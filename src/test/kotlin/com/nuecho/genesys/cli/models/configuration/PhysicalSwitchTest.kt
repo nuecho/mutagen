@@ -10,8 +10,9 @@ import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgSwi
 import com.nuecho.genesys.cli.models.configuration.ConfigurationTestData.defaultProperties
 import com.nuecho.genesys.cli.services.ServiceMocks.mockConfService
 import com.nuecho.genesys.cli.toShortName
-import io.kotlintest.matchers.shouldBe
 import io.mockk.every
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
 
 private val physicalSwitch = PhysicalSwitch(
     name = "foo",
@@ -25,20 +26,19 @@ class PhysicalSwitchTest : ConfigurationObjectTest(
     PhysicalSwitch("foo"),
     PhysicalSwitch(mockPhysicalSwitch())
 ) {
-    init {
-        val service = mockConfService()
+    val service = mockConfService()
 
-        "PhysicalSwitch.updateCfgObject should properly create CfgPhysicalSwitch" {
-            every { service.retrieveObject(CfgPhysicalSwitch::class.java, any()) } returns null
+    @Test
+    fun `updateCfgObject should properly create CfgPhysicalSwitch`() {
+        every { service.retrieveObject(CfgPhysicalSwitch::class.java, any()) } returns null
 
-            val cfgPhysicalSwitch = physicalSwitch.updateCfgObject(service)
+        val cfgPhysicalSwitch = physicalSwitch.updateCfgObject(service)
 
-            with(cfgPhysicalSwitch) {
-                name shouldBe physicalSwitch.name
-                type shouldBe toCfgSwitchType(physicalSwitch.type)
-                state shouldBe toCfgObjectState(physicalSwitch.state)
-                userProperties.asCategorizedProperties() shouldBe physicalSwitch.userProperties
-            }
+        with(cfgPhysicalSwitch) {
+            assertEquals(physicalSwitch.name, name)
+            assertEquals(toCfgSwitchType(physicalSwitch.type), type)
+            assertEquals(toCfgObjectState(physicalSwitch.state), state)
+            assertEquals(physicalSwitch.userProperties, userProperties.asCategorizedProperties())
         }
     }
 }

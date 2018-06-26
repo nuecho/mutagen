@@ -148,7 +148,7 @@ dependencies {
     compile 'org.json:json:20180130'
     compile 'org.jgrapht:jgrapht-core:1.2.+'
 
-    testCompile 'io.kotlintest:kotlintest:2.0.+'
+    testCompile 'org.junit.jupiter:junit-jupiter-api:5.+'
     testCompile "io.mockk:mockk:1.7.+"
 }
 

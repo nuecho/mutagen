@@ -2,7 +2,6 @@ package com.nuecho.genesys.cli.models.configuration.reference
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
-import com.genesyslab.platform.applicationblocks.com.objects.CfgTenant
 import com.genesyslab.platform.applicationblocks.com.queries.CfgFolderQuery
 import com.genesyslab.platform.applicationblocks.com.queries.CfgObjectiveTableQuery
 import com.genesyslab.platform.applicationblocks.com.queries.CfgPersonQuery
@@ -14,13 +13,16 @@ import com.nuecho.genesys.cli.TestResources.loadJsonConfiguration
 import com.nuecho.genesys.cli.models.configuration.ConfigurationAsserts.checkSerialization
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_REFERENCE
-import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgTenant
+import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveTenant
 import com.nuecho.genesys.cli.services.ServiceMocks.mockConfService
-import io.kotlintest.matchers.shouldBe
-import io.kotlintest.specs.StringSpec
-import io.mockk.every
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.TestInstance
+import org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS
+import org.junit.jupiter.api.Test
 
-class SimpleObjectReferenceTest : StringSpec() {
+@TestInstance(PER_CLASS)
+class SimpleObjectReferenceTest {
     data class Container(
         val tenant: TenantReference,
         val listOfPerson: List<PersonReference>,
@@ -43,88 +45,100 @@ class SimpleObjectReferenceTest : StringSpec() {
         )
     )
 
-    init {
-        val cfgTenant = mockCfgTenant(DEFAULT_TENANT)
-        val service = mockConfService()
-        every { service.retrieveObject(CfgTenant::class.java, any()) } returns cfgTenant
+    val service = mockConfService()
 
-        "SimpleObjectReference should be serialized as a JSON String" {
-            checkSerialization(container, "reference/simple_object_reference")
+    @BeforeAll
+    fun init() {
+        mockRetrieveTenant(service)
+    }
+
+    @Test
+    fun `SimpleObjectReference should be serialized as a JSON String`() {
+        checkSerialization(container, "reference/simple_object_reference")
+    }
+
+    @Test
+    fun `String reference should be deserialized as a SimpleObjectReference`() {
+        val deserializedContainer = loadJsonConfiguration(
+            "models/configuration/reference/simple_object_reference.json",
+            Container::class.java
+        )
+
+        assertEquals(container.tenant, deserializedContainer.tenant)
+        for (i in 0 until container.listOfPerson.size) {
+            assertEquals(null, deserializedContainer.listOfPerson[i].tenant)
+            assertEquals(container.listOfPerson[i].primaryKey, deserializedContainer.listOfPerson[i].primaryKey)
         }
 
-        "String reference should be deserialized as a SimpleObjectReference" {
-            val deserializedContainer = loadJsonConfiguration(
-                "models/configuration/reference/simple_object_reference.json",
-                Container::class.java
-            )
-
-            deserializedContainer.tenant shouldBe container.tenant
-            for (i in 0 until container.listOfPerson.size) {
-                deserializedContainer.listOfPerson[i].tenant shouldBe null
-                deserializedContainer.listOfPerson[i].primaryKey shouldBe container.listOfPerson[i].primaryKey
-            }
-
-            container.mapOfSkill.forEach {
-                deserializedContainer.mapOfSkill[SkillReference(it.key.primaryKey, null)] shouldBe it.value
-            }
+        container.mapOfSkill.forEach {
+            assertEquals(deserializedContainer.mapOfSkill[SkillReference(it.key.primaryKey, null)], it.value)
         }
+    }
 
-        "SimpleObjectReference.toString should generate the proper String" {
-            TenantReference(DEFAULT_TENANT).toString() shouldBe DEFAULT_TENANT
-        }
+    @Test
+    fun `SimpleObjectReference toString() should generate the proper String`() {
+        assertEquals(DEFAULT_TENANT, TenantReference(DEFAULT_TENANT).toString())
+    }
 
-        "SimpleObjectReferenceWithTenant.toString should generate the proper String" {
-            val employeeId = "employeeId"
-            PersonReference(employeeId, DEFAULT_TENANT_REFERENCE).toString() shouldBe "$DEFAULT_TENANT/$employeeId"
-        }
+    @Test
+    fun `SimpleObjectReferenceWithTenant toString() should generate the proper String`() {
+        val employeeId = "employeeId"
+        assertEquals(PersonReference(employeeId, DEFAULT_TENANT_REFERENCE).toString(), "$DEFAULT_TENANT/$employeeId")
+    }
 
-        "FolderReference should create the proper query" {
-            val folderName = "folder"
-            val actual = FolderReference(folderName).toQuery(service)
-            actual.javaClass shouldBe CfgFolderQuery::class.java
-            actual.name shouldBe folderName
-        }
+    @Test
+    fun `FolderReference toQuery should create the proper query`() {
+        val folderName = "folder"
+        val actual = FolderReference(folderName).toQuery(service)
+        assertEquals(CfgFolderQuery::class.java, actual.javaClass)
+        assertEquals(folderName, actual.name)
+    }
 
-        "ObjectiveTableReference should create the proper query" {
-            val objectiveTableName = "objectiveTable"
-            val actual = ObjectiveTableReference(objectiveTableName, DEFAULT_TENANT_REFERENCE).toQuery(service)
-            actual.javaClass shouldBe CfgObjectiveTableQuery::class.java
-            actual.name shouldBe objectiveTableName
-        }
+    @Test
+    fun `ObjectiveTableReference toQuery should create the proper query`() {
+        val objectiveTableName = "objectiveTable"
+        val actual = ObjectiveTableReference(objectiveTableName, DEFAULT_TENANT_REFERENCE).toQuery(service)
+        assertEquals(CfgObjectiveTableQuery::class.java, actual.javaClass)
+        assertEquals(objectiveTableName, actual.name)
+    }
 
-        "PersonReference should create the proper query" {
-            val employeeId = "employeeId"
-            val actual = PersonReference(employeeId, DEFAULT_TENANT_REFERENCE).toQuery(service)
-            actual.javaClass shouldBe CfgPersonQuery::class.java
-            actual.employeeId shouldBe employeeId
-        }
+    @Test
+    fun `PersonReference toQuery should create the proper query`() {
+        val employeeId = "employeeId"
+        val actual = PersonReference(employeeId, DEFAULT_TENANT_REFERENCE).toQuery(service)
+        assertEquals(CfgPersonQuery::class.java, actual.javaClass)
+        assertEquals(employeeId, actual.employeeId)
+    }
 
-        "PlaceReference should create the proper query" {
-            val placeName = "place"
-            val actual = PlaceReference(placeName, DEFAULT_TENANT_REFERENCE).toQuery(service)
-            actual.javaClass shouldBe CfgPlaceQuery::class.java
-            actual.name shouldBe placeName
-        }
+    @Test
+    fun `PlaceReference toQuery should create the proper query`() {
+        val placeName = "place"
+        val actual = PlaceReference(placeName, DEFAULT_TENANT_REFERENCE).toQuery(service)
+        assertEquals(CfgPlaceQuery::class.java, actual.javaClass)
+        assertEquals(placeName, actual.name)
+    }
 
-        "ScriptReference should create the proper query" {
-            val scriptName = "script"
-            val actual = ScriptReference(scriptName, DEFAULT_TENANT_REFERENCE).toQuery(service)
-            actual.javaClass shouldBe CfgScriptQuery::class.java
-            actual.name shouldBe scriptName
-        }
+    @Test
+    fun `ScriptReference toQuery should create the proper query`() {
+        val scriptName = "script"
+        val actual = ScriptReference(scriptName, DEFAULT_TENANT_REFERENCE).toQuery(service)
+        assertEquals(CfgScriptQuery::class.java, actual.javaClass)
+        assertEquals(scriptName, actual.name)
+    }
 
-        "SkillReference should create the proper query" {
-            val skillName = "skill"
-            val actual = SkillReference(skillName, DEFAULT_TENANT_REFERENCE).toQuery(service)
-            actual.javaClass shouldBe CfgSkillQuery::class.java
-            actual.name shouldBe skillName
-        }
+    @Test
+    fun `SkillReference toQuery should create the proper query`() {
+        val skillName = "skill"
+        val actual = SkillReference(skillName, DEFAULT_TENANT_REFERENCE).toQuery(service)
+        assertEquals(CfgSkillQuery::class.java, actual.javaClass)
+        assertEquals(skillName, actual.name)
+    }
 
-        "SwitchReference should create the proper query" {
-            val switchName = "switch"
-            val actual = SwitchReference(switchName, DEFAULT_TENANT_REFERENCE).toQuery(service)
-            actual.javaClass shouldBe CfgSwitchQuery::class.java
-            actual.name shouldBe switchName
-        }
+    @Test
+    fun `SwitchReference toQuery should create the proper query`() {
+        val switchName = "switch"
+        val actual = SwitchReference(switchName, DEFAULT_TENANT_REFERENCE).toQuery(service)
+        assertEquals(CfgSwitchQuery::class.java, actual.javaClass)
+        assertEquals(switchName, actual.name)
     }
 }

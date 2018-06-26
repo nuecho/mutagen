@@ -12,8 +12,6 @@ import com.nuecho.genesys.cli.models.configuration.reference.TenantReference
 import com.nuecho.genesys.cli.services.ServiceMocks.mockConfService
 import com.nuecho.genesys.cli.services.getObjectDbid
 import com.nuecho.genesys.cli.toShortName
-import io.kotlintest.matchers.shouldBe
-import io.kotlintest.specs.StringSpec
 import io.mockk.Runs
 import io.mockk.every
 import io.mockk.just
@@ -22,8 +20,10 @@ import io.mockk.objectMockk
 import io.mockk.staticMockk
 import io.mockk.use
 import io.mockk.verify
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Test
 
-class ImportDNTest : StringSpec() {
+class ImportDNTest {
     private val DN1 = DN(
         tenant = DEFAULT_TENANT_REFERENCE,
         number = "1",
@@ -31,46 +31,46 @@ class ImportDNTest : StringSpec() {
         type = CfgDNType.CFGACDPosition.toShortName()
     )
 
-    init {
-        fun testImportConfigurationObject(create: Boolean) {
-            var retrieveDNResult: CfgDN? = null
+    fun testImportConfigurationObject(create: Boolean) {
+        var retrieveDNResult: CfgDN? = null
 
-            if (!create) {
+        if (!create) {
+            val service = mockConfService()
+
+            retrieveDNResult = CfgDN(service).apply {
+                number = "1"
+                switchDBID = 101
+                type = CfgDNType.CFGACDPosition
+            }
+        }
+
+        val switch = mockk<CfgSwitch>().apply {
+            every { objectDbid } returns 101
+            every { name } returns "aswitch"
+        }
+
+        objectMockk(Import.Companion).use {
+            staticMockk("com.nuecho.genesys.cli.services.ConfServiceExtensionsKt").use {
                 val service = mockConfService()
+                every { service.retrieveObject(CfgDN::class.java, any()) } returns retrieveDNResult
+                every { service.retrieveObject(CfgSwitch::class.java, any()) } returns switch
+                every { service.getObjectDbid(ofType(TenantReference::class)) } returns DEFAULT_TENANT_DBID
+                every { Import.save(any()) } just Runs
 
-                retrieveDNResult = CfgDN(service).apply {
-                    number = "1"
-                    switchDBID = 101
-                    type = CfgDNType.CFGACDPosition
-                }
-            }
-
-            val switch = mockk<CfgSwitch>().apply {
-                every { objectDbid } returns 101
-                every { name } returns "aswitch"
-            }
-
-            objectMockk(Import.Companion).use {
-                staticMockk("com.nuecho.genesys.cli.services.ConfServiceExtensionsKt").use {
-                    val service = mockConfService()
-                    every { service.retrieveObject(CfgDN::class.java, any()) } returns retrieveDNResult
-                    every { service.retrieveObject(CfgSwitch::class.java, any()) } returns switch
-                    every { service.getObjectDbid(ofType(TenantReference::class)) } returns DEFAULT_TENANT_DBID
-                    every { Import.save(any()) } just Runs
-
-                    val hasImportedObject = importConfigurationObject(DN1, service)
-                    hasImportedObject shouldBe true
-                    verify(exactly = 1) { Import.save(ofType(CfgDN::class)) }
-                }
+                val hasImportedObject = importConfigurationObject(DN1, service)
+                assertTrue(hasImportedObject)
+                verify(exactly = 1) { Import.save(ofType(CfgDN::class)) }
             }
         }
+    }
 
-        "importing an existing DN should try to save it" {
-            testImportConfigurationObject(false)
-        }
+    @Test
+    fun `importing an existing DN should try to save it`() {
+        testImportConfigurationObject(false)
+    }
 
-        "importing a new DN should try to save it" {
-            testImportConfigurationObject(true)
-        }
+    @Test
+    fun `importing a new DN should try to save it`() {
+        testImportConfigurationObject(true)
     }
 }

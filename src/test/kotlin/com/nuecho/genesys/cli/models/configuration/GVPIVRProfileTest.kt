@@ -13,8 +13,9 @@ import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveRes
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveTenant
 import com.nuecho.genesys.cli.services.ServiceMocks.mockConfService
 import com.nuecho.genesys.cli.toShortName
-import io.kotlintest.matchers.shouldBe
 import io.mockk.every
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
 import java.text.SimpleDateFormat
 import java.time.ZoneId
 import java.time.ZonedDateTime
@@ -42,21 +43,20 @@ class GVPIVRProfileTest : ConfigurationObjectTest(
     GVPIVRProfile(name = NAME),
     GVPIVRProfile(mockCfgGVPIVRProfile())
 ) {
-    init {
-        "GVPIVRProfile.updateCfgObject should properly create CfgGVPIVRProfile" {
-            val service = mockConfService()
-            every { service.retrieveObject(CfgGVPIVRProfile::class.java, any()) } returns null
-            mockRetrieveTenant(service)
-            mockRetrieveCustomer(service)
-            mockRetrieveReseller(service)
+    @Test
+    fun `updateCfgObject should properly create CfgGVPIVRProfile`() {
+        val service = mockConfService()
+        every { service.retrieveObject(CfgGVPIVRProfile::class.java, any()) } returns null
+        mockRetrieveTenant(service)
+        mockRetrieveCustomer(service)
+        mockRetrieveReseller(service)
 
-            val cfgGVPIVRProfile = gvpIVRProfile.updateCfgObject(service)
+        val cfgGVPIVRProfile = gvpIVRProfile.updateCfgObject(service)
 
-            with(cfgGVPIVRProfile) {
-                name shouldBe gvpIVRProfile.name
-                state shouldBe ConfigurationObjects.toCfgObjectState(gvpIVRProfile.state)
-                userProperties.asCategorizedProperties() shouldBe gvpIVRProfile.userProperties
-            }
+        with(cfgGVPIVRProfile) {
+            assertEquals(name, gvpIVRProfile.name)
+            assertEquals(state, ConfigurationObjects.toCfgObjectState(gvpIVRProfile.state))
+            assertEquals(userProperties.asCategorizedProperties(), gvpIVRProfile.userProperties)
         }
     }
 }

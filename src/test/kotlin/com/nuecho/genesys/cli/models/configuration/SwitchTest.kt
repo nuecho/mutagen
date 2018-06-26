@@ -25,11 +25,12 @@ import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveTen
 import com.nuecho.genesys.cli.services.ServiceMocks.mockConfService
 import com.nuecho.genesys.cli.services.retrieveObject
 import com.nuecho.genesys.cli.toShortName
-import io.kotlintest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.spyk
 import io.mockk.staticMockk
 import io.mockk.use
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
 
 private const val MAIN_SWITCH = "main-switch"
 private const val OTHER_SWITCH = "other-switch"
@@ -75,48 +76,47 @@ class SwitchTest : ConfigurationObjectTest(
     Switch(tenant = DEFAULT_TENANT_REFERENCE, name = MAIN_SWITCH),
     Switch(mockMainCfgSwitch())
 ) {
-    init {
-        "Switch.updateCfgObject should properly create CfgSwitch" {
-            staticMockk("com.nuecho.genesys.cli.services.ConfServiceExtensionsKt").use {
-                val otherCfgSwitch = mockOtherCfgSwitch()
+    @Test
+    fun `updateCfgObject should properly create CfgSwitch`() {
+        staticMockk("com.nuecho.genesys.cli.services.ConfServiceExtensionsKt").use {
+            val otherCfgSwitch = mockOtherCfgSwitch()
 
-                val service = mockConfService()
-                every { service.retrieveObject(SwitchReference(MAIN_SWITCH, DEFAULT_TENANT_REFERENCE)) } returns null
-                every { service.retrieveObject(SwitchReference(OTHER_SWITCH, DEFAULT_TENANT_REFERENCE)) } returns otherCfgSwitch
-                mockRetrieveTenant(service)
-                mockRetrievePhysicalSwitch(service)
-                mockRetrieveApplication(service)
+            val service = mockConfService()
+            every { service.retrieveObject(SwitchReference(MAIN_SWITCH, DEFAULT_TENANT_REFERENCE)) } returns null
+            every { service.retrieveObject(SwitchReference(OTHER_SWITCH, DEFAULT_TENANT_REFERENCE)) } returns otherCfgSwitch
+            mockRetrieveTenant(service)
+            mockRetrievePhysicalSwitch(service)
+            mockRetrieveApplication(service)
 
-                val cfgSwitch = mainSwitch.updateCfgObject(service)
+            val cfgSwitch = mainSwitch.updateCfgObject(service)
 
-                with(cfgSwitch) {
-                    name shouldBe mainSwitch.name
-                    physSwitchDBID shouldBe DEFAULT_OBJECT_DBID
-                    tServerDBID shouldBe DEFAULT_OBJECT_DBID
-                    linkType shouldBe CfgLinkType.CFGMadgeLink
-                    dnRange shouldBe mainSwitch.dnRange
-                    state shouldBe toCfgObjectState(mainSwitch.state)
-                    userProperties.asCategorizedProperties() shouldBe mainSwitch.userProperties
+            with(cfgSwitch) {
+                assertEquals(mainSwitch.name, name)
+                assertEquals(DEFAULT_OBJECT_DBID, physSwitchDBID)
+                assertEquals(DEFAULT_OBJECT_DBID, tServerDBID)
+                assertEquals(CfgLinkType.CFGMadgeLink, linkType)
+                assertEquals(mainSwitch.dnRange, dnRange)
+                assertEquals(toCfgObjectState(mainSwitch.state), state)
+                assertEquals(mainSwitch.userProperties, userProperties.asCategorizedProperties())
 
-                    switchAccessCodes.size shouldBe 2
+                assertEquals(2, switchAccessCodes.size)
 
-                    switchAccessCodes.zip(mainSwitch.switchAccessCodes!!) { actual, expected ->
-                        with(actual) {
-                            accessCode shouldBe expected.accessCode
-                            targetType shouldBe toCfgTargetType(expected.targetType)
-                            routeType shouldBe toCfgRouteType(expected.routeType)
-                            dnSource shouldBe expected.dnSource
-                            destinationSource shouldBe expected.destinationSource
-                            locationSource shouldBe expected.locationSource
-                            dnisSource shouldBe expected.dnisSource
-                            reasonSource shouldBe expected.reasonSource
-                            extensionSource shouldBe expected.extensionSource
-                        }
+                switchAccessCodes.zip(mainSwitch.switchAccessCodes!!) { actual, expected ->
+                    with(actual) {
+                        assertEquals(expected.accessCode, accessCode)
+                        assertEquals(toCfgTargetType(expected.targetType), targetType)
+                        assertEquals(toCfgRouteType(expected.routeType), routeType)
+                        assertEquals(expected.dnSource, dnSource)
+                        assertEquals(expected.destinationSource, destinationSource)
+                        assertEquals(expected.locationSource, locationSource)
+                        assertEquals(expected.dnisSource, dnisSource)
+                        assertEquals(expected.reasonSource, reasonSource)
+                        assertEquals(expected.extensionSource, extensionSource)
                     }
-
-                    switchAccessCodes.elementAt(0).switchDBID shouldBe 103
-                    switchAccessCodes.elementAt(1).switchDBID shouldBe 0
                 }
+
+                assertEquals(103, switchAccessCodes.elementAt(0).switchDBID)
+                assertEquals(0, switchAccessCodes.elementAt(1).switchDBID)
             }
         }
     }

@@ -32,12 +32,12 @@ import com.nuecho.genesys.cli.models.configuration.reference.StatTableReference
 import com.nuecho.genesys.cli.services.ServiceMocks.mockConfService
 import com.nuecho.genesys.cli.services.getObjectDbid
 import com.nuecho.genesys.cli.toShortName
-import io.kotlintest.matchers.shouldBe
-import io.kotlintest.matchers.shouldEqual
 import io.mockk.every
 import io.mockk.objectMockk
 import io.mockk.staticMockk
 import io.mockk.use
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
 
 private const val NAME = "accessGroup"
 private const val MEMBER1 = "member1"
@@ -61,62 +61,62 @@ private val accessGroup = AccessGroup(
     type = CFGDefaultGroup.toShortName()
 )
 
-class AccessGroupTest : ConfigurationObjectTest(
+class AccessGroupTest : GroupConfigurationObjectTest(
     accessGroup,
     AccessGroup(tenant = DEFAULT_TENANT_REFERENCE, name = NAME)
 ) {
-    init {
 
-        "CfgAccessGroup initialized Group should properly serialize" {
-            val service = mockConfService()
-            val member1 = mockCfgPerson(MEMBER1)
-            val member2 = mockCfgPerson(MEMBER2)
+    @Test
+    fun `CfgAccessGroup initialized Group should properly serialize`() {
+        val service = mockConfService()
+        val member1 = mockCfgPerson(MEMBER1)
+        val member2 = mockCfgPerson(MEMBER2)
 
-            objectMockk(ConfigurationObjects).use {
-                every {
-                    service.retrieveObject(CFGPerson, any())
-                } returns member1 andThen member2
+        objectMockk(ConfigurationObjects).use {
+            every {
+                service.retrieveObject(CFGPerson, any())
+            } returns member1 andThen member2
 
-                val accessGroup = AccessGroup(mockCfgAccessGroup(service))
-                checkSerialization(accessGroup, "accessgroup")
-            }
+            val accessGroup = AccessGroup(mockCfgAccessGroup(service))
+            checkSerialization(accessGroup, "accessgroup")
         }
+    }
 
-        "AccessGroup.updateCfgObject should properly create CfgAccessGroup" {
-            val member = mockCfgPerson(MEMBER1)
+    @Test
+    fun `updateCfgObject should properly create CfgAccessGroup`() {
+        val member = mockCfgPerson(MEMBER1)
 
-            staticMockk("com.nuecho.genesys.cli.services.ConfServiceExtensionsKt").use {
-                val service = mockConfService()
-                every { service.retrieveObject(CfgPerson::class.java, any()) } answers { member }
-                every { service.retrieveObject(CfgAccessGroup::class.java, any()) } returns null
-                every { service.getObjectDbid(any()) } answers { DEFAULT_OBJECT_DBID }
+        staticMockk("com.nuecho.genesys.cli.services.ConfServiceExtensionsKt").use {
+            val service = mockConfService()
+            every { service.retrieveObject(CfgPerson::class.java, any()) } answers { member }
+            every { service.retrieveObject(CfgAccessGroup::class.java, any()) } returns null
+            every { service.getObjectDbid(any()) } answers { DEFAULT_OBJECT_DBID }
 
-                val cfgAccessGroup = accessGroup.updateCfgObject(service)
+            val cfgAccessGroup = accessGroup.updateCfgObject(service)
 
-                val cfgId = CfgID(service, cfgAccessGroup)
-                cfgId.dbid = DEFAULT_OBJECT_DBID
-                cfgId.type = CFGPerson
+            val cfgId = CfgID(service, cfgAccessGroup)
+            cfgId.dbid = DEFAULT_OBJECT_DBID
+            cfgId.type = CFGPerson
 
-                with(cfgAccessGroup) {
-                    type shouldBe CFGDefaultGroup
-                    memberIDs.size shouldBe 2
-                    memberIDs.toList()[0].dbid shouldBe DEFAULT_OBJECT_DBID
-                    memberIDs.toList()[1].dbid shouldEqual DEFAULT_OBJECT_DBID
-                    memberIDs.toList()[0].type shouldBe CFGPerson
-                    memberIDs.toList()[1].type shouldBe CFGPerson
+            with(cfgAccessGroup) {
+                assertEquals(type, CFGDefaultGroup)
+                assertEquals(memberIDs.size, 2)
+                assertEquals(memberIDs.toList()[0].dbid, DEFAULT_OBJECT_DBID)
+                assertEquals(memberIDs.toList()[1].dbid, DEFAULT_OBJECT_DBID)
+                assertEquals(memberIDs.toList()[0].type, CFGPerson)
+                assertEquals(memberIDs.toList()[1].type, CFGPerson)
 
-                    with(groupInfo) {
-                        name shouldBe accessGroup.group.name
-                        managerDBIDs shouldBe null
-                        routeDNDBIDs shouldBe null
-                        capacityTableDBID shouldBe DEFAULT_OBJECT_DBID
-                        quotaTableDBID shouldBe DEFAULT_OBJECT_DBID
-                        state shouldBe toCfgObjectState(accessGroup.group.state)
-                        userProperties.asCategorizedProperties() shouldBe accessGroup.userProperties
-                        capacityRuleDBID shouldBe DEFAULT_OBJECT_DBID
-                        siteDBID shouldBe DEFAULT_OBJECT_DBID
-                        contractDBID shouldBe DEFAULT_OBJECT_DBID
-                    }
+                with(groupInfo) {
+                    assertEquals(name, accessGroup.group.name)
+                    assertEquals(managerDBIDs, null)
+                    assertEquals(routeDNDBIDs, null)
+                    assertEquals(capacityTableDBID, DEFAULT_OBJECT_DBID)
+                    assertEquals(quotaTableDBID, DEFAULT_OBJECT_DBID)
+                    assertEquals(state, toCfgObjectState(accessGroup.group.state))
+                    assertEquals(userProperties.asCategorizedProperties(), accessGroup.userProperties)
+                    assertEquals(capacityRuleDBID, DEFAULT_OBJECT_DBID)
+                    assertEquals(siteDBID, DEFAULT_OBJECT_DBID)
+                    assertEquals(contractDBID, DEFAULT_OBJECT_DBID)
                 }
             }
         }

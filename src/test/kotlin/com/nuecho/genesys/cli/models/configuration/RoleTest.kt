@@ -15,10 +15,11 @@ import com.nuecho.genesys.cli.models.configuration.ConfigurationTestData.default
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveTenant
 import com.nuecho.genesys.cli.services.ServiceMocks.mockConfService
 import com.nuecho.genesys.cli.toShortName
-import io.kotlintest.matchers.shouldBe
 import io.mockk.every
 import io.mockk.objectMockk
 import io.mockk.use
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
 
 private const val NAME = "name"
 private const val PERSON1 = "dmorand"
@@ -33,41 +34,41 @@ private val role = Role(
     userProperties = defaultProperties()
 )
 
-class RoleTest : ConfigurationObjectTest(
+class RoleTest : GroupConfigurationObjectTest(
     role,
     Role(tenant = DEFAULT_TENANT_REFERENCE, name = NAME)
 ) {
-    init {
-        "CfgRole initialized Role should properly serialize" {
-            val service = mockConfService()
-            val person1 = mockCfgPerson(PERSON1)
-            val person2 = mockCfgPerson(PERSON2)
-            val person3 = mockCfgPerson(PERSON3)
+    @Test
+    fun `CfgRole initialized Role should properly serialize`() {
+        val service = mockConfService()
+        val person1 = mockCfgPerson(PERSON1)
+        val person2 = mockCfgPerson(PERSON2)
+        val person3 = mockCfgPerson(PERSON3)
 
-            objectMockk(ConfigurationObjects).use {
-                every {
-                    service.retrieveObject(CFGPerson, any())
-                } returns person3 andThen person2 andThen person1
+        objectMockk(ConfigurationObjects).use {
+            every {
+                service.retrieveObject(CFGPerson, any())
+            } returns person3 andThen person2 andThen person1
 
-                val role = Role(mockCfgRole(service))
-                checkSerialization(role, "role")
-            }
+            val role = Role(mockCfgRole(service))
+            checkSerialization(role, "role")
         }
+    }
 
-        "Role.updateCfgObject should properly create CfgRole" {
-            val service = mockConfService()
-            every { service.retrieveObject(CfgRole::class.java, any()) } returns null
-            mockRetrieveTenant(service)
+    @Test
+    fun `updateCfgObject should properly create CfgRole`() {
+        val service = mockConfService()
+        every { service.retrieveObject(CfgRole::class.java, any()) } returns null
+        mockRetrieveTenant(service)
 
-            val cfgRole = role.updateCfgObject(service)
+        val cfgRole = role.updateCfgObject(service)
 
-            with(cfgRole) {
-                name shouldBe role.name
-                description shouldBe role.description
-                state shouldBe toCfgObjectState(role.state)
-                members.size shouldBe 0
-                userProperties.asCategorizedProperties() shouldBe role.userProperties
-            }
+        with(cfgRole) {
+            assertEquals(role.name, name)
+            assertEquals(role.description, description)
+            assertEquals(toCfgObjectState(role.state), state)
+            assertEquals(0, members.size)
+            assertEquals(role.userProperties, userProperties.asCategorizedProperties())
         }
     }
 }

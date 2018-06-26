@@ -15,6 +15,9 @@
       }
     }
   },
-  "members": ["member1", "member2"],
+  "members": [
+    "member1",
+    "member2"
+  ],
   "type": "defaultgroup"
 }

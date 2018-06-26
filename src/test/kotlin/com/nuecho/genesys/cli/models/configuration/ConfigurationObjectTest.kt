@@ -2,45 +2,45 @@ package com.nuecho.genesys.cli.models.configuration
 
 import com.nuecho.genesys.cli.TestResources.loadJsonConfiguration
 import com.nuecho.genesys.cli.models.configuration.ConfigurationAsserts.checkSerialization
-import io.kotlintest.specs.StringSpec
+import org.junit.jupiter.api.Test
 
 @Suppress("UnnecessaryAbstractClass")
 abstract class ConfigurationObjectTest(
-    configurationObject: ConfigurationObject,
-    emptyConfigurationObject: ConfigurationObject,
-    importedConfigurationObject: ConfigurationObject?
-) : StringSpec() {
+    val configurationObject: ConfigurationObject,
+    val emptyConfigurationObject: ConfigurationObject,
+    val importedConfigurationObject: ConfigurationObject?
+) {
 
     constructor(configurationObject: ConfigurationObject, emptyConfigurationObject: ConfigurationObject) :
             this(configurationObject, emptyConfigurationObject, null)
 
-    init {
-        val configurationObjectType = configurationObject::class.simpleName!!.toLowerCase()
+    val configurationObjectType = configurationObject::class.simpleName!!.toLowerCase()
 
-        "empty $configurationObjectType should properly serialize" {
-            checkSerialization(emptyConfigurationObject, "empty_$configurationObjectType")
-        }
+    @Test
+    fun `empty object should properly serialize`() {
+        checkSerialization(emptyConfigurationObject, "empty_$configurationObjectType")
+    }
 
-        importedConfigurationObject?.let {
-            "CfgObject initialized $configurationObjectType should properly serialize" {
-                checkSerialization(importedConfigurationObject, configurationObjectType)
-            }
-        }
+    @Test
+    open fun `initialized object should properly serialize`() {
+        checkSerialization(importedConfigurationObject!!, configurationObjectType)
+    }
 
-        "fully initialized $configurationObjectType should properly serialize" {
-            checkSerialization(configurationObject, configurationObjectType)
-        }
+    @Test
+    fun `fully initialized object should properly serialize`() {
+        checkSerialization(configurationObject, configurationObjectType)
+    }
 
-        "$configurationObjectType should properly deserialize" {
-            val deserializedConfigurationObject = loadJsonConfiguration(
-                "models/configuration/$configurationObjectType.json",
-                configurationObject::class.java
-            )
+    @Test
+    fun `object should properly deserialize`() {
+        val deserializedConfigurationObject = loadJsonConfiguration(
+            "models/configuration/$configurationObjectType.json",
+            configurationObject::class.java
+        )
 
-            // Normally we should simply check that 'deserializedConfigurationObject shouldBe configurationObject' but
-            // since ConfigurationObjectWithUserProperties.equals is broken because of ByteArray.equals, this should do
-            // the trick for now.
-            checkSerialization(deserializedConfigurationObject, configurationObjectType)
-        }
+        // assertEquals(Normally we should simply check that 'deserializedConfigurationObject, configurationObject' but)
+        // since ConfigurationObjectWithUserProperties.equals is broken because of ByteArray.equals, this should do
+        // the trick for now.
+        checkSerialization(deserializedConfigurationObject, configurationObjectType)
     }
 }
