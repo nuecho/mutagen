@@ -30,7 +30,6 @@ class GenesysServicesTest {
         assertEquals(endpoint.configuration.getOption("string-attributes-encoding"), "utf-8")
 
         assertEquals(protocol.userName, user)
-        assertEquals(protocol.userPassword, password)
         assertEquals(protocol.clientApplicationType, CfgAppType.CFGSCE.asInteger())
         assertEquals(protocol.state, ChannelState.Closed)
     }

@@ -2,6 +2,7 @@ package com.nuecho.genesys.cli.commands.config.export
 
 import com.genesyslab.platform.applicationblocks.com.CfgFilterBasedQuery
 import com.genesyslab.platform.applicationblocks.com.CfgObject
+import com.genesyslab.platform.applicationblocks.com.ICfgObject
 import com.genesyslab.platform.applicationblocks.com.queries.CfgTenantQuery
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectType
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectType.CFGPersonLastLogin
@@ -95,7 +96,7 @@ object Export {
         val query = when (type) {
         // Using a CfgTenantQuery with allTenants is necessary to get the CfgTenant with DBID=1
             CfgObjectType.CFGTenant -> CfgTenantQuery().apply { allTenants = 1 }
-            else -> CfgFilterBasedQuery(type)
+            else -> CfgFilterBasedQuery<ICfgObject>(type)
         }
 
         val configurationObjects = service.retrieveMultipleObjects(

@@ -1,6 +1,7 @@
 package com.nuecho.genesys.cli.models.configuration
 
 import com.genesyslab.platform.applicationblocks.com.objects.CfgSwitch
+import com.genesyslab.platform.applicationblocks.com.objects.CfgSwitchAccessCode
 import com.genesyslab.platform.configuration.protocol.types.CfgLinkType
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectState.CFGEnabled
 import com.genesyslab.platform.configuration.protocol.types.CfgRouteType
@@ -26,7 +27,7 @@ import com.nuecho.genesys.cli.services.ServiceMocks.mockConfService
 import com.nuecho.genesys.cli.services.retrieveObject
 import com.nuecho.genesys.cli.toShortName
 import io.mockk.every
-import io.mockk.spyk
+import io.mockk.mockk
 import io.mockk.staticMockk
 import io.mockk.use
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -34,6 +35,8 @@ import org.junit.jupiter.api.Test
 
 private const val MAIN_SWITCH = "main-switch"
 private const val OTHER_SWITCH = "other-switch"
+private const val OTHER_SWITCH_DBID = 103
+
 private val mainSwitch = Switch(
     tenant = DEFAULT_TENANT_REFERENCE,
     name = MAIN_SWITCH,
@@ -115,7 +118,7 @@ class SwitchTest : ConfigurationObjectTest(
                     }
                 }
 
-                assertEquals(103, switchAccessCodes.elementAt(0).switchDBID)
+                assertEquals(OTHER_SWITCH_DBID, switchAccessCodes.elementAt(0).switchDBID)
                 assertEquals(0, switchAccessCodes.elementAt(1).switchDBID)
             }
         }
@@ -131,9 +134,20 @@ private fun mockMainCfgSwitch(): CfgSwitch {
         } returns otherCfgSwitch
 
         val mainCfgSwitch = mockCfgSwitch(mainSwitch.name)
-        val accessCodes = mainSwitch.switchAccessCodes?.map { accessCode ->
-            spyk(accessCode.toCfgSwitchAccessCode(service, mainCfgSwitch)).apply {
-                every { switch } returns otherCfgSwitch
+        val accessCodes = mainSwitch.switchAccessCodes?.map { code ->
+            mockk<CfgSwitchAccessCode>().apply {
+                every { accessCode } returns code.accessCode
+                every { targetType } returns toCfgTargetType(code.targetType)
+                every { routeType } returns toCfgRouteType(code.routeType)
+                every { dnSource } returns code.dnSource
+                every { destinationSource } returns code.destinationSource
+                every { locationSource } returns code.locationSource
+                every { dnisSource } returns code.dnisSource
+                every { reasonSource } returns code.reasonSource
+                every { extensionSource } returns code.extensionSource
+
+                every { switchDBID } returns if (code.switch == null) 0 else OTHER_SWITCH_DBID
+                every { switch } returns if (code.switch == null) null else otherCfgSwitch
             }
         }
 
@@ -155,6 +169,6 @@ private fun mockMainCfgSwitch(): CfgSwitch {
 }
 
 private fun mockOtherCfgSwitch() = mockCfgSwitch(OTHER_SWITCH).apply {
-    every { dbid } returns 103
-    every { objectDbid } returns 103
+    every { dbid } returns OTHER_SWITCH_DBID
+    every { objectDbid } returns OTHER_SWITCH_DBID
 }

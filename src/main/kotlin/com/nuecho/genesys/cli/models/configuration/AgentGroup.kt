@@ -35,9 +35,16 @@ data class AgentGroup(
     )
 
     override fun updateCfgObject(service: IConfService): CfgAgentGroup =
-        (service.retrieveObject(reference) ?: CfgAgentGroup(service)).also {
-            setProperty("agentDBIDs", agents?.mapNotNull { service.getObjectDbid(it) }, it)
-            setProperty("groupInfo", group.toCfgGroup(service, it), it)
+        (service.retrieveObject(reference) ?: CfgAgentGroup(service)).also { cfgAgentGroup ->
+
+            val groupInfo = group.toCfgGroup(service, cfgAgentGroup).also {
+                cfgAgentGroup.dbid?.let { dbid ->
+                    it.dbid = dbid
+                }
+            }
+
+            setProperty("agentDBIDs", agents?.mapNotNull { service.getObjectDbid(it) }, cfgAgentGroup)
+            setProperty("groupInfo", groupInfo, cfgAgentGroup)
         }
 
     override fun afterPropertiesSet() = group.updateTenantReferences()

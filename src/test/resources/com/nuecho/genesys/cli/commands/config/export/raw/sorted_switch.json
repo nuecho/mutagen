@@ -9,16 +9,13 @@
   },
   "CFGSwitch": [
     {
-      "name": "aaa",
-      "userProperties": ""
+      "name": "aaa"
     },
     {
-      "name": "bbb",
-      "userProperties": ""
+      "name": "bbb"
     },
     {
-      "name": "ccc",
-      "userProperties": ""
+      "name": "ccc"
     }
   ]
 }

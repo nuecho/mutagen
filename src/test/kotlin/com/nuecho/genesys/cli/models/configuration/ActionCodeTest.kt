@@ -1,11 +1,13 @@
 package com.nuecho.genesys.cli.models.configuration
 
 import com.genesyslab.platform.applicationblocks.com.objects.CfgActionCode
-import com.genesyslab.platform.applicationblocks.com.objects.CfgSubcode
 import com.genesyslab.platform.configuration.protocol.types.CfgActionCodeType.CFGTransfer
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectState.CFGEnabled
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_REFERENCE
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.SUBCODE
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.SUBNAME
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgActionCode
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgSubcode
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockKeyValueCollection
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgActionCodeType
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgObjectState
@@ -19,8 +21,6 @@ import org.junit.jupiter.api.Test
 
 private const val NAME = "name"
 private val TYPE = CFGTransfer.toShortName()
-private const val SUBNAME = "subname"
-private const val SUBCODE = "subcode"
 private val actionCode = ActionCode(
     tenant = DEFAULT_TENANT_REFERENCE,
     name = NAME,
@@ -66,10 +66,7 @@ class ActionCodeTest : ConfigurationObjectTest(
 private fun mockCfgActionCode(): CfgActionCode {
     val service = mockConfService()
     val cfgActionCode = mockCfgActionCode(actionCode.name)
-    val subcode = CfgSubcode(service, cfgActionCode).apply {
-        name = SUBNAME
-        code = SUBCODE
-    }
+    val subcode = mockCfgSubcode()
 
     return cfgActionCode.apply {
         every { type } returns toCfgActionCodeType(actionCode.type)

@@ -47,6 +47,13 @@ data class DNGroup(
 
     override fun updateCfgObject(service: IConfService) =
         (service.retrieveObject(reference) ?: CfgDNGroup(service)).also { cfgDNGroup ->
+
+            val groupInfo = group.toCfgGroup(service, cfgDNGroup).also {
+                cfgDNGroup.dbid?.let { dbid ->
+                    it.dbid = dbid
+                }
+            }
+
             setProperty("DNs", dns?.map { dnInfo ->
                 val dn = service.retrieveObject(dnInfo.dn)!!
                 CfgDNInfo(service, cfgDNGroup).also {
@@ -54,7 +61,7 @@ data class DNGroup(
                     setProperty("trunks", dnInfo.trunks, it)
                 }
             }, cfgDNGroup)
-            setProperty("groupInfo", group.toCfgGroup(service, cfgDNGroup), cfgDNGroup)
+            setProperty("groupInfo", groupInfo, cfgDNGroup)
             setProperty("type", toCfgDNGroupType(type), cfgDNGroup)
         }
 

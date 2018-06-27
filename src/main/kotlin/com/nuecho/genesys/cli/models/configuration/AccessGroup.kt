@@ -3,7 +3,6 @@ package com.nuecho.genesys.cli.models.configuration
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgAccessGroup
-import com.genesyslab.platform.applicationblocks.com.objects.CfgID
 import com.genesyslab.platform.applicationblocks.com.objects.CfgPerson
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectType.CFGPerson
 import com.nuecho.genesys.cli.core.InitializingBean
@@ -15,7 +14,6 @@ import com.nuecho.genesys.cli.models.configuration.reference.ConfigurationObject
 import com.nuecho.genesys.cli.models.configuration.reference.PersonReference
 import com.nuecho.genesys.cli.models.configuration.reference.TenantReference
 import com.nuecho.genesys.cli.models.configuration.reference.referenceSetBuilder
-import com.nuecho.genesys.cli.services.getObjectDbid
 import com.nuecho.genesys.cli.services.retrieveObject
 import com.nuecho.genesys.cli.toShortName
 
@@ -33,7 +31,7 @@ data class AccessGroup(
 
     constructor(accessGroup: CfgAccessGroup) : this(
         group = Group(accessGroup.groupInfo),
-        members = accessGroup.memberIDs?.map {
+        members = accessGroup.memberIDs?.mapNotNull {
             accessGroup.configurationService.retrieveObject(CFGPerson, it.dbid) as CfgPerson
         }?.map { it.getReference() },
         type = accessGroup.type?.toShortName()
@@ -45,17 +43,14 @@ data class AccessGroup(
 
     override fun updateCfgObject(service: IConfService) =
         (service.retrieveObject(reference) ?: CfgAccessGroup(service)).also { cfgAccessGroup ->
-            setProperty(
-                "memberIDs",
-                members?.map { person ->
-                    CfgID(service, cfgAccessGroup).also {
-                        setProperty("DBID", service.getObjectDbid(person), it)
-                        setProperty("type", CFGPerson, it)
-                    }
-                },
-                cfgAccessGroup
-            )
-            setProperty("groupInfo", group.toCfgGroup(service, cfgAccessGroup), cfgAccessGroup)
+            val groupInfo = group.toCfgGroup(service, cfgAccessGroup).also {
+                cfgAccessGroup.dbid?.let { dbid ->
+                    it.dbid = dbid
+                }
+            }
+
+            setProperty("memberIDs", members?.mapNotNull { it.toCfgID(service, cfgAccessGroup) }, cfgAccessGroup)
+            setProperty("groupInfo", groupInfo, cfgAccessGroup)
             setProperty("type", toCfgAccessGroupType(type), cfgAccessGroup)
         }
 

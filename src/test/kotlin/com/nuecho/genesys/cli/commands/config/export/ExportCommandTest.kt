@@ -70,12 +70,12 @@ class ExportCommandTest {
     }
 }
 
-private fun mockConfService(configuration: Map<ICfgQuery, Collection<ICfgObject>> = emptyMap()): ConfService {
+private fun mockConfService(configuration: Map<ICfgQuery<ICfgObject>, Collection<ICfgObject>> = emptyMap()): ConfService {
     val confService = mockk<ConfService>()
     every { confService.open() } just Runs
     every { confService.close() } just Runs
 
-    val query = slot<ICfgQuery>()
+    val query = slot<ICfgQuery<ICfgObject>>()
     every { confService.retrieveMultipleObjects<ICfgObject>(any(), capture(query)) } answers {
         configuration[query.captured]
     }

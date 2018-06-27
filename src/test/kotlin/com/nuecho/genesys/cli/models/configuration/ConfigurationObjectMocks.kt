@@ -23,10 +23,12 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgPerson
 import com.genesyslab.platform.applicationblocks.com.objects.CfgPhysicalSwitch
 import com.genesyslab.platform.applicationblocks.com.objects.CfgPlace
 import com.genesyslab.platform.applicationblocks.com.objects.CfgRole
+import com.genesyslab.platform.applicationblocks.com.objects.CfgRoleMember
 import com.genesyslab.platform.applicationblocks.com.objects.CfgScript
 import com.genesyslab.platform.applicationblocks.com.objects.CfgSkill
 import com.genesyslab.platform.applicationblocks.com.objects.CfgSkillLevel
 import com.genesyslab.platform.applicationblocks.com.objects.CfgStatTable
+import com.genesyslab.platform.applicationblocks.com.objects.CfgSubcode
 import com.genesyslab.platform.applicationblocks.com.objects.CfgSwitch
 import com.genesyslab.platform.applicationblocks.com.objects.CfgTenant
 import com.genesyslab.platform.applicationblocks.com.objects.CfgTimeZone
@@ -53,6 +55,8 @@ object ConfigurationObjectMocks {
     const val DEFAULT_SITE = "site"
     const val DEFAULT_TENANT_DBID = 1
     const val DEFAULT_OBJECT_DBID = 101
+    const val SUBNAME = "subname"
+    const val SUBCODE = "subcode"
     val DEFAULT_IVR_PROFILE_TYPE = CfgIVRProfileType.CFGIPTOutbound
     val DEFAULT_TENANT_REFERENCE = TenantReference(DEFAULT_TENANT)
     val DEFAULT_SITE_REFERENCE = FolderReference(
@@ -105,6 +109,12 @@ object ConfigurationObjectMocks {
             every { it.name } returns name
             every { it.tenant } returns tenant
             every { it.objectDbid } returns DEFAULT_OBJECT_DBID
+        }
+
+    fun mockCfgSubcode(name: String? = SUBNAME, code: String? = SUBCODE) =
+        mockk<CfgSubcode>().also {
+            every { it.name } returns name
+            every { it.code } returns code
         }
 
     fun mockCfgAgentGroup(name: String?, tenant: CfgTenant = mockCfgTenant(DEFAULT_TENANT)) =
@@ -235,6 +245,12 @@ object ConfigurationObjectMocks {
             every { it.name } returns name
             every { it.tenant } returns tenant
             every { it.objectDbid } returns DEFAULT_OBJECT_DBID
+        }
+
+    fun mockCfgRoleMember(type: CfgObjectType? = CfgObjectType.CFGPerson) =
+        mockk<CfgRoleMember>().also {
+            every { it.objectDBID } returns DEFAULT_OBJECT_DBID
+            every { it.objectType } returns type
         }
 
     fun mockCfgScript(name: String?, tenant: CfgTenant = mockCfgTenant(DEFAULT_TENANT)) =

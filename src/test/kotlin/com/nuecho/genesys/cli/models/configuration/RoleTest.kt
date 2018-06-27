@@ -2,13 +2,13 @@ package com.nuecho.genesys.cli.models.configuration
 
 import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgRole
-import com.genesyslab.platform.applicationblocks.com.objects.CfgRoleMember
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectState
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectType.CFGPerson
 import com.nuecho.genesys.cli.models.configuration.ConfigurationAsserts.checkSerialization
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_REFERENCE
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgPerson
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgRole
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgRoleMember
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockKeyValueCollection
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgObjectState
 import com.nuecho.genesys.cli.models.configuration.ConfigurationTestData.defaultProperties
@@ -77,9 +77,7 @@ private fun mockCfgRole(service: IConfService): CfgRole {
     val cfgRole = mockCfgRole(role.name)
 
     val cfgState = toCfgObjectState(role.state)
-    val member = CfgRoleMember(service, cfgRole)
-    member.objectDBID = 101
-    member.objectType = CFGPerson
+    val member = mockCfgRoleMember()
 
     return cfgRole.apply {
         every { description } returns role.description
