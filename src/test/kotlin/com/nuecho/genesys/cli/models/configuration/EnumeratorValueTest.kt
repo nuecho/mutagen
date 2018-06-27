@@ -20,7 +20,8 @@ import com.nuecho.genesys.cli.toShortName
 import io.mockk.every
 import io.mockk.staticMockk
 import io.mockk.use
-import org.junit.jupiter.api.Assertions.assertEquals
+import org.hamcrest.MatcherAssert.assertThat
+import org.hamcrest.Matchers.equalTo
 import org.junit.jupiter.api.Test
 
 private const val NAME = "enumeratorValue"
@@ -40,7 +41,7 @@ private val enumeratorValue = EnumeratorValue(
     userProperties = ConfigurationTestData.defaultProperties()
 )
 
-class EnumeratorValueTest : GroupConfigurationObjectTest(
+class EnumeratorValueTest : NoImportedObjectConfigurationObjectTest(
     enumeratorValue,
     EnumeratorValue(
         default = false,
@@ -71,13 +72,13 @@ class EnumeratorValueTest : GroupConfigurationObjectTest(
             val cfgEnumeratorValue = enumeratorValue.updateCfgObject(service)
 
             with(cfgEnumeratorValue) {
-                assertEquals(name, enumeratorValue.name)
-                assertEquals(displayName, enumeratorValue.displayName)
-                assertEquals(description, enumeratorValue.description)
-                assertEquals(enumeratorDBID, DEFAULT_OBJECT_DBID)
-                assertEquals(isDefault, toCfgFlag(enumeratorValue.default))
-                assertEquals(userProperties.asCategorizedProperties(), enumeratorValue.userProperties)
-                assertEquals(state, toCfgObjectState(enumeratorValue.state))
+                assertThat(name, equalTo(enumeratorValue.name))
+                assertThat(displayName, equalTo(enumeratorValue.displayName))
+                assertThat(description, equalTo(enumeratorValue.description))
+                assertThat(enumeratorDBID, equalTo(DEFAULT_OBJECT_DBID))
+                assertThat(isDefault, equalTo(toCfgFlag(enumeratorValue.default)))
+                assertThat(userProperties.asCategorizedProperties(), equalTo(enumeratorValue.userProperties))
+                assertThat(state, equalTo(toCfgObjectState(enumeratorValue.state)))
             }
         }
     }

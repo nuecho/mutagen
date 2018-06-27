@@ -43,7 +43,9 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.objectMockk
 import io.mockk.use
-import org.junit.jupiter.api.Assertions.assertEquals
+import org.hamcrest.MatcherAssert.assertThat
+import org.hamcrest.Matchers.equalTo
+import org.hamcrest.Matchers.hasSize
 import org.junit.jupiter.api.Test
 
 private const val EMPLOYEE_ID = "employeeId"
@@ -109,30 +111,30 @@ class PersonTest : ConfigurationObjectTest(
             val cfgPerson = person.updateCfgObject(service)
 
             with(cfgPerson) {
-                assertEquals(person.employeeId, employeeID)
-                assertEquals(person.externalId, externalID)
-                assertEquals(person.firstName, firstName)
-                assertEquals(person.lastName, lastName)
-                assertEquals(person.userName, userName)
-                assertEquals(person.password, password)
-                assertEquals(person.passwordHashAlgorithm, passwordHashAlgorithm)
-                assertEquals(person.passwordUpdatingDate, passwordUpdatingDate)
-                assertEquals(toCfgFlag(person.changePasswordOnNextLogin), changePasswordOnNextLogin)
-                assertEquals(person.emailAddress, emailAddress)
-                assertEquals(toCfgObjectState(person.state), state)
-                assertEquals(toCfgFlag(person.agent), isAgent)
-                assertEquals(toCfgFlag(person.externalAuth), isExternalAuth)
-                assertEquals(2, appRanks.size)
-                assertEquals(person.userProperties, userProperties.asCategorizedProperties())
+                assertThat(employeeID, equalTo(person.employeeId))
+                assertThat(externalID, equalTo(person.externalId))
+                assertThat(firstName, equalTo(person.firstName))
+                assertThat(lastName, equalTo(person.lastName))
+                assertThat(userName, equalTo(person.userName))
+                assertThat(password, equalTo(person.password))
+                assertThat(passwordHashAlgorithm, equalTo(person.passwordHashAlgorithm))
+                assertThat(passwordUpdatingDate, equalTo(person.passwordUpdatingDate))
+                assertThat(changePasswordOnNextLogin, equalTo(toCfgFlag(person.changePasswordOnNextLogin)))
+                assertThat(emailAddress, equalTo(person.emailAddress))
+                assertThat(state, equalTo(toCfgObjectState(person.state)))
+                assertThat(isAgent, equalTo(toCfgFlag(person.agent)))
+                assertThat(isExternalAuth, equalTo(toCfgFlag(person.externalAuth)))
+                assertThat(appRanks, hasSize(2))
+                assertThat(userProperties.asCategorizedProperties(), equalTo(person.userProperties))
             }
 
             with(cfgPerson.agentInfo) {
-                assertEquals(DEFAULT_OBJECT_DBID, siteDBID)
-                assertEquals(DEFAULT_OBJECT_DBID, placeDBID)
-                assertEquals(DEFAULT_OBJECT_DBID, contractDBID)
-                assertEquals(DEFAULT_OBJECT_DBID, capacityRuleDBID)
-                assertEquals(3, skillLevels.size)
-                assertEquals(0, agentLogins.size)
+                assertThat(siteDBID, equalTo(DEFAULT_OBJECT_DBID))
+                assertThat(placeDBID, equalTo(DEFAULT_OBJECT_DBID))
+                assertThat(contractDBID, equalTo(DEFAULT_OBJECT_DBID))
+                assertThat(capacityRuleDBID, equalTo(DEFAULT_OBJECT_DBID))
+                assertThat(skillLevels, hasSize(3))
+                assertThat(agentLogins, hasSize(0))
             }
         }
     }
@@ -146,7 +148,7 @@ class PersonTest : ConfigurationObjectTest(
         val cfgPerson = Person(DEFAULT_TENANT_REFERENCE, EMPLOYEE_ID).updateCfgObject(service)
 
         with(cfgPerson) {
-            assertEquals(EMPLOYEE_ID, employeeID)
+            assertThat(employeeID, equalTo(EMPLOYEE_ID))
         }
     }
 }

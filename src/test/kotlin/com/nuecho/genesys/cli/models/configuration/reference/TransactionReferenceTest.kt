@@ -12,7 +12,11 @@ import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mock
 import com.nuecho.genesys.cli.services.ServiceMocks.mockConfService
 import com.nuecho.genesys.cli.toShortName
 import io.mockk.every
-import org.junit.jupiter.api.Assertions.assertEquals
+import org.hamcrest.MatcherAssert.assertThat
+import org.hamcrest.Matchers.`is`
+import org.hamcrest.Matchers.contains
+import org.hamcrest.Matchers.equalTo
+import org.hamcrest.Matchers.nullValue
 import org.junit.jupiter.api.Test
 
 private const val NAME = "transaction"
@@ -37,9 +41,9 @@ class TransactionReferenceTest {
             TransactionReference::class.java
         )
 
-        assertEquals(null, deserializedTransactionReference.tenant)
-        assertEquals(TYPE.toShortName(), deserializedTransactionReference.type)
-        assertEquals(NAME, deserializedTransactionReference.name)
+        assertThat(deserializedTransactionReference.tenant, `is`(nullValue()))
+        assertThat(deserializedTransactionReference.type, equalTo(TYPE.toShortName()))
+        assertThat(deserializedTransactionReference.name, equalTo(NAME))
     }
 
     @Test
@@ -50,14 +54,14 @@ class TransactionReferenceTest {
         every { service.retrieveObject(CfgTenant::class.java, any()) } returns cfgTenant
 
         val query = transactionReference.toQuery(service)
-        assertEquals(DEFAULT_TENANT_DBID, query.tenantDbid)
-        assertEquals(TYPE, query.objectType)
-        assertEquals(NAME, query.name)
+        assertThat(query.tenantDbid, equalTo(DEFAULT_TENANT_DBID))
+        assertThat(query.objectType, equalTo(TYPE))
+        assertThat(query.name, equalTo(NAME))
     }
 
     @Test
     fun `toString should generate the proper string`() {
-        assertEquals("name: '$NAME', type: '${TYPE.toShortName()}', tenant: '${ConfigurationObjectMocks.DEFAULT_TENANT}'", transactionReference.toString())
+        assertThat("name: '$NAME', type: '${TYPE.toShortName()}', tenant: '${ConfigurationObjectMocks.DEFAULT_TENANT}'", equalTo(transactionReference.toString()))
     }
 
     @Test
@@ -93,6 +97,6 @@ class TransactionReferenceTest {
         )
 
         val sortedList = listOf(transactionReference5, transactionReference4, transactionReference3, transactionReference2, transactionReference1).sorted()
-        assertEquals(listOf(transactionReference1, transactionReference2, transactionReference3, transactionReference4, transactionReference5), sortedList)
+        assertThat(sortedList, contains(transactionReference1, transactionReference2, transactionReference3, transactionReference4, transactionReference5))
     }
 }

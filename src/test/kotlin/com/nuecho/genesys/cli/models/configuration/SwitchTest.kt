@@ -30,7 +30,9 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.staticMockk
 import io.mockk.use
-import org.junit.jupiter.api.Assertions.assertEquals
+import org.hamcrest.MatcherAssert.assertThat
+import org.hamcrest.Matchers.equalTo
+import org.hamcrest.Matchers.hasSize
 import org.junit.jupiter.api.Test
 
 private const val MAIN_SWITCH = "main-switch"
@@ -94,32 +96,32 @@ class SwitchTest : ConfigurationObjectTest(
             val cfgSwitch = mainSwitch.updateCfgObject(service)
 
             with(cfgSwitch) {
-                assertEquals(mainSwitch.name, name)
-                assertEquals(DEFAULT_OBJECT_DBID, physSwitchDBID)
-                assertEquals(DEFAULT_OBJECT_DBID, tServerDBID)
-                assertEquals(CfgLinkType.CFGMadgeLink, linkType)
-                assertEquals(mainSwitch.dnRange, dnRange)
-                assertEquals(toCfgObjectState(mainSwitch.state), state)
-                assertEquals(mainSwitch.userProperties, userProperties.asCategorizedProperties())
+                assertThat(name, equalTo(mainSwitch.name))
+                assertThat(physSwitchDBID, equalTo(DEFAULT_OBJECT_DBID))
+                assertThat(tServerDBID, equalTo(DEFAULT_OBJECT_DBID))
+                assertThat(linkType, equalTo(CfgLinkType.CFGMadgeLink))
+                assertThat(dnRange, equalTo(mainSwitch.dnRange))
+                assertThat(state, equalTo(toCfgObjectState(mainSwitch.state)))
+                assertThat(userProperties.asCategorizedProperties(), equalTo(mainSwitch.userProperties))
 
-                assertEquals(2, switchAccessCodes.size)
+                assertThat(switchAccessCodes, hasSize(2))
 
                 switchAccessCodes.zip(mainSwitch.switchAccessCodes!!) { actual, expected ->
                     with(actual) {
-                        assertEquals(expected.accessCode, accessCode)
-                        assertEquals(toCfgTargetType(expected.targetType), targetType)
-                        assertEquals(toCfgRouteType(expected.routeType), routeType)
-                        assertEquals(expected.dnSource, dnSource)
-                        assertEquals(expected.destinationSource, destinationSource)
-                        assertEquals(expected.locationSource, locationSource)
-                        assertEquals(expected.dnisSource, dnisSource)
-                        assertEquals(expected.reasonSource, reasonSource)
-                        assertEquals(expected.extensionSource, extensionSource)
+                        assertThat(accessCode, equalTo(expected.accessCode))
+                        assertThat(targetType, equalTo(toCfgTargetType(expected.targetType)))
+                        assertThat(routeType, equalTo(toCfgRouteType(expected.routeType)))
+                        assertThat(dnSource, equalTo(expected.dnSource))
+                        assertThat(destinationSource, equalTo(expected.destinationSource))
+                        assertThat(locationSource, equalTo(expected.locationSource))
+                        assertThat(dnisSource, equalTo(expected.dnisSource))
+                        assertThat(reasonSource, equalTo(expected.reasonSource))
+                        assertThat(extensionSource, equalTo(expected.extensionSource))
                     }
                 }
 
-                assertEquals(OTHER_SWITCH_DBID, switchAccessCodes.elementAt(0).switchDBID)
-                assertEquals(0, switchAccessCodes.elementAt(1).switchDBID)
+                assertThat(switchAccessCodes.elementAt(0).switchDBID, equalTo(OTHER_SWITCH_DBID))
+                assertThat(switchAccessCodes.elementAt(1).switchDBID, equalTo(0))
             }
         }
     }

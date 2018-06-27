@@ -16,7 +16,9 @@ import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveTen
 import com.nuecho.genesys.cli.services.ServiceMocks.mockConfService
 import com.nuecho.genesys.cli.toShortName
 import io.mockk.every
-import org.junit.jupiter.api.Assertions.assertEquals
+import org.hamcrest.MatcherAssert.assertThat
+import org.hamcrest.Matchers.equalTo
+import org.hamcrest.Matchers.hasSize
 import org.junit.jupiter.api.Test
 
 private const val NAME = "name"
@@ -47,18 +49,18 @@ class ActionCodeTest : ConfigurationObjectTest(
         val cfgActionCode = actionCode.updateCfgObject(service)
 
         with(cfgActionCode) {
-            assertEquals(actionCode.name, name)
-            assertEquals(toCfgActionCodeType(actionCode.type), type)
-            assertEquals(actionCode.code, code)
-            assertEquals(1, subcodes.size)
+            assertThat(name, equalTo(actionCode.name))
+            assertThat(type, equalTo(toCfgActionCodeType(actionCode.type)))
+            assertThat(code, equalTo(actionCode.code))
+            assertThat(subcodes, hasSize(1))
 
             with(subcodes.iterator().next()) {
-                assertEquals(SUBNAME, name)
-                assertEquals(SUBCODE, code)
+                assertThat(name, equalTo(SUBNAME))
+                assertThat(code, equalTo(SUBCODE))
             }
 
-            assertEquals(toCfgObjectState(actionCode.state), state)
-            assertEquals(actionCode.userProperties, userProperties.asCategorizedProperties())
+            assertThat(state, equalTo(toCfgObjectState(actionCode.state)))
+            assertThat(userProperties.asCategorizedProperties(), equalTo(actionCode.userProperties))
         }
     }
 }

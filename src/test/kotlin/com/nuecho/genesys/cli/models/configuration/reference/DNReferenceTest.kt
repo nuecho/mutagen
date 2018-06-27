@@ -16,7 +16,11 @@ import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mock
 import com.nuecho.genesys.cli.services.ServiceMocks.mockConfService
 import com.nuecho.genesys.cli.toShortName
 import io.mockk.every
-import org.junit.jupiter.api.Assertions.assertEquals
+import org.hamcrest.MatcherAssert.assertThat
+import org.hamcrest.Matchers.`is`
+import org.hamcrest.Matchers.contains
+import org.hamcrest.Matchers.equalTo
+import org.hamcrest.Matchers.nullValue
 import org.junit.jupiter.api.Test
 
 private const val NAME = "dn-123"
@@ -45,12 +49,12 @@ class DNReferenceTest {
             DNReference::class.java
         )
 
-        assertEquals(deserializedDNReference.tenant, null)
-        assertEquals(deserializedDNReference.switch.tenant, null)
-        assertEquals(deserializedDNReference.switch.primaryKey, SWITCH)
-        assertEquals(deserializedDNReference.number, NUMBER)
-        assertEquals(deserializedDNReference.type, TYPE.toShortName())
-        assertEquals(deserializedDNReference.name, NAME)
+        assertThat(deserializedDNReference.tenant, `is`(nullValue()))
+        assertThat(deserializedDNReference.switch.tenant, `is`(nullValue()))
+        assertThat(deserializedDNReference.switch.primaryKey, equalTo(SWITCH))
+        assertThat(deserializedDNReference.number, equalTo(NUMBER))
+        assertThat(deserializedDNReference.type, equalTo(TYPE.toShortName()))
+        assertThat(deserializedDNReference.name, equalTo(NAME))
     }
 
     @Test
@@ -63,11 +67,11 @@ class DNReferenceTest {
         every { service.retrieveObject(CfgTenant::class.java, any()) } returns cfgTenant
 
         val query = dnReference.toQuery(service)
-        assertEquals(query.tenantDbid, DEFAULT_TENANT_DBID)
-        assertEquals(query.switchDbid, DEFAULT_OBJECT_DBID)
-        assertEquals(query.dnNumber, NUMBER)
-        assertEquals(query.dnType, TYPE)
-        assertEquals(query.name, NAME)
+        assertThat(query.tenantDbid, equalTo(DEFAULT_TENANT_DBID))
+        assertThat(query.switchDbid, equalTo(DEFAULT_OBJECT_DBID))
+        assertThat(query.dnNumber, equalTo(NUMBER))
+        assertThat(query.dnType, equalTo(TYPE))
+        assertThat(query.name, equalTo(NAME))
     }
 
     @Test
@@ -81,21 +85,21 @@ class DNReferenceTest {
 
         val query = dnReference.copy(name = null).toQuery(service)
 
-        assertEquals(query.tenantDbid, DEFAULT_TENANT_DBID)
-        assertEquals(query.switchDbid, DEFAULT_OBJECT_DBID)
-        assertEquals(query.dnNumber, NUMBER)
-        assertEquals(query.dnType, TYPE)
-        assertEquals(query.name, null)
+        assertThat(query.tenantDbid, equalTo(DEFAULT_TENANT_DBID))
+        assertThat(query.switchDbid, equalTo(DEFAULT_OBJECT_DBID))
+        assertThat(query.dnNumber, equalTo(NUMBER))
+        assertThat(query.dnType, equalTo(TYPE))
+        assertThat(query.name, `is`(nullValue()))
     }
 
     @Test
-    fun `toString with name`() {
-        assertEquals(dnReference.toString(), "number: '$NUMBER', switch: '$SWITCH', type: '${TYPE.toShortName()}', name: '$NAME', tenant: '$DEFAULT_TENANT'")
+    fun `toString with name should generate the proper string`() {
+        assertThat("number: '$NUMBER', switch: '$SWITCH', type: '${TYPE.toShortName()}', name: '$NAME', tenant: '$DEFAULT_TENANT'", equalTo(dnReference.toString()))
     }
 
     @Test
-    fun `toString without name`() {
-        assertEquals(dnReference.copy(name = null).toString(), "number: '$NUMBER', switch: '$SWITCH', type: '${TYPE.toShortName()}', tenant: '$DEFAULT_TENANT'")
+    fun `toString without name should generate the proper string`() {
+        assertThat("number: '$NUMBER', switch: '$SWITCH', type: '${TYPE.toShortName()}', tenant: '$DEFAULT_TENANT'", equalTo(dnReference.copy(name = null).toString()))
     }
 
     @Test
@@ -147,6 +151,6 @@ class DNReferenceTest {
         )
 
         val sortedList = listOf(dnReference6, dnReference5, dnReference4, dnReference3, dnReference2, dnReference1).sorted()
-        assertEquals(sortedList, listOf(dnReference1, dnReference2, dnReference3, dnReference4, dnReference5, dnReference6))
+        assertThat(sortedList, contains(dnReference1, dnReference2, dnReference3, dnReference4, dnReference5, dnReference6))
     }
 }

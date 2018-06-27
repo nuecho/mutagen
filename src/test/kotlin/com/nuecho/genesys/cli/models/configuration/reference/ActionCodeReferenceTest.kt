@@ -13,7 +13,11 @@ import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mock
 import com.nuecho.genesys.cli.services.ServiceMocks
 import com.nuecho.genesys.cli.toShortName
 import io.mockk.every
-import org.junit.jupiter.api.Assertions.assertEquals
+import org.hamcrest.MatcherAssert.assertThat
+import org.hamcrest.Matchers.`is`
+import org.hamcrest.Matchers.contains
+import org.hamcrest.Matchers.equalTo
+import org.hamcrest.Matchers.nullValue
 import org.junit.jupiter.api.Test
 
 private const val NAME = "actionCode"
@@ -38,9 +42,9 @@ class ActionCodeReferenceTest {
             ActionCodeReference::class.java
         )
 
-        assertEquals(deserializedActionCodeReference.tenant, null)
-        assertEquals(deserializedActionCodeReference.type, TYPE.toShortName())
-        assertEquals(deserializedActionCodeReference.name, NAME)
+        assertThat(deserializedActionCodeReference.tenant, `is`(nullValue()))
+        assertThat(deserializedActionCodeReference.type, equalTo(TYPE.toShortName()))
+        assertThat(deserializedActionCodeReference.name, equalTo(NAME))
     }
 
     @Test
@@ -51,14 +55,14 @@ class ActionCodeReferenceTest {
         every { service.retrieveObject(CfgTenant::class.java, any()) } returns cfgTenant
 
         val query = actionCodeReference.toQuery(service)
-        assertEquals(query.tenantDbid, ConfigurationObjectMocks.DEFAULT_TENANT_DBID)
-        assertEquals(query.codeType, TYPE)
-        assertEquals(query.name, NAME)
+        assertThat(query.tenantDbid, equalTo(ConfigurationObjectMocks.DEFAULT_TENANT_DBID))
+        assertThat(query.codeType, equalTo(TYPE))
+        assertThat(query.name, equalTo(NAME))
     }
 
     @Test
-    fun `toString `() {
-        assertEquals(actionCodeReference.toString(), "name: '$NAME', type: '${TYPE.toShortName()}', tenant: '$DEFAULT_TENANT'")
+    fun `toString should generate the proper string`() {
+        assertThat("name: '$NAME', type: '${TYPE.toShortName()}', tenant: '$DEFAULT_TENANT'", equalTo(actionCodeReference.toString()))
     }
 
     @Test
@@ -94,6 +98,6 @@ class ActionCodeReferenceTest {
         )
 
         val sortedList = listOf(actionCodeReference5, actionCodeReference4, actionCodeReference3, actionCodeReference2, actionCodeReference1).sorted()
-        assertEquals(sortedList, listOf(actionCodeReference1, actionCodeReference2, actionCodeReference3, actionCodeReference4, actionCodeReference5))
+        assertThat(sortedList, contains(actionCodeReference1, actionCodeReference2, actionCodeReference3, actionCodeReference4, actionCodeReference5))
     }
 }

@@ -14,7 +14,10 @@ import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFA
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_REFERENCE
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveTenant
 import com.nuecho.genesys.cli.services.ServiceMocks.mockConfService
-import org.junit.jupiter.api.Assertions.assertEquals
+import org.hamcrest.MatcherAssert.assertThat
+import org.hamcrest.Matchers.`is`
+import org.hamcrest.Matchers.equalTo
+import org.hamcrest.Matchers.nullValue
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
@@ -63,73 +66,73 @@ class SimpleObjectReferenceTest {
             Container::class.java
         )
 
-        assertEquals(container.tenant, deserializedContainer.tenant)
+        assertThat(deserializedContainer.tenant, equalTo(container.tenant))
         for (i in 0 until container.listOfPerson.size) {
-            assertEquals(null, deserializedContainer.listOfPerson[i].tenant)
-            assertEquals(container.listOfPerson[i].primaryKey, deserializedContainer.listOfPerson[i].primaryKey)
+            assertThat(deserializedContainer.listOfPerson[i].tenant, `is`(nullValue()))
+            assertThat(deserializedContainer.listOfPerson[i].primaryKey, equalTo(container.listOfPerson[i].primaryKey))
         }
 
         container.mapOfSkill.forEach {
-            assertEquals(deserializedContainer.mapOfSkill[SkillReference(it.key.primaryKey, null)], it.value)
+            assertThat(deserializedContainer.mapOfSkill[SkillReference(it.key.primaryKey, null)], equalTo(it.value))
         }
     }
 
     @Test
     fun `SimpleObjectReference toString() should generate the proper String`() {
-        assertEquals(DEFAULT_TENANT, TenantReference(DEFAULT_TENANT).toString())
+        assertThat(TenantReference(DEFAULT_TENANT).toString(), equalTo(DEFAULT_TENANT))
     }
 
     @Test
     fun `SimpleObjectReferenceWithTenant toString() should generate the proper String`() {
         val employeeId = "employeeId"
-        assertEquals(PersonReference(employeeId, DEFAULT_TENANT_REFERENCE).toString(), "$DEFAULT_TENANT/$employeeId")
+        assertThat(PersonReference(employeeId, DEFAULT_TENANT_REFERENCE).toString(), equalTo("$DEFAULT_TENANT/$employeeId"))
     }
 
     @Test
     fun `ObjectiveTableReference toQuery should create the proper query`() {
         val objectiveTableName = "objectiveTable"
         val actual = ObjectiveTableReference(objectiveTableName, DEFAULT_TENANT_REFERENCE).toQuery(service)
-        assertEquals(CfgObjectiveTableQuery::class.java, actual.javaClass)
-        assertEquals(objectiveTableName, actual.name)
+        assertThat(actual.javaClass, equalTo(CfgObjectiveTableQuery::class.java))
+        assertThat(actual.name, equalTo(objectiveTableName))
     }
 
     @Test
     fun `PersonReference toQuery should create the proper query`() {
         val employeeId = "employeeId"
         val actual = PersonReference(employeeId, DEFAULT_TENANT_REFERENCE).toQuery(service)
-        assertEquals(CfgPersonQuery::class.java, actual.javaClass)
-        assertEquals(employeeId, actual.employeeId)
+        assertThat(actual.javaClass, equalTo(CfgPersonQuery::class.java))
+        assertThat(actual.employeeId, equalTo(employeeId))
     }
 
     @Test
     fun `PlaceReference toQuery should create the proper query`() {
         val placeName = "place"
         val actual = PlaceReference(placeName, DEFAULT_TENANT_REFERENCE).toQuery(service)
-        assertEquals(CfgPlaceQuery::class.java, actual.javaClass)
-        assertEquals(placeName, actual.name)
+        assertThat(actual.javaClass, equalTo(CfgPlaceQuery::class.java))
+        assertThat(actual.name, equalTo(placeName))
     }
 
     @Test
     fun `ScriptReference toQuery should create the proper query`() {
         val scriptName = "script"
         val actual = ScriptReference(scriptName, DEFAULT_TENANT_REFERENCE).toQuery(service)
-        assertEquals(CfgScriptQuery::class.java, actual.javaClass)
-        assertEquals(scriptName, actual.name)
+        assertThat(actual.javaClass, equalTo(CfgScriptQuery::class.java))
+        assertThat(actual.name, equalTo(scriptName))
     }
 
     @Test
     fun `SkillReference toQuery should create the proper query`() {
         val skillName = "skill"
         val actual = SkillReference(skillName, DEFAULT_TENANT_REFERENCE).toQuery(service)
-        assertEquals(CfgSkillQuery::class.java, actual.javaClass)
-        assertEquals(skillName, actual.name)
+        assertThat(actual.javaClass, equalTo(CfgSkillQuery::class.java))
+        assertThat(actual.name, equalTo(skillName))
     }
 
     @Test
     fun `SwitchReference toQuery should create the proper query`() {
         val switchName = "switch"
         val actual = SwitchReference(switchName, DEFAULT_TENANT_REFERENCE).toQuery(service)
-        assertEquals(CfgSwitchQuery::class.java, actual.javaClass)
-        assertEquals(switchName, actual.name)
+        assertThat(actual.javaClass, equalTo(CfgSwitchQuery::class.java))
+        assertThat(actual.name, equalTo(switchName))
     }
 }

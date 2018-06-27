@@ -11,7 +11,8 @@ import com.nuecho.genesys.cli.models.configuration.ConfigurationTestData.default
 import com.nuecho.genesys.cli.services.ServiceMocks.mockConfService
 import com.nuecho.genesys.cli.toShortName
 import io.mockk.every
-import org.junit.jupiter.api.Assertions.assertEquals
+import org.hamcrest.MatcherAssert.assertThat
+import org.hamcrest.Matchers.equalTo
 import org.junit.jupiter.api.Test
 
 private val physicalSwitch = PhysicalSwitch(
@@ -35,10 +36,10 @@ class PhysicalSwitchTest : ConfigurationObjectTest(
         val cfgPhysicalSwitch = physicalSwitch.updateCfgObject(service)
 
         with(cfgPhysicalSwitch) {
-            assertEquals(physicalSwitch.name, name)
-            assertEquals(toCfgSwitchType(physicalSwitch.type), type)
-            assertEquals(toCfgObjectState(physicalSwitch.state), state)
-            assertEquals(physicalSwitch.userProperties, userProperties.asCategorizedProperties())
+            assertThat(name, equalTo(physicalSwitch.name))
+            assertThat(type, equalTo(toCfgSwitchType(physicalSwitch.type)))
+            assertThat(state, equalTo(toCfgObjectState(physicalSwitch.state)))
+            assertThat(userProperties.asCategorizedProperties(), equalTo(physicalSwitch.userProperties))
         }
     }
 }

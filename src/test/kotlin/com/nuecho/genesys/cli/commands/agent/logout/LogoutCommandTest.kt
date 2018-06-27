@@ -19,8 +19,9 @@ import io.mockk.objectMockk
 import io.mockk.staticMockk
 import io.mockk.use
 import io.mockk.verify
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertTrue
+import org.hamcrest.MatcherAssert.assertThat
+import org.hamcrest.Matchers.equalTo
+import org.hamcrest.Matchers.startsWith
 import org.junit.jupiter.api.Test
 
 private const val MISSING_REQUIRED_OPTIONS = "Missing required options [--stat-host=<statHost>, --stat-port=<statPort>, params[ 0]=employeeId]"
@@ -30,13 +31,13 @@ class LogoutCommandTest {
     @Test
     fun `executing Logout with no arguments should print an error message`() {
         val output = execute("agent", "logout")
-        assertTrue(output.startsWith(MISSING_REQUIRED_OPTIONS))
+        assertThat(output, startsWith(MISSING_REQUIRED_OPTIONS))
     }
 
     @Test
     fun `executing Logout with -h argument should print usage`() {
         val output = execute("agent", "logout", "-h")
-        assertTrue(output.startsWith(USAGE_PREFIX))
+        assertThat(output, startsWith(USAGE_PREFIX))
     }
 
     @Test
@@ -89,7 +90,7 @@ class LogoutCommandTest {
 
             val tService = switch.getTService()
 
-            assertEquals(tService!!.endpoint, endpoint)
+            assertThat(tService!!.endpoint, equalTo(endpoint))
         }
     }
 }

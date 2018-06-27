@@ -4,9 +4,10 @@ import com.nuecho.genesys.cli.TestResources.loadEnvironments
 import com.nuecho.genesys.cli.services.GenesysServices.DEFAULT_APPLICATION_NAME
 import com.nuecho.genesys.cli.services.GenesysServices.DEFAULT_SERVER_PORT
 import com.nuecho.genesys.cli.services.GenesysServices.DEFAULT_USE_TLS
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Test
+import org.hamcrest.MatcherAssert.assertThat
+import org.hamcrest.Matchers.equalTo
 import org.junit.jupiter.api.Assertions.assertThrows
+import org.junit.jupiter.api.Test
 import java.io.File
 
 class EnvironmentTest {
@@ -34,14 +35,14 @@ class EnvironmentTest {
     fun `omitting optional selectedEnvironment properties should give default values`() {
         val environments = loadEnvironments("environments.yml")
 
-        assertEquals(environments["default"], defaultTestEnvironment)
+        assertThat(environments["default"], equalTo(defaultTestEnvironment))
     }
 
     @Test
     fun `providing optional selectedEnvironment properties should override default values`() {
         val environments = loadEnvironments("environments.yml")
 
-        assertEquals(environments["override"], overrideTestEnvironment)
+        assertThat(environments["override"], equalTo(overrideTestEnvironment))
     }
 
     @Test

@@ -2,8 +2,8 @@ package com.nuecho.genesys.cli.models.configuration
 
 import com.fasterxml.jackson.databind.module.SimpleModule
 import com.nuecho.genesys.cli.core.defaultJsonObjectMapper
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertTrue
+import org.hamcrest.MatcherAssert.assertThat
+import org.hamcrest.Matchers.equalTo
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
@@ -46,8 +46,8 @@ class CategorizedPropertiesDeserializerTest {
         @Suppress("UNCHECKED_CAST")
         val actual = mapper.readValue(jsonObject, Map::class.java) as CategorizedProperties
 
-        assertEquals(actual["section"]?.get("number"), expected["section"]?.get("number"))
-        assertEquals(actual["section"]?.get("string"), expected["section"]?.get("string"))
+        assertThat(actual["section"]?.get("number") as Number, equalTo(expected["section"]?.get("number")))
+        assertThat(actual["section"]?.get("string") as String, equalTo(expected["section"]?.get("string")))
         checkUserProperties(actual, expected)
     }
 
@@ -72,5 +72,5 @@ private fun checkUserProperties(
     // Ensure that byte arrays are properly deserialized (GC-60)
     val actualByteArray = actualUserProperties["section"]?.get("bytes") as ByteArray
     val expectedByteArray = expectedUserProperties["section"]?.get("bytes") as ByteArray
-    assertTrue(actualByteArray.contentEquals(expectedByteArray))
+    assertThat(actualByteArray, equalTo(expectedByteArray))
 }

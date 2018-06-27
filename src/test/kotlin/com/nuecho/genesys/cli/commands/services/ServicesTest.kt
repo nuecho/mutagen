@@ -13,9 +13,10 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.staticMockk
 import io.mockk.use
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertFalse
-import org.junit.jupiter.api.Assertions.assertTrue
+import org.hamcrest.MatcherAssert.assertThat
+import org.hamcrest.Matchers.`is`
+import org.hamcrest.Matchers.equalTo
+import org.hamcrest.Matchers.startsWith
 import org.junit.jupiter.api.Test
 import java.io.ByteArrayOutputStream
 import java.net.URI
@@ -32,7 +33,7 @@ class ServicesTest {
     fun `executing services with -h argument should print usage`() {
         val output = CliOutputCaptureWrapper.execute("services", "-h")
 
-        assertTrue(output.startsWith(USAGE_PREFIX))
+        assertThat(output, startsWith(USAGE_PREFIX))
     }
 
     @Test
@@ -42,7 +43,7 @@ class ServicesTest {
         every { application.type } returns CfgAppType.CFGTServer
 
         val shortName = application.type.toShortName()
-        assertEquals(shortName, TYPE)
+        assertThat(shortName, equalTo(TYPE))
     }
 
     @Test
@@ -55,7 +56,7 @@ class ServicesTest {
             every { application.getDefaultEndpoint() } returns Endpoint(ENDPOINT_URI)
 
             val accepted = Services.accept(application)
-            assertTrue(accepted)
+            assertThat(accepted, `is`(true))
         }
     }
 
@@ -67,7 +68,7 @@ class ServicesTest {
         every { application.isServer } returns CfgFlag.CFGFalse
 
         val accepted = Services.accept(application)
-        assertFalse(accepted)
+        assertThat(accepted, `is`(false))
     }
 
     @Test
@@ -82,7 +83,7 @@ class ServicesTest {
             every { application.type.toShortName() } returns "tserver"
 
             val accepted = Services.accept(application, listOf("NonMatchingType"))
-            assertFalse(accepted)
+            assertThat(accepted, `is`(false))
         }
     }
 
@@ -98,12 +99,12 @@ class ServicesTest {
             every { application.type.toShortName() } returns "tserver"
 
             val accepted = Services.accept(application, listOf(TYPE))
-            assertTrue(accepted)
+            assertThat(accepted, `is`(true))
         }
     }
 
     @Test
-    fun `given an server application should return a service object`() {
+    fun `given a server application should return a service object`() {
 
         val application = mockk<CfgApplication>()
         every { application.isServer } returns CfgFlag.CFGTrue
@@ -118,7 +119,7 @@ class ServicesTest {
 
             val service = Services.toServiceDefinition(application)
 
-            assertEquals(ServiceDefinition("foo", TYPE, VERSION, ENDPOINT_URI, true), service)
+            assertThat(service, equalTo(ServiceDefinition("foo", TYPE, VERSION, ENDPOINT_URI, true)))
         }
     }
 
@@ -142,13 +143,13 @@ class ServicesTest {
 
             val result = defaultJsonObjectMapper().readTree(String(output.toByteArray()))
 
-            assertEquals(defaultJsonObjectMapper().readTree(javaClass.getResourceAsStream("services.json")), result)
+            assertThat(result, equalTo(defaultJsonObjectMapper().readTree(javaClass.getResourceAsStream("services.json"))))
         }
     }
 
     @Test
     fun `given an unreachable endpoint should return status as DOWN`() {
         val result = Services.status(Endpoint(ENDPOINT_URI), true, SOCKET_TIMEOUT)
-        assertEquals(Status.DOWN, result)
+        assertThat(result, equalTo(Status.DOWN))
     }
 }

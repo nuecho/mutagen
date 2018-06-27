@@ -10,7 +10,9 @@ import com.nuecho.genesys.cli.models.configuration.ConfigurationAsserts.checkSer
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT
 import com.nuecho.genesys.cli.services.ServiceMocks.mockConfService
 import com.nuecho.genesys.cli.toShortName
-import org.junit.jupiter.api.Assertions.assertEquals
+import org.hamcrest.MatcherAssert.assertThat
+import org.hamcrest.Matchers.contains
+import org.hamcrest.Matchers.equalTo
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
@@ -37,9 +39,9 @@ class FolderReferenceTest {
             FolderReference::class.java
         )
 
-        assertEquals(deserializedFolderReference.owner, OWNER)
-        assertEquals(deserializedFolderReference.path, PATH)
-        assertEquals(deserializedFolderReference.type, TYPE)
+        assertThat(deserializedFolderReference.owner, equalTo(OWNER))
+        assertThat(deserializedFolderReference.path, equalTo(PATH))
+        assertThat(deserializedFolderReference.type, equalTo(TYPE))
     }
 
     @Test
@@ -51,9 +53,9 @@ class FolderReferenceTest {
 
     @Test
     fun `FolderReference toString`() {
-        assertEquals(
+        assertThat(
             folderReference.toString(),
-            "type: '$TYPE', owner: 'tenant/tenant', path: '${PATH.joinToString("/")}'"
+            equalTo("type: '$TYPE', owner: 'tenant/tenant', path: '${PATH.joinToString("/")}'")
         )
     }
 
@@ -90,6 +92,6 @@ class FolderReferenceTest {
         )
 
         val sortedList = listOf(folderReference5, folderReference4, folderReference3, folderReference2, folderReference1).sorted()
-        assertEquals(sortedList, listOf(folderReference1, folderReference2, folderReference3, folderReference4, folderReference5))
+        assertThat(sortedList, contains(folderReference1, folderReference2, folderReference3, folderReference4, folderReference5))
     }
 }

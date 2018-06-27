@@ -3,7 +3,7 @@ package com.nuecho.genesys.cli.models.configuration
 import org.junit.jupiter.api.Disabled
 
 @Suppress("UnnecessaryAbstractClass")
-abstract class GroupConfigurationObjectTest(
+abstract class NoImportedObjectConfigurationObjectTest(
     configurationObject: ConfigurationObject,
     emptyConfigurationObject: ConfigurationObject
 ) : ConfigurationObjectTest(configurationObject, emptyConfigurationObject) {

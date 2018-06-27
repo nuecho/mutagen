@@ -4,7 +4,8 @@ import com.genesyslab.platform.commons.protocol.ChannelState
 import com.genesyslab.platform.configuration.protocol.types.CfgAppType
 import com.nuecho.genesys.cli.preferences.environment.Environment
 import com.nuecho.genesys.cli.services.GenesysServices.createConfServerProtocol
-import org.junit.jupiter.api.Assertions.assertEquals
+import org.hamcrest.MatcherAssert.assertThat
+import org.hamcrest.Matchers.equalTo
 import org.junit.jupiter.api.Test
 
 class GenesysServicesTest {
@@ -25,13 +26,13 @@ class GenesysServicesTest {
         val protocol = createConfServerProtocol(environment)
         val endpoint = protocol.endpoint
 
-        assertEquals(endpoint.host, host)
-        assertEquals(endpoint.port, port)
-        assertEquals(endpoint.configuration.getOption("string-attributes-encoding"), "utf-8")
+        assertThat(endpoint.host, equalTo(host))
+        assertThat(endpoint.port, equalTo(port))
+        assertThat(endpoint.configuration.getOption("string-attributes-encoding"), equalTo("utf-8"))
 
-        assertEquals(protocol.userName, user)
-        assertEquals(protocol.clientApplicationType, CfgAppType.CFGSCE.asInteger())
-        assertEquals(protocol.state, ChannelState.Closed)
+        assertThat(protocol.userName, equalTo(user))
+        assertThat(protocol.clientApplicationType, equalTo(CfgAppType.CFGSCE.asInteger()))
+        assertThat(protocol.state, equalTo(ChannelState.Closed))
     }
 
     @Test
@@ -47,7 +48,7 @@ class GenesysServicesTest {
         val protocol = createConfServerProtocol(environment)
         val endpoint = protocol.endpoint
 
-        assertEquals(endpoint.configuration.getOption("string-attributes-encoding"), "utf-8")
+        assertThat(endpoint.configuration.getOption("string-attributes-encoding"), equalTo("utf-8"))
     }
 
     @Test
@@ -63,6 +64,6 @@ class GenesysServicesTest {
         val protocol = createConfServerProtocol(environment)
         val endpoint = protocol.endpoint
 
-        assertEquals(endpoint.configuration.getOption("string-attributes-encoding"), "gb2312")
+        assertThat(endpoint.configuration.getOption("string-attributes-encoding"), equalTo("gb2312"))
     }
 }

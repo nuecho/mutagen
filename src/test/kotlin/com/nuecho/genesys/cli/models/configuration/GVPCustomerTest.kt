@@ -15,7 +15,8 @@ import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveTim
 import com.nuecho.genesys.cli.services.ServiceMocks.mockConfService
 import com.nuecho.genesys.cli.toShortName
 import io.mockk.every
-import org.junit.jupiter.api.Assertions.assertEquals
+import org.hamcrest.MatcherAssert.assertThat
+import org.hamcrest.Matchers.equalTo
 import org.junit.jupiter.api.Test
 
 private const val NAME = "name"
@@ -45,9 +46,9 @@ class GVPCustomerTest : ConfigurationObjectTest(
         val cfgGVPCustomer = gvpCustomer.updateCfgObject(service)
 
         with(cfgGVPCustomer) {
-            assertEquals(name, gvpCustomer.name)
-            assertEquals(state, ConfigurationObjects.toCfgObjectState(gvpCustomer.state))
-            assertEquals(userProperties.asCategorizedProperties(), gvpCustomer.userProperties)
+            assertThat(name, equalTo(gvpCustomer.name))
+            assertThat(state, equalTo(ConfigurationObjects.toCfgObjectState(gvpCustomer.state)))
+            assertThat(userProperties.asCategorizedProperties(), equalTo(gvpCustomer.userProperties))
         }
     }
 }

@@ -38,7 +38,7 @@ abstract class ConfigurationObjectTest(
             configurationObject::class.java
         )
 
-        // assertEquals(Normally we should simply check that 'deserializedConfigurationObject, configurationObject' but)
+        // Normally we should simply check: `assertThat(deserializedConfigurationObject, equalTo(configurationObject))`, but
         // since ConfigurationObjectWithUserProperties.equals is broken because of ByteArray.equals, this should do
         // the trick for now.
         checkSerialization(deserializedConfigurationObject, configurationObjectType)

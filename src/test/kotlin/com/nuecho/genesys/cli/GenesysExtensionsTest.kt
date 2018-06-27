@@ -3,7 +3,8 @@ package com.nuecho.genesys.cli
 import com.genesyslab.platform.reporting.protocol.statserver.DnActions
 import com.nuecho.genesys.cli.commands.agent.mockAgentStatus
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks
-import org.junit.jupiter.api.Assertions.assertEquals
+import org.hamcrest.MatcherAssert.assertThat
+import org.hamcrest.Matchers.equalTo
 import org.junit.jupiter.api.Test
 import java.time.ZoneId
 import java.util.TimeZone
@@ -19,23 +20,25 @@ class GenesysExtensionsTest {
             status = DnActions.LoggedIn
         )
 
-        assertEquals(
-            """
+        assertThat(
+            status.toConsoleString(),
+            equalTo(
+                """
                 |Agent (test):
                 |  Status: LoggedIn
                 |  Place : testPlace
                 |  DNs   : [DN: 1234 - Switch: testSwitch]
-                """.trimMargin(),
-            status.toConsoleString()
+                """.trimMargin()
+            )
         )
     }
 
     @Test
     fun `CFGTimeZone to ZoneID should be correct`() {
         var cfgTimeZone = ConfigurationObjectMocks.mockCfgTimeZone("GMT")
-        assertEquals(TimeZone.getTimeZone(ZoneId.of("GMT", ZoneId.SHORT_IDS)).getDisplayName(false, TimeZone.SHORT), cfgTimeZone.toTimeZoneId())
+        assertThat(TimeZone.getTimeZone(ZoneId.of("GMT", ZoneId.SHORT_IDS)).getDisplayName(false, TimeZone.SHORT), equalTo(cfgTimeZone.toTimeZoneId()))
 
         cfgTimeZone = ConfigurationObjectMocks.mockCfgTimeZone("ECT")
-        assertEquals(cfgTimeZone.toTimeZoneId(), TimeZone.getTimeZone(ZoneId.of("ECT", ZoneId.SHORT_IDS)).getDisplayName(false, TimeZone.SHORT))
+        assertThat(TimeZone.getTimeZone(ZoneId.of("ECT", ZoneId.SHORT_IDS)).getDisplayName(false, TimeZone.SHORT), equalTo(cfgTimeZone.toTimeZoneId()))
     }
 }
