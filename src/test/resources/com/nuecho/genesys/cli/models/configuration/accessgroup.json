@@ -5,7 +5,16 @@
     "contract": "contract",
     "name": "accessGroup",
     "quotaTable": "quotaTable",
-    "site": "site",
+    "site": {
+      "owner": {
+        "name": "tenant",
+        "type": "tenant"
+      },
+      "path": [
+        "site"
+      ],
+      "type": "folder"
+    },
     "state": "enabled",
     "tenant": "tenant",
     "userProperties": {

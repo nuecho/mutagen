@@ -9,9 +9,12 @@ import com.genesyslab.platform.configuration.protocol.types.CfgAccessGroupType.C
 import com.genesyslab.platform.configuration.protocol.types.CfgDNType
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectState
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectState.CFGEnabled
+import com.genesyslab.platform.configuration.protocol.types.CfgObjectType.CFGFolder
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectType.CFGPerson
 import com.nuecho.genesys.cli.models.configuration.ConfigurationAsserts.checkSerialization
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_OBJECT_DBID
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_SITE
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_SITE_REFERENCE
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_REFERENCE
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgAccessGroup
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgDN
@@ -24,7 +27,6 @@ import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mock
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgSwitch
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockKeyValueCollection
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgObjectState
-import com.nuecho.genesys.cli.models.configuration.reference.FolderReference
 import com.nuecho.genesys.cli.models.configuration.reference.ObjectiveTableReference
 import com.nuecho.genesys.cli.models.configuration.reference.PersonReference
 import com.nuecho.genesys.cli.models.configuration.reference.ScriptReference
@@ -51,7 +53,7 @@ private val accessGroup = AccessGroup(
         state = CfgObjectState.CFGEnabled.toShortName(),
         userProperties = ConfigurationTestData.defaultProperties(),
         capacityRule = ScriptReference("capacityRule", DEFAULT_TENANT_REFERENCE),
-        site = FolderReference("site"),
+        site = DEFAULT_SITE_REFERENCE,
         contract = ObjectiveTableReference("contract", DEFAULT_TENANT_REFERENCE)
     ),
     members = listOf(
@@ -139,7 +141,7 @@ private fun mockCfgAccessGroup(service: IConfService): CfgAccessGroup {
     val capacityTableMock = mockCfgStatTable(accessGroup.group.capacityTable!!.primaryKey)
     val quotaTableMock = mockCfgStatTable(accessGroup.group.quotaTable!!.primaryKey)
     val capacityRuleMock = mockCfgScript(accessGroup.group.capacityRule!!.primaryKey)
-    val siteMock = mockCfgFolder(accessGroup.group.site!!.primaryKey)
+    val siteMock = mockCfgFolder(DEFAULT_SITE, CFGFolder)
     val contractMock = mockCfgObjectiveTable(accessGroup.group.contract!!.primaryKey)
 
     return cfgAccessGroup.apply {

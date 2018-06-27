@@ -15,7 +15,16 @@
   "number": "123",
   "override": "anoverride",
   "routeType": "direct",
-  "site": "abc",
+  "site": {
+    "owner": {
+      "name": "tenant",
+      "type": "tenant"
+    },
+    "path": [
+      "site"
+    ],
+    "type": "folder"
+  },
   "state": "enabled",
   "switch": "aswitch",
   "tenant": "tenant",

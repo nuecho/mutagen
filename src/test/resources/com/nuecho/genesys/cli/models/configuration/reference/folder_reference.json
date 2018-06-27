@@ -1,0 +1,11 @@
+{
+  "owner": {
+    "name": "tenant",
+    "type": "tenant"
+  },
+  "path": [
+    "Objects",
+    "Persons"
+  ],
+  "type": "person"
+}
