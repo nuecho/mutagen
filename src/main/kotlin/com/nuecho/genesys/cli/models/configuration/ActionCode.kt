@@ -6,13 +6,17 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgActionCode
 import com.genesyslab.platform.applicationblocks.com.objects.CfgSubcode
+import com.nuecho.genesys.cli.getFolderReference
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setFolder
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setProperty
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgActionCodeType
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgObjectState
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toKeyValueCollection
 import com.nuecho.genesys.cli.models.configuration.reference.ActionCodeReference
 import com.nuecho.genesys.cli.models.configuration.reference.ConfigurationObjectReference
+import com.nuecho.genesys.cli.models.configuration.reference.FolderReference
 import com.nuecho.genesys.cli.models.configuration.reference.TenantReference
+import com.nuecho.genesys.cli.models.configuration.reference.referenceSetBuilder
 import com.nuecho.genesys.cli.services.getObjectDbid
 import com.nuecho.genesys.cli.services.retrieveObject
 import com.nuecho.genesys.cli.toShortName
@@ -26,7 +30,8 @@ data class ActionCode(
     val state: String? = null,
     @JsonSerialize(using = CategorizedPropertiesSerializer::class)
     @JsonDeserialize(using = CategorizedPropertiesDeserializer::class)
-    override val userProperties: CategorizedProperties? = null
+    override val userProperties: CategorizedProperties? = null,
+    override val folder: FolderReference? = null
 ) : ConfigurationObject {
     @get:JsonIgnore
     override val reference = ActionCodeReference(name, type, tenant)
@@ -38,6 +43,7 @@ data class ActionCode(
         code = actionCode.code,
         subcodes = actionCode.subcodes?.map { it.name to it.code }?.toMap(),
         state = actionCode.state?.toShortName(),
+        folder = actionCode.getFolderReference(),
         userProperties = actionCode.userProperties.asCategorizedProperties()
     )
 
@@ -50,12 +56,17 @@ data class ActionCode(
             setProperty("subcodes", toCfgSubcodeList(subcodes, it), it)
             setProperty("state", toCfgObjectState(state), it)
             setProperty("userProperties", toKeyValueCollection(userProperties), it)
+            setFolder(folder, it)
         }
 
     override fun checkMandatoryProperties(): Set<String> =
         if (code == null) setOf(CODE) else emptySet()
 
-    override fun getReferences(): Set<ConfigurationObjectReference<*>> = setOf(tenant)
+    override fun getReferences(): Set<ConfigurationObjectReference<*>> =
+        referenceSetBuilder()
+            .add(tenant)
+            .add(folder)
+            .toSet()
 }
 
 private fun toCfgSubcodeList(subcodes: Map<String, String>?, actionCode: CfgActionCode) =

@@ -7,7 +7,9 @@ import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgGVPIVRProfile
 import com.nuecho.genesys.cli.asBoolean
 import com.nuecho.genesys.cli.core.InitializingBean
+import com.nuecho.genesys.cli.getFolderReference
 import com.nuecho.genesys.cli.getReference
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setFolder
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setProperty
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgFlag
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgIVRProfileType
@@ -15,6 +17,7 @@ import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgObj
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toKeyValueCollection
 import com.nuecho.genesys.cli.models.configuration.reference.ConfigurationObjectReference
 import com.nuecho.genesys.cli.models.configuration.reference.DNReference
+import com.nuecho.genesys.cli.models.configuration.reference.FolderReference
 import com.nuecho.genesys.cli.models.configuration.reference.GVPCustomerReference
 import com.nuecho.genesys.cli.models.configuration.reference.GVPIVRProfileReference
 import com.nuecho.genesys.cli.models.configuration.reference.GVPResellerReference
@@ -50,8 +53,8 @@ data class GVPIVRProfile(
     val state: String? = null,
     @JsonSerialize(using = CategorizedPropertiesSerializer::class)
     @JsonDeserialize(using = CategorizedPropertiesDeserializer::class)
-    override val userProperties: CategorizedProperties? = null
-
+    override val userProperties: CategorizedProperties? = null,
+    override val folder: FolderReference? = null
 ) : ConfigurationObject, InitializingBean {
 
     @get:JsonIgnore
@@ -73,7 +76,8 @@ data class GVPIVRProfile(
         status = gvpivrProfile.status,
         dids = gvpivrProfile.diDs?.map { DNReference(it.number, it.switch.name, it.type) },
         state = gvpivrProfile.state?.toShortName(),
-        userProperties = gvpivrProfile.userProperties?.asCategorizedProperties()
+        userProperties = gvpivrProfile.userProperties?.asCategorizedProperties(),
+        folder = gvpivrProfile.getFolderReference()
     )
 
     override fun updateCfgObject(service: IConfService) =
@@ -94,6 +98,7 @@ data class GVPIVRProfile(
 
             setProperty("userProperties", toKeyValueCollection(userProperties), it)
             setProperty("state", toCfgObjectState(state), it)
+            setFolder(folder, it)
         }
 
     override fun checkMandatoryProperties(): Set<String> {
@@ -117,6 +122,7 @@ data class GVPIVRProfile(
             .add(reseller)
             .add(customer)
             .add(dids)
+            .add(folder)
             .toSet()
 }
 

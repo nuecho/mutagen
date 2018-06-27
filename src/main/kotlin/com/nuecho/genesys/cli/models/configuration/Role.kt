@@ -8,12 +8,16 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgAccessGroup
 import com.genesyslab.platform.applicationblocks.com.objects.CfgPerson
 import com.genesyslab.platform.applicationblocks.com.objects.CfgRole
 import com.nuecho.genesys.cli.Logging.warn
+import com.nuecho.genesys.cli.getFolderReference
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setFolder
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setProperty
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgObjectState
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toKeyValueCollection
 import com.nuecho.genesys.cli.models.configuration.reference.ConfigurationObjectReference
+import com.nuecho.genesys.cli.models.configuration.reference.FolderReference
 import com.nuecho.genesys.cli.models.configuration.reference.RoleReference
 import com.nuecho.genesys.cli.models.configuration.reference.TenantReference
+import com.nuecho.genesys.cli.models.configuration.reference.referenceSetBuilder
 import com.nuecho.genesys.cli.services.getObjectDbid
 import com.nuecho.genesys.cli.services.retrieveObject
 import com.nuecho.genesys.cli.toShortName
@@ -27,7 +31,8 @@ data class Role(
     val members: SortedSet<String>? = null,
     @JsonSerialize(using = CategorizedPropertiesSerializer::class)
     @JsonDeserialize(using = CategorizedPropertiesDeserializer::class)
-    override val userProperties: CategorizedProperties? = null
+    override val userProperties: CategorizedProperties? = null,
+    override val folder: FolderReference? = null
 ) : ConfigurationObject {
     @get:JsonIgnore
     override val reference = RoleReference(name)
@@ -38,6 +43,7 @@ data class Role(
         description = role.description,
         state = role.state?.toShortName(),
         userProperties = role.userProperties?.asCategorizedProperties(),
+        folder = role.getFolderReference(),
         members = role.members?.map {
             val dbid = it.objectDBID
             val type = it.objectType
@@ -66,7 +72,12 @@ data class Role(
             setProperty("description", description, it)
             setProperty("state", toCfgObjectState(state), it)
             setProperty("userProperties", toKeyValueCollection(userProperties), it)
+            setFolder(folder, it)
         }
 
-    override fun getReferences(): Set<ConfigurationObjectReference<*>> = setOf(tenant)
+    override fun getReferences(): Set<ConfigurationObjectReference<*>> =
+        referenceSetBuilder()
+            .add(tenant)
+            .add(folder)
+            .toSet()
 }

@@ -9,11 +9,14 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgEnumeratorValue
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectType.CFGEnumerator
 import com.nuecho.genesys.cli.asBoolean
 import com.nuecho.genesys.cli.core.InitializingBean
+import com.nuecho.genesys.cli.getFolderReference
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setFolder
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setProperty
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgObjectState
 import com.nuecho.genesys.cli.models.configuration.reference.ConfigurationObjectReference
 import com.nuecho.genesys.cli.models.configuration.reference.EnumeratorReference
 import com.nuecho.genesys.cli.models.configuration.reference.EnumeratorValueReference
+import com.nuecho.genesys.cli.models.configuration.reference.FolderReference
 import com.nuecho.genesys.cli.models.configuration.reference.TenantReference
 import com.nuecho.genesys.cli.models.configuration.reference.referenceSetBuilder
 import com.nuecho.genesys.cli.services.getObjectDbid
@@ -29,10 +32,10 @@ data class EnumeratorValue(
     val displayName: String? = null,
     val state: String? = null,
     val tenant: TenantReference? = null,
-
     @JsonSerialize(using = CategorizedPropertiesSerializer::class)
     @JsonDeserialize(using = CategorizedPropertiesDeserializer::class)
-    override val userProperties: CategorizedProperties? = null
+    override val userProperties: CategorizedProperties? = null,
+    override val folder: FolderReference? = null
 ) : ConfigurationObject, InitializingBean {
     @get:JsonIgnore
     override val reference = EnumeratorValueReference(name, enumerator)
@@ -48,7 +51,8 @@ data class EnumeratorValue(
         },
         name = enumeratorValue.name,
         state = enumeratorValue.state.toShortName(),
-        userProperties = enumeratorValue.userProperties?.asCategorizedProperties()
+        userProperties = enumeratorValue.userProperties?.asCategorizedProperties(),
+        folder = enumeratorValue.getFolderReference()
     )
 
     constructor(tenant: TenantReference, default: Boolean, displayName: String, enumerator: String, name: String) :
@@ -74,6 +78,7 @@ data class EnumeratorValue(
             setProperty("isDefault", ConfigurationObjects.toCfgFlag(default), cfgEnumeratorValue)
             setProperty("state", toCfgObjectState(state), cfgEnumeratorValue)
             setProperty("userProperties", ConfigurationObjects.toKeyValueCollection(userProperties), cfgEnumeratorValue)
+            setFolder(folder, cfgEnumeratorValue)
         }
 
     override fun checkMandatoryProperties(): Set<String> {
@@ -101,5 +106,6 @@ data class EnumeratorValue(
         referenceSetBuilder()
             .add(enumerator)
             .add(tenant)
+            .add(folder)
             .toSet()
 }

@@ -2,18 +2,25 @@ package com.nuecho.genesys.cli.models.configuration
 
 import com.genesyslab.platform.applicationblocks.com.objects.CfgGVPIVRProfile
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectState
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_FOLDER_REFERENCE
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_IVR_PROFILE_TYPE
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_OBJECT_DBID
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_REFERENCE
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockKeyValueCollection
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgFlag
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgObjectState
 import com.nuecho.genesys.cli.models.configuration.ConfigurationTestData.defaultProperties
+import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockConfigurationObjectRepository
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveCustomer
+import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveFolderByDbid
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveReseller
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveTenant
+import com.nuecho.genesys.cli.services.ConfigurationObjectRepository
 import com.nuecho.genesys.cli.services.ServiceMocks.mockConfService
 import com.nuecho.genesys.cli.toShortName
 import io.mockk.every
+import io.mockk.objectMockk
+import io.mockk.use
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.equalTo
 import org.junit.jupiter.api.Test
@@ -36,7 +43,8 @@ private val gvpIVRProfile = GVPIVRProfile(
     endServiceDate = SIMPLE_DATE_FORMAT.parse("2019-06-06T21:17:50.105+0000"),
     tfn = listOf("1888", "1877"),
     state = CfgObjectState.CFGEnabled.toShortName(),
-    userProperties = defaultProperties()
+    userProperties = defaultProperties(),
+    folder = DEFAULT_FOLDER_REFERENCE
 )
 
 class GVPIVRProfileTest : ConfigurationObjectTest(
@@ -53,18 +61,24 @@ class GVPIVRProfileTest : ConfigurationObjectTest(
         mockRetrieveCustomer(service)
         mockRetrieveReseller(service)
 
-        val cfgGVPIVRProfile = gvpIVRProfile.updateCfgObject(service)
+        objectMockk(ConfigurationObjectRepository).use {
+            mockConfigurationObjectRepository()
+            val cfgGVPIVRProfile = gvpIVRProfile.updateCfgObject(service)
 
-        with(cfgGVPIVRProfile) {
-            assertThat(name, equalTo(gvpIVRProfile.name))
-            assertThat(state, equalTo(ConfigurationObjects.toCfgObjectState(gvpIVRProfile.state)))
-            assertThat(userProperties.asCategorizedProperties(), equalTo(gvpIVRProfile.userProperties))
+            with(cfgGVPIVRProfile) {
+                assertThat(name, equalTo(gvpIVRProfile.name))
+                assertThat(state, equalTo(ConfigurationObjects.toCfgObjectState(gvpIVRProfile.state)))
+                assertThat(userProperties.asCategorizedProperties(), equalTo(gvpIVRProfile.userProperties))
+            }
         }
     }
 }
 
 private fun mockCfgGVPIVRProfile() = ConfigurationObjectMocks.mockCfgGVPIVRProfile(gvpIVRProfile.name).apply {
+    val service = mockConfService()
+    mockRetrieveFolderByDbid(service)
 
+    every { configurationService } returns service
     every { customer } returns null
     every { reseller } returns null
 
@@ -88,4 +102,5 @@ private fun mockCfgGVPIVRProfile() = ConfigurationObjectMocks.mockCfgGVPIVRProfi
 
     every { state } returns toCfgObjectState(gvpIVRProfile.state)
     every { userProperties } returns mockKeyValueCollection()
+    every { folderId } returns DEFAULT_OBJECT_DBID
 }

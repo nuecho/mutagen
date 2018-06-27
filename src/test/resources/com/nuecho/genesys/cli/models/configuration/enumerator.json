@@ -1,6 +1,16 @@
 {
   "description": "description",
   "displayName": "displayName",
+  "folder": {
+    "owner": {
+      "name": "tenant",
+      "type": "tenant"
+    },
+    "path": [
+      "folder"
+    ],
+    "type": "folder"
+  },
   "name": "name",
   "state": "enabled",
   "tenant": "tenant",

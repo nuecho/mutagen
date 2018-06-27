@@ -2,6 +2,16 @@
   "description": "a description",
   "displayName": "name",
   "endServiceDate": "2019-06-06T21:17:50.105+0000",
+  "folder": {
+    "owner": {
+      "name": "tenant",
+      "type": "tenant"
+    },
+    "path": [
+      "folder"
+    ],
+    "type": "folder"
+  },
   "name": "name",
   "notes": "a note",
   "startServiceDate": "2018-06-06T21:17:50.105+0000",

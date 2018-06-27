@@ -7,13 +7,16 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgSwitch
 import com.nuecho.genesys.cli.core.InitializingBean
+import com.nuecho.genesys.cli.getFolderReference
 import com.nuecho.genesys.cli.getReference
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setFolder
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setProperty
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgLinkType
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgObjectState
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toKeyValueCollection
 import com.nuecho.genesys.cli.models.configuration.reference.ApplicationReference
 import com.nuecho.genesys.cli.models.configuration.reference.ConfigurationObjectReference
+import com.nuecho.genesys.cli.models.configuration.reference.FolderReference
 import com.nuecho.genesys.cli.models.configuration.reference.PhysicalSwitchReference
 import com.nuecho.genesys.cli.models.configuration.reference.SwitchReference
 import com.nuecho.genesys.cli.models.configuration.reference.TenantReference
@@ -39,7 +42,8 @@ data class Switch(
     val state: String? = null,
     @JsonSerialize(using = CategorizedPropertiesSerializer::class)
     @JsonDeserialize(using = CategorizedPropertiesDeserializer::class)
-    override val userProperties: CategorizedProperties? = null
+    override val userProperties: CategorizedProperties? = null,
+    override val folder: FolderReference? = null
 ) : ConfigurationObject, InitializingBean {
     @get:JsonIgnore
     override val reference = SwitchReference(name, tenant)
@@ -53,7 +57,8 @@ data class Switch(
         switchAccessCodes = switch.switchAccessCodes?.map { SwitchAccessCode(it) },
         dnRange = switch.dnRange,
         state = switch.state?.toShortName(),
-        userProperties = switch.userProperties?.asCategorizedProperties()
+        userProperties = switch.userProperties?.asCategorizedProperties(),
+        folder = switch.getFolderReference()
     )
 
     override fun updateCfgObject(service: IConfService) =
@@ -71,6 +76,7 @@ data class Switch(
             setProperty("DNRange", dnRange, switch)
             setProperty("state", toCfgObjectState(state), switch)
             setProperty("userProperties", toKeyValueCollection(userProperties), switch)
+            setFolder(folder, switch)
         }
 
     override fun checkMandatoryProperties(): Set<String> =
@@ -86,5 +92,6 @@ data class Switch(
             .add(physicalSwitch)
             .add(tServer)
             .add(switchAccessCodes?.mapNotNull { it.switch })
+            .add(folder)
             .toSet()
 }

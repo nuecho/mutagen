@@ -1,5 +1,15 @@
 {
   "channel": "achannel",
+  "folder": {
+    "owner": {
+      "name": "tenant",
+      "type": "tenant"
+    },
+    "path": [
+      "folder"
+    ],
+    "type": "folder"
+  },
   "name": "name",
   "notes": "some notes",
   "reseller": "areseller",

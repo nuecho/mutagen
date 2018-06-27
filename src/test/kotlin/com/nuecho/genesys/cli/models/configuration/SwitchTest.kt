@@ -6,6 +6,7 @@ import com.genesyslab.platform.configuration.protocol.types.CfgLinkType
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectState.CFGEnabled
 import com.genesyslab.platform.configuration.protocol.types.CfgRouteType
 import com.genesyslab.platform.configuration.protocol.types.CfgTargetType
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_FOLDER_REFERENCE
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_OBJECT_DBID
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_REFERENCE
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgApplication
@@ -20,14 +21,18 @@ import com.nuecho.genesys.cli.models.configuration.ConfigurationTestData.default
 import com.nuecho.genesys.cli.models.configuration.reference.ApplicationReference
 import com.nuecho.genesys.cli.models.configuration.reference.PhysicalSwitchReference
 import com.nuecho.genesys.cli.models.configuration.reference.SwitchReference
+import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockConfigurationObjectRepository
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveApplication
+import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveFolderByDbid
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrievePhysicalSwitch
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveTenant
+import com.nuecho.genesys.cli.services.ConfigurationObjectRepository
 import com.nuecho.genesys.cli.services.ServiceMocks.mockConfService
 import com.nuecho.genesys.cli.services.retrieveObject
 import com.nuecho.genesys.cli.toShortName
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.objectMockk
 import io.mockk.staticMockk
 import io.mockk.use
 import org.hamcrest.MatcherAssert.assertThat
@@ -73,7 +78,8 @@ private val mainSwitch = Switch(
             reasonSource = "reasonSource2",
             extensionSource = "extensionSource2"
         )
-    )
+    ),
+    folder = DEFAULT_FOLDER_REFERENCE
 )
 
 class SwitchTest : ConfigurationObjectTest(
@@ -84,45 +90,48 @@ class SwitchTest : ConfigurationObjectTest(
 ) {
     @Test
     fun `updateCfgObject should properly create CfgSwitch`() {
+        val service = mockConfService()
+        mockRetrieveTenant(service)
+        mockRetrievePhysicalSwitch(service)
+        mockRetrieveApplication(service)
+
         staticMockk("com.nuecho.genesys.cli.services.ConfServiceExtensionsKt").use {
             val otherCfgSwitch = mockOtherCfgSwitch()
-
-            val service = mockConfService()
             every { service.retrieveObject(SwitchReference(MAIN_SWITCH, DEFAULT_TENANT_REFERENCE)) } returns null
             every { service.retrieveObject(SwitchReference(OTHER_SWITCH, DEFAULT_TENANT_REFERENCE)) } returns otherCfgSwitch
-            mockRetrieveTenant(service)
-            mockRetrievePhysicalSwitch(service)
-            mockRetrieveApplication(service)
 
-            val cfgSwitch = mainSwitch.updateCfgObject(service)
+            objectMockk(ConfigurationObjectRepository).use {
+                mockConfigurationObjectRepository()
+                val cfgSwitch = mainSwitch.updateCfgObject(service)
 
-            with(cfgSwitch) {
-                assertThat(name, equalTo(mainSwitch.name))
-                assertThat(physSwitchDBID, equalTo(DEFAULT_OBJECT_DBID))
-                assertThat(tServerDBID, equalTo(DEFAULT_OBJECT_DBID))
-                assertThat(linkType, equalTo(CfgLinkType.CFGMadgeLink))
-                assertThat(dnRange, equalTo(mainSwitch.dnRange))
-                assertThat(state, equalTo(toCfgObjectState(mainSwitch.state)))
-                assertThat(userProperties.asCategorizedProperties(), equalTo(mainSwitch.userProperties))
+                with(cfgSwitch) {
+                    assertThat(name, equalTo(mainSwitch.name))
+                    assertThat(physSwitchDBID, equalTo(DEFAULT_OBJECT_DBID))
+                    assertThat(tServerDBID, equalTo(DEFAULT_OBJECT_DBID))
+                    assertThat(linkType, equalTo(CfgLinkType.CFGMadgeLink))
+                    assertThat(dnRange, equalTo(mainSwitch.dnRange))
+                    assertThat(state, equalTo(toCfgObjectState(mainSwitch.state)))
+                    assertThat(userProperties.asCategorizedProperties(), equalTo(mainSwitch.userProperties))
 
-                assertThat(switchAccessCodes, hasSize(2))
+                    assertThat(switchAccessCodes, hasSize(2))
 
-                switchAccessCodes.zip(mainSwitch.switchAccessCodes!!) { actual, expected ->
-                    with(actual) {
-                        assertThat(accessCode, equalTo(expected.accessCode))
-                        assertThat(targetType, equalTo(toCfgTargetType(expected.targetType)))
-                        assertThat(routeType, equalTo(toCfgRouteType(expected.routeType)))
-                        assertThat(dnSource, equalTo(expected.dnSource))
-                        assertThat(destinationSource, equalTo(expected.destinationSource))
-                        assertThat(locationSource, equalTo(expected.locationSource))
-                        assertThat(dnisSource, equalTo(expected.dnisSource))
-                        assertThat(reasonSource, equalTo(expected.reasonSource))
-                        assertThat(extensionSource, equalTo(expected.extensionSource))
+                    switchAccessCodes.zip(mainSwitch.switchAccessCodes!!) { actual, expected ->
+                        with(actual) {
+                            assertThat(accessCode, equalTo(expected.accessCode))
+                            assertThat(targetType, equalTo(toCfgTargetType(expected.targetType)))
+                            assertThat(routeType, equalTo(toCfgRouteType(expected.routeType)))
+                            assertThat(dnSource, equalTo(expected.dnSource))
+                            assertThat(destinationSource, equalTo(expected.destinationSource))
+                            assertThat(locationSource, equalTo(expected.locationSource))
+                            assertThat(dnisSource, equalTo(expected.dnisSource))
+                            assertThat(reasonSource, equalTo(expected.reasonSource))
+                            assertThat(extensionSource, equalTo(expected.extensionSource))
+                        }
                     }
-                }
 
-                assertThat(switchAccessCodes.elementAt(0).switchDBID, equalTo(OTHER_SWITCH_DBID))
-                assertThat(switchAccessCodes.elementAt(1).switchDBID, equalTo(0))
+                    assertThat(switchAccessCodes.elementAt(0).switchDBID, equalTo(OTHER_SWITCH_DBID))
+                    assertThat(switchAccessCodes.elementAt(1).switchDBID, equalTo(0))
+                }
             }
         }
     }
@@ -130,6 +139,8 @@ class SwitchTest : ConfigurationObjectTest(
 
 private fun mockMainCfgSwitch(): CfgSwitch {
     val service = mockConfService()
+    mockRetrieveFolderByDbid(service)
+
     staticMockk("com.nuecho.genesys.cli.services.ConfServiceExtensionsKt").use {
         val otherCfgSwitch = mockOtherCfgSwitch()
         every {
@@ -160,6 +171,7 @@ private fun mockMainCfgSwitch(): CfgSwitch {
         val objectState = toCfgObjectState(mainSwitch.state)
 
         return mainCfgSwitch.apply {
+            every { configurationService } returns service
             every { linkType } returns cfgLinkType
             every { dnRange } returns mainSwitch.dnRange
             every { switchAccessCodes } returns accessCodes
@@ -167,6 +179,7 @@ private fun mockMainCfgSwitch(): CfgSwitch {
             every { userProperties } returns mockKeyValueCollection()
             every { physSwitch } returns physicalSwitch
             every { tServer } returns tServerApplication
+            every { folderId } returns DEFAULT_OBJECT_DBID
         }
     }
 }

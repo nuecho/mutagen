@@ -21,6 +21,10 @@ exceptions:
   TooGenericExceptionCaught:
     active: false
 
+naming:
+  FunctionMaxLength:
+    maximumFunctionNameLength: 40
+
 performance:
   SpreadOperator:
     active: false
