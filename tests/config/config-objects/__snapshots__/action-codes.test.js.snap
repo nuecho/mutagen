@@ -9,6 +9,15 @@ Completed. 1 object(s) imported.
 }
 `;
 
+exports[`[mutagen actionCodes config import-export] should throw exception when new actionCodes to import miss mandatory properties actionCodes: exception has been thrown 1`] = `
+Object {
+  "stderr": "Mandatory properties [code] not set in actioncode 'name: 'emptyCfgObjectTest', type: 'transfer', tenant: 'Environment''
+Cannot import configuration: some configuration objects' mandatory properties for creation are not set.
+",
+  "stdout": "",
+}
+`;
+
 exports[`[mutagen actionCodes config import-export] should update the actionCodes: the actionCodes have been updated 1`] = `
 Object {
   "stderr": "",

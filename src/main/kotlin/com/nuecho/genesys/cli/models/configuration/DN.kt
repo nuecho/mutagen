@@ -117,7 +117,7 @@ data class DN(
             setProperty("association", association, it)
 
             // Routing
-            setProperty("routeType", toCfgRouteType(routeType), it)
+            setProperty(ROUTE_TYPE, toCfgRouteType(routeType), it)
             setProperty("destDNDBIDs", destinationDNs?.mapNotNull { service.getObjectDbid(it) }, it)
 
             setProperty("DNLoginID", dnLoginID, it)
@@ -138,6 +138,9 @@ data class DN(
 
             setProperty("contractDBID", service.getObjectDbid(contract), it)
         }
+
+    override fun checkMandatoryProperties(): Set<String> =
+        if (routeType == null) setOf(ROUTE_TYPE) else emptySet()
 
     override fun applyDefaultValues() {
         // registerAll = CfgDNRegisterFlag.CFGDRTrue.toShortName()

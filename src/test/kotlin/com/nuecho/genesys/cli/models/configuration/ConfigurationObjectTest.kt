@@ -2,19 +2,27 @@ package com.nuecho.genesys.cli.models.configuration
 
 import com.nuecho.genesys.cli.TestResources.loadJsonConfiguration
 import com.nuecho.genesys.cli.models.configuration.ConfigurationAsserts.checkSerialization
+import org.hamcrest.MatcherAssert.assertThat
+import org.hamcrest.Matchers.equalTo
 import org.junit.jupiter.api.Test
 
 @Suppress("UnnecessaryAbstractClass")
 abstract class ConfigurationObjectTest(
     val configurationObject: ConfigurationObject,
     val emptyConfigurationObject: ConfigurationObject,
+    val mandatoryProperties: Set<String>,
     val importedConfigurationObject: ConfigurationObject?
 ) {
 
-    constructor(configurationObject: ConfigurationObject, emptyConfigurationObject: ConfigurationObject) :
-            this(configurationObject, emptyConfigurationObject, null)
+    constructor(configurationObject: ConfigurationObject, emptyConfigurationObject: ConfigurationObject, mandatoryProperties: Set<String>) :
+            this(configurationObject, emptyConfigurationObject, mandatoryProperties, null)
 
     val configurationObjectType = configurationObject::class.simpleName!!.toLowerCase()
+
+    @Test
+    fun `empty object missing mandatory properties should throw MandatoryPropertiesNotSetException`() {
+        assertThat(emptyConfigurationObject.checkMandatoryProperties(), equalTo(mandatoryProperties))
+    }
 
     @Test
     fun `empty object should properly serialize`() {

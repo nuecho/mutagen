@@ -28,7 +28,6 @@ import com.nuecho.genesys.cli.toShortName
 data class Switch(
     val tenant: TenantReference,
     val name: String,
-
     val physicalSwitch: PhysicalSwitchReference? = null,
 
     @get:JsonProperty("tServer")
@@ -73,6 +72,9 @@ data class Switch(
             setProperty("state", toCfgObjectState(state), switch)
             setProperty("userProperties", toKeyValueCollection(userProperties), switch)
         }
+
+    override fun checkMandatoryProperties(): Set<String> =
+        if (physicalSwitch == null) setOf(PHYSICAL_SWITCH) else emptySet()
 
     override fun afterPropertiesSet() {
         switchAccessCodes?.forEach { it.updateTenantReferences(tenant) }

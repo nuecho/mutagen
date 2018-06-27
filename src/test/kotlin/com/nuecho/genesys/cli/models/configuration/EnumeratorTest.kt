@@ -31,6 +31,7 @@ private val enumerator = Enumerator(
 class EnumeratorTest : ConfigurationObjectTest(
     enumerator,
     Enumerator(tenant = DEFAULT_TENANT_REFERENCE, name = NAME),
+    setOf(DISPLAY_NAME, TYPE),
     Enumerator(mockCfgEnumerator())
 ) {
     @Test

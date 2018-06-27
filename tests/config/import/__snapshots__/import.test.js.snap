@@ -46,7 +46,7 @@ exports[`[mutagen config import file] should not import any object if some depen
 Object {
   "stderr": "Cannot find script 'MissingDependencyTenant1/NonExistingScript1' (referenced by 'MissingDependencyTenant1')
 Cannot find script 'MissingDependencyTenant2/NonExistingScript2' (referenced by 'MissingDependencyTenant2')
-Cannot import configuration: some configuration object dependency could not be found.
+Cannot import configuration: some configuration objects' dependencies could not be found.
 ",
   "stdout": "",
 }
@@ -63,7 +63,7 @@ Object {
 exports[`[mutagen config import file] should not import the object if it has an invalid tenant: no object has been imported 1`] = `
 Object {
   "stderr": "Cannot find tenant 'Invalid tenant' (referenced by 'Invalid tenant/switchWithInvalidTenant')
-Cannot import configuration: some configuration object dependency could not be found.
+Cannot import configuration: some configuration objects' dependencies could not be found.
 ",
   "stdout": "",
 }

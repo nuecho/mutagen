@@ -91,6 +91,7 @@ private val person = Person(
 class PersonTest : ConfigurationObjectTest(
     person,
     Person(tenant = DEFAULT_TENANT_REFERENCE, employeeId = EMPLOYEE_ID),
+    setOf(USER_NAME),
     Person(mockCfgPerson())
 ) {
     @Test

@@ -1,17 +1,27 @@
+const defaultOptions = {
+  checkKey: null,
+  initialNumberOfObjects: 0,
+  checkInitialExport: true,
+  checkMandatoryProperties: true
+};
+
 function cfgObjectTests (
   cfgObjectType,
   configurationFile,
-  checkKey = null,
-  initialNumberOfObjects = 0,
-  checkInitialExport = true
+  options = {}
 ) {
   describe(`[mutagen ${cfgObjectType} config import-export]`, () => {
-    if (checkInitialExport) {
-      cfgObjectInitialExportTest(cfgObjectType, initialNumberOfObjects);
+    const mergedOptions = {...defaultOptions, ...options}
+
+    if (mergedOptions.checkInitialExport) {
+      cfgObjectInitialExportTest(cfgObjectType, mergedOptions.initialNumberOfObjects);
     }
-    cfgObjectCreationTest(cfgObjectType, getResourcePath(configurationFile));
-    cfgObjectUpdateTest(cfgObjectType, getResourcePath(configurationFile));
-    cfgObjectExportTest(cfgObjectType, checkKey);
+    if (mergedOptions.checkMandatoryProperties) {
+      cfgObjectMissingPropertiesTest(cfgObjectType, getResourcePath(`config-objects/empty-${configurationFile}`));
+    }
+    cfgObjectCreationTest(cfgObjectType, getResourcePath(`config-objects/${configurationFile}`));
+    cfgObjectUpdateTest(cfgObjectType, getResourcePath(`config-objects/${configurationFile}`));
+    cfgObjectExportTest(cfgObjectType, mergedOptions.checkKey);
   });
 };
 
@@ -21,14 +31,24 @@ function cfgObjectInitialExportTest(cfgObjectType, initialNumberOfObjects) {
   test(`should ${shouldExport}initially export ${cfgObjectType}`, () => {
     const { code, output } = mutagen(`config export --format JSON`);
     const exportedConfig = JSON.parse(output.stdout);
+    // every tenant has a copy of every enumerator, and the number of tenants in the config varies if other tests have already imported tenants
+    const expectedNumberOfObjects = cfgObjectType === "enumerators" ? exportedConfig.tenants.length * initialNumberOfObjects : initialNumberOfObjects;
 
     if (initialNumberOfObjects)
-      expect(exportedConfig[cfgObjectType].length).toBe(initialNumberOfObjects);
+      expect(exportedConfig[cfgObjectType].length).toBe(expectedNumberOfObjects);
     else expect(exportedConfig[cfgObjectType]).toBeUndefined;
     expect(code).toBe(0);
   });
 };
 
+function cfgObjectMissingPropertiesTest(cfgObjectType, emptyConfigurationPath) {
+  test(`should throw exception when new ${cfgObjectType} to import miss mandatory properties ${cfgObjectType}`, () => {
+    const { code, output } = mutagen(`config import ${emptyConfigurationPath}`);
+
+    expect(output).toMatchSnapshot(`exception has been thrown`);
+    expect(code).toBe(1);
+  });
+};
 
 function cfgObjectCreationTest(cfgObjectType, configurationPath) {
   test(`should create the ${cfgObjectType}`, () => {
@@ -52,19 +72,17 @@ function cfgObjectExportTest(cfgObjectType, checkKey = null) {
   test(`should properly export the imported ${cfgObjectType}`, () => {
     const { code, output } = mutagen(`config export --format JSON`);
     const exportedConfig = JSON.parse(output.stdout);
-    // every tenant has a copy of every enumerator, and the number of tenants in the config varies if other tests import tenants
-    const expectedNumberOfObjects = cfgObjectType === "enumerators" ? exportedConfig.tenants.length : 1;
 
     expect(code).toBe(0);    
     expect(exportedConfig[cfgObjectType]).toBeDefined;
     if(checkKey)
-      expect(exportedConfig[cfgObjectType].filter(checkKey).length).toBe(expectedNumberOfObjects);
+      expect(exportedConfig[cfgObjectType].filter(checkKey).length).toBe(1);
     else    
-      expect(exportedConfig[cfgObjectType].filter(cfgObject => cfgObject.name === "cfgObjectTest").length).toBe(expectedNumberOfObjects);
+      expect(exportedConfig[cfgObjectType].filter(cfgObject => cfgObject.name === "cfgObjectTest").length).toBe(1);
   });
 };
 
-const importDependencies = (dependenciesFile) => {mutagen(`config import --auto-confirm ${getResourcePath(dependenciesFile)}`);}
+const importDependencies = (dependenciesFile) => {mutagen(`config import --auto-confirm ${getResourcePath(`config-objects/${dependenciesFile}`)}`);}
 
 module.exports = {
   cfgObjectTests,

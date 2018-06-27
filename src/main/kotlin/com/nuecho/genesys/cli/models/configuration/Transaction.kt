@@ -49,7 +49,7 @@ data class Transaction(
             }
 
             setProperty("tenantDBID", service.getObjectDbid(tenant), it)
-            setProperty("alias", alias, it)
+            setProperty(ALIAS, alias, it)
             setProperty("description", description, it)
             setProperty("recordPeriod", recordPeriod, it)
             setProperty("type", toCfgTransactionType(type), it)
@@ -58,6 +58,9 @@ data class Transaction(
             setProperty("userProperties", toKeyValueCollection(userProperties), it)
             setProperty("state", ConfigurationObjects.toCfgObjectState(state), it)
         }
+
+    override fun checkMandatoryProperties(): Set<String> =
+        if (alias == null) setOf(ALIAS) else emptySet()
 
     override fun applyDefaultValues() {
         // alias = name

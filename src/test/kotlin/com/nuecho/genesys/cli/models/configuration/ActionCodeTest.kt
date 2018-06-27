@@ -38,6 +38,7 @@ private val actionCode = ActionCode(
 class ActionCodeTest : ConfigurationObjectTest(
     actionCode,
     ActionCode(tenant = DEFAULT_TENANT_REFERENCE, name = NAME, type = TYPE),
+    setOf(CODE),
     ActionCode(mockCfgActionCode())
 ) {
     @Test

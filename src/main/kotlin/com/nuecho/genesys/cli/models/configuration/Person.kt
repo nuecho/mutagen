@@ -72,7 +72,7 @@ data class Person(
         (service.retrieveObject(reference) ?: CfgPerson(service)).also {
             setProperty("tenantDBID", service.getObjectDbid(tenant), it)
             setProperty("employeeID", employeeId, it)
-            setProperty("userName", userName, it)
+            setProperty(USER_NAME, userName, it)
             setProperty("externalID", externalId, it)
             setProperty("firstName", firstName, it)
             setProperty("lastName", lastName, it)
@@ -88,6 +88,9 @@ data class Person(
             setProperty("userProperties", toKeyValueCollection(userProperties), it)
             setProperty("agentInfo", agentInfo?.toCfgAgentInfo(it), it)
         }
+
+    override fun checkMandatoryProperties(): Set<String> =
+        if (userName == null) setOf(USER_NAME) else emptySet()
 
     override fun afterPropertiesSet() {
         agentInfo?.updateTenantReferences(tenant)

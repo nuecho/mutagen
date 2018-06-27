@@ -62,10 +62,10 @@ data class GVPReseller(
         (service.retrieveObject(reference) ?: CfgGVPReseller(service)).also {
             setProperty("tenantDBID", service.getObjectDbid(tenant), it)
             setProperty("name", name, it)
-            setProperty("displayName", displayName ?: name, it)
+            setProperty(DISPLAY_NAME, displayName ?: name, it)
             setProperty("notes", notes, it)
             setProperty("timeZoneDBID", service.getObjectDbid(timeZone ?: TimeZoneReference(tenant = tenant)), it)
-            setProperty("isParentNSP", toCfgFlag(isParentNSP ?: false), it)
+            setProperty(IS_PARENT_NSP, toCfgFlag(isParentNSP ?: false), it)
 
             if (startDate != null) {
                 val zoneId = ZoneId.of(timeZone?.primaryKey ?: "GMT", ZoneId.SHORT_IDS)

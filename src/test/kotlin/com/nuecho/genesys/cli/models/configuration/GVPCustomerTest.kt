@@ -33,6 +33,7 @@ private val gvpCustomer = GVPCustomer(
 class GVPCustomerTest : ConfigurationObjectTest(
     gvpCustomer,
     GVPCustomer(name = NAME),
+    setOf(CHANNEL, RESELLER, TENANT),
     GVPCustomer(mockCfgGVPCustomer())
 ) {
     @Test

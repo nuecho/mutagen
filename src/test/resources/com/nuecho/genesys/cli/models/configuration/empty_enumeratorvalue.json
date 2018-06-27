@@ -1,6 +1,5 @@
 {
   "default": false,
-  "displayName": "displayName",
   "enumerator": "enumerator",
   "name": "enumeratorValue"
 }

@@ -1,1 +1,1 @@
-cfgObjectTests("tenants", "config-objects/tenants-config.json", null, 1);
+cfgObjectTests("tenants", "tenants-config.json", {initialNumberOfObjects: 1, checkMandatoryProperties: false});

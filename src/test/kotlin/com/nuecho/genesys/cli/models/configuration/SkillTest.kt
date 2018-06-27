@@ -26,6 +26,7 @@ private val skill = Skill(
 class SkillTest : ConfigurationObjectTest(
     skill,
     Skill(tenant = DEFAULT_TENANT_REFERENCE, name = NAME),
+    emptySet(),
     Skill(mockCfgSkill())
 ) {
     @Test

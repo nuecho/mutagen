@@ -49,7 +49,7 @@ data class AccessGroup(
                 }
             }
 
-            setProperty("memberIDs", members?.mapNotNull { it.toCfgID(service, cfgAccessGroup) }, cfgAccessGroup)
+            setProperty("memberIDs", members?.map { it.toCfgID(service, cfgAccessGroup) }, cfgAccessGroup)
             setProperty("groupInfo", groupInfo, cfgAccessGroup)
             setProperty("type", toCfgAccessGroupType(type), cfgAccessGroup)
         }

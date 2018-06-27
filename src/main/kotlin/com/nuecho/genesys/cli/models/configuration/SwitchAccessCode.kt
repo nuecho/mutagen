@@ -22,8 +22,8 @@ import com.nuecho.genesys.cli.toShortName
 data class SwitchAccessCode(
     val switch: SwitchReference? = null,
     val accessCode: String? = null,
-    val targetType: String? = null,
-    val routeType: String? = null,
+    val targetType: String,
+    val routeType: String,
     val dnSource: String? = null,
     val destinationSource: String? = null,
     val locationSource: String? = null,
@@ -34,8 +34,8 @@ data class SwitchAccessCode(
     constructor(switchAccessCode: CfgSwitchAccessCode) : this(
         switch = if (switchAccessCode.switchDBID == 0) null else switchAccessCode.switch.getReference(),
         accessCode = switchAccessCode.accessCode,
-        targetType = switchAccessCode.targetType?.toShortName(),
-        routeType = switchAccessCode.routeType?.toShortName(),
+        targetType = switchAccessCode.targetType.toShortName(),
+        routeType = switchAccessCode.routeType.toShortName(),
         dnSource = switchAccessCode.dnSource,
         destinationSource = switchAccessCode.destinationSource,
         locationSource = switchAccessCode.locationSource,

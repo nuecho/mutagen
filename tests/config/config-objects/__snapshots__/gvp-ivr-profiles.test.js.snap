@@ -9,6 +9,15 @@ Completed. 1 object(s) imported.
 }
 `;
 
+exports[`[mutagen gvpIVRProfiles config import-export] should throw exception when new gvpIVRProfiles to import miss mandatory properties gvpIVRProfiles: exception has been thrown 1`] = `
+Object {
+  "stderr": "Mandatory properties [displayName, tenant] not set in gvpivrprofile 'emptyCfgObjectTest'
+Cannot import configuration: some configuration objects' mandatory properties for creation are not set.
+",
+  "stdout": "",
+}
+`;
+
 exports[`[mutagen gvpIVRProfiles config import-export] should update the gvpIVRProfiles: the gvpIVRProfiles have been updated 1`] = `
 Object {
   "stderr": "",

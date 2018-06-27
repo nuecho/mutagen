@@ -1,3 +1,3 @@
 const checkKey = (cfgObject) => {return cfgObject.employeeId === "cfgObjectTest"};
 
-cfgObjectTests("persons", "config-objects/persons-config.json", checkKey, 1);
+cfgObjectTests("persons", "persons-config.json", {checkKey: checkKey, initialNumberOfObjects: 1});

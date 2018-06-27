@@ -9,6 +9,15 @@ Completed. 1 object(s) imported.
 }
 `;
 
+exports[`[mutagen dns config import-export] should throw exception when new dns to import miss mandatory properties dns: exception has been thrown 1`] = `
+Object {
+  "stderr": "Mandatory properties [routeType] not set in dn 'number: '1234', switch: 'switchForDn', type: 'Extension', tenant: 'Environment''
+Cannot import configuration: some configuration objects' mandatory properties for creation are not set.
+",
+  "stdout": "",
+}
+`;
+
 exports[`[mutagen dns config import-export] should update the dns: the dns have been updated 1`] = `
 Object {
   "stderr": "",

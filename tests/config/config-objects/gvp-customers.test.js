@@ -1,2 +1,2 @@
-importDependencies("config-objects/gvp-customers-dependencies-config.json");
-cfgObjectTests("gvpCustomers", "config-objects/gvp-customers-config.json");
+importDependencies("gvp-customers-dependencies-config.json");
+cfgObjectTests("gvpCustomers", "gvp-customers-config.json");

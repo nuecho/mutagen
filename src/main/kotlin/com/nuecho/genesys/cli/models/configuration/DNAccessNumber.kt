@@ -8,7 +8,6 @@ import com.nuecho.genesys.cli.models.configuration.reference.TenantReference
 data class DNAccessNumber(
     val number: String,
     val switch: SwitchReference
-
 ) {
     constructor(dnAccessNumber: CfgDNAccessNumber) : this(
         number = dnAccessNumber.number,

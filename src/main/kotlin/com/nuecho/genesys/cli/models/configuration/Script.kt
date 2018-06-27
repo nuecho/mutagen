@@ -50,11 +50,14 @@ data class Script(
 
             setProperty("tenantDBID", service.getObjectDbid(tenant), it)
             setProperty("name", name, it)
-            setProperty("type", toCfgScriptType(type), it)
+            setProperty(TYPE, toCfgScriptType(type), it)
             setProperty("index", index, it)
             setProperty("state", toCfgObjectState(state), it)
             setProperty("userProperties", toKeyValueCollection(userProperties), it)
         }
+
+    override fun checkMandatoryProperties(): Set<String> =
+        if (type == null) setOf(TYPE) else emptySet()
 
     override fun applyDefaultValues() {
         // type = CfgScriptType.CFGNoScript.toShortName()

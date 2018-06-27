@@ -31,6 +31,7 @@ private val gvpReseller = GVPReseller(
 class GVPResellerTest : ConfigurationObjectTest(
     gvpReseller,
     GVPReseller(tenant = DEFAULT_TENANT_REFERENCE, name = NAME),
+    emptySet(),
     GVPReseller(mockCfgGVPReseller())
 ) {
     @Test

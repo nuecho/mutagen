@@ -46,11 +46,14 @@ data class ActionCode(
             setProperty("tenantDBID", service.getObjectDbid(tenant), it)
             setProperty("name", name, it)
             setProperty("type", toCfgActionCodeType(type), it)
-            setProperty("code", code, it)
+            setProperty(CODE, code, it)
             setProperty("subcodes", toCfgSubcodeList(subcodes, it), it)
             setProperty("state", toCfgObjectState(state), it)
             setProperty("userProperties", toKeyValueCollection(userProperties), it)
         }
+
+    override fun checkMandatoryProperties(): Set<String> =
+        if (code == null) setOf(CODE) else emptySet()
 
     override fun getReferences(): Set<ConfigurationObjectReference<*>> = setOf(tenant)
 }

@@ -9,6 +9,15 @@ Completed. 1 object(s) imported.
 }
 `;
 
+exports[`[mutagen physicalSwitches config import-export] should throw exception when new physicalSwitches to import miss mandatory properties physicalSwitches: exception has been thrown 1`] = `
+Object {
+  "stderr": "Mandatory properties [type] not set in physicalswitch 'emptyCfgObjectTest'
+Cannot import configuration: some configuration objects' mandatory properties for creation are not set.
+",
+  "stdout": "",
+}
+`;
+
 exports[`[mutagen physicalSwitches config import-export] should update the physicalSwitches: the physicalSwitches have been updated 1`] = `
 Object {
   "stderr": "",

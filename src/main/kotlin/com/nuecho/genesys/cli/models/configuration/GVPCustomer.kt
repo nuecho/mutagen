@@ -65,7 +65,7 @@ data class GVPCustomer(
     override fun updateCfgObject(service: IConfService) =
         (service.retrieveObject(reference) ?: CfgGVPCustomer(service)).also {
             setProperty("name", name, it)
-            setProperty("channel", channel, it)
+            setProperty(CHANNEL, channel, it)
             setProperty("displayName", displayName ?: name, it)
             setProperty("notes", notes, it)
             setProperty("isProvisioned", toCfgFlag(isProvisioned ?: false), it)
@@ -77,6 +77,19 @@ data class GVPCustomer(
             setProperty("userProperties", toKeyValueCollection(userProperties), it)
             setProperty("state", toCfgObjectState(state), it)
         }
+
+    override fun checkMandatoryProperties(): Set<String> {
+        val missingMandatoryProperties = mutableSetOf<String>()
+
+        if (channel == null)
+            missingMandatoryProperties.add(CHANNEL)
+        if (reseller == null)
+            missingMandatoryProperties.add(RESELLER)
+        if (tenant == null)
+            missingMandatoryProperties.add(TENANT)
+
+        return missingMandatoryProperties
+    }
 
     override fun afterPropertiesSet() {
         reseller?.tenant = tenant

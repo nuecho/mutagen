@@ -1,1 +1,1 @@
-cfgObjectTests("transactions", "config-objects/transactions-config.json");
+cfgObjectTests("transactions", "transactions-config.json");
