@@ -1,4 +1,4 @@
-name,description,12,14,10
-foo,fooscription,foo.fr.wav,foo.en.wav,
-bar,barscription,bar.fr.wav,audio.wav,
-baz,bazscription,baz.fr.wav,baz.en.wav,
+name,type,description,12,14,10,messageArId,
+foo,ANNOUNCEMENT,fooscription,foo.fr.wav,foo.en.wav,
+bar,ANNOUNCEMENT,barscription,bar.fr.wav,audio.wav,
+baz,MUSIC,bazscription,baz.fr.wav,baz.en.wav,

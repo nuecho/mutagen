@@ -35,12 +35,6 @@ object AudioServices {
     const val CREATE_MESSAGE_SUCCESS_CODE = 302
     const val SUCCESS_CODE = 200
 
-    // Message Map Keys
-    const val NAME = "name"
-    const val DESCRIPTION = "description"
-    const val MESSAGE_AR_ID = "messageArId"
-    const val TENANT_ID = "tenantId"
-
     // Headers
     const val CONTENT_TYPE = "Content-Type"
     const val APPLICATION_JSON = "application/json"
@@ -75,11 +69,11 @@ object AudioServices {
         return String(encryptedChars.map { it.toChar() }.toCharArray())
     }
 
-    internal fun createMessage(name: String, description: String, gaxUrl: String): String {
+    internal fun createMessage(name: String, type: MessageType, description: String, gaxUrl: String): String {
         "$gaxUrl$AUDIO_RESOURCES_PATH"
             .httpPost()
             .header(CONTENT_TYPE to APPLICATION_JSON)
-            .body(CreateMessageRequest(name, description).toJson())
+            .body(CreateMessageRequest(name, description, type).toJson())
             .responseString()
             .let { (request, response, result) ->
                 checkStatusCode(
@@ -143,10 +137,10 @@ object AudioServices {
             }
     }
 
-    fun getMessagesData(gaxUrl: String): List<Message> {
+    fun getMessagesData(gaxUrl: String): List<ArmMessage> {
         val messageListType = TypeFactory
             .defaultInstance()
-            .constructCollectionType(List::class.java, Message::class.java)
+            .constructCollectionType(List::class.java, ArmMessage::class.java)
 
         "$gaxUrl$AUDIO_MESSAGES_PATH"
             .httpGet()
@@ -211,22 +205,9 @@ object AudioServices {
 
 class AudioServicesException(message: String) : Exception(message)
 
-private data class LoginRequest(
-    val username: String,
-    val password: String,
-    @get:JsonProperty("isPasswordEncrypted")
-    val isPasswordEncrypted: Boolean
-)
-
-private data class CreateMessageRequest(
+data class ArmMessage(
     val name: String,
-    val description: String,
-    val type: String = "ANNOUNCEMENT",
-    val privateResource: Boolean = false
-)
-
-data class Message(
-    val name: String,
+    val type: MessageType,
     val description: String,
     val id: String,
     val arId: Int,
@@ -245,7 +226,25 @@ data class Personality(
     val id: String
 )
 
+enum class MessageType {
+    ANNOUNCEMENT, MUSIC
+}
+
 internal data class AudioRequestInfo(
     val id: String,
     val fileId: String
+)
+
+private data class LoginRequest(
+    val username: String,
+    val password: String,
+    @get:JsonProperty("isPasswordEncrypted")
+    val isPasswordEncrypted: Boolean
+)
+
+private data class CreateMessageRequest(
+    val name: String,
+    val description: String,
+    val type: MessageType,
+    val privateResource: Boolean = false
 )

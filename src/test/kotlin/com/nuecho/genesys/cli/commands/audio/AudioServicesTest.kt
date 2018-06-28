@@ -1,6 +1,5 @@
 package com.nuecho.genesys.cli.commands.audio
 
-import com.fasterxml.jackson.dataformat.csv.CsvSchema
 import com.github.kittinunf.fuel.core.Client
 import com.github.kittinunf.fuel.core.FuelManager
 import com.github.kittinunf.fuel.core.Method
@@ -26,7 +25,9 @@ import com.nuecho.genesys.cli.commands.audio.AudioServices.getMessagesData
 import com.nuecho.genesys.cli.commands.audio.AudioServices.getPersonalities
 import com.nuecho.genesys.cli.commands.audio.AudioServices.login
 import com.nuecho.genesys.cli.commands.audio.AudioServices.uploadAudio
-import com.nuecho.genesys.cli.commands.audio.export.AudioExport.writeAudioData
+import com.nuecho.genesys.cli.commands.audio.MessageType.ANNOUNCEMENT
+import com.nuecho.genesys.cli.commands.audio.export.AudioExport.buildCsvSchema
+import com.nuecho.genesys.cli.commands.audio.export.AudioExport.writeCsv
 import org.hamcrest.CoreMatchers.startsWith
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.containsString
@@ -45,10 +46,10 @@ private const val MESSAGE_URL = "$GAX_URL/messages/1234"
 private const val INTERNAL_SERVER_ERROR = 500
 
 class AudioServicesTest {
-    val personalitiesData = File(getTestResource("commands/audio/personalities_data.json").toURI())
-    val messagesData = File(getTestResource("commands/audio/messages_data.json").toURI())
-    val parentFile = File(getTestResource("commands/audio").toURI())
-    val audioWav = File(getTestResource("commands/audio/audio.wav").toURI())
+    private val personalitiesData = File(getTestResource("commands/audio/personalities_data.json").toURI())
+    private val messagesData = File(getTestResource("commands/audio/messages_data.json").toURI())
+    private val parentFile = File(getTestResource("commands/audio").toURI())
+    private val audioWav = File(getTestResource("commands/audio/audio.wav").toURI())
 
     @Test
     fun `uploadAudio should properly build the Request`() {
@@ -102,14 +103,7 @@ class AudioServicesTest {
 
     @Test
     fun `writeAudioData should properly build the Request`() {
-        val schemaBuilder = CsvSchema.Builder()
-            .addColumn(AudioServices.NAME)
-            .addColumn(AudioServices.DESCRIPTION)
-            .addColumn(AudioServices.TENANT_ID)
-            .addColumn(AudioServices.MESSAGE_AR_ID)
-            .addColumn("10")
-            .addColumn("12")
-            .addColumn("15")
+        val personalities = setOf(Personality("10", "1010"), Personality("12", "1212"), Personality("15", "1515"))
 
         mockHttpClient(
             SUCCESS_CODE,
@@ -120,9 +114,9 @@ class AudioServicesTest {
             assertThat(it.path, equalTo("$GAX_URL$AUDIO_MESSAGES_PATH"))
         }
 
-        writeAudioData(
+        writeCsv(
             getMessagesData(GAX_URL),
-            schemaBuilder,
+            buildCsvSchema(personalities),
             ByteArrayOutputStream()
         )
     }
@@ -209,7 +203,7 @@ class AudioServicesTest {
             assertThat(it.path, equalTo("$GAX_URL$AUDIO_RESOURCES_PATH"))
         }
 
-        val messageUrl = createMessage("name", "description", GAX_URL)
+        val messageUrl = createMessage("name", ANNOUNCEMENT, "description", GAX_URL)
         assertThat(messageUrl, equalTo(MESSAGE_URL))
     }
 
@@ -217,7 +211,7 @@ class AudioServicesTest {
     fun `createMessage should fail if message url is missing`() {
         mockHttpClient(CREATE_MESSAGE_SUCCESS_CODE)
         assertThrows(AudioServicesException::class.java) {
-            createMessage("name", "description", GAX_URL)
+            createMessage("name", ANNOUNCEMENT, "description", GAX_URL)
         }
     }
 
@@ -225,7 +219,7 @@ class AudioServicesTest {
     fun `createMessage should properly handle error`() {
         mockHttpClient(statusCode = 666, headers = mapOf(LOCATION to listOf(MESSAGE_URL)))
         assertThrows(AudioServicesException::class.java) {
-            createMessage("name", "description", GAX_URL)
+            createMessage("name", ANNOUNCEMENT, "description", GAX_URL)
         }
     }
 }

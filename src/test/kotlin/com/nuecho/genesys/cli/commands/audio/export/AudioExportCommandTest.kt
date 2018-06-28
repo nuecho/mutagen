@@ -7,26 +7,23 @@ import com.github.kittinunf.fuel.core.Request
 import com.github.kittinunf.fuel.core.Response
 import com.nuecho.genesys.cli.CliOutputCaptureWrapper
 import com.nuecho.genesys.cli.TestResources.getTestResource
+import com.nuecho.genesys.cli.commands.audio.ArmMessage
 import com.nuecho.genesys.cli.commands.audio.AudioRequestInfo
-import com.nuecho.genesys.cli.commands.audio.AudioServices.DESCRIPTION
-import com.nuecho.genesys.cli.commands.audio.AudioServices.MESSAGE_AR_ID
-import com.nuecho.genesys.cli.commands.audio.AudioServices.NAME
-import com.nuecho.genesys.cli.commands.audio.AudioServices.TENANT_ID
 import com.nuecho.genesys.cli.commands.audio.AudioServices.getMessagesData
 import com.nuecho.genesys.cli.commands.audio.AudioServicesException
-import com.nuecho.genesys.cli.commands.audio.Message
 import com.nuecho.genesys.cli.commands.audio.Personality
+import com.nuecho.genesys.cli.commands.audio.export.AudioExport.buildCsvSchema
 import com.nuecho.genesys.cli.commands.audio.export.AudioExport.getAudioMap
 import com.nuecho.genesys.cli.commands.audio.export.AudioExport.getMissingPersonalitiesIds
-import com.nuecho.genesys.cli.commands.audio.export.AudioExport.getSchemaBuilder
 import com.nuecho.genesys.cli.commands.audio.export.AudioExport.isSelectedPersonality
-import com.nuecho.genesys.cli.commands.audio.export.AudioExport.writeAudioData
+import com.nuecho.genesys.cli.commands.audio.export.AudioExport.writeCsv
 import com.nuecho.genesys.cli.core.defaultJsonObjectMapper
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.`is`
 import org.hamcrest.Matchers.containsString
 import org.hamcrest.Matchers.empty
 import org.hamcrest.Matchers.equalTo
+import org.hamcrest.Matchers.notNullValue
 import org.hamcrest.Matchers.startsWith
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.BeforeAll
@@ -49,13 +46,13 @@ private const val INVALID_PERSONALITY_ID = "15"
 
 @TestInstance(PER_CLASS)
 class AudioExportCommandTest {
-    val messagesData = File(getTestResource("commands/audio/messages_data.json").toURI())
-    val personalitiesData = File(getTestResource("commands/audio/personalities_data.json").toURI())
-    val parentFile = File(getTestResource("commands/audio").toURI())
-    val expectedAudioCsv = File(getTestResource("commands/audio/expected_audio_output.csv").toURI())
+    private val messagesData = File(getTestResource("commands/audio/messages_data.json").toURI())
+    private val personalitiesData = File(getTestResource("commands/audio/personalities_data.json").toURI())
+    private val parentFile = File(getTestResource("commands/audio").toURI())
+    private val expectedAudioCsv = File(getTestResource("commands/audio/expected_audio_output.csv").toURI())
 
-    val existingMessages: List<Message> = defaultJsonObjectMapper().readValue(messagesData.inputStream(), object : TypeReference<List<Message>>() {})
-    val personalities: Set<Personality> = defaultJsonObjectMapper().readValue(personalitiesData.inputStream(), object : TypeReference<Set<Personality>>() {})
+    private val existingArmMessages: List<ArmMessage> = defaultJsonObjectMapper().readValue(messagesData.inputStream(), object : TypeReference<List<ArmMessage>>() {})
+    private val personalities: Set<Personality> = defaultJsonObjectMapper().readValue(personalitiesData.inputStream(), object : TypeReference<Set<Personality>>() {})
 
     @BeforeAll
     fun init() {
@@ -77,16 +74,16 @@ class AudioExportCommandTest {
 
     @Test
     fun `writeAudioData should fail when the response status code is wrong`() {
-        val schemaBuilder = getSchemaBuilder(personalities)
+        val schema = buildCsvSchema(personalities)
 
         mockHttpClient(
             INTERNAL_SERVER_ERROR,
             messagesData.inputStream()
         )
         assertThrows(AudioServicesException::class.java) {
-            writeAudioData(
+            writeCsv(
                 getMessagesData(GAX_URL),
-                schemaBuilder,
+                schema,
                 ByteArrayOutputStream()
             )
         }
@@ -108,10 +105,11 @@ class AudioExportCommandTest {
 
     @Test
     fun `getAudioMap should return map including exclusively existing personality id keys`() {
-        val audioMap = getAudioMap(existingMessages, setOf(INVALID_PERSONALITY_ID, FRANK_ID), parentFile.path)
+        val audioMap = getAudioMap(existingArmMessages, setOf(INVALID_PERSONALITY_ID, FRANK_ID), parentFile.path)
 
         assertThat(
-            audioMap, equalTo(
+            audioMap,
+            equalTo(
                 mapOf(
                     "${parentFile.path}/$FRANK_ID/Test.wav" to AudioRequestInfo("10001", "10001"),
                     "${parentFile.path}/$FRANK_ID/Enter Password.wav" to AudioRequestInfo("10002", "10003"),
@@ -123,21 +121,22 @@ class AudioExportCommandTest {
     }
 
     @Test
-    fun `getSchemaBuilder should properly build csv schema builder from personalities`() {
-        val schemaBuilder = getSchemaBuilder(personalities)
+    fun `buildCsvSchema should properly build csv schema from personalities`() {
+        val schema = buildCsvSchema(personalities)
 
-        assertThat(schemaBuilder.hasColumn(NAME), `is`(true))
-        assertThat(schemaBuilder.hasColumn(DESCRIPTION), `is`(true))
-        assertThat(schemaBuilder.hasColumn(MESSAGE_AR_ID), `is`(true))
-        assertThat(schemaBuilder.hasColumn(TENANT_ID), `is`(true))
-        assertThat(schemaBuilder.hasColumn(FRANK_ID), `is`(true))
-        assertThat(schemaBuilder.hasColumn(JOELLA_ID), `is`(true))
+        assertThat(schema.column("name"), notNullValue())
+        assertThat(schema.column("name"), notNullValue())
+        assertThat(schema.column("description"), notNullValue())
+        assertThat(schema.column("messageArId"), notNullValue())
+        assertThat(schema.column("tenantId"), notNullValue())
+        assertThat(schema.column(FRANK_ID), notNullValue())
+        assertThat(schema.column(JOELLA_ID), notNullValue())
     }
 
     @Test
     fun `writeCsvFile should properly write in csv file`() {
         val output = ByteArrayOutputStream()
-        writeAudioData(existingMessages, getSchemaBuilder(personalities), output)
+        writeCsv(existingArmMessages, buildCsvSchema(personalities), output)
         assertThat(output.toString(), equalTo(expectedAudioCsv.readText()))
     }
 }

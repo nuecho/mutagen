@@ -1,6 +1,7 @@
 [
   {
     "name": "Test",
+    "type": "ANNOUNCEMENT",
     "description": "Test description",
     "id": 10001,
     "arId": 1000,
@@ -18,6 +19,7 @@
   },
   {
     "name": "Enter Password",
+    "type": "ANNOUNCEMENT",
     "description": "Now enter your password, followed by pound",
     "id": 10002,
     "arId": 1001,
@@ -35,6 +37,7 @@
   },
   {
     "name": "foo",
+    "type": "ANNOUNCEMENT",
     "description": "foo",
     "id": 10003,
     "arId": 1002,
@@ -60,6 +63,7 @@
   },
   {
     "name": "BAZ",
+    "type": "MUSIC",
     "description": "baz",
     "id": 10004,
     "arId": 1005,
