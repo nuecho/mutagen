@@ -1,5 +1,5 @@
-name,description,messageArId,tenantId,10,12
-Test,"Test description",1000,1,10/Test.wav,
-"Enter Password","Now enter your password, followed by pound",1001,1,"10/Enter Password.wav",
-foo,foo,1002,1,10/foo.wav,12/foo.wav
-BAZ,baz,1005,1,10/BAZ.wav,12/BAZ.wav
+name,type,description,messageArId,tenantId,10,12
+Test,ANNOUNCEMENT,"Test description",1000,1,10/Test.wav,
+"Enter Password",ANNOUNCEMENT,"Now enter your password, followed by pound",1001,1,"10/Enter Password.wav",
+foo,ANNOUNCEMENT,foo,1002,1,10/foo.wav,12/foo.wav
+BAZ,MUSIC,baz,1005,1,10/BAZ.wav,12/BAZ.wav

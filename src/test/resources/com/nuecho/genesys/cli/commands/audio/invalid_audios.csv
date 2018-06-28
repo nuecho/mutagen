@@ -1,4 +1,4 @@
-description,10014,10015
-fooscription,foo.fr.wav,foo.en.wav
-barscription,bar.fr.wav,bar.en.wav
-bazscription,baz.fr.wav,baz.en.wav
+description,type,10014,10015
+fooscription,ANNOUCNCEMENT,foo.fr.wav,foo.en.wav
+barscription,ANNOUCNCEMENT,bar.fr.wav,bar.en.wav
+bazscription,MUSIC,baz.fr.wav,baz.en.wav

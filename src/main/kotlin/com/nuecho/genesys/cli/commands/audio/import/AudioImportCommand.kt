@@ -2,23 +2,21 @@ package com.nuecho.genesys.cli.commands.audio.import
 
 import com.fasterxml.jackson.dataformat.csv.CsvMapper
 import com.fasterxml.jackson.dataformat.csv.CsvSchema
+import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import com.github.kittinunf.fuel.core.FuelManager
 import com.nuecho.genesys.cli.GenesysCli
 import com.nuecho.genesys.cli.GenesysCliCommand
 import com.nuecho.genesys.cli.Logging.info
 import com.nuecho.genesys.cli.commands.audio.Audio
-import com.nuecho.genesys.cli.commands.audio.AudioServices.DESCRIPTION
 import com.nuecho.genesys.cli.commands.audio.AudioServices.HTTP
-import com.nuecho.genesys.cli.commands.audio.AudioServices.MESSAGE_AR_ID
-import com.nuecho.genesys.cli.commands.audio.AudioServices.NAME
-import com.nuecho.genesys.cli.commands.audio.AudioServices.TENANT_ID
 import com.nuecho.genesys.cli.commands.audio.AudioServices.createMessage
 import com.nuecho.genesys.cli.commands.audio.AudioServices.getMessagesData
 import com.nuecho.genesys.cli.commands.audio.AudioServices.getPersonalities
 import com.nuecho.genesys.cli.commands.audio.AudioServices.login
 import com.nuecho.genesys.cli.commands.audio.AudioServices.uploadAudio
-import com.nuecho.genesys.cli.commands.audio.Message
+import com.nuecho.genesys.cli.commands.audio.ArmMessage
 import com.nuecho.genesys.cli.commands.audio.Personality
+import com.nuecho.genesys.cli.commands.audio.Message
 import com.nuecho.genesys.cli.preferences.environment.Environment
 import picocli.CommandLine
 import java.io.File
@@ -64,7 +62,7 @@ object AudioImport {
 
         val gaxUrl = "$HTTP${environment.host}:${environment.port}"
         var callbackSequenceNumber = 1
-        val messages = readAudioData(audioData).readAll()
+        val messages = readAudioData(audioData)
 
         info { "Logging in to GAX as '${environment.user}'." }
         login(environment.user, environment.password!!, true, gaxUrl)
@@ -77,76 +75,65 @@ object AudioImport {
 
         checkMissingAudioFiles(messages, audioDirectory)
 
-        messages.forEach {
-            val message = it.toMutableMap()
-            val name = message.remove(NAME) ?: throw AudioImportException("Missing $NAME column in audio data file")
-            val description = message.remove(DESCRIPTION) ?: ""
-
-            info { "Creating message '$name'." }
-            val messageUrl = createMessage(name, description, gaxUrl)
+        messages.sortedBy { it.messageArId }.forEach { message ->
+            info { "Creating message '${message.name}'." }
+            val messageUrl = createMessage(message.name, message.type, message.description, gaxUrl)
             val url = "${messageUrl.substringBeforeLast("/")}/audioresources/${messageUrl.substringAfterLast("/")}"
 
-            message.filter { (column, value) -> isPersonality(column) && !value.isEmpty() }
-                .forEach { (personality, audioPath) ->
-                    info { "Uploading '$audioPath'." }
-                    uploadAudio(
-                        messageUrl = url,
-                        audioFile = File(audioDirectory, audioPath),
-                        personality = personalityIdToQueryIdMap.get(personality)!!,
-                        callbackSequenceNumber = callbackSequenceNumber++
-                    )
-                }
+            message.audioByPersonality.forEach { (personality, audioPath) ->
+                info { "Uploading '$audioPath'." }
+                uploadAudio(
+                    messageUrl = url,
+                    audioFile = File(audioDirectory, audioPath),
+                    personality = personalityIdToQueryIdMap[personality]!!,
+                    callbackSequenceNumber = callbackSequenceNumber++
+                )
+            }
         }
     }
 
     internal fun readAudioData(inputStream: InputStream) =
         CsvMapper()
-            .readerFor(Map::class.java)
+            .registerKotlinModule()
+            .readerFor(Message::class.java)
             .with(CsvSchema.emptySchema().withHeader())
-            .readValues<Map<String, String>>(inputStream)
+            .readValues<Message>(inputStream)
+            .readAll()
 
     internal fun checkDuplicatedMessagesNames(
-        messages: List<Map<String, String>>,
-        existingMessages: List<Message>
+        messages: List<Message>,
+        existingArmMessages: List<ArmMessage>
     ) {
-        val invalidMessagesNames = findExistingMessagesNames(messages, existingMessages)
+        val armMessagesName = existingArmMessages.map { it.name.toLowerCase() }
+        val invalidMessagesNames = messages
+            .map { it.name.toLowerCase() }
+            .filter { armMessagesName.contains(it) }
+            .toList()
+
         checkForInvalidElements(invalidMessagesNames, "messages' names already exist on the gax server")
     }
 
-    internal fun findExistingMessagesNames(
-        newMessages: List<Map<String, String>>,
-        messagesData: List<Message>
-    ): List<String> {
-        val messagesNames = newMessages.map { it.get(NAME)?.toLowerCase() ?: "" }.toMutableList()
-        messagesNames.retainAll(messagesData.map { it.name.toLowerCase() })
-
-        return messagesNames
-    }
-
-    internal fun checkMissingAudioFiles(messages: List<Map<String, String>>, audioDirectory: File) {
-        val invalidAudioFiles = findMissingAudioFiles(messages, audioDirectory.absolutePath)
-        checkForInvalidElements(invalidAudioFiles, "audio files don't exist")
-    }
-
-    internal fun findMissingAudioFiles(newMessages: List<Map<String, String>>, audioDirectory: String) =
-        newMessages.flatMap { it.entries }
-            .filter { (column, value) -> isPersonality(column) && !value.isEmpty() }
-            .map { (_, value) -> File(audioDirectory, value) }
+    internal fun checkMissingAudioFiles(messages: List<Message>, audioDirectory: File) {
+        val invalidAudioFiles = messages.flatMap { it.audioByPersonality.values }
+            .map { filename -> File(audioDirectory, filename) }
             .filter { !it.exists() }
             .map { it.absolutePath }
             .toList()
 
-    internal fun checkMissingPersonalities(
-        messages: List<Map<String, String>>,
-        personalitiesMap: Map<String, String>
-    ) {
-        val invalidPersonalities = getMissingPersonalities(messages, personalitiesMap)
-        checkForInvalidElements(invalidPersonalities, "personalities don't exist")
+        checkForInvalidElements(invalidAudioFiles, "audio files don't exist")
     }
 
-    internal fun getMissingPersonalities(messages: List<Map<String, String>>, personalitiesMap: Map<String, String>) =
-    // all messages have the same keys, so only one message's personalities actually have to be checked
-        messages[0].keys.filter { key -> isPersonality(key) && !personalitiesMap.containsKey(key) }
+    internal fun checkMissingPersonalities(
+        messages: List<Message>,
+        personalitiesMap: Map<String, String>
+    ) {
+        val invalidPersonalities = messages
+            .flatMap { it.audioByPersonality.keys }
+            .toSet()
+            .filter { !personalitiesMap.containsKey(it) }
+
+        checkForInvalidElements(invalidPersonalities, "personalities don't exist")
+    }
 
     internal fun checkForInvalidElements(invalidElements: List<String>, prefix: String) {
         if (invalidElements.isNotEmpty()) {
@@ -161,9 +148,6 @@ object AudioImport {
 
     internal fun getPersonalitiesIdsMap(personalities: Set<Personality>) =
         personalities.map { personality -> personality.personalityId to personality.id }.toMap()
-
-    private fun isPersonality(key: String) =
-        key != MESSAGE_AR_ID && key != TENANT_ID && key != NAME && key != DESCRIPTION
 }
 
 class AudioImportException(message: String) : Exception(message)

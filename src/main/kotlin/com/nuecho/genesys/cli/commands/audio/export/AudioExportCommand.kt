@@ -1,6 +1,5 @@
 package com.nuecho.genesys.cli.commands.audio.export
 
-import com.fasterxml.jackson.core.JsonGenerator
 import com.fasterxml.jackson.dataformat.csv.CsvMapper
 import com.fasterxml.jackson.dataformat.csv.CsvSchema
 import com.github.kittinunf.fuel.core.FuelManager
@@ -8,13 +7,10 @@ import com.nuecho.genesys.cli.GenesysCli
 import com.nuecho.genesys.cli.GenesysCliCommand
 import com.nuecho.genesys.cli.Logging.info
 import com.nuecho.genesys.cli.Logging.warn
+import com.nuecho.genesys.cli.commands.audio.ArmMessage
 import com.nuecho.genesys.cli.commands.audio.Audio
 import com.nuecho.genesys.cli.commands.audio.AudioRequestInfo
-import com.nuecho.genesys.cli.commands.audio.AudioServices.DESCRIPTION
 import com.nuecho.genesys.cli.commands.audio.AudioServices.HTTP
-import com.nuecho.genesys.cli.commands.audio.AudioServices.MESSAGE_AR_ID
-import com.nuecho.genesys.cli.commands.audio.AudioServices.NAME
-import com.nuecho.genesys.cli.commands.audio.AudioServices.TENANT_ID
 import com.nuecho.genesys.cli.commands.audio.AudioServices.downloadAudioFile
 import com.nuecho.genesys.cli.commands.audio.AudioServices.getMessagesData
 import com.nuecho.genesys.cli.commands.audio.AudioServices.getPersonalities
@@ -46,8 +42,7 @@ class AudioExportCommand : GenesysCliCommand() {
     @CommandLine.Option(
         names = ["--personalities-ids"],
         split = ",",
-        description = ["Comma separated list of which personalities' audios to export " +
-                "(10001,10002,10015,...)."]
+        description = ["Comma separated list of which personalities' audios to export (10,11,12,...)."]
     )
     private var personalitiesIds: Set<String>? = null
 
@@ -90,11 +85,11 @@ object AudioExport {
         login(environment.user, environment.password!!, true, gaxUrl)
 
         val personalities = getPersonalities(gaxUrl)
-        val csvSchemaBuilder = getSchemaBuilder(personalities)
+        val csvSchema = buildCsvSchema(personalities)
         val messages = getMessagesData(gaxUrl)
         val audioDirectory = (outputFile.parentFile ?: File(System.getProperty("user.dir"))).apply { createDirectory() }
 
-        writeAudioData(messages, csvSchemaBuilder, outputFile.outputStream())
+        writeCsv(messages, csvSchema, outputFile.outputStream())
 
         if (withAudios) {
             val missingPersonalitiesIds = getMissingPersonalitiesIds(personalities, selectedPersonalitiesIds)
@@ -107,96 +102,40 @@ object AudioExport {
         }
     }
 
-    internal fun writeAudioData(
-        messages: List<Message>,
-        csvSchemaBuilder: CsvSchema.Builder,
-        outputStream: OutputStream
-    ) {
-        val mapper = CsvMapper()
-        mapper.enable(JsonGenerator.Feature.IGNORE_UNKNOWN)
-
-        val csvRows = messages.map { item ->
-            val csvRow: MutableMap<String, String> = mutableMapOf(
-                NAME to item.name,
-                DESCRIPTION to item.description,
-                MESSAGE_AR_ID to item.arId.toString(),
-                TENANT_ID to item.tenantId.toString()
-            )
-
-            for (audioResource in item.ownResourceFiles) {
-                val personalityId = audioResource.personality.personalityId
-                csvRow[personalityId] = "$personalityId/${item.name}.wav"
-            }
-            csvRow
-        }
-
+    internal fun writeCsv(armMessages: List<ArmMessage>, csvSchema: CsvSchema, outputStream: OutputStream) =
         CsvMapper()
-            .writerFor(Map::class.java)
-            .with(
-                csvSchemaBuilder
-                    .setLineSeparator(System.getProperty("line.separator"))
-                    .build()
-                    .sortedBy(NAME, DESCRIPTION, MESSAGE_AR_ID, TENANT_ID)
-                    .withHeader()
-            )
+            .writerFor(Message::class.java)
+            .with(csvSchema)
             .writeValues(outputStream)
-            .writeAll(csvRows)
-    }
+            .writeAll(armMessages.map { Message(it) }.sortedBy { it.messageArId })
 
-    internal fun getSchemaBuilder(personalities: Set<Personality>): CsvSchema.Builder {
-
-        val csvSchemaBuilder = CsvSchema.Builder()
-
-        csvSchemaBuilder.addColumn(NAME)
-        csvSchemaBuilder.addColumn(DESCRIPTION)
-        csvSchemaBuilder.addColumn(TENANT_ID)
-        csvSchemaBuilder.addColumn(MESSAGE_AR_ID)
+    internal fun buildCsvSchema(personalities: Set<Personality>): CsvSchema {
+        val schemaBuilder = CsvSchema.Builder()
+            .addColumnsFrom(CsvMapper().schemaFor(Message::class.java))
+            .setLineSeparator(System.getProperty("line.separator"))
 
         for (personality in personalities) {
-            csvSchemaBuilder.addColumn(personality.personalityId)
+            schemaBuilder.addColumn(personality.personalityId)
         }
 
-        return csvSchemaBuilder
-    }
-
-    internal fun downloadAudioFiles(
-        gaxUrl: String,
-        audioFilesIds: Map<String, AudioRequestInfo>
-    ) {
-        audioFilesIds.forEach { filePath, audioRequestInfo ->
-            val file = File(filePath)
-
-            file.parentFile.createDirectory()
-
-            file.createNewFile()
-            downloadAudioFile(gaxUrl, audioRequestInfo, file)
-        }
-    }
-
-    private fun File.createDirectory() {
-
-        if (!this.exists() &&
-            !this.mkdirs()
-        ) {
-            throw AudioServicesException("Failed to create directory $this")
-        }
+        return schemaBuilder.build().withHeader()
     }
 
     internal fun getAudioMap(
-        messages: List<Message>,
+        messages: List<ArmMessage>,
         selectedPersonalities: Set<String>?,
         audioDirectoryPath: String
     ): Map<String, AudioRequestInfo> {
         val audioFilesMap = mutableMapOf<String, AudioRequestInfo>()
 
-        messages.forEach { (name, _, id, _, _, ownResourceFiles) ->
-            for (file in ownResourceFiles) {
-                if (!isSelectedPersonality(file.personality.personalityId, selectedPersonalities)) {
+        for (message in messages) {
+            for (file in message.ownResourceFiles) {
+                if (!isSelectedPersonality(file.personality.personalityId, selectedPersonalities))
                     continue
-                }
+
                 audioFilesMap.set(
-                    "$audioDirectoryPath/${file.personality.personalityId}/$name.wav",
-                    AudioRequestInfo(id, file.id)
+                    "$audioDirectoryPath/${file.personality.personalityId}/${message.name}.wav",
+                    AudioRequestInfo(message.id, file.id)
                 )
             }
         }
@@ -207,9 +146,23 @@ object AudioExport {
     internal fun isSelectedPersonality(personalityId: String, selectedPersonalities: Set<String>?) =
         selectedPersonalities == null || selectedPersonalities.contains(personalityId)
 
-    internal fun getMissingPersonalitiesIds(
-        personalities: Set<Personality>,
-        selectedPersonalitiesIds: Set<String>?
-    ) = if (selectedPersonalitiesIds == null) emptySet()
-    else selectedPersonalitiesIds.subtract(personalities.map { it.personalityId })
+    internal fun getMissingPersonalitiesIds(personalities: Set<Personality>, selectedPersonalitiesIds: Set<String>?) =
+        selectedPersonalitiesIds?.subtract(personalities.map { it.personalityId }) ?: emptySet()
+
+    private fun downloadAudioFiles(
+        gaxUrl: String,
+        audioFilesIds: Map<String, AudioRequestInfo>
+    ) {
+        audioFilesIds.forEach { filePath, audioRequestInfo ->
+            val file = File(filePath)
+            file.parentFile.createDirectory()
+            file.createNewFile()
+            downloadAudioFile(gaxUrl, audioRequestInfo, file)
+        }
+    }
+
+    private fun File.createDirectory() {
+        if (!this.exists() && !this.mkdirs())
+            throw AudioServicesException("Failed to create directory $this")
+    }
 }
