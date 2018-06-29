@@ -7,7 +7,7 @@ import com.nuecho.genesys.cli.models.configuration.reference.ConfigurationObject
 
 fun <T : ICfgObject> IConfService.retrieveObject(reference: ConfigurationObjectReference<T>): T? {
     @Suppress("UNCHECKED_CAST")
-    if (ConfServiceCache.containsKey(reference)) return ConfServiceCache[reference] as T
+    if (ConfServiceCache.contains(reference)) return ConfServiceCache[reference] as T
 
     val query = try {
         reference.toQuery(this)

@@ -73,8 +73,8 @@ object ConfServiceExtensionMocks {
 
     fun mockCfgFolderCache() {
         val cfgFolder = mockCfgFolder("site", CfgObjectType.CFGFolder)
-        every { ConfServiceCache.containsKey(any()) } returns false
-        every { ConfServiceCache.containsKey(ofType(FolderReference::class)) } returns true
+        every { ConfServiceCache.contains(any()) } returns false
+        every { ConfServiceCache.contains(ofType(FolderReference::class)) } returns true
         every { ConfServiceCache[ofType(FolderReference::class)] } returns cfgFolder
     }
 
