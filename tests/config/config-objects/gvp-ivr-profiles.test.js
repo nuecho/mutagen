@@ -1,1 +1,1 @@
-cfgObjectTests("gvpIVRProfiles", "config-objects/gvp-ivr-profiles-config.json");
+cfgObjectTests("gvpIVRProfiles", "gvp-ivr-profiles-config.json");

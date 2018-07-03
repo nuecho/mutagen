@@ -69,9 +69,9 @@ private val accessGroup = AccessGroup(
 
 class AccessGroupTest : NoImportedObjectConfigurationObjectTest(
     accessGroup,
-    AccessGroup(tenant = DEFAULT_TENANT_REFERENCE, name = NAME)
+    AccessGroup(tenant = DEFAULT_TENANT_REFERENCE, name = NAME),
+    emptySet()
 ) {
-
     @Test
     fun `CfgAccessGroup initialized Group should properly serialize`() {
         val service = mockConfService()

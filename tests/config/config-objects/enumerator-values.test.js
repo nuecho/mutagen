@@ -1,1 +1,1 @@
-cfgObjectTests("enumeratorValues", "config-objects/enumerator-values-config.json");
+cfgObjectTests("enumeratorValues", "enumerator-values-config.json");

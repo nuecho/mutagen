@@ -107,6 +107,36 @@ class EnumeratorReference(name: String, tenant: TenantReference?) :
 
 @JsonSerialize(using = SimpleObjectReferenceSerializer::class)
 @JsonDeserialize(using = SimpleObjectReferenceDeserializer::class)
+class GVPCustomerReference(name: String) :
+    SimpleObjectReference<CfgGVPCustomer>(CfgGVPCustomer::class.java, name) {
+
+    override fun toQuery(service: IConfService) =
+        CfgFilterBasedQuery<CfgGVPCustomer>(CfgObjectType.CFGGVPCustomer).apply {
+            this.setProperty("name", primaryKey)
+        }
+}
+
+@JsonSerialize(using = SimpleObjectReferenceSerializer::class)
+@JsonDeserialize(using = SimpleObjectReferenceDeserializer::class)
+class GVPIVRProfileReference(name: String) :
+    SimpleObjectReference<CfgGVPIVRProfile>(CfgGVPIVRProfile::class.java, name) {
+    override fun toQuery(service: IConfService) = CfgGVPIVRProfileQuery(primaryKey)
+}
+
+@JsonSerialize(using = SimpleObjectReferenceSerializer::class)
+@JsonDeserialize(using = SimpleObjectReferenceWithTenantDeserializer::class)
+class GVPResellerReference(name: String, tenant: TenantReference?) :
+    SimpleObjectReferenceWithTenant<CfgGVPReseller>(CfgGVPReseller::class.java, name, tenant) {
+
+    override fun toQuery(service: IConfService) =
+        CfgFilterBasedQuery<CfgGVPReseller>(CfgObjectType.CFGGVPReseller).apply {
+            this.setProperty("name", primaryKey)
+            this.setProperty("tenant_dbid", getTenantDbid(tenant, service))
+        }
+}
+
+@JsonSerialize(using = SimpleObjectReferenceSerializer::class)
+@JsonDeserialize(using = SimpleObjectReferenceDeserializer::class)
 class IVRReference(name: String) :
     SimpleObjectReference<CfgIVR>(CfgIVR::class.java, name) {
     override fun toQuery(service: IConfService) = CfgIVRQuery(primaryKey)
@@ -184,36 +214,6 @@ class SkillReference(name: String, tenant: TenantReference?) :
     override fun toQuery(service: IConfService) = CfgSkillQuery(primaryKey).apply {
         tenantDbid = getTenantDbid(tenant, service)
     }
-}
-
-@JsonSerialize(using = SimpleObjectReferenceSerializer::class)
-@JsonDeserialize(using = SimpleObjectReferenceDeserializer::class)
-class GVPIVRProfileReference(name: String) :
-    SimpleObjectReference<CfgGVPIVRProfile>(CfgGVPIVRProfile::class.java, name) {
-    override fun toQuery(service: IConfService) = CfgGVPIVRProfileQuery(primaryKey)
-}
-
-@JsonSerialize(using = SimpleObjectReferenceSerializer::class)
-@JsonDeserialize(using = SimpleObjectReferenceDeserializer::class)
-class GVPCustomerReference(name: String) :
-    SimpleObjectReference<CfgGVPCustomer>(CfgGVPCustomer::class.java, name) {
-
-    override fun toQuery(service: IConfService) =
-        CfgFilterBasedQuery<CfgGVPCustomer>(CfgObjectType.CFGGVPCustomer).apply {
-            this.setProperty("name", primaryKey)
-        }
-}
-
-@JsonSerialize(using = SimpleObjectReferenceSerializer::class)
-@JsonDeserialize(using = SimpleObjectReferenceWithTenantDeserializer::class)
-class GVPResellerReference(name: String, tenant: TenantReference?) :
-    SimpleObjectReferenceWithTenant<CfgGVPReseller>(CfgGVPReseller::class.java, name, tenant) {
-
-    override fun toQuery(service: IConfService) =
-        CfgFilterBasedQuery<CfgGVPReseller>(CfgObjectType.CFGGVPReseller).apply {
-            this.setProperty("name", primaryKey)
-            this.setProperty("tenant_dbid", getTenantDbid(tenant, service))
-        }
 }
 
 @JsonSerialize(using = SimpleObjectReferenceSerializer::class)

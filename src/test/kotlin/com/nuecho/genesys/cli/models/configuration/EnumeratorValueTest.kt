@@ -44,11 +44,10 @@ private val enumeratorValue = EnumeratorValue(
 class EnumeratorValueTest : NoImportedObjectConfigurationObjectTest(
     enumeratorValue,
     EnumeratorValue(
-        default = false,
-        displayName = "displayName",
         enumerator = ENUMERATOR_REFERENCE,
         name = NAME
-    )
+    ),
+    setOf(DISPLAY_NAME, TENANT)
 ) {
 
     @Test

@@ -74,12 +74,15 @@ private val dn = DN(
 )
 
 class DNTest : ConfigurationObjectTest(
-    dn, DN(
+    dn,
+    DN(
         tenant = DEFAULT_TENANT_REFERENCE,
         number = "123",
         switch = SwitchReference("aswitch", DEFAULT_TENANT_REFERENCE),
         type = CFGRoutingQueue.toShortName()
-    ), DN(mockCfgDN())
+    ),
+    setOf(ROUTE_TYPE),
+    DN(mockCfgDN())
 ) {
 
     @Test

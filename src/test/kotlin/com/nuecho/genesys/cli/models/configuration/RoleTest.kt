@@ -38,7 +38,8 @@ private val role = Role(
 
 class RoleTest : NoImportedObjectConfigurationObjectTest(
     role,
-    Role(tenant = DEFAULT_TENANT_REFERENCE, name = NAME)
+    Role(tenant = DEFAULT_TENANT_REFERENCE, name = NAME),
+    emptySet()
 ) {
     @Test
     fun `CfgRole initialized Role should properly serialize`() {

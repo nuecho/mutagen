@@ -18,11 +18,11 @@ import org.hamcrest.Matchers.equalTo
 import org.junit.jupiter.api.Test
 
 private const val NAME = "foo"
-private val TYPE = CFGTRTList
+private val CFGTRTLIST_TYPE = CFGTRTList
 private val transaction = Transaction(
     tenant = DEFAULT_TENANT_REFERENCE,
     name = NAME,
-    type = TYPE.toShortName(),
+    type = CFGTRTLIST_TYPE.toShortName(),
     alias = "bar",
     recordPeriod = 0,
     description = "some description",
@@ -32,7 +32,8 @@ private val transaction = Transaction(
 
 class TransactionTest : ConfigurationObjectTest(
     transaction,
-    Transaction(tenant = DEFAULT_TENANT_REFERENCE, name = NAME, type = TYPE.toShortName()),
+    Transaction(tenant = DEFAULT_TENANT_REFERENCE, name = NAME, type = CFGTRTLIST_TYPE.toShortName()),
+    setOf(ALIAS),
     Transaction(mockCfgTransaction())
 ) {
     @Test
@@ -59,7 +60,7 @@ private fun mockCfgTransaction() = mockCfgTransaction(transaction.name).apply {
     every { alias } returns transaction.alias
     every { description } returns transaction.description
     every { recordPeriod } returns transaction.recordPeriod
-    every { type } returns TYPE
+    every { type } returns CFGTRTLIST_TYPE
     every { state } returns CfgObjectState.CFGEnabled
     every { userProperties } returns mockKeyValueCollection()
 }

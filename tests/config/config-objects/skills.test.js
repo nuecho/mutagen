@@ -1,1 +1,1 @@
-cfgObjectTests("skills", "config-objects/skills-config.json");
+cfgObjectTests("skills", "skills-config.json", {checkMandatoryProperties: false});

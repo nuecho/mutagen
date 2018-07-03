@@ -1,1 +1,3 @@
-cfgObjectTests("enumerators", "config-objects/enumerators-config.json", null, 23);
+const checkKey = (cfgObject) => {return cfgObject.name === "cfgObjectTest" && cfgObject.tenant === "Environment"};
+
+cfgObjectTests("enumerators", "enumerators-config.json", {initialNumberOfObjects: 23, checkKey: checkKey});

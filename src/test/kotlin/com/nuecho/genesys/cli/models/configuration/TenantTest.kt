@@ -36,7 +36,7 @@ private val tenant = Tenant(
     userProperties = defaultProperties()
 )
 
-class TenantTest : ConfigurationObjectTest(tenant, Tenant("foo"), Tenant(mockCfgTenant())) {
+class TenantTest : ConfigurationObjectTest(tenant, Tenant("foo"), emptySet(), Tenant(mockCfgTenant())) {
     @Test
     fun `updateCfgObject should properly create CfgTenant`() {
         val defaultTenant = mockCfgTenant(DEFAULT_TENANT)

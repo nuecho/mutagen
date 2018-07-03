@@ -13,6 +13,8 @@ interface ConfigurationObject : Comparable<ConfigurationObject> {
 
     fun updateCfgObject(service: IConfService): CfgObject
 
+    fun checkMandatoryProperties(): Set<String> = emptySet()
+
     fun applyDefaultValues() {}
 
     @JsonIgnore

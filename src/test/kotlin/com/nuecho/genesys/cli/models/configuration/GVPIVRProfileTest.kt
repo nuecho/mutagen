@@ -42,6 +42,7 @@ private val gvpIVRProfile = GVPIVRProfile(
 class GVPIVRProfileTest : ConfigurationObjectTest(
     gvpIVRProfile,
     GVPIVRProfile(name = NAME),
+    setOf(DISPLAY_NAME, TENANT),
     GVPIVRProfile(mockCfgGVPIVRProfile())
 ) {
     @Test

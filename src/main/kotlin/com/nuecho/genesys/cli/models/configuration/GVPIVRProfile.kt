@@ -81,7 +81,7 @@ data class GVPIVRProfile(
             setProperty("name", name, it)
             setProperty("tenantDBID", service.getObjectDbid(tenant), it)
             setProperty("customerDBID", service.getObjectDbid(customer), it)
-            setProperty("displayName", displayName, it)
+            setProperty(DISPLAY_NAME, displayName, it)
             setProperty("type", toCfgIVRProfileType(type), it)
             setProperty("notes", notes, it)
             setProperty("description", description, it)
@@ -95,6 +95,17 @@ data class GVPIVRProfile(
             setProperty("userProperties", toKeyValueCollection(userProperties), it)
             setProperty("state", toCfgObjectState(state), it)
         }
+
+    override fun checkMandatoryProperties(): Set<String> {
+        val missingMandatoryProperties = mutableSetOf<String>()
+
+        if (displayName == null)
+            missingMandatoryProperties.add(DISPLAY_NAME)
+        if (tenant == null)
+            missingMandatoryProperties.add(TENANT)
+
+        return missingMandatoryProperties
+    }
 
     override fun afterPropertiesSet() {
         reseller?.tenant = tenant

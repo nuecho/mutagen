@@ -1,0 +1,14 @@
+{
+  "__metadata__": {
+    "formatName": "JSON",
+    "formatVersion": "1.0.0"
+  },
+  "dns": [
+    {
+      "number": "1234",
+      "switch": "switchForDn",
+      "tenant": "Environment",
+      "type": "Extension"
+    }
+  ]
+}

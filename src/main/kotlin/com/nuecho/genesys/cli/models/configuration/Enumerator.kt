@@ -43,12 +43,23 @@ data class Enumerator(
         (service.retrieveObject(reference) ?: CfgEnumerator(service)).also {
             setProperty("tenantDBID", service.getObjectDbid(tenant), it)
             setProperty("name", name, it)
-            setProperty("displayName", displayName ?: name, it)
+            setProperty(DISPLAY_NAME, displayName ?: name, it)
             setProperty("description", description, it)
-            setProperty("type", toCfgEnumeratorType(type), it)
+            setProperty(TYPE, toCfgEnumeratorType(type), it)
             setProperty("state", toCfgObjectState(state), it)
             setProperty("userProperties", ConfigurationObjects.toKeyValueCollection(userProperties), it)
         }
+
+    override fun checkMandatoryProperties(): Set<String> {
+        val missingMandatoryProperties = mutableSetOf<String>()
+
+        if (displayName == null)
+            missingMandatoryProperties.add(DISPLAY_NAME)
+        if (type == null)
+            missingMandatoryProperties.add(TYPE)
+
+        return missingMandatoryProperties
+    }
 
     override fun getReferences(): Set<ConfigurationObjectReference<*>> = setOf(tenant)
 }

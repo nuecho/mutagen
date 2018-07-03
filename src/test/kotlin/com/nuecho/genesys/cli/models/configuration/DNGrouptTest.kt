@@ -75,7 +75,8 @@ private val dnGroup = DNGroup(
 
 class DNGrouptTest : NoImportedObjectConfigurationObjectTest(
     dnGroup,
-    DNGroup(tenant = DEFAULT_TENANT_REFERENCE, name = DN_GROUP, shortNameType = CFGACDQueues.toShortName())
+    DNGroup(tenant = DEFAULT_TENANT_REFERENCE, name = DN_GROUP),
+    setOf(TYPE)
 ) {
 
     @Test

@@ -21,7 +21,7 @@ import com.nuecho.genesys.cli.toShortName
 data class DNGroup(
     val group: Group,
     val dns: List<DNInfo>? = null,
-    val type: String
+    val type: String? = null
 ) : ConfigurationObject, InitializingBean {
 
     @get:JsonIgnore
@@ -40,9 +40,8 @@ data class DNGroup(
         type = dnGroup.type.toShortName()
     )
 
-    constructor(tenant: TenantReference, name: String, shortNameType: String) : this(
-        group = Group(tenant, name),
-        type = shortNameType
+    constructor(tenant: TenantReference, name: String) : this(
+        group = Group(tenant, name)
     )
 
     override fun updateCfgObject(service: IConfService) =
@@ -62,8 +61,11 @@ data class DNGroup(
                 }
             }, cfgDNGroup)
             setProperty("groupInfo", groupInfo, cfgDNGroup)
-            setProperty("type", toCfgDNGroupType(type), cfgDNGroup)
+            setProperty(TYPE, toCfgDNGroupType(type), cfgDNGroup)
         }
+
+    override fun checkMandatoryProperties(): Set<String> =
+        if (type == null) setOf(TYPE) else emptySet()
 
     override fun afterPropertiesSet() {
         group.updateTenantReferences()

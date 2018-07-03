@@ -9,6 +9,15 @@ Completed. 1 object(s) imported.
 }
 `;
 
+exports[`[mutagen enumerators config import-export] should throw exception when new enumerators to import miss mandatory properties enumerators: exception has been thrown 1`] = `
+Object {
+  "stderr": "Mandatory properties [displayName, type] not set in enumerator 'Environment/emptyCfgObjectTest'
+Cannot import configuration: some configuration objects' mandatory properties for creation are not set.
+",
+  "stdout": "",
+}
+`;
+
 exports[`[mutagen enumerators config import-export] should update the enumerators: the enumerators have been updated 1`] = `
 Object {
   "stderr": "",

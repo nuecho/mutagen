@@ -79,6 +79,7 @@ private val mainSwitch = Switch(
 class SwitchTest : ConfigurationObjectTest(
     mainSwitch,
     Switch(tenant = DEFAULT_TENANT_REFERENCE, name = MAIN_SWITCH),
+    setOf(PHYSICAL_SWITCH),
     Switch(mockMainCfgSwitch())
 ) {
     @Test

@@ -1,6 +1,7 @@
 package com.nuecho.genesys.cli.commands.config.import
 
 import com.genesyslab.platform.applicationblocks.com.objects.CfgPhysicalSwitch
+import com.genesyslab.platform.applicationblocks.com.objects.CfgScript
 import com.genesyslab.platform.applicationblocks.com.objects.CfgTenant
 import com.genesyslab.platform.configuration.protocol.types.CfgDNType.CFGCP
 import com.nuecho.genesys.cli.CliOutputCaptureWrapper.execute
@@ -38,6 +39,8 @@ import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
 
 private const val USAGE_PREFIX = "Usage: import [-?]"
+private const val PHYSICAL_SWITCH_NAME = "physSwitch"
+private const val PHYSICAL_SWITCH_TYPE = "CFGNortelMeridian"
 
 class ImportTest {
     @Test
@@ -64,7 +67,7 @@ class ImportTest {
 
         val configuration = Configuration(
             __metadata__ = mockMetadata(JSON),
-            physicalSwitches = listOf(PhysicalSwitch("physSwitch"))
+            physicalSwitches = listOf(PhysicalSwitch(PHYSICAL_SWITCH_NAME, PHYSICAL_SWITCH_TYPE))
         )
 
         staticMockk("kotlin.io.ConsoleKt").use {
@@ -84,7 +87,7 @@ class ImportTest {
 
         val configuration = Configuration(
             __metadata__ = mockMetadata(JSON),
-            physicalSwitches = listOf(PhysicalSwitch("physSwitch"))
+            physicalSwitches = listOf(PhysicalSwitch(PHYSICAL_SWITCH_NAME, PHYSICAL_SWITCH_TYPE))
         )
 
         staticMockk("kotlin.io.ConsoleKt").use {
@@ -114,8 +117,12 @@ class ImportTest {
             __metadata__ = mockMetadata(JSON),
             tenants = listOf(Tenant(tenantName, defaultCapacityRule = scriptReference)),
             scripts = listOf(Script(tenant = tenantReference, name = scriptName)),
-            physicalSwitches = listOf(PhysicalSwitch("physSwitch"))
+            physicalSwitches = listOf(PhysicalSwitch(PHYSICAL_SWITCH_NAME, PHYSICAL_SWITCH_TYPE))
         )
+
+        every { service.retrieveObject(CfgTenant::class.java, any()) } returns null
+        every { service.retrieveObject(CfgScript::class.java, any()) } returns null
+        every { service.retrieveObject(CfgPhysicalSwitch::class.java, any()) } returns null
 
         assertThrows(ConfigurationObjectCycleException::class.java) {
             importConfiguration(configuration, service, true)
@@ -127,11 +134,13 @@ class ImportTest {
         val configuration = Configuration(
             __metadata__ = mockMetadata(JSON),
             scripts = listOf(Script(tenant = TenantReference("tenant"), name = "script1")),
-            physicalSwitches = listOf(PhysicalSwitch("physSwitch"))
+            physicalSwitches = listOf(PhysicalSwitch(PHYSICAL_SWITCH_NAME))
         )
 
         val service = mockConfService()
         every { service.retrieveObject(CfgTenant::class.java, any()) } returns null
+        every { service.retrieveObject(CfgScript::class.java, any()) } returns null
+        every { service.retrieveObject(CfgPhysicalSwitch::class.java, any()) } returns null
 
         assertThrows(UnresolvedConfigurationObjectReferenceException::class.java) {
             importConfiguration(configuration, service, true)
@@ -139,19 +148,33 @@ class ImportTest {
     }
 
     @Test
+    fun `missing mandatory properties in new configuration objects should be detected and abort the import`() {
+        val configuration = Configuration(
+            __metadata__ = mockMetadata(JSON),
+            physicalSwitches = listOf(PhysicalSwitch(PHYSICAL_SWITCH_NAME))
+        )
+
+        val service = mockConfService()
+        every { service.retrieveObject(CfgPhysicalSwitch::class.java, any()) } returns null
+
+        assertThrows(MandatoryPropertiesNotSetException::class.java) {
+            importConfiguration(configuration, service, true)
+        }
+    }
+
+    @Test
     fun `object creation should be performed in the correct order according to the dependencies between objects`() {
-        val physicalSwitchName = "physSwitch"
         val tenantName = "tenant"
         val switchName = "switch"
 
-        val physicalSwitchReference = PhysicalSwitchReference(physicalSwitchName)
+        val physicalSwitchReference = PhysicalSwitchReference(PHYSICAL_SWITCH_NAME)
         val tenantReference = TenantReference(tenantName)
         val switchReference = SwitchReference(tenant = tenantReference, name = switchName)
 
-        val physicalSwitch = PhysicalSwitch(physicalSwitchName)
+        val physicalSwitch = PhysicalSwitch(PHYSICAL_SWITCH_NAME, PHYSICAL_SWITCH_TYPE)
         val tenant = Tenant(tenantName)
         val switch = Switch(tenant = tenantReference, name = switchName, physicalSwitch = physicalSwitchReference)
-        val dn = DN(tenant = tenantReference, type = CFGCP.toShortName(), number = "123", switch = switchReference)
+        val dn = DN(tenant = tenantReference, type = CFGCP.toShortName(), number = "123", switch = switchReference, routeType = "CFGDefault")
 
         val configuration = Configuration(
             __metadata__ = mockMetadata(JSON),
@@ -161,7 +184,12 @@ class ImportTest {
             dns = listOf(dn)
         )
 
-        val sortedConfigurationObjects = extractTopologicalSequence(configuration, mockConfService())
+        val service = mockConfService()
+        every { service.retrieveObject(CfgTenant::class.java, any()) } returns null
+        every { service.retrieveObject(CfgScript::class.java, any()) } returns null
+        every { service.retrieveObject(CfgPhysicalSwitch::class.java, any()) } returns null
+
+        val sortedConfigurationObjects = extractTopologicalSequence(configuration, service)
 
         assertThat(sortedConfigurationObjects, hasSize(4))
 

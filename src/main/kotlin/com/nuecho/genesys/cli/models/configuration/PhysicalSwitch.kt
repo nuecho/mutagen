@@ -38,10 +38,13 @@ data class PhysicalSwitch(
     override fun updateCfgObject(service: IConfService) =
         (service.retrieveObject(reference) ?: CfgPhysicalSwitch(service)).also {
             setProperty("name", name, it)
-            setProperty("type", toCfgSwitchType(type), it)
+            setProperty(TYPE, toCfgSwitchType(type), it)
             setProperty("state", toCfgObjectState(state), it)
             setProperty("userProperties", toKeyValueCollection(userProperties), it)
         }
+
+    override fun checkMandatoryProperties(): Set<String> =
+        if (type == null) setOf(TYPE) else emptySet()
 
     override fun getReferences(): Set<ConfigurationObjectReference<*>> = setOf()
 }

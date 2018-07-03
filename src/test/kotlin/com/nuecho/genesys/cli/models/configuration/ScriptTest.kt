@@ -29,6 +29,7 @@ private val script = Script(
 class ScriptTest : ConfigurationObjectTest(
     script,
     Script(tenant = DEFAULT_TENANT_REFERENCE, name = NAME),
+    setOf(TYPE),
     Script(mockCfgScript())
 ) {
     @Test

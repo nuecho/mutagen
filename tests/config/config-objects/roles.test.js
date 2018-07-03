@@ -1,1 +1,1 @@
-cfgObjectTests("roles", "config-objects/roles-config.json");
+cfgObjectTests("roles", "roles-config.json", {checkMandatoryProperties: false});

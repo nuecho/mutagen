@@ -21,13 +21,14 @@ import com.nuecho.genesys.cli.services.retrieveObject
 import com.nuecho.genesys.cli.toShortName
 
 data class EnumeratorValue(
-    val tenant: TenantReference? = null,
-    val default: Boolean,
-    val displayName: String,
     val enumerator: EnumeratorReference,
     val name: String,
+    // default will be true if not specified, but an exception is thrown if more than 1 enumeratorValue is default
+    val default: Boolean = false,
     val description: String? = null,
+    val displayName: String? = null,
     val state: String? = null,
+    val tenant: TenantReference? = null,
 
     @JsonSerialize(using = CategorizedPropertiesSerializer::class)
     @JsonDeserialize(using = CategorizedPropertiesDeserializer::class)
@@ -69,11 +70,22 @@ data class EnumeratorValue(
             setProperty("enumeratorDBID", service.getObjectDbid(enumerator), cfgEnumeratorValue)
             setProperty("name", name, cfgEnumeratorValue)
             setProperty("description", description, cfgEnumeratorValue)
-            setProperty("displayName", displayName, cfgEnumeratorValue)
+            setProperty(DISPLAY_NAME, displayName, cfgEnumeratorValue)
             setProperty("isDefault", ConfigurationObjects.toCfgFlag(default), cfgEnumeratorValue)
             setProperty("state", toCfgObjectState(state), cfgEnumeratorValue)
             setProperty("userProperties", ConfigurationObjects.toKeyValueCollection(userProperties), cfgEnumeratorValue)
         }
+
+    override fun checkMandatoryProperties(): Set<String> {
+        val missingMandatoryProperties = mutableSetOf<String>()
+
+        if (displayName == null)
+            missingMandatoryProperties.add(DISPLAY_NAME)
+        if (tenant == null)
+            missingMandatoryProperties.add(TENANT)
+
+        return missingMandatoryProperties
+    }
 
     override fun afterPropertiesSet() {
         enumerator.tenant = tenant
@@ -88,5 +100,6 @@ data class EnumeratorValue(
     override fun getReferences(): Set<ConfigurationObjectReference<*>> =
         referenceSetBuilder()
             .add(enumerator)
+            .add(tenant)
             .toSet()
 }

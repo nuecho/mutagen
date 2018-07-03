@@ -1,0 +1,14 @@
+{
+  "__metadata__": {
+    "formatName": "JSON",
+    "formatVersion": "1.0.0"
+  },
+  "agentGroups": [
+    {
+      "group": {
+        "name": "emptyCfgObjectTest",
+        "tenant": "Environment"
+      }
+    }
+  ]
+}
