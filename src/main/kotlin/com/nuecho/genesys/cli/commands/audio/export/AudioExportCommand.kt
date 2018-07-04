@@ -1,5 +1,6 @@
 package com.nuecho.genesys.cli.commands.audio.export
 
+import com.fasterxml.jackson.core.JsonGenerator.Feature.IGNORE_UNKNOWN
 import com.fasterxml.jackson.dataformat.csv.CsvMapper
 import com.fasterxml.jackson.dataformat.csv.CsvSchema
 import com.github.kittinunf.fuel.core.FuelManager
@@ -40,11 +41,12 @@ class AudioExportCommand : GenesysCliCommand() {
     private var withAudios: Boolean = false
 
     @CommandLine.Option(
-        names = ["--personalities-ids"],
+        names = ["--personality-ids"],
         split = ",",
+        paramLabel = "personality-id",
         description = ["Comma separated list of which personalities' audios to export (10,11,12,...)."]
     )
-    private var personalitiesIds: Set<String>? = null
+    private var personalityIds: Set<String>? = null
 
     @CommandLine.Parameters(
         arity = "1",
@@ -61,7 +63,7 @@ class AudioExportCommand : GenesysCliCommand() {
             getGenesysCli().loadEnvironment(),
             outputFile!!,
             withAudios,
-            personalitiesIds
+            personalityIds
         )
 
         return 0
@@ -74,7 +76,7 @@ object AudioExport {
         environment: Environment,
         outputFile: File,
         withAudios: Boolean,
-        selectedPersonalitiesIds: Set<String>?
+        selectedPersonalityIds: Set<String>?
     ) {
         FuelManager.instance.removeAllResponseInterceptors()
         CookieHandler.setDefault(CookieManager())
@@ -85,37 +87,38 @@ object AudioExport {
         login(environment.user, environment.password!!, true, gaxUrl)
 
         val personalities = getPersonalities(gaxUrl)
-        val csvSchema = buildCsvSchema(personalities)
+        val missingPersonalityIds = getMissingPersonalityIds(personalities, selectedPersonalityIds)
+        if (missingPersonalityIds.isNotEmpty()) {
+            warn { "$missingPersonalityIds do not refer to existing personalities" }
+        }
+
+        val csvSchema = buildCsvSchema(selectedPersonalityIds ?: personalities.map { it.personalityId }.toSortedSet())
         val messages = getMessagesData(gaxUrl)
         val audioDirectory = (outputFile.parentFile ?: File(System.getProperty("user.dir"))).apply { createDirectory() }
 
         writeCsv(messages, csvSchema, outputFile.outputStream())
 
         if (withAudios) {
-            val missingPersonalitiesIds = getMissingPersonalitiesIds(personalities, selectedPersonalitiesIds)
-            if (missingPersonalitiesIds.isNotEmpty()) {
-                warn { "$missingPersonalitiesIds do not refer to existing personalities" }
-            }
-
-            val audioFilesInfos = getAudioMap(messages, selectedPersonalitiesIds, audioDirectory.path)
+            val audioFilesInfos = getAudioMap(messages, selectedPersonalityIds, audioDirectory.path)
             downloadAudioFiles(gaxUrl, audioFilesInfos)
         }
     }
 
     internal fun writeCsv(armMessages: List<ArmMessage>, csvSchema: CsvSchema, outputStream: OutputStream) =
         CsvMapper()
+            .configure(IGNORE_UNKNOWN, true)
             .writerFor(Message::class.java)
             .with(csvSchema)
             .writeValues(outputStream)
             .writeAll(armMessages.map { Message(it) }.sortedBy { it.messageArId })
 
-    internal fun buildCsvSchema(personalities: Set<Personality>): CsvSchema {
+    internal fun buildCsvSchema(personalityIds: Set<String>): CsvSchema {
         val schemaBuilder = CsvSchema.Builder()
             .addColumnsFrom(CsvMapper().schemaFor(Message::class.java))
             .setLineSeparator(System.getProperty("line.separator"))
 
-        for (personality in personalities) {
-            schemaBuilder.addColumn(personality.personalityId)
+        for (personality in personalityIds) {
+            schemaBuilder.addColumn(personality)
         }
 
         return schemaBuilder.build().withHeader()
@@ -146,8 +149,8 @@ object AudioExport {
     internal fun isSelectedPersonality(personalityId: String, selectedPersonalities: Set<String>?) =
         selectedPersonalities == null || selectedPersonalities.contains(personalityId)
 
-    internal fun getMissingPersonalitiesIds(personalities: Set<Personality>, selectedPersonalitiesIds: Set<String>?) =
-        selectedPersonalitiesIds?.subtract(personalities.map { it.personalityId }) ?: emptySet()
+    internal fun getMissingPersonalityIds(personalities: Set<Personality>, selectedPersonalityIds: Set<String>?) =
+        selectedPersonalityIds?.subtract(personalities.map { it.personalityId }) ?: emptySet()
 
     private fun downloadAudioFiles(
         gaxUrl: String,

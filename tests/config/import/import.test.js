@@ -1,13 +1,11 @@
-const INVALID_TENANT_CONFIGURATION_PATH = getResourcePath("import/switch-with-invalid-tenant-config.json");
-const MULTIPLE_OBJECTS_CONFIGURATION_PATH = getResourcePath("import/multiple-objects-config.json");
-const REPEATED_KEYS_CONFIGURATION_PATH = getResourcePath("import/same-key-switches-config.json");
-const CYCLE_CONFIGURATION_PATH = getResourcePath("import/cycle-config.json");
-const MISSING_DEPENDENCY_CONFIGURATION_PATH = getResourcePath("import/missing-dependency-config.json");
-const ACCEPT_CHANGES_CONFIGURATION_PATH = getResourcePath("import/accept-changes-config.json");
-const REJECT_CHANGES_CONFIGURATION_PATH = getResourcePath("import/reject-changes-config.json");
-const SWITCH_DEPENDENCIES_CONFIGURATION_PATH = getResourcePath(
-  "config-objects/switch-dependencies-config.json"
-);
+const INVALID_TENANT_CONFIGURATION_PATH = getResourcePath("config/import/switch-with-invalid-tenant-config.json");
+const MULTIPLE_OBJECTS_CONFIGURATION_PATH = getResourcePath("config/import/multiple-objects-config.json");
+const REPEATED_KEYS_CONFIGURATION_PATH = getResourcePath("config/import/same-key-switches-config.json");
+const CYCLE_CONFIGURATION_PATH = getResourcePath("config/import/cycle-config.json");
+const MISSING_DEPENDENCY_CONFIGURATION_PATH = getResourcePath("config/import/missing-dependency-config.json");
+const ACCEPT_CHANGES_CONFIGURATION_PATH = getResourcePath("config/import/accept-changes-config.json");
+const REJECT_CHANGES_CONFIGURATION_PATH = getResourcePath("config/import/reject-changes-config.json");
+const SWITCH_DEPENDENCIES_CONFIGURATION_PATH = getResourcePath("config/config-objects/switch-dependencies-config.json");
 
 test(`[mutagen config import --help] should print import usage`, () => {
   const { code, output } = mutagen(`config import --help`);

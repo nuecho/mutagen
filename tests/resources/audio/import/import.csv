@@ -1,0 +1,6 @@
+name,type,description,10,11
+"import_test music name 1",MUSIC,"this is the description for music name 1",,"11/music name 1.wav"
+"import_test message name 1",ANNOUNCEMENT,"this is the description for message name 1","10/message name 1.wav","11/message name 1.wav"
+"import_test music name 2",MUSIC,"this is the description for music name 2",,
+"import_test message name 2",ANNOUNCEMENT,"this is the description for message name 2","10/message name 2.wav",
+"import_test music name 3",MUSIC,"this is the description for music name 3","10/music name 3.wav","11/music name 3.wav"

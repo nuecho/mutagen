@@ -12,7 +12,7 @@ Completed. 1 object(s) imported.
 exports[`[mutagen enumeratorValues config import-export] should throw exception when new enumeratorValues to import miss mandatory properties enumeratorValues: exception has been thrown 1`] = `
 Object {
   "stderr": "Mandatory properties [displayName, tenant] not set in enumeratorvalue 'name: 'emptyCfgObjectTest', enumerator: 'null/MediaType''
-Cannot find enumerator 'null/MediaType' (referenced by 'name: 'emptyCfgObjectTest', enumerator: 'null/MediaType'')
+Cannot find enumerator 'null/MediaType' (referenced by enumeratorvalue 'name: 'emptyCfgObjectTest', enumerator: 'null/MediaType'')
 Cannot import configuration: some configuration objects' dependencies could not be found.
 ",
   "stdout": "",

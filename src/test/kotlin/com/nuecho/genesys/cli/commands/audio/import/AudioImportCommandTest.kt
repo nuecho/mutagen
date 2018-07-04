@@ -12,7 +12,7 @@ import com.nuecho.genesys.cli.commands.audio.import.AudioImport.checkDuplicatedM
 import com.nuecho.genesys.cli.commands.audio.import.AudioImport.checkForInvalidElements
 import com.nuecho.genesys.cli.commands.audio.import.AudioImport.checkMissingAudioFiles
 import com.nuecho.genesys.cli.commands.audio.import.AudioImport.checkMissingPersonalities
-import com.nuecho.genesys.cli.commands.audio.import.AudioImport.getPersonalitiesIdsMap
+import com.nuecho.genesys.cli.commands.audio.import.AudioImport.getPersonalityIdsMap
 import com.nuecho.genesys.cli.commands.audio.import.AudioImport.readAudioData
 import com.nuecho.genesys.cli.core.defaultJsonObjectMapper
 import org.hamcrest.MatcherAssert.assertThat
@@ -33,7 +33,7 @@ class AudioImportCommandTest {
     private val audioCsv = getTestResource("commands/audio/audios.csv")
     private val personalitiesData = File(getTestResource("commands/audio/personalities_data.json").toURI())
     private val personalities: Set<Personality> = defaultJsonObjectMapper().readValue(personalitiesData.inputStream(), object : TypeReference<Set<Personality>>() {})
-    private val personalitiesMap = getPersonalitiesIdsMap(personalities)
+    private val personalitiesMap = getPersonalityIdsMap(personalities)
     private val newMessages = readAudioData(audioCsv.openStream())
 
     @BeforeAll
@@ -87,7 +87,7 @@ class AudioImportCommandTest {
                         "",
                         0,
                         0,
-                        ArrayList()
+                        arrayListOf()
                     )
                 )
             )
@@ -112,9 +112,9 @@ class AudioImportCommandTest {
     }
 
     @Test
-    fun `getPersonalitiesIdsMap should properly map the personalities' ids to their personalityIds`() {
+    fun `getPersonalityIdsMap should properly map the personalities' ids to their personalityIds`() {
         assertThat(
-            getPersonalitiesIdsMap(personalities),
+            getPersonalityIdsMap(personalities),
             equalTo(
                 mapOf(
                     "10" to "10002",

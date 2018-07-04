@@ -170,7 +170,7 @@ object AudioServices {
         "$gaxUrl$AUDIO_RESOURCES_PATH/${audioFileInfo.id}$FILES_PATH/${audioFileInfo.fileId}$AUDIO_PATH"
             .httpDownload()
             .destination { _, _ -> destination }
-            .responseString ()
+            .responseString()
             .let { (_, response, _) ->
                 if (response.statusCode != SUCCESS_CODE) {
                     warn {

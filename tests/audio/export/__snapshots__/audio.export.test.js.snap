@@ -1,0 +1,94 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`[mutagen audio export --help] should print export usage: export usage 1`] = `
+Object {
+  "stderr": "",
+  "stdout": "Usage: export [-?] [--with-audios] [--personality-ids=personality-id[,
+              personality-id]...]... outputFile
+Export audio files from ARM
+      outputFile              Output audio description file.
+      --personality-ids=personality-id[,personality-id]...
+                              Comma separated list of which personalities'
+                                audios to export (10,11,12,...).
+      --with-audios           Download messages' audio files.
+  -?, -h, --help              Show this help message.
+",
+}
+`;
+
+exports[`[mutagen audio export --personality-ids=x] should export messages into a csv file only for selected personalities: csv file 1`] = `
+Object {
+  "stderr": "",
+  "stdout": "name,type,description,messageArId,tenantId,11
+\\"export_test music name 1\\",MUSIC,\\"this is the description for music name 1\\",<removed-for-testing-purposes>,1,\\"11/export_test music name 1.wav\\"
+\\"export_test message name 1\\",ANNOUNCEMENT,\\"this is the description for message name 1\\",<removed-for-testing-purposes>,1,\\"11/export_test message name 1.wav\\"
+\\"export_test music name 2\\",MUSIC,\\"this is the description for music name 2\\",<removed-for-testing-purposes>,1,
+\\"export_test message name 2\\",ANNOUNCEMENT,\\"this is the description for message name 2\\",<removed-for-testing-purposes>,1,
+\\"export_test music name 3\\",MUSIC,\\"this is the description for music name 3\\",<removed-for-testing-purposes>,1,\\"11/export_test music name 3.wav\\"
+",
+}
+`;
+
+exports[`[mutagen audio export --personality-ids=x] should export messages into a csv file only for selected personalities: export done 1`] = `
+Object {
+  "stderr": "",
+  "stdout": "",
+}
+`;
+
+exports[`[mutagen audio export --with-audios] should export audio files: downloaded files 1`] = `
+Object {
+  "stderr": "",
+  "stdout": "/tmp/mutagen/test/export/with-audios/10/export_test message name 1.wav
+/tmp/mutagen/test/export/with-audios/10/export_test message name 2.wav
+/tmp/mutagen/test/export/with-audios/10/export_test music name 3.wav
+/tmp/mutagen/test/export/with-audios/11/export_test message name 1.wav
+/tmp/mutagen/test/export/with-audios/11/export_test music name 1.wav
+/tmp/mutagen/test/export/with-audios/11/export_test music name 3.wav
+",
+}
+`;
+
+exports[`[mutagen audio export --with-audios] should export audio files: export done 1`] = `
+Object {
+  "stderr": "",
+  "stdout": "",
+}
+`;
+
+exports[`[mutagen audio export] should export messages into a csv file: csv file 1`] = `
+Object {
+  "stderr": "",
+  "stdout": "name,type,description,messageArId,tenantId,10,11
+\\"export_test music name 1\\",MUSIC,\\"this is the description for music name 1\\",1000,1,,\\"11/export_test music name 1.wav\\"
+\\"export_test message name 1\\",ANNOUNCEMENT,\\"this is the description for message name 1\\",1001,1,\\"10/export_test message name 1.wav\\",\\"11/export_test message name 1.wav\\"
+\\"export_test music name 2\\",MUSIC,\\"this is the description for music name 2\\",1002,1,,
+\\"export_test message name 2\\",ANNOUNCEMENT,\\"this is the description for message name 2\\",1003,1,\\"10/export_test message name 2.wav\\",
+\\"export_test music name 3\\",MUSIC,\\"this is the description for music name 3\\",1004,1,\\"10/export_test music name 3.wav\\",\\"11/export_test music name 3.wav\\"
+",
+}
+`;
+
+exports[`[mutagen audio export] should export messages into a csv file: export done 1`] = `
+Object {
+  "stderr": "",
+  "stdout": "",
+}
+`;
+
+exports[`[mutagen audio export] should print usage when output file is not specified: export usage 1`] = `
+Object {
+  "stderr": "",
+  "stdout": "Missing required parameter: outputFile
+Usage: export [-?] [--with-audios] [--personality-ids=personality-id[,
+              personality-id]...]... outputFile
+Export audio files from ARM
+      outputFile              Output audio description file.
+      --personality-ids=personality-id[,personality-id]...
+                              Comma separated list of which personalities'
+                                audios to export (10,11,12,...).
+      --with-audios           Download messages' audio files.
+  -?, -h, --help              Show this help message.
+",
+}
+`;

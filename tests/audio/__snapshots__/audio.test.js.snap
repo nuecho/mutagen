@@ -1,0 +1,14 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`[mutagen audio --help] should print audio usage: audio usage 1`] = `
+Object {
+  "stderr": "",
+  "stdout": "Usage: audio [-?]
+GAX ARM tool
+  -?, -h, --help              Show this help message.
+Commands:
+  import  Import audio files in ARM
+  export  Export audio files from ARM
+",
+}
+`;

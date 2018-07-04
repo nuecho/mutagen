@@ -1,5 +1,6 @@
 package com.nuecho.genesys.cli.commands.audio.import
 
+import com.fasterxml.jackson.databind.JsonMappingException
 import com.fasterxml.jackson.dataformat.csv.CsvMapper
 import com.fasterxml.jackson.dataformat.csv.CsvSchema
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
@@ -7,6 +8,7 @@ import com.github.kittinunf.fuel.core.FuelManager
 import com.nuecho.genesys.cli.GenesysCli
 import com.nuecho.genesys.cli.GenesysCliCommand
 import com.nuecho.genesys.cli.Logging.info
+import com.nuecho.genesys.cli.commands.audio.ArmMessage
 import com.nuecho.genesys.cli.commands.audio.Audio
 import com.nuecho.genesys.cli.commands.audio.AudioServices.HTTP
 import com.nuecho.genesys.cli.commands.audio.AudioServices.createMessage
@@ -14,9 +16,8 @@ import com.nuecho.genesys.cli.commands.audio.AudioServices.getMessagesData
 import com.nuecho.genesys.cli.commands.audio.AudioServices.getPersonalities
 import com.nuecho.genesys.cli.commands.audio.AudioServices.login
 import com.nuecho.genesys.cli.commands.audio.AudioServices.uploadAudio
-import com.nuecho.genesys.cli.commands.audio.ArmMessage
-import com.nuecho.genesys.cli.commands.audio.Personality
 import com.nuecho.genesys.cli.commands.audio.Message
+import com.nuecho.genesys.cli.commands.audio.Personality
 import com.nuecho.genesys.cli.preferences.environment.Environment
 import picocli.CommandLine
 import java.io.File
@@ -62,7 +63,11 @@ object AudioImport {
 
         val gaxUrl = "$HTTP${environment.host}:${environment.port}"
         var callbackSequenceNumber = 1
-        val messages = readAudioData(audioData)
+        val messages = try {
+            readAudioData(audioData)
+        } catch (exception: JsonMappingException) {
+            throw AudioImportException("Invalid input file.", exception)
+        }
 
         info { "Logging in to GAX as '${environment.user}'." }
         login(environment.user, environment.password!!, true, gaxUrl)
@@ -70,7 +75,7 @@ object AudioImport {
         val existingMessages = getMessagesData(gaxUrl)
         checkDuplicatedMessagesNames(messages, existingMessages)
 
-        val personalityIdToQueryIdMap = getPersonalitiesIdsMap(getPersonalities(gaxUrl))
+        val personalityIdToQueryIdMap = getPersonalityIdsMap(getPersonalities(gaxUrl))
         checkMissingPersonalities(messages, personalityIdToQueryIdMap)
 
         checkMissingAudioFiles(messages, audioDirectory)
@@ -90,6 +95,8 @@ object AudioImport {
                 )
             }
         }
+
+        println("Imported ${messages.size} message${if (messages.size > 1) "s" else ""}.")
     }
 
     internal fun readAudioData(inputStream: InputStream) =
@@ -146,8 +153,8 @@ object AudioImport {
         }
     }
 
-    internal fun getPersonalitiesIdsMap(personalities: Set<Personality>) =
+    internal fun getPersonalityIdsMap(personalities: Set<Personality>) =
         personalities.map { personality -> personality.personalityId to personality.id }.toMap()
 }
 
-class AudioImportException(message: String) : Exception(message)
+class AudioImportException(message: String, cause: Throwable? = null) : Exception(message, cause)

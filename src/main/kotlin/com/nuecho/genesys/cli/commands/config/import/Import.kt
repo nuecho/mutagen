@@ -114,9 +114,10 @@ class Import : GenesysCliCommand() {
                     if (configurationObjectsByReference.containsKey(dependency)) {
                         objectDependencyGraph.addEdge(configurationObjectsByReference[dependency], configurationObject)
                     } else if (service.retrieveObject(dependency) == null) {
+                        val reference = configurationObject.reference
                         warn {
                             "Cannot find ${dependency.getCfgObjectType().toShortName()} '$dependency' " +
-                                    "(referenced by '${configurationObject.reference}')"
+                                    "(referenced by ${reference.getCfgObjectType().toShortName()} '$reference')"
                         }
                         hasMissingObject = true
                     }
