@@ -3,7 +3,8 @@ package com.nuecho.genesys.cli.commands.config.import
 import com.genesyslab.platform.applicationblocks.com.objects.CfgDN
 import com.genesyslab.platform.applicationblocks.com.objects.CfgSwitch
 import com.genesyslab.platform.configuration.protocol.types.CfgDNType
-import com.nuecho.genesys.cli.commands.config.import.Import.Companion.importConfigurationObject
+import com.nuecho.genesys.cli.models.Plan
+import com.nuecho.genesys.cli.models.Plan.Companion.importConfigurationObject
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_DBID
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_REFERENCE
 import com.nuecho.genesys.cli.models.configuration.DN
@@ -56,11 +57,11 @@ class ImportDNTest {
                 every { service.retrieveObject(CfgDN::class.java, any()) } returns retrieveDNResult
                 every { service.retrieveObject(CfgSwitch::class.java, any()) } returns switch
                 every { service.getObjectDbid(ofType(TenantReference::class)) } returns DEFAULT_TENANT_DBID
-                every { Import.save(any()) } just Runs
+                every { Plan.save(any()) } just Runs
 
                 val hasImportedObject = importConfigurationObject(DN1, service)
                 assertThat(hasImportedObject, `is`(true))
-                verify(exactly = 1) { Import.save(ofType(CfgDN::class)) }
+                verify(exactly = 1) { Plan.save(ofType(CfgDN::class)) }
             }
         }
     }

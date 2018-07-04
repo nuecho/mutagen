@@ -5,7 +5,8 @@ import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgGVPReseller
 import com.genesyslab.platform.applicationblocks.com.objects.CfgTenant
 import com.genesyslab.platform.applicationblocks.com.objects.CfgTimeZone
-import com.nuecho.genesys.cli.commands.config.import.Import.Companion.importConfigurationObject
+import com.nuecho.genesys.cli.models.Plan
+import com.nuecho.genesys.cli.models.Plan.Companion.importConfigurationObject
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObject
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveReseller
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveTenant
@@ -30,7 +31,7 @@ abstract class ImportObjectSpec(val cfgObject: CfgObject, val configurationObjec
 
         objectMockk(Import.Companion).use {
             every { service.retrieveObject(cfgObject.javaClass, any()) } returns retrieveObjectResult
-            every { Import.save(any()) } just Runs
+            every { Plan.save(any()) } just Runs
 
             if (cfgObject !is CfgTenant) {
                 mockRetrieveTenant(service)
@@ -39,7 +40,7 @@ abstract class ImportObjectSpec(val cfgObject: CfgObject, val configurationObjec
             mockRetrieveDefaultObjects(service, cfgObject)
             val hasImportedObject = importConfigurationObject(configurationObject, service)
             assertThat(hasImportedObject, `is`(true))
-            verify(exactly = 1) { Import.save(any()) }
+            verify(exactly = 1) { Plan.save(any()) }
         }
     }
 
