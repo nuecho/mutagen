@@ -145,6 +145,7 @@ dependencies {
     compile 'com.github.kittinunf.fuel:fuel:1.12.+'
     compile 'info.picocli:picocli:2.3.+'
     compile 'io.github.microutils:kotlin-logging:1.5.+'
+    compile 'org.fusesource.jansi:jansi:1.17.+'
     compile 'org.json:json:20180130'
     compile 'org.jgrapht:jgrapht-core:1.2.+'
 

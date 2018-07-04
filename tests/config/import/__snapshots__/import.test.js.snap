@@ -30,9 +30,35 @@ exports[`[mutagen config import file] should import the objects if the user conf
 Object {
   "stderr": "",
   "stdout": "The following changes are going to be applied:
-+ physicalswitch => AcceptChangesPhysicalSwitch
-+ switch => Environment/AcceptChangesSwitch
-+ dn => number: '123', switch: 'AcceptChangesSwitch', type: 'Extension', name: 'AcceptChangesDN', tenant: 'Environment'
++ CFGPhysicalSwitch => AcceptChangesPhysicalSwitch
+  {
+    \\"name\\" : \\"AcceptChangesPhysicalSwitch\\",
+    \\"state\\" : \\"enabled\\",
+    \\"type\\" : \\"fujitsu\\"
+  }
++ CFGSwitch => Environment/AcceptChangesSwitch
+  {
+    \\"dnRange\\" : \\"74233-74244, 74290\\",
+    \\"linkType\\" : \\"madgelink\\",
+    \\"name\\" : \\"AcceptChangesSwitch\\",
+    \\"physicalSwitch\\" : \\"AcceptChangesPhysicalSwitch\\",
+    \\"state\\" : \\"enabled\\",
+    \\"switchAccessCodes\\" : [ ],
+    \\"tenant\\" : \\"Environment\\"
+  }
++ CFGDN => number: '123', switch: 'AcceptChangesSwitch', type: 'Extension', name: 'AcceptChangesDN', tenant: 'Environment'
+  {
+    \\"name\\" : \\"AcceptChangesDN\\",
+    \\"number\\" : \\"123\\",
+    \\"routeType\\" : \\"default\\",
+    \\"state\\" : \\"enabled\\",
+    \\"switch\\" : \\"AcceptChangesSwitch\\",
+    \\"switchSpecificType\\" : 1,
+    \\"tenant\\" : \\"Environment\\",
+    \\"trunks\\" : 1,
+    \\"type\\" : \\"Extension\\",
+    \\"useOverride\\" : true
+  }
 
 Please confirm [y|n]: + physicalswitch => AcceptChangesPhysicalSwitch
 + switch => Environment/AcceptChangesSwitch
@@ -73,9 +99,35 @@ exports[`[mutagen config import file] should not import the objects if the user 
 Object {
   "stderr": "",
   "stdout": "The following changes are going to be applied:
-+ physicalswitch => RejectChangesPhysicalSwitch
-+ switch => Environment/RejectChangesSwitch
-+ dn => number: '123', switch: 'RejectChangesSwitch', type: 'Extension', name: 'RejectChangesDN', tenant: 'Environment'
++ CFGPhysicalSwitch => RejectChangesPhysicalSwitch
+  {
+    \\"name\\" : \\"RejectChangesPhysicalSwitch\\",
+    \\"state\\" : \\"enabled\\",
+    \\"type\\" : \\"fujitsu\\"
+  }
++ CFGSwitch => Environment/RejectChangesSwitch
+  {
+    \\"dnRange\\" : \\"74233-74244, 74290\\",
+    \\"linkType\\" : \\"madgelink\\",
+    \\"name\\" : \\"RejectChangesSwitch\\",
+    \\"physicalSwitch\\" : \\"RejectChangesPhysicalSwitch\\",
+    \\"state\\" : \\"enabled\\",
+    \\"switchAccessCodes\\" : [ ],
+    \\"tenant\\" : \\"Environment\\"
+  }
++ CFGDN => number: '123', switch: 'RejectChangesSwitch', type: 'Extension', name: 'RejectChangesDN', tenant: 'Environment'
+  {
+    \\"name\\" : \\"RejectChangesDN\\",
+    \\"number\\" : \\"123\\",
+    \\"routeType\\" : \\"default\\",
+    \\"state\\" : \\"enabled\\",
+    \\"switch\\" : \\"RejectChangesSwitch\\",
+    \\"switchSpecificType\\" : 1,
+    \\"tenant\\" : \\"Environment\\",
+    \\"trunks\\" : 1,
+    \\"type\\" : \\"Extension\\",
+    \\"useOverride\\" : true
+  }
 
 Please confirm [y|n]: Import cancelled.
 ",
