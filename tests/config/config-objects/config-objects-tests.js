@@ -17,10 +17,10 @@ function cfgObjectTests (
       cfgObjectInitialExportTest(cfgObjectType, mergedOptions.initialNumberOfObjects);
     }
     if (mergedOptions.checkMandatoryProperties) {
-      cfgObjectMissingPropertiesTest(cfgObjectType, getResourcePath(`config-objects/empty-${configurationFile}`));
+      cfgObjectMissingPropertiesTest(cfgObjectType, getResourcePath(`config/config-objects/empty-${configurationFile}`));
     }
-    cfgObjectCreationTest(cfgObjectType, getResourcePath(`config-objects/${configurationFile}`));
-    cfgObjectUpdateTest(cfgObjectType, getResourcePath(`config-objects/${configurationFile}`));
+    cfgObjectCreationTest(cfgObjectType, getResourcePath(`config/config-objects/${configurationFile}`));
+    cfgObjectUpdateTest(cfgObjectType, getResourcePath(`config/config-objects/${configurationFile}`));
     cfgObjectExportTest(cfgObjectType, mergedOptions.checkKey);
   });
 };
@@ -82,7 +82,7 @@ function cfgObjectExportTest(cfgObjectType, checkKey = null) {
   });
 };
 
-const importDependencies = (dependenciesFile) => {mutagen(`config import --auto-confirm ${getResourcePath(`config-objects/${dependenciesFile}`)}`);}
+const importDependencies = (dependenciesFile) => {mutagen(`config import --auto-confirm ${getResourcePath(`config/config-objects/${dependenciesFile}`)}`);}
 
 module.exports = {
   cfgObjectTests,

@@ -14,7 +14,7 @@ import com.nuecho.genesys.cli.commands.audio.AudioServicesException
 import com.nuecho.genesys.cli.commands.audio.Personality
 import com.nuecho.genesys.cli.commands.audio.export.AudioExport.buildCsvSchema
 import com.nuecho.genesys.cli.commands.audio.export.AudioExport.getAudioMap
-import com.nuecho.genesys.cli.commands.audio.export.AudioExport.getMissingPersonalitiesIds
+import com.nuecho.genesys.cli.commands.audio.export.AudioExport.getMissingPersonalityIds
 import com.nuecho.genesys.cli.commands.audio.export.AudioExport.isSelectedPersonality
 import com.nuecho.genesys.cli.commands.audio.export.AudioExport.writeCsv
 import com.nuecho.genesys.cli.core.defaultJsonObjectMapper
@@ -53,6 +53,7 @@ class AudioExportCommandTest {
 
     private val existingArmMessages: List<ArmMessage> = defaultJsonObjectMapper().readValue(messagesData.inputStream(), object : TypeReference<List<ArmMessage>>() {})
     private val personalities: Set<Personality> = defaultJsonObjectMapper().readValue(personalitiesData.inputStream(), object : TypeReference<Set<Personality>>() {})
+    private val personalityIds = personalities.map { it.personalityId }.toSortedSet()
 
     @BeforeAll
     fun init() {
@@ -74,7 +75,7 @@ class AudioExportCommandTest {
 
     @Test
     fun `writeAudioData should fail when the response status code is wrong`() {
-        val schema = buildCsvSchema(personalities)
+        val schema = buildCsvSchema(personalityIds)
 
         mockHttpClient(
             INTERNAL_SERVER_ERROR,
@@ -90,9 +91,9 @@ class AudioExportCommandTest {
     }
 
     @Test
-    fun `getMissingPersonalitiesIds should return personalities that don't exist`() {
-        assertThat(getMissingPersonalitiesIds(personalities, setOf(INVALID_PERSONALITY_ID, FRANK_ID)), equalTo(setOf(INVALID_PERSONALITY_ID)))
-        assertThat(getMissingPersonalitiesIds(personalities, null), `is`(empty()))
+    fun `getMissingPersonalityIds should return personalities that don't exist`() {
+        assertThat(getMissingPersonalityIds(personalities, setOf(INVALID_PERSONALITY_ID, FRANK_ID)), equalTo(setOf(INVALID_PERSONALITY_ID)))
+        assertThat(getMissingPersonalityIds(personalities, null), `is`(empty()))
     }
 
     @Test
@@ -122,7 +123,7 @@ class AudioExportCommandTest {
 
     @Test
     fun `buildCsvSchema should properly build csv schema from personalities`() {
-        val schema = buildCsvSchema(personalities)
+        val schema = buildCsvSchema(personalityIds)
 
         assertThat(schema.column("name"), notNullValue())
         assertThat(schema.column("name"), notNullValue())
@@ -136,7 +137,7 @@ class AudioExportCommandTest {
     @Test
     fun `writeCsvFile should properly write in csv file`() {
         val output = ByteArrayOutputStream()
-        writeCsv(existingArmMessages, buildCsvSchema(personalities), output)
+        writeCsv(existingArmMessages, buildCsvSchema(personalityIds), output)
         assertThat(output.toString(), equalTo(expectedAudioCsv.readText()))
     }
 }

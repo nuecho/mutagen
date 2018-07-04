@@ -7,6 +7,11 @@ import com.nuecho.genesys.cli.commands.password.SetPasswordCommand
 import com.nuecho.genesys.cli.commands.services.Services
 import com.nuecho.genesys.cli.preferences.Preferences
 import picocli.CommandLine
+import picocli.CommandLine.DefaultExceptionHandler
+import picocli.CommandLine.Help
+import picocli.CommandLine.ParameterException
+import picocli.CommandLine.RunLast
+import java.io.PrintStream
 
 const val BANNER = """
 _   .-')                .-') _      ('-.                   ('-.       .-') _
@@ -43,7 +48,14 @@ open class GenesysCli : GenesysCliCommand() {
         @Suppress("PrintStackTrace")
         fun execute(genesysCli: GenesysCli, vararg args: String): Int {
             try {
-                return CommandLine.call(genesysCli, System.out, *args) ?: 0
+                val exceptionHandler = CliExceptionHandler()
+                val result = CommandLine(genesysCli)
+                        .parseWithHandlers(RunLast(), System.out, Help.Ansi.AUTO, exceptionHandler, *args)
+
+                if (exceptionHandler.exceptionOccurred)
+                    return 1
+
+                return (result?.getOrNull(0) ?: 0) as Int
             } catch (exception: CommandLine.InitializationException) {
                 exception.printStackTrace()
                 return 1
@@ -113,3 +125,18 @@ open class GenesysCli : GenesysCliCommand() {
     ]
 )
 class GenesysCliWithBanner : GenesysCli()
+
+private class CliExceptionHandler : DefaultExceptionHandler() {
+    var exceptionOccurred = false
+
+    override fun handleException(
+        exception: ParameterException?,
+        out: PrintStream?,
+        ansi: Help.Ansi?,
+        vararg args: String?
+    ): MutableList<Any> {
+        exceptionOccurred = true
+
+        return super.handleException(exception, out, ansi, *args)
+    }
+}

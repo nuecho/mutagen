@@ -103,7 +103,7 @@ class AudioServicesTest {
 
     @Test
     fun `writeAudioData should properly build the Request`() {
-        val personalities = setOf(Personality("10", "1010"), Personality("12", "1212"), Personality("15", "1515"))
+        val personalities = setOf("10", "12", "15")
 
         mockHttpClient(
             SUCCESS_CODE,
