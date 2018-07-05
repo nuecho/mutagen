@@ -6,6 +6,7 @@ import com.nuecho.genesys.cli.preferences.environment.Environment
 import com.nuecho.genesys.cli.services.GenesysServices.createConfServerProtocol
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.equalTo
+import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
 
 class GenesysServicesTest {
@@ -15,7 +16,7 @@ class GenesysServicesTest {
     val password = "password"
 
     @Test
-    fun `createConfigurationService should create a valid IConfService`() {
+    fun `createConfServerProtocol should create a valid IConfService`() {
         val environment = Environment(
             host = host,
             port = port,
@@ -36,7 +37,7 @@ class GenesysServicesTest {
     }
 
     @Test
-    fun `createConfigurationService should set encoding to utf-8 if an invalid encoding is specified`() {
+    fun `createConfServerProtocol should throw an exception if an invalid encoding is specified`() {
         val environment = Environment(
             host = host,
             port = port,
@@ -45,14 +46,11 @@ class GenesysServicesTest {
             encoding = "invalidEncoding"
         )
 
-        val protocol = createConfServerProtocol(environment)
-        val endpoint = protocol.endpoint
-
-        assertThat(endpoint.configuration.getOption("string-attributes-encoding"), equalTo("utf-8"))
+        assertThrows(InvalidEncodingException::class.java) { createConfServerProtocol(environment) }
     }
 
     @Test
-    fun `createConfigurationService should set encoding to valid specified encoding`() {
+    fun `createConfServerProtocol should set encoding to specified valid encoding`() {
         val environment = Environment(
             host = host,
             port = port,

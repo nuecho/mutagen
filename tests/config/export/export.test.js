@@ -2,17 +2,17 @@ test(`[mutagen config export --help] should print import usage`, () => {
   assertMutagenResult(`config export --help`, "export usage", 0);
 });
 
-test(`[mutagen config export] should warn the user when an invalid encoding is specified`, () => {
+test(`[mutagen config export] should throw an exception when the encoding specified is not supported`, () => {
   const { code, output } = mutagen(`-e invalidEncoding config export`);
 
-  expect(output.stderr).toMatchSnapshot("export invalid encoding warning");
-  expect(code).toBe(0);
+  expect(output.stderr).toMatchSnapshot("export invalid encoding exception");
+  expect(code).toBe(1);
 });
 
-test(`[mutagen config export] should not warn the user when no encoding is specified`, () => {
+test(`[mutagen config export] should not throw an exception when no encoding is specified`, () => {
   const { code, output } = mutagen(`config export`);
 
-  expect(output.stderr).toMatchSnapshot("export without warning");
+  expect(output.stderr).toMatchSnapshot("export without exception");
   expect(code).toBe(0);
 });
 
