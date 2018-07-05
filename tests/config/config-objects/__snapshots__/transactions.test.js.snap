@@ -11,8 +11,8 @@ Completed. 1 object(s) imported.
 
 exports[`[mutagen transactions config import-export] should throw exception when new transactions to import miss mandatory properties transactions: exception has been thrown 1`] = `
 Object {
-  "stderr": "Mandatory properties [alias] not set in transaction 'name: 'emptyCfgObjectTest', type: 'callData', tenant: 'Environment''
-Cannot import configuration: some configuration objects' mandatory properties for creation are not set.
+  "stderr": "Cannot import configuration: some configuration objects' mandatory properties for creation are not set.
+	Mandatory properties [alias] not set in transaction 'name: 'emptyCfgObjectTest', type: 'callData', tenant: 'Environment''
 ",
   "stdout": "",
 }

@@ -5,16 +5,12 @@ import com.nuecho.genesys.cli.GenesysCliCommand
 import com.nuecho.genesys.cli.Logging.info
 import com.nuecho.genesys.cli.commands.config.Config
 import com.nuecho.genesys.cli.core.defaultJsonObjectMapper
-import com.nuecho.genesys.cli.models.Plan
+import com.nuecho.genesys.cli.models.ImportPlan
 import com.nuecho.genesys.cli.models.configuration.Configuration
 import com.nuecho.genesys.cli.services.ConfService
-import com.nuecho.genesys.cli.services.ConfServiceCache
+import com.nuecho.genesys.cli.services.ConfigurationObjectRepository
 import picocli.CommandLine
 import java.io.File
-
-const val YES: String = "y"
-const val NO: String = "n"
-val statusToColor: Map<ImportOperationType, String> = mapOf(CREATE to "green", UPDATE to "yellow", SKIP to "white")
 
 @CommandLine.Command(
     name = "import",
@@ -53,19 +49,16 @@ class Import : GenesysCliCommand() {
         fun importConfiguration(configuration: Configuration, service: ConfService, autoConfirm: Boolean): Boolean {
             info { "Preparing import." }
 
-            val plan = Plan(configuration, service)
+            val plan = ImportPlan(configuration, service)
 
             if (!autoConfirm) {
                 plan.print()
 
-                if (!autoConfirm) {
-                    printPlan(configurationObjects, service)
-
-                    if (!confirm()) {
-                        println("Import cancelled.")
-                        return false
-                    }
+                if (!confirm()) {
+                    println("Import cancelled.")
+                    return false
                 }
+            }
 
             info { "Beginning import." }
             val count = plan.apply()

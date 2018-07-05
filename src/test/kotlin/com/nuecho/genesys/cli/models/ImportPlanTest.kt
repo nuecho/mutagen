@@ -20,15 +20,16 @@ import com.nuecho.genesys.cli.models.configuration.reference.TenantReference
 import com.nuecho.genesys.cli.services.ServiceMocks
 import com.nuecho.genesys.cli.toShortName
 import io.mockk.every
-import org.hamcrest.MatcherAssert
-import org.hamcrest.Matchers
-import org.junit.jupiter.api.Assertions
+import org.hamcrest.MatcherAssert.assertThat
+import org.hamcrest.Matchers.equalTo
+import org.hamcrest.Matchers.hasSize
+import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
 
 private const val PHYSICAL_SWITCH_NAME = "physSwitch"
 private const val PHYSICAL_SWITCH_TYPE = "CFGNortelMeridian"
 
-class PlanTest {
+class ImportPlanTest {
 
     @Test
     fun `dependency cycles should be detected and abort the import`() {
@@ -51,13 +52,13 @@ class PlanTest {
         every { service.retrieveObject(CfgScript::class.java, any()) } returns null
         every { service.retrieveObject(CfgPhysicalSwitch::class.java, any()) } returns null
 
-        Assertions.assertThrows(ConfigurationObjectCycleException::class.java) {
+        assertThrows(ConfigurationObjectCycleException::class.java) {
             Import.importConfiguration(configuration, service, true)
         }
     }
 
     @Test
-    fun `missing configuration objects should be detected and abort the import`() {
+    fun `missing configuration object dependencies should be detected and abort the import`() {
         val configuration = Configuration(
             __metadata__ = ConfigMocks.mockMetadata(ExportFormat.JSON),
             scripts = listOf(Script(tenant = TenantReference("tenant"), name = "script1")),
@@ -69,7 +70,8 @@ class PlanTest {
         every { service.retrieveObject(CfgScript::class.java, any()) } returns null
         every { service.retrieveObject(CfgPhysicalSwitch::class.java, any()) } returns null
 
-        Assertions.assertThrows(UnresolvedConfigurationObjectReferenceException::class.java) {
+        // XXX we should test at the plan.checkMissingDependencies level
+        assertThrows(UnresolvedConfigurationObjectReferenceException::class.java) {
             Import.importConfiguration(configuration, service, true)
         }
     }
@@ -84,7 +86,8 @@ class PlanTest {
         val service = ServiceMocks.mockConfService()
         every { service.retrieveObject(CfgPhysicalSwitch::class.java, any()) } returns null
 
-        Assertions.assertThrows(MandatoryPropertiesNotSetException::class.java) {
+        // XXX we should test at the plan.checkMissingProperties level
+        assertThrows(MandatoryPropertiesNotSetException::class.java) {
             Import.importConfiguration(configuration, service, true)
         }
     }
@@ -116,13 +119,13 @@ class PlanTest {
         every { service.retrieveObject(CfgScript::class.java, any()) } returns null
         every { service.retrieveObject(CfgPhysicalSwitch::class.java, any()) } returns null
 
-        val sortedConfigurationObjects = Plan.extractTopologicalSequence(configuration, service)
+        val operations = ImportPlan.applyOperationOrder(configuration, ImportPlan.toOperations(service, configuration))
 
-        MatcherAssert.assertThat(sortedConfigurationObjects, Matchers.hasSize(4))
+        assertThat(operations, hasSize(4))
 
         // physicalSwitch and tenant can legally be in any order
-        sortedConfigurationObjects.subList(0, 2).containsAll(listOf(physicalSwitch, tenant))
-        MatcherAssert.assertThat(sortedConfigurationObjects[2] as Switch, Matchers.equalTo(switch))
-        MatcherAssert.assertThat(sortedConfigurationObjects[3] as DN, Matchers.equalTo(dn))
+        operations.subList(0, 2).containsAll(listOf(ImportPlanOperation(service, physicalSwitch), ImportPlanOperation(service, tenant)))
+        assertThat(operations[2].configurationObject as Switch, equalTo(switch))
+        assertThat(operations[3].configurationObject as DN, equalTo(dn))
     }
 }

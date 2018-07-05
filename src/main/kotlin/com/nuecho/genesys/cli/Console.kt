@@ -1,7 +1,7 @@
 package com.nuecho.genesys.cli
 
-import com.nuecho.genesys.cli.commands.config.import.NO
-import com.nuecho.genesys.cli.commands.config.import.YES
+const val YES: String = "y"
+const val NO: String = "n"
 
 object Console {
     fun confirm(): Boolean {

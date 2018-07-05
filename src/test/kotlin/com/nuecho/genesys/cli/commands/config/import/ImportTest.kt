@@ -5,7 +5,7 @@ import com.nuecho.genesys.cli.CliOutputCaptureWrapper.execute
 import com.nuecho.genesys.cli.commands.config.ConfigMocks.mockMetadata
 import com.nuecho.genesys.cli.commands.config.export.ExportFormat.JSON
 import com.nuecho.genesys.cli.commands.config.import.Import.Companion.importConfiguration
-import com.nuecho.genesys.cli.models.Plan
+import com.nuecho.genesys.cli.models.ImportPlan
 import com.nuecho.genesys.cli.models.configuration.Configuration
 import com.nuecho.genesys.cli.models.configuration.ConfigurationBuilder
 import com.nuecho.genesys.cli.models.configuration.PhysicalSwitch
@@ -40,7 +40,7 @@ class ImportTest {
 
         objectMockk(Import.Companion).use {
             importConfiguration(configuration, service, true)
-            verify(exactly = 0) { Plan.save(any()) }
+            verify(exactly = 0) { ImportPlan.save(any()) }
         }
     }
 
@@ -59,7 +59,7 @@ class ImportTest {
 
             objectMockk(Import.Companion).use {
                 importConfiguration(configuration, service, false)
-                verify(exactly = 0) { Plan.save(any()) }
+                verify(exactly = 0) { ImportPlan.save(any()) }
             }
         }
     }
@@ -78,10 +78,10 @@ class ImportTest {
             every { service.retrieveObject(CfgPhysicalSwitch::class.java, any()) } returns null
 
             objectMockk(Import.Companion).use {
-                every { Plan.save(any()) } just Runs
+                every { ImportPlan.save(any()) } just Runs
 
                 importConfiguration(configuration, service, false)
-                verify(exactly = 1) { Plan.save(any()) }
+                verify(exactly = 1) { ImportPlan.save(any()) }
             }
         }
     }

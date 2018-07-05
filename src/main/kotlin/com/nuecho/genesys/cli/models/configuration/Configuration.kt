@@ -1,5 +1,7 @@
 package com.nuecho.genesys.cli.models.configuration
 
+import com.fasterxml.jackson.annotation.JsonIgnore
+
 data class Configuration(
     val __metadata__: Metadata,
     val accessGroups: List<AccessGroup> = emptyList(),
@@ -21,26 +23,32 @@ data class Configuration(
     val tenants: List<Tenant> = emptyList(),
     val transactions: List<Transaction> = emptyList()
 ) {
-    fun toList() = listOf(
-        accessGroups,
-        actionCodes,
-        agentGroups,
-        dnGroups,
-        dns,
-        enumerators,
-        enumeratorValues,
-        gvpCustomers,
-        gvpIVRProfiles,
-        gvpResellers,
-        persons,
-        physicalSwitches,
-        roles,
-        scripts,
-        skills,
-        switches,
-        tenants,
-        transactions
-    ).flatMap { it }
+    @get:JsonIgnore
+    val asList by lazy {
+        listOf(
+            accessGroups,
+            actionCodes,
+            agentGroups,
+            dnGroups,
+            dns,
+            enumerators,
+            enumeratorValues,
+            gvpCustomers,
+            gvpIVRProfiles,
+            gvpResellers,
+            persons,
+            physicalSwitches,
+            roles,
+            scripts,
+            skills,
+            switches,
+            tenants,
+            transactions
+        ).flatMap { it }
+    }
 
-    fun toMapByReference() = toList().map { it.reference to it }.toMap()
+    @get:JsonIgnore
+    val asMapByReference by lazy {
+        asList.map { it.reference to it }.toMap()
+    }
 }

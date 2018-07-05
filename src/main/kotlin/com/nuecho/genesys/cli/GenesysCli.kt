@@ -6,6 +6,7 @@ import com.nuecho.genesys.cli.commands.config.Config
 import com.nuecho.genesys.cli.commands.password.SetPasswordCommand
 import com.nuecho.genesys.cli.commands.services.Services
 import com.nuecho.genesys.cli.preferences.Preferences
+import org.fusesource.jansi.AnsiConsole
 import picocli.CommandLine
 import picocli.CommandLine.DefaultExceptionHandler
 import picocli.CommandLine.Help
@@ -48,9 +49,11 @@ open class GenesysCli : GenesysCliCommand() {
         @Suppress("PrintStackTrace")
         fun execute(genesysCli: GenesysCli, vararg args: String): Int {
             try {
+                AnsiConsole.systemInstall()
+
                 val exceptionHandler = CliExceptionHandler()
                 val result = CommandLine(genesysCli)
-                        .parseWithHandlers(RunLast(), System.out, Help.Ansi.AUTO, exceptionHandler, *args)
+                    .parseWithHandlers(RunLast(), System.out, Help.Ansi.AUTO, exceptionHandler, *args)
 
                 if (exceptionHandler.exceptionOccurred)
                     return 1
@@ -70,6 +73,8 @@ open class GenesysCli : GenesysCliCommand() {
                 }
 
                 return 1
+            } finally {
+                AnsiConsole.systemUninstall()
             }
         }
     }

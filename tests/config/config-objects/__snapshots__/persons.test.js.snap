@@ -11,8 +11,8 @@ Completed. 1 object(s) imported.
 
 exports[`[mutagen persons config import-export] should throw exception when new persons to import miss mandatory properties persons: exception has been thrown 1`] = `
 Object {
-  "stderr": "Mandatory properties [userName] not set in person 'Environment/emptyCfgObjectTest'
-Cannot import configuration: some configuration objects' mandatory properties for creation are not set.
+  "stderr": "Cannot import configuration: some configuration objects' mandatory properties for creation are not set.
+	Mandatory properties [userName] not set in person 'Environment/emptyCfgObjectTest'
 ",
   "stdout": "",
 }
