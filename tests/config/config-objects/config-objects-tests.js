@@ -43,28 +43,19 @@ function cfgObjectInitialExportTest(cfgObjectType, initialNumberOfObjects) {
 
 function cfgObjectMissingPropertiesTest(cfgObjectType, emptyConfigurationPath) {
   test(`should throw exception when new ${cfgObjectType} to import miss mandatory properties ${cfgObjectType}`, () => {
-    const { code, output } = mutagen(`config import ${emptyConfigurationPath}`);
-
-    expect(output).toMatchSnapshot(`exception has been thrown`);
-    expect(code).toBe(1);
+    assertMutagenResult(`config import ${emptyConfigurationPath}`, "exception has been thrown", 1);
   });
 };
 
 function cfgObjectCreationTest(cfgObjectType, configurationPath) {
   test(`should create the ${cfgObjectType}`, () => {
-    const { code, output } = mutagen(`config import --auto-confirm ${configurationPath}`);
-
-    expect(output).toMatchSnapshot(`the ${cfgObjectType} have been created`);
-    expect(code).toBe(0);
+    assertMutagenResult(`config import --auto-confirm ${configurationPath}`, `the ${cfgObjectType} have been created`, 0);
   });
 };
 
 function cfgObjectUpdateTest(cfgObjectType, configurationPath) {
   test(`should update the ${cfgObjectType}`, () => {
-    const { code, output } = mutagen(`config import --auto-confirm ${configurationPath}`);
-    
-    expect(output).toMatchSnapshot(`the ${cfgObjectType} have been updated`);
-    expect(code).toBe(0);
+    assertMutagenResult(`config import --auto-confirm ${configurationPath}`, `the ${cfgObjectType} have been updated`, 0);
   });
 };
 

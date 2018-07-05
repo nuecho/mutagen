@@ -50,9 +50,23 @@ const execAsync = (command = "", callback) =>
 const mutagen = (args = "") => exec(`${MUTAGEN_PATH} ${args}`);
 const mutagenAsync = (args = "", callback) => execAsync(`${MUTAGEN_PATH} ${args}`, callback);
 
+const assertMutagenResult = (args, snapshot, returnCode) => {
+  const { code, output } = mutagen(args);
+  expect(output).toMatchSnapshot(snapshot);
+  expect(code).toBe(returnCode);
+}
+
 const formatResponse = ({ code, stdout, stderr }) => ({
   code,
   output: { stdout, stderr }
 });
 
-module.exports = { Configserver, getResourcePath, mutagen, mutagenAsync, exec, execAsync };
+module.exports = {
+  assertMutagenResult,
+  Configserver,
+  exec,
+  execAsync,
+  getResourcePath,
+  mutagen,
+  mutagenAsync
+};

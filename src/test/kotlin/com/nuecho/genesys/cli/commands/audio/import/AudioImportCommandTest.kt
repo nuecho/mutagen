@@ -14,6 +14,7 @@ import com.nuecho.genesys.cli.commands.audio.import.AudioImport.checkMissingAudi
 import com.nuecho.genesys.cli.commands.audio.import.AudioImport.checkMissingPersonalities
 import com.nuecho.genesys.cli.commands.audio.import.AudioImport.getPersonalityIdsMap
 import com.nuecho.genesys.cli.commands.audio.import.AudioImport.readAudioData
+import com.nuecho.genesys.cli.commands.audio.import.AudioImport.removeEmptyLines
 import com.nuecho.genesys.cli.core.defaultJsonObjectMapper
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.`is`
@@ -24,7 +25,9 @@ import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS
+import java.io.ByteArrayInputStream
 import java.io.File
+import kotlin.text.Charsets.UTF_8
 
 private const val USAGE_PREFIX = "Usage: import [-?]"
 
@@ -34,7 +37,7 @@ class AudioImportCommandTest {
     private val personalitiesData = File(getTestResource("commands/audio/personalities_data.json").toURI())
     private val personalities: Set<Personality> = defaultJsonObjectMapper().readValue(personalitiesData.inputStream(), object : TypeReference<Set<Personality>>() {})
     private val personalitiesMap = getPersonalityIdsMap(personalities)
-    private val newMessages = readAudioData(audioCsv.openStream())
+    private val newMessages = readAudioData(audioCsv.openStream(), UTF_8)
 
     @BeforeAll
     fun init() {
@@ -50,7 +53,7 @@ class AudioImportCommandTest {
 
     @Test
     fun `readAudioData should properly deserialize audio messagesData`() {
-        val audioData = readAudioData(audioCsv.openStream())
+        val audioData = readAudioData(audioCsv.openStream(), UTF_8)
         val expected = Message.Builder("foo", ANNOUNCEMENT, "fooscription")
             .withAudios(
                 "12" to "foo.fr.wav",
@@ -121,6 +124,28 @@ class AudioImportCommandTest {
                     "12" to "10004"
                 )
             )
+        )
+    }
+
+    @Test
+    fun `removeEmptyLines should skip blank lines`() {
+        val charset = UTF_8
+        val inputText = """line1
+            |
+            |
+            |line2
+            |
+        """.trimMargin()
+        val inputStream = ByteArrayInputStream(inputText.toByteArray(charset))
+
+        assertThat(
+            removeEmptyLines(inputStream, charset),
+            equalTo(
+                """line1
+                  |line2
+                """.trimMargin()
+            )
+
         )
     }
 }
