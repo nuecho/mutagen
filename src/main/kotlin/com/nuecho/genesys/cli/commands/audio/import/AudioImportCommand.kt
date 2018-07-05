@@ -10,7 +10,8 @@ import com.nuecho.genesys.cli.GenesysCliCommand
 import com.nuecho.genesys.cli.Logging.info
 import com.nuecho.genesys.cli.commands.audio.ArmMessage
 import com.nuecho.genesys.cli.commands.audio.Audio
-import com.nuecho.genesys.cli.commands.audio.AudioServices.HTTP
+import com.nuecho.genesys.cli.commands.audio.AudioServices.DEFAULT_GAX_API_PATH
+import com.nuecho.genesys.cli.commands.audio.AudioServices.buildGaxUrl
 import com.nuecho.genesys.cli.commands.audio.AudioServices.createMessage
 import com.nuecho.genesys.cli.commands.audio.AudioServices.getMessagesData
 import com.nuecho.genesys.cli.commands.audio.AudioServices.getPersonalities
@@ -35,6 +36,12 @@ class AudioImportCommand : GenesysCliCommand() {
     private var audio: Audio? = null
 
     @CommandLine.Option(
+        names = ["--gax-api-path"],
+        description = ["GAX API path. Defaults to '$DEFAULT_GAX_API_PATH'."]
+    )
+    private var gaxApiPath: String = DEFAULT_GAX_API_PATH
+
+    @CommandLine.Option(
         names = ["--encoding"],
         description = ["Encoding of the input file. Defaults to UTF-8."]
     )
@@ -55,7 +62,8 @@ class AudioImportCommand : GenesysCliCommand() {
             getGenesysCli().loadEnvironment(),
             inputFile!!.inputStream(),
             inputFile!!.absoluteFile.parentFile,
-            encoding
+            encoding,
+            gaxApiPath
         )
 
         return 0
@@ -64,12 +72,18 @@ class AudioImportCommand : GenesysCliCommand() {
 
 object AudioImport {
 
-    fun importAudios(environment: Environment, audioData: InputStream, audioDirectory: File, encoding: Charset) {
+    fun importAudios(
+        environment: Environment,
+        audioData: InputStream,
+        audioDirectory: File,
+        encoding: Charset,
+        gaxApiPath: String
+    ) {
         // To disable the automatic redirection
         FuelManager.instance.removeAllResponseInterceptors()
         CookieHandler.setDefault(CookieManager())
 
-        val gaxUrl = "$HTTP${environment.host}:${environment.port}"
+        val gaxUrl = buildGaxUrl(environment, gaxApiPath)
         var callbackSequenceNumber = 1
         val messages = try {
             readAudioData(audioData, encoding)

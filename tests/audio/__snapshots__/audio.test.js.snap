@@ -16,10 +16,13 @@ Commands:
 exports[`[mutagen audio export --help] should print export usage: export usage 1`] = `
 Object {
   "stderr": "",
-  "stdout": "Usage: export [-?] [--with-audios] [--personality-ids=personality-id[,
-              personality-id]...]... outputFile
+  "stdout": "Usage: export [-?] [--with-audios] [--gax-api-path=<gaxApiPath>]
+              [--personality-ids=personality-id[,personality-id]...]...
+              outputFile
 Export audio files from ARM
       outputFile              Output audio description file.
+      --gax-api-path=<gaxApiPath>
+                              GAX API path. Defaults to '/gax/api'.
       --personality-ids=personality-id[,personality-id]...
                               Comma separated list of which personalities'
                                 audios to export (10,11,12,...).
@@ -89,14 +92,25 @@ Object {
 }
 `;
 
+exports[`[mutagen audio export] should fail when GAX API path is invalid: invalid GAX API path 1`] = `
+Object {
+  "stderr": "Failed to log in to GAX.
+",
+  "stdout": "",
+}
+`;
+
 exports[`[mutagen audio export] should print usage when output file is not specified: export usage 1`] = `
 Object {
   "stderr": "",
   "stdout": "Missing required parameter: outputFile
-Usage: export [-?] [--with-audios] [--personality-ids=personality-id[,
-              personality-id]...]... outputFile
+Usage: export [-?] [--with-audios] [--gax-api-path=<gaxApiPath>]
+              [--personality-ids=personality-id[,personality-id]...]...
+              outputFile
 Export audio files from ARM
       outputFile              Output audio description file.
+      --gax-api-path=<gaxApiPath>
+                              GAX API path. Defaults to '/gax/api'.
       --personality-ids=personality-id[,personality-id]...
                               Comma separated list of which personalities'
                                 audios to export (10,11,12,...).
@@ -109,10 +123,13 @@ Export audio files from ARM
 exports[`[mutagen audio import --help] should print import usage: import usage 1`] = `
 Object {
   "stderr": "",
-  "stdout": "Usage: import [-?] [--encoding=<encoding>] inputFile
+  "stdout": "Usage: import [-?] [--encoding=<encoding>] [--gax-api-path=<gaxApiPath>]
+              inputFile
 Import audio files in ARM
       inputFile               Input audio description file.
       --encoding=<encoding>   Encoding of the input file. Defaults to UTF-8.
+      --gax-api-path=<gaxApiPath>
+                              GAX API path. Defaults to '/gax/api'.
   -?, -h, --help              Show this help message.
 ",
 }
@@ -184,6 +201,14 @@ import_iso_latin_test,ANNOUNCEMENT,\\"pâtatë poèl\\",<removed-for-testing-pur
 }
 `;
 
+exports[`[mutagen audio import] should fail when GAX API path is invalid: invalid GAX API path 1`] = `
+Object {
+  "stderr": "Failed to log in to GAX.
+",
+  "stdout": "",
+}
+`;
+
 exports[`[mutagen audio import] should fail when file to import does not exist: no such file or directory 1`] = `
 Object {
   "stderr": "/tmp/foo (No such file or directory)
@@ -222,10 +247,13 @@ exports[`[mutagen audio import] should fail when the specified encoding is inval
 Object {
   "stderr": "",
   "stdout": "Could not convert 'POTATO-8' to Charset for option '--encoding': java.nio.charset.UnsupportedCharsetException: POTATO-8
-Usage: import [-?] [--encoding=<encoding>] inputFile
+Usage: import [-?] [--encoding=<encoding>] [--gax-api-path=<gaxApiPath>]
+              inputFile
 Import audio files in ARM
       inputFile               Input audio description file.
       --encoding=<encoding>   Encoding of the input file. Defaults to UTF-8.
+      --gax-api-path=<gaxApiPath>
+                              GAX API path. Defaults to '/gax/api'.
   -?, -h, --help              Show this help message.
 ",
 }
@@ -276,10 +304,13 @@ exports[`[mutagen audio import] should print usage when file to import is not sp
 Object {
   "stderr": "",
   "stdout": "Missing required parameter: inputFile
-Usage: import [-?] [--encoding=<encoding>] inputFile
+Usage: import [-?] [--encoding=<encoding>] [--gax-api-path=<gaxApiPath>]
+              inputFile
 Import audio files in ARM
       inputFile               Input audio description file.
       --encoding=<encoding>   Encoding of the input file. Defaults to UTF-8.
+      --gax-api-path=<gaxApiPath>
+                              GAX API path. Defaults to '/gax/api'.
   -?, -h, --help              Show this help message.
 ",
 }
