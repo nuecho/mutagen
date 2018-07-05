@@ -4,7 +4,10 @@ const { readCsv } = require("../audio.test.helpers.js");
 const DEPENDENCIES_FILE_PATH = getResourcePath("audio/export/dependencies.csv");
 const OUTPUT_PREFIX = "/tmp/mutagen/test/export";
 
-mutagen(`--env gax audio import ${DEPENDENCIES_FILE_PATH}`);
+beforeAll(() => {
+  const { code } = mutagen(`--env gax audio import ${DEPENDENCIES_FILE_PATH}`);
+  expect(code).toBe(0);
+})
 
 test(`[mutagen audio export --help] should print export usage`, () => {
   const { code, output } = mutagen(`--env gax audio export --help`);
@@ -27,8 +30,8 @@ test(`[mutagen audio export] should export messages into a csv file`, () => {
   expect(mutagenResult.output).toMatchSnapshot("export done");
   expect(mutagenResult.code).toBe(0);
 
-  const csvFile = exec(`cat ${outputFile} | egrep '(messageArId)|(export_test)'`);
-  expect(csvFile.output).toMatchSnapshot("csv file");
+  const csvFile = readCsv(outputFile, "export_test");
+  expect(csvFile).toMatchSnapshot("csv file");
 });
 
 test(`[mutagen audio export --personality-ids=x] should export messages into a csv file only for selected personalities`, () => {

@@ -60,11 +60,11 @@ exports[`[mutagen audio export] should export messages into a csv file: csv file
 Object {
   "stderr": "",
   "stdout": "name,type,description,messageArId,tenantId,10,11
-\\"export_test music name 1\\",MUSIC,\\"this is the description for music name 1\\",1000,1,,\\"11/export_test music name 1.wav\\"
-\\"export_test message name 1\\",ANNOUNCEMENT,\\"this is the description for message name 1\\",1001,1,\\"10/export_test message name 1.wav\\",\\"11/export_test message name 1.wav\\"
-\\"export_test music name 2\\",MUSIC,\\"this is the description for music name 2\\",1002,1,,
-\\"export_test message name 2\\",ANNOUNCEMENT,\\"this is the description for message name 2\\",1003,1,\\"10/export_test message name 2.wav\\",
-\\"export_test music name 3\\",MUSIC,\\"this is the description for music name 3\\",1004,1,\\"10/export_test music name 3.wav\\",\\"11/export_test music name 3.wav\\"
+\\"export_test music name 1\\",MUSIC,\\"this is the description for music name 1\\",<removed-for-testing-purposes>,1,,\\"11/export_test music name 1.wav\\"
+\\"export_test message name 1\\",ANNOUNCEMENT,\\"this is the description for message name 1\\",<removed-for-testing-purposes>,1,\\"10/export_test message name 1.wav\\",\\"11/export_test message name 1.wav\\"
+\\"export_test music name 2\\",MUSIC,\\"this is the description for music name 2\\",<removed-for-testing-purposes>,1,,
+\\"export_test message name 2\\",ANNOUNCEMENT,\\"this is the description for message name 2\\",<removed-for-testing-purposes>,1,\\"10/export_test message name 2.wav\\",
+\\"export_test music name 3\\",MUSIC,\\"this is the description for music name 3\\",<removed-for-testing-purposes>,1,\\"10/export_test music name 3.wav\\",\\"11/export_test music name 3.wav\\"
 ",
 }
 `;
