@@ -8,53 +8,33 @@ const REJECT_CHANGES_CONFIGURATION_PATH = getResourcePath("config/import/reject-
 const SWITCH_DEPENDENCIES_CONFIGURATION_PATH = getResourcePath("config/config-objects/switch-dependencies-config.json");
 
 test(`[mutagen config import --help] should print import usage`, () => {
-  const { code, output } = mutagen(`config import --help`);
-
-  expect(output).toMatchSnapshot("import usage");
-  expect(code).toBe(0);
+  assertMutagenResult(`config import --help`, "import usage", 0);
 });
 
 test(`[mutagen config import] should fail when file to import does not exist`, () => {
-  const { code, output } = mutagen(`config import --auto-confirm /tmp/foo`);
-
-  expect(output).toMatchSnapshot("no such file or directory");
-  expect(code).not.toBe(0);
+  assertMutagenResult(`config import --auto-confirm /tmp/foo`, "no such file or directory", 1);
 });
 
 test(`[mutagen config import file] should not import the object if it has an invalid tenant`, () => {
   mutagen(`config import --auto-confirm ${SWITCH_DEPENDENCIES_CONFIGURATION_PATH}`);
-  const { code, output } = mutagen(`config import --auto-confirm ${INVALID_TENANT_CONFIGURATION_PATH}`);
 
-  expect(output).toMatchSnapshot("no object has been imported");
-  expect(code).toBe(1);
+  assertMutagenResult(`config import --auto-confirm ${INVALID_TENANT_CONFIGURATION_PATH}`, "no object has been imported", 1);
 });
 
 test(`[mutagen config import file] should import multiple objects of different types`, () => {
-  const { code, output } = mutagen(`config import --auto-confirm ${MULTIPLE_OBJECTS_CONFIGURATION_PATH}`);
-
-  expect(output).toMatchSnapshot("every object has been imported");
-  expect(code).toBe(0);
+  assertMutagenResult(`config import --auto-confirm ${MULTIPLE_OBJECTS_CONFIGURATION_PATH}`, "every object has been imported", 0);
 });
 
 test(`[mutagen config import file] should only import objects with a unique key`, () => {
-  const { code, output } = mutagen(`config import --auto-confirm ${REPEATED_KEYS_CONFIGURATION_PATH}`);
-
-  expect(output).toMatchSnapshot("only one object with the key has been imported");
-  expect(code).toBe(0);
+  assertMutagenResult(`config import --auto-confirm ${REPEATED_KEYS_CONFIGURATION_PATH}`, "only one object with the key has been imported", 0);
 });
 
 test(`[mutagen config import file] should not import any object if there's a cycle between object dependencies`, () => {
-  const { code, output } = mutagen(`config import --auto-confirm ${CYCLE_CONFIGURATION_PATH}`);
-
-  expect(output).toMatchSnapshot("cycle detected");
-  expect(code).toBe(1);
+  assertMutagenResult(`config import --auto-confirm ${CYCLE_CONFIGURATION_PATH}`, "cycle detected", 1);
 });
 
 test(`[mutagen config import file] should not import any object if some dependencies cannot be resolved`, () => {
-  const { code, output } = mutagen(`config import --auto-confirm ${MISSING_DEPENDENCY_CONFIGURATION_PATH}`);
-
-  expect(output).toMatchSnapshot("found missing dependency");
-  expect(code).toBe(1);
+  assertMutagenResult(`config import --auto-confirm ${MISSING_DEPENDENCY_CONFIGURATION_PATH}`, "found missing dependency", 1);
 });
 
 test(`[mutagen config import file] should not import the objects if the user does not confirm the changes`, (done) => {

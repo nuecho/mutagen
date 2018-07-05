@@ -3,9 +3,10 @@
 exports[`[mutagen audio import --help] should print import usage: import usage 1`] = `
 Object {
   "stderr": "",
-  "stdout": "Usage: import [-?] inputFile
+  "stdout": "Usage: import [-?] [--encoding=<encoding>] inputFile
 Import audio files in ARM
       inputFile               Input audio description file.
+      --encoding=<encoding>   Encoding of the input file. Defaults to UTF-8.
   -?, -h, --help              Show this help message.
 ",
 }
@@ -20,7 +21,14 @@ Object {
 }
 `;
 
-exports[`[mutagen audio import] message type and description should be optional: number of messages imported 1`] = `
+exports[`[mutagen audio import] message type and description should be optional: mutagen export output 1`] = `
+Object {
+  "stderr": "",
+  "stdout": "",
+}
+`;
+
+exports[`[mutagen audio import] message type and description should be optional: mutagen import output 1`] = `
 Object {
   "stderr": "",
   "stdout": "Imported 2 messages.
@@ -34,6 +42,38 @@ Object {
   "stdout": "name,type,description,messageArId,tenantId,10,11
 \\"import_minimalist_test message name 1\\",ANNOUNCEMENT,,<removed-for-testing-purposes>,1,\\"10/import_minimalist_test message name 1.wav\\",
 \\"import_minimalist_test message name 2\\",ANNOUNCEMENT,,<removed-for-testing-purposes>,1,\\"10/import_minimalist_test message name 2.wav\\",
+",
+}
+`;
+
+exports[`[mutagen audio import] should allow setting input file encoding with --encoding: export of the imported files 1`] = `
+Object {
+  "stderr": "",
+  "stdout": "/tmp/mutagen/test/import/import_iso_latin_test/10/import_iso_latin_test.wav
+",
+}
+`;
+
+exports[`[mutagen audio import] should allow setting input file encoding with --encoding: mutagen export output 1`] = `
+Object {
+  "stderr": "",
+  "stdout": "",
+}
+`;
+
+exports[`[mutagen audio import] should allow setting input file encoding with --encoding: mutagen import output 1`] = `
+Object {
+  "stderr": "",
+  "stdout": "Imported 1 message.
+",
+}
+`;
+
+exports[`[mutagen audio import] should allow setting input file encoding with --encoding: re-export of the csv file 1`] = `
+Object {
+  "stderr": "",
+  "stdout": "name,type,description,messageArId,tenantId,10,11
+import_iso_latin_test,ANNOUNCEMENT,\\"pâtatë poèl\\",<removed-for-testing-purposes>,1,\\"10/import_iso_latin_test.wav\\",
 ",
 }
 `;
@@ -72,6 +112,19 @@ Object {
 }
 `;
 
+exports[`[mutagen audio import] should fail when the specified encoding is invalid: invalid encoding message 1`] = `
+Object {
+  "stderr": "",
+  "stdout": "Could not convert 'POTATO-8' to Charset for option '--encoding': java.nio.charset.UnsupportedCharsetException: POTATO-8
+Usage: import [-?] [--encoding=<encoding>] inputFile
+Import audio files in ARM
+      inputFile               Input audio description file.
+      --encoding=<encoding>   Encoding of the input file. Defaults to UTF-8.
+  -?, -h, --help              Show this help message.
+",
+}
+`;
+
 exports[`[mutagen audio import] should import messages and audio files: export of the imported files 1`] = `
 Object {
   "stderr": "",
@@ -85,7 +138,14 @@ Object {
 }
 `;
 
-exports[`[mutagen audio import] should import messages and audio files: number of messages imported 1`] = `
+exports[`[mutagen audio import] should import messages and audio files: mutagen export output 1`] = `
+Object {
+  "stderr": "",
+  "stdout": "",
+}
+`;
+
+exports[`[mutagen audio import] should import messages and audio files: mutagen import output 1`] = `
 Object {
   "stderr": "",
   "stdout": "Imported 5 messages.
@@ -110,9 +170,10 @@ exports[`[mutagen audio import] should print usage when file to import is not sp
 Object {
   "stderr": "",
   "stdout": "Missing required parameter: inputFile
-Usage: import [-?] inputFile
+Usage: import [-?] [--encoding=<encoding>] inputFile
 Import audio files in ARM
       inputFile               Input audio description file.
+      --encoding=<encoding>   Encoding of the input file. Defaults to UTF-8.
   -?, -h, --help              Show this help message.
 ",
 }

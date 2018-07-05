@@ -1,8 +1,5 @@
 test(`[mutagen config export --help] should print import usage`, () => {
-  const { code, output } = mutagen(`config export --help`);
-
-  expect(output).toMatchSnapshot("export usage");
-  expect(code).toBe(0);
+  assertMutagenResult(`config export --help`, "export usage", 0);
 });
 
 test(`[mutagen config export] should warn the user when an invalid encoding is specified`, () => {

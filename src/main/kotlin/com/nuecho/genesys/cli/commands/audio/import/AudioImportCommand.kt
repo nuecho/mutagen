@@ -24,6 +24,7 @@ import java.io.File
 import java.io.InputStream
 import java.net.CookieHandler
 import java.net.CookieManager
+import java.nio.charset.Charset
 
 @CommandLine.Command(
     name = "import",
@@ -32,6 +33,12 @@ import java.net.CookieManager
 class AudioImportCommand : GenesysCliCommand() {
     @CommandLine.ParentCommand
     private var audio: Audio? = null
+
+    @CommandLine.Option(
+        names = ["--encoding"],
+        description = ["Encoding of the input file. Defaults to UTF-8."]
+    )
+    private var encoding: Charset = Charsets.UTF_8
 
     @CommandLine.Parameters(
         arity = "1",
@@ -47,7 +54,8 @@ class AudioImportCommand : GenesysCliCommand() {
         AudioImport.importAudios(
             getGenesysCli().loadEnvironment(),
             inputFile!!.inputStream(),
-            inputFile!!.absoluteFile.parentFile
+            inputFile!!.absoluteFile.parentFile,
+            encoding
         )
 
         return 0
@@ -56,7 +64,7 @@ class AudioImportCommand : GenesysCliCommand() {
 
 object AudioImport {
 
-    fun importAudios(environment: Environment, audioData: InputStream, audioDirectory: File) {
+    fun importAudios(environment: Environment, audioData: InputStream, audioDirectory: File, encoding: Charset) {
         // To disable the automatic redirection
         FuelManager.instance.removeAllResponseInterceptors()
         CookieHandler.setDefault(CookieManager())
@@ -64,7 +72,7 @@ object AudioImport {
         val gaxUrl = "$HTTP${environment.host}:${environment.port}"
         var callbackSequenceNumber = 1
         val messages = try {
-            readAudioData(audioData)
+            readAudioData(audioData, encoding)
         } catch (exception: JsonMappingException) {
             throw AudioImportException("Invalid input file.", exception)
         }
@@ -99,13 +107,22 @@ object AudioImport {
         println("Imported ${messages.size} message${if (messages.size > 1) "s" else ""}.")
     }
 
-    internal fun readAudioData(inputStream: InputStream) =
+    internal fun readAudioData(inputStream: InputStream, encoding: Charset) =
         CsvMapper()
             .registerKotlinModule()
             .readerFor(Message::class.java)
             .with(CsvSchema.emptySchema().withHeader())
-            .readValues<Message>(inputStream)
+            .readValues<Message>(removeEmptyLines(inputStream, encoding))
             .readAll()
+
+    // Ideally we would like our csv mapper to use .withFeatures(CsvParser.Feature.SKIP_EMPTY_LINES) but the
+    // feature is not yet implemented https://github.com/FasterXML/jackson-dataformats-text/issues/15
+    internal fun removeEmptyLines(inputStream: InputStream, encoding: Charset) =
+        inputStream
+            .reader(encoding)
+            .readLines()
+            .filter { it.isNotBlank() }
+            .joinToString(separator = "\n")
 
     internal fun checkDuplicatedMessagesNames(
         messages: List<Message>,
