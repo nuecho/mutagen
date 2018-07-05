@@ -7,6 +7,7 @@ import com.nuecho.genesys.cli.Logging.info
 import com.nuecho.genesys.cli.Logging.warn
 import com.nuecho.genesys.cli.commands.config.Config
 import com.nuecho.genesys.cli.commands.config.import.ImportOperationType.CREATE
+import com.nuecho.genesys.cli.commands.config.import.ImportOperationType.SKIP
 import com.nuecho.genesys.cli.commands.config.import.ImportOperationType.UPDATE
 import com.nuecho.genesys.cli.core.defaultJsonObjectMapper
 import com.nuecho.genesys.cli.models.configuration.Configuration
@@ -16,6 +17,8 @@ import com.nuecho.genesys.cli.services.ConfService
 import com.nuecho.genesys.cli.services.ConfServiceCache
 import com.nuecho.genesys.cli.services.retrieveObject
 import com.nuecho.genesys.cli.toShortName
+import org.fusesource.jansi.Ansi.ansi
+import org.fusesource.jansi.AnsiConsole
 import org.jgrapht.Graph
 import org.jgrapht.alg.cycle.CycleDetector
 import org.jgrapht.graph.DefaultDirectedGraph
@@ -26,6 +29,7 @@ import java.io.File
 
 const val YES: String = "y"
 const val NO: String = "n"
+val statusToColor: Map<ImportOperationType, String> = mapOf(CREATE to "green", UPDATE to "yellow", SKIP to "white")
 
 @CommandLine.Command(
     name = "import",
@@ -66,24 +70,30 @@ class Import : GenesysCliCommand() {
 
             val configurationObjects = extractTopologicalSequence(configuration, service)
 
-            if (!autoConfirm) {
-                printPlan(configurationObjects, service)
+            try {
+                AnsiConsole.systemInstall()
 
-                if (!confirm()) {
-                    println("Import cancelled.")
-                    return false
+                if (!autoConfirm) {
+                    printPlan(configurationObjects, service)
+
+                    if (!confirm()) {
+                        println("Import cancelled.")
+                        return false
+                    }
                 }
+
+                info { "Beginning import." }
+
+                val count = configurationObjects
+                    .map { importConfigurationObject(it, service) }
+                    .filter { it }
+                    .count()
+
+                println("Completed. $count object(s) imported.")
+                return true
+            } finally {
+                AnsiConsole.systemUninstall()
             }
-
-            info { "Beginning import." }
-
-            val count = configurationObjects
-                .map { importConfigurationObject(it, service) }
-                .filter { it }
-                .count()
-
-            println("Completed. $count object(s) imported.")
-            return true
         }
 
         @Suppress("ThrowsCount", "ComplexMethod")
@@ -158,7 +168,7 @@ class Import : GenesysCliCommand() {
                 // Those objects will be fetched again later... A better modelization of the plan & operations
                 // could prevent us from fetching the objects multiple times.
                 val operationType = if (service.retrieveObject(it.reference) == null) CREATE else UPDATE
-                printObjectImportStatus(it.reference, operationType)
+                printObjectImportPlan(it, operationType)
             }
             println()
         }
@@ -184,6 +194,7 @@ class Import : GenesysCliCommand() {
             info { "Processing $type '$reference'." }
             val status = if (cfgObject.isSaved) UPDATE else CREATE
             save(cfgObject)
+
             printObjectImportStatus(reference, status)
 
             // TODO This should eventually return false if the object was identical and therefore not updated
@@ -194,7 +205,31 @@ class Import : GenesysCliCommand() {
             reference: ConfigurationObjectReference<*>,
             status: ImportOperationType
         ) {
-            println("$status ${reference.getCfgObjectType().toShortName()} => $reference")
+            println(
+                ansi().render(
+                    "@|${statusToColor.get(status)} $status ${reference.getCfgObjectType().toShortName()}" +
+                            " => $reference|@"
+                )
+            )
+        }
+
+        private fun printObjectImportPlan(
+            configurationObject: ConfigurationObject,
+            status: ImportOperationType
+        ) {
+            val printableConfigurationObject = defaultJsonObjectMapper()
+                .writerWithDefaultPrettyPrinter()
+                .writeValueAsString(configurationObject)
+                .replace("\n", "\n  ")
+
+            println(
+                ansi().render(
+                    "@|${statusToColor.get(status)} $status " +
+                            "${configurationObject.reference.getCfgObjectType()}" +
+                            " => ${configurationObject.reference}\n  " +
+                            "$printableConfigurationObject|@"
+                )
+            )
         }
 
         internal fun save(cfgObject: CfgObject) = cfgObject.save()
