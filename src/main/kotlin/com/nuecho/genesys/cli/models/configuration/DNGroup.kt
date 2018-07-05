@@ -7,12 +7,15 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgDNGroup
 import com.genesyslab.platform.applicationblocks.com.objects.CfgDNInfo
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectType.CFGDN
 import com.nuecho.genesys.cli.core.InitializingBean
+import com.nuecho.genesys.cli.getFolderReference
 import com.nuecho.genesys.cli.getReference
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setFolder
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setProperty
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgDNGroupType
 import com.nuecho.genesys.cli.models.configuration.reference.ConfigurationObjectReference
 import com.nuecho.genesys.cli.models.configuration.reference.DNGroupReference
 import com.nuecho.genesys.cli.models.configuration.reference.DNReference
+import com.nuecho.genesys.cli.models.configuration.reference.FolderReference
 import com.nuecho.genesys.cli.models.configuration.reference.TenantReference
 import com.nuecho.genesys.cli.models.configuration.reference.referenceSetBuilder
 import com.nuecho.genesys.cli.services.retrieveObject
@@ -21,7 +24,8 @@ import com.nuecho.genesys.cli.toShortName
 data class DNGroup(
     val group: Group,
     val dns: List<DNInfo>? = null,
-    val type: String? = null
+    val type: String? = null,
+    override val folder: FolderReference? = null
 ) : ConfigurationObject, InitializingBean {
 
     @get:JsonIgnore
@@ -37,7 +41,8 @@ data class DNGroup(
             val dn = dnGroup.configurationService.retrieveObject(CFGDN, cfgDNInfo.dndbid) as CfgDN
             DNInfo(dn.getReference(), cfgDNInfo.trunks)
         },
-        type = dnGroup.type.toShortName()
+        type = dnGroup.type.toShortName(),
+        folder = dnGroup.getFolderReference()
     )
 
     constructor(tenant: TenantReference, name: String) : this(
@@ -62,6 +67,7 @@ data class DNGroup(
             }, cfgDNGroup)
             setProperty("groupInfo", groupInfo, cfgDNGroup)
             setProperty(TYPE, toCfgDNGroupType(type), cfgDNGroup)
+            setFolder(folder, cfgDNGroup)
         }
 
     override fun checkMandatoryProperties(): Set<String> =
@@ -79,6 +85,7 @@ data class DNGroup(
         referenceSetBuilder()
             .add(dns?.map { it.dn })
             .add(group.getReferences())
+            .add(folder)
             .toSet()
 }
 

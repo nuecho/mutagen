@@ -1,12 +1,22 @@
 {
-  "name": "name",
   "description": "description",
-  "state": "enabled",
+  "folder": {
+    "owner": {
+      "name": "tenant",
+      "type": "tenant"
+    },
+    "path": [
+      "folder"
+    ],
+    "type": "folder"
+  },
   "members": [
     "person/dmorand",
     "person/fparga",
     "person/pdeschen"
   ],
+  "name": "name",
+  "state": "enabled",
   "tenant": "tenant",
   "userProperties": {
     "section": {

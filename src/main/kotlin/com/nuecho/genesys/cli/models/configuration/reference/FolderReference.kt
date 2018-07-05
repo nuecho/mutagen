@@ -16,6 +16,8 @@ import com.genesyslab.platform.commons.GEnum
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectType
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectType.CFGFolder
 import com.nuecho.genesys.cli.getReference
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectNotFoundException
+import com.nuecho.genesys.cli.services.retrieveObject
 import com.nuecho.genesys.cli.toShortName
 
 data class FolderReference(val type: String, val owner: OwnerReference, val path: List<String>) :
@@ -39,6 +41,9 @@ data class FolderReference(val type: String, val owner: OwnerReference, val path
     }
 
     override fun toString() = "type: '$type', owner: '$owner', path: '${path.joinToString("/")}'"
+
+    fun toFolderDbid(service: IConfService) = service.retrieveObject(this)?.objectDbid
+            ?: throw ConfigurationObjectNotFoundException(this)
 }
 
 data class OwnerReference(val type: String, val name: String, val tenant: TenantReference? = null) :

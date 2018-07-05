@@ -2,6 +2,8 @@ package com.nuecho.genesys.cli.models.configuration
 
 import com.genesyslab.platform.applicationblocks.com.objects.CfgGVPCustomer
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectState
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_FOLDER_REFERENCE
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_OBJECT_DBID
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_REFERENCE
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgGVPCustomer
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockKeyValueCollection
@@ -9,12 +11,17 @@ import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgFla
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgObjectState
 import com.nuecho.genesys.cli.models.configuration.ConfigurationTestData.defaultProperties
 import com.nuecho.genesys.cli.models.configuration.reference.GVPResellerReference
+import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockConfigurationObjectRepository
+import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveFolderByDbid
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveReseller
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveTenant
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveTimeZone
+import com.nuecho.genesys.cli.services.ConfigurationObjectRepository
 import com.nuecho.genesys.cli.services.ServiceMocks.mockConfService
 import com.nuecho.genesys.cli.toShortName
 import io.mockk.every
+import io.mockk.objectMockk
+import io.mockk.use
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.equalTo
 import org.junit.jupiter.api.Test
@@ -27,7 +34,8 @@ private val gvpCustomer = GVPCustomer(
     channel = "achannel",
     notes = "some notes",
     state = CfgObjectState.CFGEnabled.toShortName(),
-    userProperties = defaultProperties()
+    userProperties = defaultProperties(),
+    folder = DEFAULT_FOLDER_REFERENCE
 )
 
 class GVPCustomerTest : ConfigurationObjectTest(
@@ -44,19 +52,25 @@ class GVPCustomerTest : ConfigurationObjectTest(
         mockRetrieveReseller(service)
         mockRetrieveTimeZone(service)
 
-        val cfgGVPCustomer = gvpCustomer.updateCfgObject(service)
+        objectMockk(ConfigurationObjectRepository).use {
+            mockConfigurationObjectRepository()
+            val cfgGVPCustomer = gvpCustomer.updateCfgObject(service)
 
-        with(cfgGVPCustomer) {
-            assertThat(name, equalTo(gvpCustomer.name))
-            assertThat(state, equalTo(ConfigurationObjects.toCfgObjectState(gvpCustomer.state)))
-            assertThat(userProperties.asCategorizedProperties(), equalTo(gvpCustomer.userProperties))
+            with(cfgGVPCustomer) {
+                assertThat(name, equalTo(gvpCustomer.name))
+                assertThat(state, equalTo(ConfigurationObjects.toCfgObjectState(gvpCustomer.state)))
+                assertThat(userProperties.asCategorizedProperties(), equalTo(gvpCustomer.userProperties))
+            }
         }
     }
 }
 
 private fun mockCfgGVPCustomer() = mockCfgGVPCustomer(gvpCustomer.name).apply {
-    val resellerMock = ConfigurationObjectMocks.mockCfgGVPReseller(gvpCustomer.reseller!!.primaryKey)
+    val service = mockConfService()
+    mockRetrieveFolderByDbid(service)
 
+    val resellerMock = ConfigurationObjectMocks.mockCfgGVPReseller(gvpCustomer.reseller!!.primaryKey)
+    every { configurationService } returns service
     every { state } returns toCfgObjectState(gvpCustomer.state)
     every { channel } returns gvpCustomer.channel
     every { reseller } returns resellerMock
@@ -69,4 +83,5 @@ private fun mockCfgGVPCustomer() = mockCfgGVPCustomer(gvpCustomer.name).apply {
     every { timeZone } returns null
 
     every { userProperties } returns mockKeyValueCollection()
+    every { folderId } returns DEFAULT_OBJECT_DBID
 }

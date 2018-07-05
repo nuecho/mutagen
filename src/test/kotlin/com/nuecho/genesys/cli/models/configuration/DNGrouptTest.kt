@@ -12,9 +12,9 @@ import com.genesyslab.platform.configuration.protocol.types.CfgObjectType.CFGDN
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectType.CFGFolder
 import com.nuecho.genesys.cli.getReference
 import com.nuecho.genesys.cli.models.configuration.ConfigurationAsserts.checkSerialization
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_FOLDER
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_FOLDER_REFERENCE
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_OBJECT_DBID
-import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_SITE
-import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_SITE_REFERENCE
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_REFERENCE
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgDN
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgDNGroup
@@ -32,6 +32,9 @@ import com.nuecho.genesys.cli.models.configuration.reference.ObjectiveTableRefer
 import com.nuecho.genesys.cli.models.configuration.reference.ScriptReference
 import com.nuecho.genesys.cli.models.configuration.reference.StatTableReference
 import com.nuecho.genesys.cli.models.configuration.reference.SwitchReference
+import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockConfigurationObjectRepository
+import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveFolderByDbid
+import com.nuecho.genesys.cli.services.ConfigurationObjectRepository
 import com.nuecho.genesys.cli.services.ServiceMocks.mockConfService
 import com.nuecho.genesys.cli.services.getObjectDbid
 import com.nuecho.genesys.cli.services.retrieveObject
@@ -63,14 +66,15 @@ private val dnGroup = DNGroup(
         state = CfgObjectState.CFGEnabled.toShortName(),
         userProperties = ConfigurationTestData.defaultProperties(),
         capacityRule = ScriptReference("capacityRule", DEFAULT_TENANT_REFERENCE),
-        site = DEFAULT_SITE_REFERENCE,
+        site = DEFAULT_FOLDER_REFERENCE,
         contract = ObjectiveTableReference("contract", DEFAULT_TENANT_REFERENCE)
     ),
     dns = listOf(
         DNInfo(dn = DNReference(NUMBER1, SWITCH, CFGACDQueue, NAME)),
         DNInfo(dn = DNReference(NUMBER2, SWITCH, CFGACDQueue, NAME), trunks = 2)
     ),
-    type = CFGACDQueues.toShortName()
+    type = CFGACDQueues.toShortName(),
+    folder = DEFAULT_FOLDER_REFERENCE
 )
 
 class DNGrouptTest : NoImportedObjectConfigurationObjectTest(
@@ -82,6 +86,8 @@ class DNGrouptTest : NoImportedObjectConfigurationObjectTest(
     @Test
     fun `CfgDNGroup initialized Group should properly serialize`() {
         val service = mockConfService()
+        mockRetrieveFolderByDbid(service)
+
         val dn1 = mockCfgDN(NUMBER1, DEFAULT_OBJECT_DBID)
         val dn2 = mockCfgDN(NUMBER2, OTHER_DBID)
 
@@ -100,34 +106,37 @@ class DNGrouptTest : NoImportedObjectConfigurationObjectTest(
         val dn1 = mockCfgDN(NUMBER1, DEFAULT_OBJECT_DBID)
         val dn2 = mockCfgDN(NUMBER2, OTHER_DBID)
 
+        val service = mockConfService()
+        every { service.retrieveObject(CfgDNGroup::class.java, any()) } returns null
+
         staticMockk("com.nuecho.genesys.cli.services.ConfServiceExtensionsKt").use {
-            val service = mockConfService()
             every { service.getObjectDbid(any()) } answers { DEFAULT_OBJECT_DBID }
-            every { service.retrieveObject(CfgDNGroup::class.java, any()) } returns null
             every { service.retrieveObject(DNReference(NUMBER1, SWITCH, CFGACDQueue, NAME)) } returns dn1
             every { service.retrieveObject(DNReference(NUMBER2, SWITCH, CFGACDQueue, NAME)) } returns dn2
 
-            val cfgDNGroup = dnGroup.updateCfgObject(service)
+            objectMockk(ConfigurationObjectRepository).use {
+                mockConfigurationObjectRepository()
 
-            with(cfgDNGroup) {
-                assertThat(type, equalTo(CFGACDQueues))
-                assertThat(dNs, hasSize(2))
-                assertThat(dNs.toList()[0].trunks, `is`(nullValue()))
-                assertThat(dNs.toList()[0].dndbid, equalTo(DEFAULT_OBJECT_DBID))
-                assertThat(dNs.toList()[1].trunks, equalTo(2))
-                assertThat(dNs.toList()[1].dndbid, equalTo(102))
+                val cfgDNGroup = dnGroup.updateCfgObject(service)
 
-                with(groupInfo) {
-                    assertThat(name, equalTo(dnGroup.group.name))
-                    assertThat(managerDBIDs, `is`(nullValue()))
-                    assertThat(routeDNDBIDs, `is`(nullValue()))
-                    assertThat(capacityTableDBID, equalTo(DEFAULT_OBJECT_DBID))
-                    assertThat(quotaTableDBID, equalTo(DEFAULT_OBJECT_DBID))
-                    assertThat(state, equalTo(toCfgObjectState(dnGroup.group.state)))
-                    assertThat(userProperties.asCategorizedProperties(), equalTo(dnGroup.userProperties))
-                    assertThat(capacityRuleDBID, equalTo(DEFAULT_OBJECT_DBID))
-                    assertThat(siteDBID, equalTo(DEFAULT_OBJECT_DBID))
-                    assertThat(contractDBID, equalTo(DEFAULT_OBJECT_DBID))
+                with(cfgDNGroup) {
+                    assertThat(type, equalTo(CFGACDQueues))
+                    assertThat(dNs, hasSize(2))
+                    assertThat(dNs.toList()[0].trunks, `is`(nullValue()))
+                    assertThat(dNs.toList()[0].dndbid, equalTo(DEFAULT_OBJECT_DBID))
+                    assertThat(dNs.toList()[1].trunks, equalTo(2))
+                    assertThat(dNs.toList()[1].dndbid, equalTo(102))
+
+                    assertThat(groupInfo.name, equalTo(dnGroup.group.name))
+                    assertThat(groupInfo.managerDBIDs, `is`(nullValue()))
+                    assertThat(groupInfo.routeDNDBIDs, `is`(nullValue()))
+                    assertThat(groupInfo.capacityTableDBID, equalTo(DEFAULT_OBJECT_DBID))
+                    assertThat(groupInfo.quotaTableDBID, equalTo(DEFAULT_OBJECT_DBID))
+                    assertThat(groupInfo.state, equalTo(toCfgObjectState(dnGroup.group.state)))
+                    assertThat(groupInfo.userProperties.asCategorizedProperties(), equalTo(dnGroup.userProperties))
+                    assertThat(groupInfo.capacityRuleDBID, equalTo(DEFAULT_OBJECT_DBID))
+                    assertThat(groupInfo.siteDBID, equalTo(DEFAULT_OBJECT_DBID))
+                    assertThat(groupInfo.contractDBID, equalTo(DEFAULT_OBJECT_DBID))
                 }
             }
         }
@@ -148,6 +157,7 @@ private fun mockCfgDN(number: String, dnDbid: Int): CfgDN {
         every { tenant.name } returns "tenant"
         every { trunks } returns 0
         every { type.toShortName() } returns CFGACDQueue.toShortName()
+        every { folderId } returns DEFAULT_OBJECT_DBID
     }
 }
 
@@ -167,13 +177,14 @@ private fun mockCfgDNGroup(service: IConfService): CfgDNGroup {
     val capacityTableMock = mockCfgStatTable(dnGroup.group.capacityTable!!.primaryKey)
     val quotaTableMock = mockCfgStatTable(dnGroup.group.quotaTable!!.primaryKey)
     val capacityRuleMock = mockCfgScript(dnGroup.group.capacityRule!!.primaryKey)
-    val siteMock = mockCfgFolder(DEFAULT_SITE, CFGFolder)
+    val siteMock = mockCfgFolder(DEFAULT_FOLDER, CFGFolder)
     val contractMock = mockCfgObjectiveTable(dnGroup.group.contract!!.primaryKey)
 
     return cfgDNGroup.apply {
         every { configurationService } returns service
         every { dNs } returns dnsMock
         every { type } returns CFGACDQueues
+        every { folderId } returns DEFAULT_OBJECT_DBID
         every { groupInfo.managers } returns managersMock
         every { groupInfo.routeDNs } returns routeDNsMock
         every { groupInfo.capacityTable } returns capacityTableMock

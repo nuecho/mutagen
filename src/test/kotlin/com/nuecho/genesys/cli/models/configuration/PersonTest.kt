@@ -8,9 +8,9 @@ import com.genesyslab.platform.configuration.protocol.types.CfgFlag
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectState
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectType.CFGFolder
 import com.genesyslab.platform.configuration.protocol.types.CfgRank
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_FOLDER
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_FOLDER_REFERENCE
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_OBJECT_DBID
-import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_SITE
-import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_SITE_REFERENCE
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_REFERENCE
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgAgentLoginInfo
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgFolder
@@ -29,14 +29,15 @@ import com.nuecho.genesys.cli.models.configuration.reference.PlaceReference
 import com.nuecho.genesys.cli.models.configuration.reference.ScriptReference
 import com.nuecho.genesys.cli.models.configuration.reference.SkillReference
 import com.nuecho.genesys.cli.models.configuration.reference.SwitchReference
-import com.nuecho.genesys.cli.services.ConfServiceCache
-import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockCfgFolderCache
+import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockConfigurationObjectRepository
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveAgentLogin
+import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveFolderByDbid
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveObjectiveTable
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrievePlace
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveScript
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveSkill
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveTenant
+import com.nuecho.genesys.cli.services.ConfigurationObjectRepository
 import com.nuecho.genesys.cli.services.ServiceMocks.mockConfService
 import com.nuecho.genesys.cli.toShortName
 import io.mockk.every
@@ -74,7 +75,7 @@ private val person = Person(
         capacityRule = ScriptReference("capacityRule", DEFAULT_TENANT_REFERENCE),
         contract = ObjectiveTableReference("contract", DEFAULT_TENANT_REFERENCE),
         place = PlaceReference("place", DEFAULT_TENANT_REFERENCE),
-        site = DEFAULT_SITE_REFERENCE,
+        site = DEFAULT_FOLDER_REFERENCE,
         skillLevels = mapOf(
             SkillReference("skill_1", DEFAULT_TENANT_REFERENCE) to 10,
             SkillReference("skill_2", DEFAULT_TENANT_REFERENCE) to 20,
@@ -85,7 +86,8 @@ private val person = Person(
             AgentLoginInfo(AgentLoginReference("agent_2", SWITCH_REFERENCE), 2000),
             AgentLoginInfo(AgentLoginReference("agent_3", SWITCH_REFERENCE), 3000)
         )
-    )
+    ),
+    folder = DEFAULT_FOLDER_REFERENCE
 )
 
 class PersonTest : ConfigurationObjectTest(
@@ -106,8 +108,8 @@ class PersonTest : ConfigurationObjectTest(
         mockRetrieveScript(service)
         mockRetrieveSkill(service)
 
-        objectMockk(ConfServiceCache).use {
-            mockCfgFolderCache()
+        objectMockk(ConfigurationObjectRepository).use {
+            mockConfigurationObjectRepository()
 
             val cfgPerson = person.updateCfgObject(service)
 
@@ -156,6 +158,9 @@ class PersonTest : ConfigurationObjectTest(
 
 @Suppress("LongMethod")
 private fun mockCfgPerson(): CfgPerson {
+    val service = mockConfService()
+    mockRetrieveFolderByDbid(service)
+
     val cfgAppRanks = listOf(
         mockCfgAppRank(CfgAppType.CFGAdvisors, CfgRank.CFGUser),
         mockCfgAppRank(CfgAppType.CFGAgentDesktop, CfgRank.CFGDesigner)
@@ -164,6 +169,7 @@ private fun mockCfgPerson(): CfgPerson {
     val cfgAgentInfo = mockCfgAgentInfo()
 
     return mockCfgPerson(person.employeeId).apply {
+        every { configurationService } returns service
         every { externalID } returns person.externalId
         every { firstName } returns person.firstName
         every { lastName } returns person.lastName
@@ -179,6 +185,7 @@ private fun mockCfgPerson(): CfgPerson {
         every { appRanks } returns cfgAppRanks
         every { userProperties } returns mockKeyValueCollection()
         every { agentInfo } returns cfgAgentInfo
+        every { folderId } returns DEFAULT_OBJECT_DBID
     }
 }
 
@@ -194,7 +201,7 @@ private fun mockCfgAgentInfo(): CfgAgentInfo {
     val capacityRule = mockCfgScript("capacityRule")
     val contract = mockCfgObjectiveTable("contract")
     val place = mockCfgPlace("place")
-    val site = mockCfgFolder(DEFAULT_SITE, CFGFolder)
+    val site = mockCfgFolder(DEFAULT_FOLDER, CFGFolder)
 
     val skillLevels = listOf(
         mockCfgSkillLevel("skill_1", 10),

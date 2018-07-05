@@ -1,5 +1,15 @@
 {
   "dnRange": "74233-74244, 74290",
+  "folder": {
+    "owner": {
+      "name": "tenant",
+      "type": "tenant"
+    },
+    "path": [
+      "folder"
+    ],
+    "type": "folder"
+  },
   "linkType": "madgelink",
   "name": "main-switch",
   "physicalSwitch": "physicalSwitch",

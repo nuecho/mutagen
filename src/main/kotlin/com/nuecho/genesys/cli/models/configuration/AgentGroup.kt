@@ -4,10 +4,13 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgAgentGroup
 import com.nuecho.genesys.cli.core.InitializingBean
+import com.nuecho.genesys.cli.getFolderReference
 import com.nuecho.genesys.cli.getReference
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setFolder
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setProperty
 import com.nuecho.genesys.cli.models.configuration.reference.AgentGroupReference
 import com.nuecho.genesys.cli.models.configuration.reference.ConfigurationObjectReference
+import com.nuecho.genesys.cli.models.configuration.reference.FolderReference
 import com.nuecho.genesys.cli.models.configuration.reference.PersonReference
 import com.nuecho.genesys.cli.models.configuration.reference.TenantReference
 import com.nuecho.genesys.cli.models.configuration.reference.referenceSetBuilder
@@ -16,7 +19,8 @@ import com.nuecho.genesys.cli.services.retrieveObject
 
 data class AgentGroup(
     val agents: List<PersonReference>? = null,
-    val group: Group
+    val group: Group,
+    override val folder: FolderReference? = null
 ) : ConfigurationObject, InitializingBean {
     @get:JsonIgnore
     override val reference = AgentGroupReference(group.name, group.tenant)
@@ -27,7 +31,8 @@ data class AgentGroup(
 
     constructor(agentGroup: CfgAgentGroup) : this(
         agents = agentGroup.agents?.map { it.getReference() },
-        group = Group(agentGroup.groupInfo)
+        group = Group(agentGroup.groupInfo),
+        folder = agentGroup.getFolderReference()
     )
 
     constructor(tenant: TenantReference, name: String) : this(
@@ -45,6 +50,7 @@ data class AgentGroup(
 
             setProperty("agentDBIDs", agents?.mapNotNull { service.getObjectDbid(it) }, cfgAgentGroup)
             setProperty("groupInfo", groupInfo, cfgAgentGroup)
+            setFolder(folder, cfgAgentGroup)
         }
 
     override fun afterPropertiesSet() = group.updateTenantReferences()
@@ -53,5 +59,6 @@ data class AgentGroup(
         referenceSetBuilder()
             .add(agents)
             .add(group.getReferences())
+            .add(folder)
             .toSet()
 }

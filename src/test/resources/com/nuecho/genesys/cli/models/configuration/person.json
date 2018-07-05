@@ -33,7 +33,7 @@
         "type": "tenant"
       },
       "path": [
-        "site"
+        "folder"
       ],
       "type": "folder"
     },
@@ -53,6 +53,16 @@
   "externalAuth": false,
   "externalId": "externalId",
   "firstName": "firstName",
+  "folder": {
+    "owner": {
+      "name": "tenant",
+      "type": "tenant"
+    },
+    "path": [
+      "folder"
+    ],
+    "type": "folder"
+  },
   "lastName": "lastName",
   "password": "password",
   "passwordHashAlgorithm": 1,

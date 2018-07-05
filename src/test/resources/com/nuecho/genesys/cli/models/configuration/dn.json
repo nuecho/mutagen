@@ -10,6 +10,16 @@
     }
   ],
   "dnLoginID": "anId",
+  "folder": {
+    "owner": {
+      "name": "tenant",
+      "type": "tenant"
+    },
+    "path": [
+      "folder"
+    ],
+    "type": "folder"
+  },
   "group": "dnGroup",
   "name": "aname",
   "number": "123",
@@ -21,7 +31,7 @@
       "type": "tenant"
     },
     "path": [
-      "site"
+      "folder"
     ],
     "type": "folder"
   },

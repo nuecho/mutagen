@@ -2,15 +2,22 @@ package com.nuecho.genesys.cli.models.configuration
 
 import com.genesyslab.platform.applicationblocks.com.objects.CfgGVPReseller
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectState
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_FOLDER_REFERENCE
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_OBJECT_DBID
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_REFERENCE
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockKeyValueCollection
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgObjectState
 import com.nuecho.genesys.cli.models.configuration.ConfigurationTestData.defaultProperties
+import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockConfigurationObjectRepository
+import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveFolderByDbid
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveTenant
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveTimeZone
+import com.nuecho.genesys.cli.services.ConfigurationObjectRepository
 import com.nuecho.genesys.cli.services.ServiceMocks.mockConfService
 import com.nuecho.genesys.cli.toShortName
 import io.mockk.every
+import io.mockk.objectMockk
+import io.mockk.use
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.equalTo
 import org.junit.jupiter.api.Test
@@ -25,7 +32,8 @@ private val gvpReseller = GVPReseller(
     name = NAME,
     startDate = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ").parse("2018-06-06T21:17:50.105+0000"),
     state = CfgObjectState.CFGEnabled.toShortName(),
-    userProperties = defaultProperties()
+    userProperties = defaultProperties(),
+    folder = DEFAULT_FOLDER_REFERENCE
 )
 
 class GVPResellerTest : ConfigurationObjectTest(
@@ -41,18 +49,25 @@ class GVPResellerTest : ConfigurationObjectTest(
         mockRetrieveTenant(service)
         mockRetrieveTimeZone(service)
 
-        val cfgGVPReseller = gvpReseller.updateCfgObject(service)
+        objectMockk(ConfigurationObjectRepository).use {
+            mockConfigurationObjectRepository()
+            val cfgGVPReseller = gvpReseller.updateCfgObject(service)
 
-        with(cfgGVPReseller) {
-            assertThat(name, equalTo(gvpReseller.name))
-            assertThat(state, equalTo(ConfigurationObjects.toCfgObjectState(gvpReseller.state)))
-            assertThat(userProperties.asCategorizedProperties(), equalTo(gvpReseller.userProperties))
+            with(cfgGVPReseller) {
+                assertThat(name, equalTo(gvpReseller.name))
+                assertThat(state, equalTo(ConfigurationObjects.toCfgObjectState(gvpReseller.state)))
+                assertThat(userProperties.asCategorizedProperties(), equalTo(gvpReseller.userProperties))
+            }
         }
     }
 }
 
 private fun mockCfgGVPReseller() =
     ConfigurationObjectMocks.mockCfgGVPReseller(gvpReseller.name).apply {
+        val service = mockConfService()
+        mockRetrieveFolderByDbid(service)
+
+        every { configurationService } returns service
         every { displayName } returns null
         every { isParentNSP } returns ConfigurationObjects.toCfgFlag(gvpReseller.isParentNSP)
         every { notes } returns gvpReseller.notes
@@ -63,4 +78,5 @@ private fun mockCfgGVPReseller() =
 
         every { state } returns toCfgObjectState(gvpReseller.state)
         every { userProperties } returns mockKeyValueCollection()
+        every { folderId } returns DEFAULT_OBJECT_DBID
     }

@@ -52,17 +52,18 @@ import io.mockk.mockk
 @Suppress("LargeClass")
 object ConfigurationObjectMocks {
     const val DEFAULT_TENANT = "tenant"
-    const val DEFAULT_SITE = "site"
+    const val DEFAULT_FOLDER = "folder"
     const val DEFAULT_TENANT_DBID = 1
     const val DEFAULT_OBJECT_DBID = 101
     const val SUBNAME = "subname"
     const val SUBCODE = "subcode"
+    val DEFAULT_FOLDER_TYPE = CFGFolder
     val DEFAULT_IVR_PROFILE_TYPE = CfgIVRProfileType.CFGIPTOutbound
     val DEFAULT_TENANT_REFERENCE = TenantReference(DEFAULT_TENANT)
-    val DEFAULT_SITE_REFERENCE = FolderReference(
-        CFGFolder.toShortName(),
+    val DEFAULT_FOLDER_REFERENCE = FolderReference(
+        DEFAULT_FOLDER_TYPE.toShortName(),
         OwnerReference(CFGTenant.toShortName(), DEFAULT_TENANT),
-        listOf(DEFAULT_SITE)
+        listOf(DEFAULT_FOLDER)
     )
 
     fun mockCfgAgentLoginInfo(loginCode: String, wrapupTime: Int): CfgAgentLoginInfo {
@@ -177,7 +178,7 @@ object ConfigurationObjectMocks {
             every { it.enumerator } returns enumerator
         }
 
-    fun mockCfgFolder(name: String?, type: CfgObjectType) =
+    fun mockCfgFolder(name: String = DEFAULT_FOLDER, type: CfgObjectType = DEFAULT_FOLDER_TYPE) =
         mockk<CfgFolder>().also {
             val owner = mockCfgOwnerID()
             val parent = mockCfgParentID()

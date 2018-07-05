@@ -5,12 +5,16 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgTransaction
+import com.nuecho.genesys.cli.getFolderReference
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setFolder
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setProperty
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgTransactionType
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toKeyValueCollection
 import com.nuecho.genesys.cli.models.configuration.reference.ConfigurationObjectReference
+import com.nuecho.genesys.cli.models.configuration.reference.FolderReference
 import com.nuecho.genesys.cli.models.configuration.reference.TenantReference
 import com.nuecho.genesys.cli.models.configuration.reference.TransactionReference
+import com.nuecho.genesys.cli.models.configuration.reference.referenceSetBuilder
 import com.nuecho.genesys.cli.services.getObjectDbid
 import com.nuecho.genesys.cli.services.retrieveObject
 import com.nuecho.genesys.cli.toShortName
@@ -25,8 +29,8 @@ data class Transaction(
     val state: String? = null,
     @JsonSerialize(using = CategorizedPropertiesSerializer::class)
     @JsonDeserialize(using = CategorizedPropertiesDeserializer::class)
-    override val userProperties: CategorizedProperties? = null
-
+    override val userProperties: CategorizedProperties? = null,
+    override val folder: FolderReference? = null
 ) : ConfigurationObject {
     @get:JsonIgnore
     override val reference = TransactionReference(name, type, tenant)
@@ -39,7 +43,8 @@ data class Transaction(
         recordPeriod = transaction.recordPeriod,
         state = transaction.state?.toShortName(),
         type = transaction.type.toShortName(),
-        userProperties = transaction.userProperties?.asCategorizedProperties()
+        userProperties = transaction.userProperties?.asCategorizedProperties(),
+        folder = transaction.getFolderReference()
     )
 
     override fun updateCfgObject(service: IConfService) =
@@ -57,6 +62,7 @@ data class Transaction(
             setProperty("name", name, it)
             setProperty("userProperties", toKeyValueCollection(userProperties), it)
             setProperty("state", ConfigurationObjects.toCfgObjectState(state), it)
+            setFolder(folder, it)
         }
 
     override fun checkMandatoryProperties(): Set<String> =
@@ -69,5 +75,9 @@ data class Transaction(
         // type = CfgTransactionType.CFGTRTNoTransactionType.toShortName()
     }
 
-    override fun getReferences(): Set<ConfigurationObjectReference<*>> = setOf(tenant)
+    override fun getReferences(): Set<ConfigurationObjectReference<*>> =
+        referenceSetBuilder()
+            .add(tenant)
+            .add(folder)
+            .toSet()
 }

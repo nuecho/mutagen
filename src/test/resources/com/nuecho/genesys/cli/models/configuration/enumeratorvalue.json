@@ -3,6 +3,16 @@
   "description": "description",
   "displayName": "displayName",
   "enumerator": "enumerator",
+  "folder": {
+    "owner": {
+      "name": "tenant",
+      "type": "tenant"
+    },
+    "path": [
+      "folder"
+    ],
+    "type": "folder"
+  },
   "name": "enumeratorValue",
   "state": "enabled",
   "tenant": "tenant",

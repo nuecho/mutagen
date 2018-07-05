@@ -8,6 +8,8 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgAppRank
 import com.genesyslab.platform.applicationblocks.com.objects.CfgPerson
 import com.nuecho.genesys.cli.asBoolean
 import com.nuecho.genesys.cli.core.InitializingBean
+import com.nuecho.genesys.cli.getFolderReference
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setFolder
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setProperty
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgAppType
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgFlag
@@ -15,8 +17,10 @@ import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgObj
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgRank
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toKeyValueCollection
 import com.nuecho.genesys.cli.models.configuration.reference.ConfigurationObjectReference
+import com.nuecho.genesys.cli.models.configuration.reference.FolderReference
 import com.nuecho.genesys.cli.models.configuration.reference.PersonReference
 import com.nuecho.genesys.cli.models.configuration.reference.TenantReference
+import com.nuecho.genesys.cli.models.configuration.reference.referenceSetBuilder
 import com.nuecho.genesys.cli.services.getObjectDbid
 import com.nuecho.genesys.cli.services.retrieveObject
 import com.nuecho.genesys.cli.toShortName
@@ -43,7 +47,8 @@ data class Person(
     val agentInfo: AgentInfo? = null,
     @JsonSerialize(using = CategorizedPropertiesSerializer::class)
     @JsonDeserialize(using = CategorizedPropertiesDeserializer::class)
-    override val userProperties: CategorizedProperties? = null
+    override val userProperties: CategorizedProperties? = null,
+    override val folder: FolderReference? = null
 ) : ConfigurationObject, InitializingBean {
     @get:JsonIgnore
     override val reference = PersonReference(employeeId, tenant)
@@ -65,6 +70,7 @@ data class Person(
         externalAuth = person.isExternalAuth?.asBoolean(),
         appRanks = person.appRanks?.map { it.appType.toShortName() to it.appRank.toShortName() }?.toMap(),
         userProperties = person.userProperties?.asCategorizedProperties(),
+        folder = person.getFolderReference(),
         agentInfo = if (person.agentInfo != null) AgentInfo(person.agentInfo) else null
     )
 
@@ -87,6 +93,7 @@ data class Person(
             setProperty("appRanks", toCfgAppRankList(appRanks, it), it)
             setProperty("userProperties", toKeyValueCollection(userProperties), it)
             setProperty("agentInfo", agentInfo?.toCfgAgentInfo(it), it)
+            setFolder(folder, it)
         }
 
     override fun checkMandatoryProperties(): Set<String> =
@@ -96,7 +103,11 @@ data class Person(
         agentInfo?.updateTenantReferences(tenant)
     }
 
-    override fun getReferences(): Set<ConfigurationObjectReference<*>> = setOf(tenant)
+    override fun getReferences(): Set<ConfigurationObjectReference<*>> =
+        referenceSetBuilder()
+            .add(tenant)
+            .add(folder)
+            .toSet()
 }
 
 private fun toCfgAppRankList(appRankMap: Map<String, String>?, person: CfgPerson) =

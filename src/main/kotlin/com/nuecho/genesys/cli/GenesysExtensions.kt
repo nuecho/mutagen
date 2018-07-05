@@ -2,6 +2,7 @@
 
 package com.nuecho.genesys.cli
 
+import com.genesyslab.platform.applicationblocks.com.CfgObject
 import com.genesyslab.platform.applicationblocks.com.objects.CfgAccessGroup
 import com.genesyslab.platform.applicationblocks.com.objects.CfgAgentGroup
 import com.genesyslab.platform.applicationblocks.com.objects.CfgAgentLogin
@@ -27,6 +28,7 @@ import com.genesyslab.platform.commons.protocol.Endpoint
 import com.genesyslab.platform.configuration.protocol.types.CfgDNRegisterFlag
 import com.genesyslab.platform.configuration.protocol.types.CfgFlag
 import com.genesyslab.platform.configuration.protocol.types.CfgIVRProfileType
+import com.genesyslab.platform.configuration.protocol.types.CfgObjectType.CFGFolder
 import com.genesyslab.platform.configuration.protocol.types.CfgTransactionType
 import com.genesyslab.platform.reporting.protocol.statserver.AgentStatus
 import com.genesyslab.platform.reporting.protocol.statserver.DnActions
@@ -106,13 +108,17 @@ fun CfgTransactionType.toShortName(): String =
 fun CfgDNRegisterFlag.toShortName(): String =
     this.name().replace(CFG_DN_REGISTER_FLAG_PREFIX, "").toLowerCase()
 
-fun CfgFlag.asBoolean(): Boolean? =
+fun CfgFlag.asBoolean() =
     when (this) {
         CfgFlag.CFGNoFlag -> null
         CfgFlag.CFGTrue -> true
         CfgFlag.CFGFalse -> false
         else -> throw IllegalArgumentException("Illegal CfgFlag value: '$this'")
     }
+
+fun CfgObject.getFolderReference() =
+    if (folderId == 0) null
+    else (configurationService.retrieveObject(CFGFolder, folderId) as CfgFolder).getReference()
 
 fun CfgAccessGroup.getReference() = AccessGroupReference(groupInfo.name, groupInfo.tenant.getReference())
 fun CfgAgentGroup.getReference() = AgentGroupReference(groupInfo.name, groupInfo.tenant.getReference())

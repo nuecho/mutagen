@@ -9,9 +9,9 @@ import com.genesyslab.platform.configuration.protocol.types.CfgObjectState
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectType.CFGFolder
 import com.genesyslab.platform.configuration.protocol.types.CfgRouteType
 import com.nuecho.genesys.cli.asBoolean
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_FOLDER
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_FOLDER_REFERENCE
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_OBJECT_DBID
-import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_SITE
-import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_SITE_REFERENCE
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_REFERENCE
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgDN
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgDNGroup
@@ -28,12 +28,13 @@ import com.nuecho.genesys.cli.models.configuration.reference.DNGroupReference
 import com.nuecho.genesys.cli.models.configuration.reference.DNReference
 import com.nuecho.genesys.cli.models.configuration.reference.ObjectiveTableReference
 import com.nuecho.genesys.cli.models.configuration.reference.SwitchReference
-import com.nuecho.genesys.cli.services.ConfServiceCache
-import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockCfgFolderCache
+import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockConfigurationObjectRepository
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveDNGroup
+import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveFolderByDbid
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveObjectiveTable
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveSwitch
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveTenant
+import com.nuecho.genesys.cli.services.ConfigurationObjectRepository
 import com.nuecho.genesys.cli.services.ServiceMocks.mockConfService
 import com.nuecho.genesys.cli.toShortName
 import io.mockk.every
@@ -67,10 +68,11 @@ private val dn = DN(
     override = "anoverride",
     name = "aname",
     useOverride = CfgFlag.CFGTrue.asBoolean(),
-    site = DEFAULT_SITE_REFERENCE,
+    site = DEFAULT_FOLDER_REFERENCE,
     contract = ObjectiveTableReference("acontract", DEFAULT_TENANT_REFERENCE),
     userProperties = ConfigurationTestData.defaultProperties(),
-    state = CfgObjectState.CFGEnabled.toShortName()
+    state = CfgObjectState.CFGEnabled.toShortName(),
+    folder = DEFAULT_FOLDER_REFERENCE
 )
 
 class DNTest : ConfigurationObjectTest(
@@ -94,8 +96,8 @@ class DNTest : ConfigurationObjectTest(
         mockRetrieveSwitch(service)
         mockRetrieveObjectiveTable(service)
 
-        objectMockk(ConfServiceCache).use {
-            mockCfgFolderCache()
+        objectMockk(ConfigurationObjectRepository).use {
+            mockConfigurationObjectRepository()
             val cfgDN = dn.updateCfgObject(service)
 
             with(cfgDN) {
@@ -112,10 +114,13 @@ class DNTest : ConfigurationObjectTest(
 
 @Suppress("LongMethod")
 private fun mockCfgDN(): CfgDN {
+    val service = mockConfService()
+    mockRetrieveFolderByDbid(service)
+
     val cfgState = toCfgObjectState(dn.state)
     val cfgDNGroup = mockCfgDNGroup(dn.group!!.primaryKey)
     val cfgSwitch = mockCfgSwitch(dn.switch.primaryKey)
-    val cfgSite = mockCfgFolder(DEFAULT_SITE, CFGFolder)
+    val cfgSite = mockCfgFolder(DEFAULT_FOLDER, CFGFolder)
     val cfgDestDN = mockCfgDN(dn.destinationDNs!!.first().number).apply {
         every { switch } returns cfgSwitch
         every { type } returns CFGACDQueue
@@ -125,6 +130,7 @@ private fun mockCfgDN(): CfgDN {
     every { cfgObjectiveTable.dbid } returns 111
 
     return mockCfgDN(dn.number).apply {
+        every { configurationService } returns service
         every { group } returns cfgDNGroup
         every { switch } returns cfgSwitch
         every { registerAll } returns toCfgDNRegisterFlag(dn.registerAll)
@@ -146,5 +152,6 @@ private fun mockCfgDN(): CfgDN {
         every { useOverride } returns toCfgFlag(dn.useOverride)
         every { site } returns cfgSite
         every { contract } returns cfgObjectiveTable
+        every { folderId } returns DEFAULT_OBJECT_DBID
     }
 }

@@ -21,7 +21,7 @@ import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects
 import com.nuecho.genesys.cli.models.configuration.Metadata
 import com.nuecho.genesys.cli.preferences.environment.Environment
 import com.nuecho.genesys.cli.services.ConfService
-import com.nuecho.genesys.cli.services.ConfServiceCache
+import com.nuecho.genesys.cli.services.ConfigurationObjectRepository
 import picocli.CommandLine
 import java.io.OutputStream
 
@@ -43,7 +43,7 @@ class ExportCommand : GenesysCliCommand() {
         val environment = getGenesysCli().loadEnvironment()
         val service = ConfService(environment)
         service.open()
-        ConfServiceCache.populateCache(service)
+        ConfigurationObjectRepository.prefetchConfigurationObjects(service)
 
         try {
             exportConfiguration(

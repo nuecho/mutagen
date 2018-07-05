@@ -5,11 +5,15 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgSkill
+import com.nuecho.genesys.cli.getFolderReference
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setFolder
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setProperty
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toKeyValueCollection
 import com.nuecho.genesys.cli.models.configuration.reference.ConfigurationObjectReference
+import com.nuecho.genesys.cli.models.configuration.reference.FolderReference
 import com.nuecho.genesys.cli.models.configuration.reference.SkillReference
 import com.nuecho.genesys.cli.models.configuration.reference.TenantReference
+import com.nuecho.genesys.cli.models.configuration.reference.referenceSetBuilder
 import com.nuecho.genesys.cli.services.getObjectDbid
 import com.nuecho.genesys.cli.services.retrieveObject
 import com.nuecho.genesys.cli.toShortName
@@ -20,8 +24,8 @@ data class Skill(
     val state: String? = null,
     @JsonSerialize(using = CategorizedPropertiesSerializer::class)
     @JsonDeserialize(using = CategorizedPropertiesDeserializer::class)
-    override val userProperties: CategorizedProperties? = null
-
+    override val userProperties: CategorizedProperties? = null,
+    override val folder: FolderReference? = null
 ) : ConfigurationObject {
     @get:JsonIgnore
     override val reference = SkillReference(name, tenant)
@@ -30,7 +34,8 @@ data class Skill(
         tenant = TenantReference(skill.tenant.name),
         name = skill.name,
         state = skill.state?.toShortName(),
-        userProperties = skill.userProperties?.asCategorizedProperties()
+        userProperties = skill.userProperties?.asCategorizedProperties(),
+        folder = skill.getFolderReference()
     )
 
     override fun updateCfgObject(service: IConfService) =
@@ -39,7 +44,12 @@ data class Skill(
             setProperty("name", name, it)
             setProperty("userProperties", toKeyValueCollection(userProperties), it)
             setProperty("state", ConfigurationObjects.toCfgObjectState(state), it)
+            setFolder(folder, it)
         }
 
-    override fun getReferences(): Set<ConfigurationObjectReference<*>> = setOf(tenant)
+    override fun getReferences(): Set<ConfigurationObjectReference<*>> =
+        referenceSetBuilder()
+            .add(tenant)
+            .add(folder)
+            .toSet()
 }

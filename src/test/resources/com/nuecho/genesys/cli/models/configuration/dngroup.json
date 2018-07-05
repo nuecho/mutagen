@@ -18,6 +18,16 @@
       "trunks": 2
     }
   ],
+  "folder": {
+    "owner": {
+      "name": "tenant",
+      "type": "tenant"
+    },
+    "path": [
+      "folder"
+    ],
+    "type": "folder"
+  },
   "group": {
     "capacityRule": "capacityRule",
     "capacityTable": "capacityTable",
@@ -30,7 +40,7 @@
         "type": "tenant"
       },
       "path": [
-        "site"
+        "folder"
       ],
       "type": "folder"
     },

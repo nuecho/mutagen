@@ -7,12 +7,15 @@ import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgTenant
 import com.nuecho.genesys.cli.asBoolean
 import com.nuecho.genesys.cli.core.InitializingBean
+import com.nuecho.genesys.cli.getFolderReference
 import com.nuecho.genesys.cli.getReference
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setFolder
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setProperty
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgFlag
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgObjectState
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toKeyValueCollection
 import com.nuecho.genesys.cli.models.configuration.reference.ConfigurationObjectReference
+import com.nuecho.genesys.cli.models.configuration.reference.FolderReference
 import com.nuecho.genesys.cli.models.configuration.reference.ObjectiveTableReference
 import com.nuecho.genesys.cli.models.configuration.reference.ScriptReference
 import com.nuecho.genesys.cli.models.configuration.reference.TenantReference
@@ -32,8 +35,8 @@ data class Tenant(
     val state: String? = null,
     @JsonSerialize(using = CategorizedPropertiesSerializer::class)
     @JsonDeserialize(using = CategorizedPropertiesDeserializer::class)
-    override val userProperties: CategorizedProperties? = null
-
+    override val userProperties: CategorizedProperties? = null,
+    override val folder: FolderReference? = null
 ) : ConfigurationObject, InitializingBean {
     @get:JsonIgnore
     override val reference = TenantReference(name)
@@ -47,7 +50,8 @@ data class Tenant(
         parentTenant = tenant.parentTenant?.getReference(),
         password = tenant.password,
         state = tenant.state?.toShortName(),
-        userProperties = tenant.userProperties?.asCategorizedProperties()
+        userProperties = tenant.userProperties?.asCategorizedProperties(),
+        folder = tenant.getFolderReference()
     )
 
     override fun updateCfgObject(service: IConfService) =
@@ -66,6 +70,7 @@ data class Tenant(
 
             setProperty("state", toCfgObjectState(state), it)
             setProperty("userProperties", toKeyValueCollection(userProperties), it)
+            setFolder(folder, it)
         }
 
     override fun applyDefaultValues() {
@@ -82,5 +87,6 @@ data class Tenant(
             .add(defaultContract)
             .add(defaultCapacityRule)
             .add(parentTenant)
+            .add(folder)
             .toSet()
 }

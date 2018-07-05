@@ -71,11 +71,11 @@ object ConfServiceExtensionMocks {
             place
         }
 
-    fun mockCfgFolderCache() {
+    fun mockConfigurationObjectRepository() {
         val cfgFolder = mockCfgFolder("site", CfgObjectType.CFGFolder)
-        every { ConfServiceCache.contains(any()) } returns false
-        every { ConfServiceCache.contains(ofType(FolderReference::class)) } returns true
-        every { ConfServiceCache[ofType(FolderReference::class)] } returns cfgFolder
+        every { ConfigurationObjectRepository.contains(any()) } returns false
+        every { ConfigurationObjectRepository.contains(ofType(FolderReference::class)) } returns true
+        every { ConfigurationObjectRepository[ofType(FolderReference::class)] } returns cfgFolder
     }
 
     fun mockRetrieveSkill(service: IConfService, dbid: Int = DEFAULT_OBJECT_DBID) =
@@ -175,5 +175,10 @@ object ConfServiceExtensionMocks {
         every { service.retrieveObject(CfgGVPCustomer::class.java, any()) } answers {
             mockCfgGVPCustomer(DEFAULT_TENANT)
         }
+    }
+
+    fun mockRetrieveFolderByDbid(service: IConfService) {
+        val folder = mockCfgFolder()
+        every { service.retrieveObject(CfgObjectType.CFGFolder, any()) } returns folder
     }
 }

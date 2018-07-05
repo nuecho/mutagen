@@ -5,12 +5,16 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgPhysicalSwitch
+import com.nuecho.genesys.cli.getFolderReference
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setFolder
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setProperty
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgObjectState
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgSwitchType
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toKeyValueCollection
 import com.nuecho.genesys.cli.models.configuration.reference.ConfigurationObjectReference
+import com.nuecho.genesys.cli.models.configuration.reference.FolderReference
 import com.nuecho.genesys.cli.models.configuration.reference.PhysicalSwitchReference
+import com.nuecho.genesys.cli.models.configuration.reference.referenceSetBuilder
 import com.nuecho.genesys.cli.services.retrieveObject
 import com.nuecho.genesys.cli.toShortName
 
@@ -23,7 +27,8 @@ data class PhysicalSwitch(
     val state: String? = null,
     @JsonSerialize(using = CategorizedPropertiesSerializer::class)
     @JsonDeserialize(using = CategorizedPropertiesDeserializer::class)
-    override val userProperties: CategorizedProperties? = null
+    override val userProperties: CategorizedProperties? = null,
+    override val folder: FolderReference? = null
 ) : ConfigurationObject {
     @get:JsonIgnore
     override val reference = PhysicalSwitchReference(name)
@@ -32,7 +37,8 @@ data class PhysicalSwitch(
         name = physicalSwitch.name,
         type = physicalSwitch.type?.toShortName(),
         state = physicalSwitch.state?.toShortName(),
-        userProperties = physicalSwitch.userProperties?.asCategorizedProperties()
+        userProperties = physicalSwitch.userProperties?.asCategorizedProperties(),
+        folder = physicalSwitch.getFolderReference()
     )
 
     override fun updateCfgObject(service: IConfService) =
@@ -41,10 +47,14 @@ data class PhysicalSwitch(
             setProperty(TYPE, toCfgSwitchType(type), it)
             setProperty("state", toCfgObjectState(state), it)
             setProperty("userProperties", toKeyValueCollection(userProperties), it)
+            setFolder(folder, it)
         }
 
     override fun checkMandatoryProperties(): Set<String> =
         if (type == null) setOf(TYPE) else emptySet()
 
-    override fun getReferences(): Set<ConfigurationObjectReference<*>> = setOf()
+    override fun getReferences(): Set<ConfigurationObjectReference<*>> =
+        referenceSetBuilder()
+            .add(folder)
+            .toSet()
 }

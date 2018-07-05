@@ -8,7 +8,9 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgDN
 import com.genesyslab.platform.applicationblocks.com.objects.CfgDNAccessNumber
 import com.nuecho.genesys.cli.asBoolean
 import com.nuecho.genesys.cli.core.InitializingBean
+import com.nuecho.genesys.cli.getFolderReference
 import com.nuecho.genesys.cli.getReference
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setFolder
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setProperty
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgDNRegisterFlag
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgDNType
@@ -55,6 +57,7 @@ data class DN(
     @JsonSerialize(using = CategorizedPropertiesSerializer::class)
     @JsonDeserialize(using = CategorizedPropertiesDeserializer::class)
     override val userProperties: CategorizedProperties? = null,
+    override val folder: FolderReference? = null,
 
     val name: String? = null,
 
@@ -89,6 +92,7 @@ data class DN(
 
         state = dn.state?.toShortName(),
         userProperties = dn.userProperties?.asCategorizedProperties(),
+        folder = dn.getFolderReference(),
 
         name = dn.name,
 
@@ -137,6 +141,8 @@ data class DN(
             setProperty("siteDBID", service.getObjectDbid(site), it)
 
             setProperty("contractDBID", service.getObjectDbid(contract), it)
+
+            setFolder(folder, it)
         }
 
     override fun checkMandatoryProperties(): Set<String> =
@@ -169,6 +175,7 @@ data class DN(
             .add(accessNumbers?.map { it.switch })
             .add(site)
             .add(contract)
+            .add(folder)
             .toSet()
 }
 

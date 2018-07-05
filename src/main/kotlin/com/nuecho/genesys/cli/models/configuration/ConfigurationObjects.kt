@@ -1,5 +1,6 @@
 package com.nuecho.genesys.cli.models.configuration
 
+import com.genesyslab.platform.applicationblocks.com.CfgObject
 import com.genesyslab.platform.applicationblocks.com.ICfgBase
 import com.genesyslab.platform.applicationblocks.com.ICfgObject
 import com.genesyslab.platform.commons.GEnum
@@ -28,6 +29,7 @@ import com.genesyslab.platform.configuration.protocol.types.CfgScriptType
 import com.genesyslab.platform.configuration.protocol.types.CfgSwitchType
 import com.genesyslab.platform.configuration.protocol.types.CfgTargetType
 import com.genesyslab.platform.configuration.protocol.types.CfgTransactionType
+import com.nuecho.genesys.cli.models.configuration.reference.FolderReference
 
 object ConfigurationObjects {
 
@@ -45,6 +47,9 @@ object ConfigurationObjects {
 
     fun getCfgObjectType(cfgObjectClass: Class<out ICfgObject>) =
         CfgObjectType.getValue(CfgObjectType::class.java, cfgObjectClass.simpleName) as CfgObjectType
+
+    fun setFolder(folder: FolderReference?, cfgObject: CfgObject) =
+        folder?.let { cfgObject.folderId = folder.toFolderDbid(cfgObject.configurationService) }
 
     fun setProperty(name: String, value: Any?, cfgBase: ICfgBase) =
         value?.let { cfgBase.setProperty(name, it) }

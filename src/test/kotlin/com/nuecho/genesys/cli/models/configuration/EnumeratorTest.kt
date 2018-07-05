@@ -3,16 +3,23 @@ package com.nuecho.genesys.cli.models.configuration
 import com.genesyslab.platform.applicationblocks.com.objects.CfgEnumerator
 import com.genesyslab.platform.configuration.protocol.types.CfgEnumeratorType.CFGENTRole
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectState.CFGEnabled
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_FOLDER_REFERENCE
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_OBJECT_DBID
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_REFERENCE
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgEnumerator
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockKeyValueCollection
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgEnumeratorType
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgObjectState
 import com.nuecho.genesys.cli.models.configuration.ConfigurationTestData.defaultProperties
+import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockConfigurationObjectRepository
+import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveFolderByDbid
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveTenant
+import com.nuecho.genesys.cli.services.ConfigurationObjectRepository
 import com.nuecho.genesys.cli.services.ServiceMocks.mockConfService
 import com.nuecho.genesys.cli.toShortName
 import io.mockk.every
+import io.mockk.objectMockk
+import io.mockk.use
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.equalTo
 import org.junit.jupiter.api.Test
@@ -25,7 +32,8 @@ private val enumerator = Enumerator(
     description = "description",
     type = CFGENTRole.toShortName(),
     state = CFGEnabled.toShortName(),
-    userProperties = defaultProperties()
+    userProperties = defaultProperties(),
+    folder = DEFAULT_FOLDER_REFERENCE
 )
 
 class EnumeratorTest : ConfigurationObjectTest(
@@ -40,15 +48,18 @@ class EnumeratorTest : ConfigurationObjectTest(
         every { service.retrieveObject(CfgEnumerator::class.java, any()) } returns null
         mockRetrieveTenant(service)
 
-        val cfgEnumerator = enumerator.updateCfgObject(service)
+        objectMockk(ConfigurationObjectRepository).use {
+            mockConfigurationObjectRepository()
+            val cfgEnumerator = enumerator.updateCfgObject(service)
 
-        with(cfgEnumerator) {
-            assertThat(name, equalTo(enumerator.name))
-            assertThat(displayName, equalTo(enumerator.displayName))
-            assertThat(description, equalTo(enumerator.description))
-            assertThat(type, equalTo(toCfgEnumeratorType(enumerator.type)))
-            assertThat(state, equalTo(toCfgObjectState(enumerator.state)))
-            assertThat(userProperties.asCategorizedProperties(), equalTo(enumerator.userProperties))
+            with(cfgEnumerator) {
+                assertThat(name, equalTo(enumerator.name))
+                assertThat(displayName, equalTo(enumerator.displayName))
+                assertThat(description, equalTo(enumerator.description))
+                assertThat(type, equalTo(toCfgEnumeratorType(enumerator.type)))
+                assertThat(state, equalTo(toCfgObjectState(enumerator.state)))
+                assertThat(userProperties.asCategorizedProperties(), equalTo(enumerator.userProperties))
+            }
         }
     }
 
@@ -68,9 +79,14 @@ class EnumeratorTest : ConfigurationObjectTest(
 }
 
 private fun mockCfgEnumerator() = mockCfgEnumerator(enumerator.name).apply {
+    val service = mockConfService()
+    mockRetrieveFolderByDbid(service)
+
+    every { configurationService } returns service
     every { displayName } returns enumerator.displayName
     every { description } returns enumerator.description
     every { type } returns toCfgEnumeratorType(enumerator.type)
     every { state } returns toCfgObjectState(enumerator.state)
     every { userProperties } returns mockKeyValueCollection()
+    every { folderId } returns DEFAULT_OBJECT_DBID
 }

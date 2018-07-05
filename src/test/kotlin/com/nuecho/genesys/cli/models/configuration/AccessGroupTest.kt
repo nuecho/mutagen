@@ -12,9 +12,9 @@ import com.genesyslab.platform.configuration.protocol.types.CfgObjectState.CFGEn
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectType.CFGFolder
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectType.CFGPerson
 import com.nuecho.genesys.cli.models.configuration.ConfigurationAsserts.checkSerialization
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_FOLDER
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_FOLDER_REFERENCE
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_OBJECT_DBID
-import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_SITE
-import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_SITE_REFERENCE
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_REFERENCE
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgAccessGroup
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgDN
@@ -27,10 +27,13 @@ import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mock
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgSwitch
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockKeyValueCollection
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgObjectState
+import com.nuecho.genesys.cli.models.configuration.ConfigurationTestData.defaultProperties
 import com.nuecho.genesys.cli.models.configuration.reference.ObjectiveTableReference
 import com.nuecho.genesys.cli.models.configuration.reference.PersonReference
 import com.nuecho.genesys.cli.models.configuration.reference.ScriptReference
 import com.nuecho.genesys.cli.models.configuration.reference.StatTableReference
+import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockConfigurationObjectRepository
+import com.nuecho.genesys.cli.services.ConfigurationObjectRepository
 import com.nuecho.genesys.cli.services.ServiceMocks.mockConfService
 import com.nuecho.genesys.cli.services.getObjectDbid
 import com.nuecho.genesys.cli.toShortName
@@ -48,6 +51,7 @@ import org.junit.jupiter.api.Test
 private const val NAME = "accessGroup"
 private const val MEMBER1 = "member1"
 private const val MEMBER2 = "member2"
+
 private val accessGroup = AccessGroup(
     group = Group(
         tenant = DEFAULT_TENANT_REFERENCE,
@@ -55,16 +59,17 @@ private val accessGroup = AccessGroup(
         capacityTable = StatTableReference("capacityTable", DEFAULT_TENANT_REFERENCE),
         quotaTable = StatTableReference("quotaTable", DEFAULT_TENANT_REFERENCE),
         state = CfgObjectState.CFGEnabled.toShortName(),
-        userProperties = ConfigurationTestData.defaultProperties(),
+        userProperties = defaultProperties(),
         capacityRule = ScriptReference("capacityRule", DEFAULT_TENANT_REFERENCE),
-        site = DEFAULT_SITE_REFERENCE,
+        site = DEFAULT_FOLDER_REFERENCE,
         contract = ObjectiveTableReference("contract", DEFAULT_TENANT_REFERENCE)
     ),
     members = listOf(
         PersonReference(MEMBER1, DEFAULT_TENANT_REFERENCE),
         PersonReference(MEMBER2, DEFAULT_TENANT_REFERENCE)
     ),
-    type = CFGDefaultGroup.toShortName()
+    type = CFGDefaultGroup.toShortName(),
+    folder = DEFAULT_FOLDER_REFERENCE
 )
 
 class AccessGroupTest : NoImportedObjectConfigurationObjectTest(
@@ -75,10 +80,12 @@ class AccessGroupTest : NoImportedObjectConfigurationObjectTest(
     @Test
     fun `CfgAccessGroup initialized Group should properly serialize`() {
         val service = mockConfService()
+        val folder = mockCfgFolder()
         val member1 = mockCfgPerson(MEMBER1)
         val member2 = mockCfgPerson(MEMBER2)
 
         objectMockk(ConfigurationObjects).use {
+            every { service.retrieveObject(CFGFolder, any()) } returns folder
             every {
                 service.retrieveObject(CFGPerson, any())
             } returns member1 andThen member2
@@ -91,38 +98,41 @@ class AccessGroupTest : NoImportedObjectConfigurationObjectTest(
     @Test
     fun `updateCfgObject should properly create CfgAccessGroup`() {
         val member = mockCfgPerson(MEMBER1)
+        val service = mockConfService()
+
+        every { service.retrieveObject(CfgPerson::class.java, any()) } answers { member }
+        every { service.retrieveObject(CfgAccessGroup::class.java, any()) } returns null
 
         staticMockk("com.nuecho.genesys.cli.services.ConfServiceExtensionsKt").use {
-            val service = mockConfService()
-            every { service.retrieveObject(CfgPerson::class.java, any()) } answers { member }
-            every { service.retrieveObject(CfgAccessGroup::class.java, any()) } returns null
             every { service.getObjectDbid(any()) } answers { DEFAULT_OBJECT_DBID }
 
-            val cfgAccessGroup = accessGroup.updateCfgObject(service)
+            objectMockk(ConfigurationObjectRepository).use {
+                mockConfigurationObjectRepository()
+                val cfgAccessGroup = accessGroup.updateCfgObject(service)
 
-            val cfgId = CfgID(service, cfgAccessGroup)
-            cfgId.dbid = DEFAULT_OBJECT_DBID
-            cfgId.type = CFGPerson
+                val cfgId = CfgID(service, cfgAccessGroup)
+                cfgId.dbid = DEFAULT_OBJECT_DBID
+                cfgId.type = CFGPerson
 
-            with(cfgAccessGroup) {
-                assertThat(type, equalTo(CFGDefaultGroup))
-                assertThat(memberIDs, hasSize(2))
-                assertThat(memberIDs.toList()[0].dbid, equalTo(DEFAULT_OBJECT_DBID))
-                assertThat(memberIDs.toList()[1].dbid, equalTo(DEFAULT_OBJECT_DBID))
-                assertThat(memberIDs.toList()[0].type, equalTo(CFGPerson))
-                assertThat(memberIDs.toList()[1].type, equalTo(CFGPerson))
+                with(cfgAccessGroup) {
+                    assertThat(type, equalTo(CFGDefaultGroup))
+                    assertThat(folderId, equalTo(DEFAULT_OBJECT_DBID))
+                    assertThat(memberIDs, hasSize(2))
+                    assertThat(memberIDs.toList()[0].dbid, equalTo(DEFAULT_OBJECT_DBID))
+                    assertThat(memberIDs.toList()[1].dbid, equalTo(DEFAULT_OBJECT_DBID))
+                    assertThat(memberIDs.toList()[0].type, equalTo(CFGPerson))
+                    assertThat(memberIDs.toList()[1].type, equalTo(CFGPerson))
 
-                with(groupInfo) {
-                    assertThat(name, equalTo(accessGroup.group.name))
-                    assertThat(managerDBIDs, `is`(nullValue()))
-                    assertThat(routeDNDBIDs, `is`(nullValue()))
-                    assertThat(capacityTableDBID, equalTo(DEFAULT_OBJECT_DBID))
-                    assertThat(quotaTableDBID, equalTo(DEFAULT_OBJECT_DBID))
-                    assertThat(state, equalTo(toCfgObjectState(accessGroup.group.state)))
-                    assertThat(userProperties.asCategorizedProperties(), equalTo(accessGroup.userProperties))
-                    assertThat(capacityRuleDBID, equalTo(DEFAULT_OBJECT_DBID))
-                    assertThat(siteDBID, equalTo(DEFAULT_OBJECT_DBID))
-                    assertThat(contractDBID, equalTo(DEFAULT_OBJECT_DBID))
+                    assertThat(groupInfo.name, equalTo(accessGroup.group.name))
+                    assertThat(groupInfo.managerDBIDs, `is`(nullValue()))
+                    assertThat(groupInfo.routeDNDBIDs, `is`(nullValue()))
+                    assertThat(groupInfo.capacityTableDBID, equalTo(DEFAULT_OBJECT_DBID))
+                    assertThat(groupInfo.quotaTableDBID, equalTo(DEFAULT_OBJECT_DBID))
+                    assertThat(groupInfo.state, equalTo(toCfgObjectState(accessGroup.group.state)))
+                    assertThat(groupInfo.userProperties.asCategorizedProperties(), equalTo(accessGroup.userProperties))
+                    assertThat(groupInfo.capacityRuleDBID, equalTo(DEFAULT_OBJECT_DBID))
+                    assertThat(groupInfo.siteDBID, equalTo(DEFAULT_OBJECT_DBID))
+                    assertThat(groupInfo.contractDBID, equalTo(DEFAULT_OBJECT_DBID))
                 }
             }
         }
@@ -145,14 +155,15 @@ private fun mockCfgAccessGroup(service: IConfService): CfgAccessGroup {
     val capacityTableMock = mockCfgStatTable(accessGroup.group.capacityTable!!.primaryKey)
     val quotaTableMock = mockCfgStatTable(accessGroup.group.quotaTable!!.primaryKey)
     val capacityRuleMock = mockCfgScript(accessGroup.group.capacityRule!!.primaryKey)
-    val siteMock = mockCfgFolder(DEFAULT_SITE, CFGFolder)
+    val siteMock = mockCfgFolder(DEFAULT_FOLDER, CFGFolder)
     val contractMock = mockCfgObjectiveTable(accessGroup.group.contract!!.primaryKey)
 
     return cfgAccessGroup.apply {
         every { configurationService } returns service
         every { memberIDs } returns membersMock
-
         every { type } returns CfgAccessGroupType.CFGDefaultGroup
+        every { folderId } returns DEFAULT_OBJECT_DBID
+
         every { groupInfo.managers } returns managersMock
         every { groupInfo.routeDNs } returns routeDNsMock
         every { groupInfo.capacityTable } returns capacityTableMock

@@ -14,7 +14,7 @@ import com.nuecho.genesys.cli.models.configuration.Configuration
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObject
 import com.nuecho.genesys.cli.models.configuration.reference.ConfigurationObjectReference
 import com.nuecho.genesys.cli.services.ConfService
-import com.nuecho.genesys.cli.services.ConfServiceCache
+import com.nuecho.genesys.cli.services.ConfigurationObjectRepository
 import com.nuecho.genesys.cli.services.retrieveObject
 import com.nuecho.genesys.cli.toShortName
 import org.fusesource.jansi.Ansi.ansi
@@ -57,7 +57,7 @@ class Import : GenesysCliCommand() {
 
     override fun execute(): Int {
         val result = withEnvironmentConfService {
-            ConfServiceCache.populateCache(it)
+            ConfigurationObjectRepository.prefetchConfigurationObjects(it)
             val configuration = defaultJsonObjectMapper().readValue(inputFile, Configuration::class.java)
             importConfiguration(configuration, it, autoConfirm)
         }

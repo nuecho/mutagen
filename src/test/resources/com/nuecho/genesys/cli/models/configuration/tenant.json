@@ -2,15 +2,25 @@
   "chargeableNumber": "123",
   "defaultCapacityRule": "capacityRule",
   "defaultContract": "contract",
+  "folder": {
+    "owner": {
+      "name": "tenant",
+      "type": "tenant"
+    },
+    "path": [
+      "folder"
+    ],
+    "type": "folder"
+  },
   "name": "foo",
   "parentTenant": "parent",
   "password": "password",
+  "serviceProvider": false,
   "state": "enabled",
   "userProperties": {
     "section": {
       "number": 456,
       "string": "def"
     }
-  },
-  "serviceProvider": false
+  }
 }

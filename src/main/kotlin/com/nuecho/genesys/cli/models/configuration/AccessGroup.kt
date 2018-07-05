@@ -6,11 +6,14 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgAccessGroup
 import com.genesyslab.platform.applicationblocks.com.objects.CfgPerson
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectType.CFGPerson
 import com.nuecho.genesys.cli.core.InitializingBean
+import com.nuecho.genesys.cli.getFolderReference
 import com.nuecho.genesys.cli.getReference
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setFolder
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setProperty
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgAccessGroupType
 import com.nuecho.genesys.cli.models.configuration.reference.AccessGroupReference
 import com.nuecho.genesys.cli.models.configuration.reference.ConfigurationObjectReference
+import com.nuecho.genesys.cli.models.configuration.reference.FolderReference
 import com.nuecho.genesys.cli.models.configuration.reference.PersonReference
 import com.nuecho.genesys.cli.models.configuration.reference.TenantReference
 import com.nuecho.genesys.cli.models.configuration.reference.referenceSetBuilder
@@ -20,7 +23,8 @@ import com.nuecho.genesys.cli.toShortName
 data class AccessGroup(
     val group: Group,
     val members: List<PersonReference>? = null,
-    val type: String? = null
+    val type: String? = null,
+    override val folder: FolderReference? = null
 ) : ConfigurationObject, InitializingBean {
     @get:JsonIgnore
     override val reference = AccessGroupReference(group.name, group.tenant)
@@ -34,7 +38,8 @@ data class AccessGroup(
         members = accessGroup.memberIDs?.mapNotNull {
             accessGroup.configurationService.retrieveObject(CFGPerson, it.dbid) as CfgPerson
         }?.map { it.getReference() },
-        type = accessGroup.type?.toShortName()
+        type = accessGroup.type?.toShortName(),
+        folder = accessGroup.getFolderReference()
     )
 
     constructor(tenant: TenantReference, name: String) : this(
@@ -52,6 +57,7 @@ data class AccessGroup(
             setProperty("memberIDs", members?.map { it.toCfgID(service, cfgAccessGroup) }, cfgAccessGroup)
             setProperty("groupInfo", groupInfo, cfgAccessGroup)
             setProperty("type", toCfgAccessGroupType(type), cfgAccessGroup)
+            setFolder(folder, cfgAccessGroup)
         }
 
     override fun afterPropertiesSet() {
@@ -63,5 +69,6 @@ data class AccessGroup(
         referenceSetBuilder()
             .add(members)
             .add(group.getReferences())
+            .add(folder)
             .toSet()
 }

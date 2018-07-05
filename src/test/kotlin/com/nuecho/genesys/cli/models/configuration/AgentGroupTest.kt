@@ -6,11 +6,10 @@ import com.genesyslab.platform.configuration.protocol.types.CfgDNType
 import com.genesyslab.platform.configuration.protocol.types.CfgDNType.CFGCP
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectState
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectType.CFGFolder
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_FOLDER
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_FOLDER_REFERENCE
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_OBJECT_DBID
-import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_SITE
-import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_SITE_REFERENCE
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_REFERENCE
-import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgAgentGroup
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgDN
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgFolder
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgObjectiveTable
@@ -24,15 +23,17 @@ import com.nuecho.genesys.cli.models.configuration.reference.ObjectiveTableRefer
 import com.nuecho.genesys.cli.models.configuration.reference.PersonReference
 import com.nuecho.genesys.cli.models.configuration.reference.ScriptReference
 import com.nuecho.genesys.cli.models.configuration.reference.StatTableReference
-import com.nuecho.genesys.cli.services.ConfServiceCache
-import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks
+import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockConfigurationObjectRepository
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveDN
+import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveFolderByDbid
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveObjectiveTable
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrievePerson
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveScript
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveStatTable
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveTenant
+import com.nuecho.genesys.cli.services.ConfigurationObjectRepository
 import com.nuecho.genesys.cli.services.ServiceMocks
+import com.nuecho.genesys.cli.services.ServiceMocks.mockConfService
 import com.nuecho.genesys.cli.toShortName
 import io.mockk.every
 import io.mockk.objectMockk
@@ -66,9 +67,10 @@ private val agentGroup = AgentGroup(
         state = CfgObjectState.CFGEnabled.toShortName(),
         userProperties = ConfigurationTestData.defaultProperties(),
         capacityRule = ScriptReference("capacityRule", DEFAULT_TENANT_REFERENCE),
-        site = DEFAULT_SITE_REFERENCE,
+        site = DEFAULT_FOLDER_REFERENCE,
         contract = ObjectiveTableReference("contract", DEFAULT_TENANT_REFERENCE)
-    )
+    ),
+    folder = DEFAULT_FOLDER_REFERENCE
 )
 
 class AgentGroupTest : ConfigurationObjectTest(
@@ -92,8 +94,8 @@ class AgentGroupTest : ConfigurationObjectTest(
         mockRetrieveStatTable(service)
         mockRetrieveScript(service)
 
-        objectMockk(ConfServiceCache).use {
-            ConfServiceExtensionMocks.mockCfgFolderCache()
+        objectMockk(ConfigurationObjectRepository).use {
+            mockConfigurationObjectRepository()
             val cfgAgentGroup = agentGroup.updateCfgObject(service)
 
             with(cfgAgentGroup) {
@@ -118,6 +120,9 @@ class AgentGroupTest : ConfigurationObjectTest(
 
 @Suppress("LongMethod")
 private fun mockCfgAgentGroup(): CfgAgentGroup {
+    val service = mockConfService()
+    mockRetrieveFolderByDbid(service)
+
     val cfgSwitch = mockCfgSwitch("switch")
 
     val agentsMock = agentGroup.agents?.map { ref -> mockCfgPerson(ref.primaryKey) }
@@ -133,11 +138,13 @@ private fun mockCfgAgentGroup(): CfgAgentGroup {
     val capacityTableMock = mockCfgStatTable(agentGroup.group.capacityTable!!.primaryKey)
     val quotaTableMock = mockCfgStatTable(agentGroup.group.quotaTable!!.primaryKey)
     val capacityRuleMock = mockCfgScript(agentGroup.group.capacityRule!!.primaryKey)
-    val siteMock = mockCfgFolder(DEFAULT_SITE, CFGFolder)
+    val siteMock = mockCfgFolder(DEFAULT_FOLDER, CFGFolder)
     val contractMock = mockCfgObjectiveTable(agentGroup.group.contract!!.primaryKey)
 
     return ConfigurationObjectMocks.mockCfgAgentGroup(agentGroup.group.name).apply {
+        every { configurationService } returns service
         every { agents } returns agentsMock
+        every { folderId } returns DEFAULT_OBJECT_DBID
         every { groupInfo.managers } returns managersMock
         every { groupInfo.routeDNs } returns routeDNsMock
         every { groupInfo.capacityTable } returns capacityTableMock
