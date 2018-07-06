@@ -12,3 +12,288 @@ Commands:
 ",
 }
 `;
+
+exports[`[mutagen audio export --help] should print export usage: export usage 1`] = `
+Object {
+  "stderr": "",
+  "stdout": "Usage: export [-?] [--with-audios] [--personality-ids=personality-id[,
+              personality-id]...]... outputFile
+Export audio files from ARM
+      outputFile              Output audio description file.
+      --personality-ids=personality-id[,personality-id]...
+                              Comma separated list of which personalities'
+                                audios to export (10,11,12,...).
+      --with-audios           Download messages' audio files.
+  -?, -h, --help              Show this help message.
+",
+}
+`;
+
+exports[`[mutagen audio export --personality-ids=x] should export messages into a csv file only for selected personalities: csv file 1`] = `
+Object {
+  "stderr": "",
+  "stdout": "name,type,description,messageArId,tenantId,11
+\\"export_test music name 1\\",MUSIC,\\"this is the description for music name 1\\",<removed-for-testing-purposes>,1,\\"11/export_test music name 1.wav\\"
+\\"export_test message name 1\\",ANNOUNCEMENT,\\"this is the description for message name 1\\",<removed-for-testing-purposes>,1,\\"11/export_test message name 1.wav\\"
+\\"export_test music name 2\\",MUSIC,\\"this is the description for music name 2\\",<removed-for-testing-purposes>,1,
+\\"export_test message name 2\\",ANNOUNCEMENT,\\"this is the description for message name 2\\",<removed-for-testing-purposes>,1,
+\\"export_test music name 3\\",MUSIC,\\"this is the description for music name 3\\",<removed-for-testing-purposes>,1,\\"11/export_test music name 3.wav\\"
+",
+}
+`;
+
+exports[`[mutagen audio export --personality-ids=x] should export messages into a csv file only for selected personalities: export done 1`] = `
+Object {
+  "stderr": "",
+  "stdout": "",
+}
+`;
+
+exports[`[mutagen audio export --with-audios] should export audio files: downloaded files 1`] = `
+Object {
+  "stderr": "",
+  "stdout": "/tmp/mutagen/test/with-audios/10/export_test message name 1.wav
+/tmp/mutagen/test/with-audios/10/export_test message name 2.wav
+/tmp/mutagen/test/with-audios/10/export_test music name 3.wav
+/tmp/mutagen/test/with-audios/11/export_test message name 1.wav
+/tmp/mutagen/test/with-audios/11/export_test music name 1.wav
+/tmp/mutagen/test/with-audios/11/export_test music name 3.wav
+",
+}
+`;
+
+exports[`[mutagen audio export --with-audios] should export audio files: export done 1`] = `
+Object {
+  "stderr": "",
+  "stdout": "",
+}
+`;
+
+exports[`[mutagen audio export] should export messages into a csv file: csv file 1`] = `
+Object {
+  "stderr": "",
+  "stdout": "name,type,description,messageArId,tenantId,10,11
+\\"export_test music name 1\\",MUSIC,\\"this is the description for music name 1\\",<removed-for-testing-purposes>,1,,\\"11/export_test music name 1.wav\\"
+\\"export_test message name 1\\",ANNOUNCEMENT,\\"this is the description for message name 1\\",<removed-for-testing-purposes>,1,\\"10/export_test message name 1.wav\\",\\"11/export_test message name 1.wav\\"
+\\"export_test music name 2\\",MUSIC,\\"this is the description for music name 2\\",<removed-for-testing-purposes>,1,,
+\\"export_test message name 2\\",ANNOUNCEMENT,\\"this is the description for message name 2\\",<removed-for-testing-purposes>,1,\\"10/export_test message name 2.wav\\",
+\\"export_test music name 3\\",MUSIC,\\"this is the description for music name 3\\",<removed-for-testing-purposes>,1,\\"10/export_test music name 3.wav\\",\\"11/export_test music name 3.wav\\"
+",
+}
+`;
+
+exports[`[mutagen audio export] should export messages into a csv file: export done 1`] = `
+Object {
+  "stderr": "",
+  "stdout": "",
+}
+`;
+
+exports[`[mutagen audio export] should print usage when output file is not specified: export usage 1`] = `
+Object {
+  "stderr": "",
+  "stdout": "Missing required parameter: outputFile
+Usage: export [-?] [--with-audios] [--personality-ids=personality-id[,
+              personality-id]...]... outputFile
+Export audio files from ARM
+      outputFile              Output audio description file.
+      --personality-ids=personality-id[,personality-id]...
+                              Comma separated list of which personalities'
+                                audios to export (10,11,12,...).
+      --with-audios           Download messages' audio files.
+  -?, -h, --help              Show this help message.
+",
+}
+`;
+
+exports[`[mutagen audio import --help] should print import usage: import usage 1`] = `
+Object {
+  "stderr": "",
+  "stdout": "Usage: import [-?] [--encoding=<encoding>] inputFile
+Import audio files in ARM
+      inputFile               Input audio description file.
+      --encoding=<encoding>   Encoding of the input file. Defaults to UTF-8.
+  -?, -h, --help              Show this help message.
+",
+}
+`;
+
+exports[`[mutagen audio import] message type and description should be optional: export of the imported files 1`] = `
+Object {
+  "stderr": "",
+  "stdout": "/tmp/mutagen/test/import_minimalist_test/10/import_minimalist_test message name 1.wav
+/tmp/mutagen/test/import_minimalist_test/10/import_minimalist_test message name 2.wav
+",
+}
+`;
+
+exports[`[mutagen audio import] message type and description should be optional: mutagen export output 1`] = `
+Object {
+  "stderr": "",
+  "stdout": "",
+}
+`;
+
+exports[`[mutagen audio import] message type and description should be optional: mutagen import output 1`] = `
+Object {
+  "stderr": "",
+  "stdout": "Imported 2 messages.
+",
+}
+`;
+
+exports[`[mutagen audio import] message type and description should be optional: re-export of the csv file 1`] = `
+Object {
+  "stderr": "",
+  "stdout": "name,type,description,messageArId,tenantId,10,11
+\\"import_minimalist_test message name 1\\",ANNOUNCEMENT,,<removed-for-testing-purposes>,1,\\"10/import_minimalist_test message name 1.wav\\",
+\\"import_minimalist_test message name 2\\",ANNOUNCEMENT,,<removed-for-testing-purposes>,1,\\"10/import_minimalist_test message name 2.wav\\",
+",
+}
+`;
+
+exports[`[mutagen audio import] should allow setting input file encoding with --encoding: export of the imported files 1`] = `
+Object {
+  "stderr": "",
+  "stdout": "/tmp/mutagen/test/import_iso_latin_test/10/import_iso_latin_test.wav
+",
+}
+`;
+
+exports[`[mutagen audio import] should allow setting input file encoding with --encoding: mutagen export output 1`] = `
+Object {
+  "stderr": "",
+  "stdout": "",
+}
+`;
+
+exports[`[mutagen audio import] should allow setting input file encoding with --encoding: mutagen import output 1`] = `
+Object {
+  "stderr": "",
+  "stdout": "Imported 1 message.
+",
+}
+`;
+
+exports[`[mutagen audio import] should allow setting input file encoding with --encoding: re-export of the csv file 1`] = `
+Object {
+  "stderr": "",
+  "stdout": "name,type,description,messageArId,tenantId,10,11
+import_iso_latin_test,ANNOUNCEMENT,\\"pâtatë poèl\\",<removed-for-testing-purposes>,1,\\"10/import_iso_latin_test.wav\\",
+",
+}
+`;
+
+exports[`[mutagen audio import] should fail when file to import does not exist: no such file or directory 1`] = `
+Object {
+  "stderr": "/tmp/foo (No such file or directory)
+",
+  "stdout": "",
+}
+`;
+
+exports[`[mutagen audio import] should fail when file to import is not a valid CSV: invalid csv 1`] = `
+Object {
+  "stderr": "Invalid input file.
+",
+  "stdout": "",
+}
+`;
+
+exports[`[mutagen audio import] should fail when some audio files are missing: missing audio files 1`] = `
+Object {
+  "stderr": "Audio import failed: the following audio files don't exist
+/usr/src/app/tests/resources/audio/11/MISSING AUDIO FILE.wav
+",
+  "stdout": "",
+}
+`;
+
+exports[`[mutagen audio import] should fail when the csv file references invalid personality: missing personality 1`] = `
+Object {
+  "stderr": "Audio import failed: the following personalities don't exist
+12
+",
+  "stdout": "",
+}
+`;
+
+exports[`[mutagen audio import] should fail when the specified encoding is invalid: invalid encoding message 1`] = `
+Object {
+  "stderr": "",
+  "stdout": "Could not convert 'POTATO-8' to Charset for option '--encoding': java.nio.charset.UnsupportedCharsetException: POTATO-8
+Usage: import [-?] [--encoding=<encoding>] inputFile
+Import audio files in ARM
+      inputFile               Input audio description file.
+      --encoding=<encoding>   Encoding of the input file. Defaults to UTF-8.
+  -?, -h, --help              Show this help message.
+",
+}
+`;
+
+exports[`[mutagen audio import] should import messages and audio files: export of the imported files 1`] = `
+Object {
+  "stderr": "",
+  "stdout": "/tmp/mutagen/test/import_test/10/import_test message name 1.wav
+/tmp/mutagen/test/import_test/10/import_test message name 2.wav
+/tmp/mutagen/test/import_test/10/import_test music name 3.wav
+/tmp/mutagen/test/import_test/11/import_test message name 1.wav
+/tmp/mutagen/test/import_test/11/import_test music name 1.wav
+/tmp/mutagen/test/import_test/11/import_test music name 3.wav
+",
+}
+`;
+
+exports[`[mutagen audio import] should import messages and audio files: mutagen export output 1`] = `
+Object {
+  "stderr": "",
+  "stdout": "",
+}
+`;
+
+exports[`[mutagen audio import] should import messages and audio files: mutagen import output 1`] = `
+Object {
+  "stderr": "",
+  "stdout": "Imported 5 messages.
+",
+}
+`;
+
+exports[`[mutagen audio import] should import messages and audio files: re-export of the csv file 1`] = `
+Object {
+  "stderr": "",
+  "stdout": "name,type,description,messageArId,tenantId,10,11
+\\"import_test music name 1\\",MUSIC,\\"this is the description for music name 1\\",<removed-for-testing-purposes>,1,,\\"11/import_test music name 1.wav\\"
+\\"import_test message name 1\\",ANNOUNCEMENT,\\"this is the description for message name 1\\",<removed-for-testing-purposes>,1,\\"10/import_test message name 1.wav\\",\\"11/import_test message name 1.wav\\"
+\\"import_test music name 2\\",MUSIC,\\"this is the description for music name 2\\",<removed-for-testing-purposes>,1,,
+\\"import_test message name 2\\",ANNOUNCEMENT,\\"this is the description for message name 2\\",<removed-for-testing-purposes>,1,\\"10/import_test message name 2.wav\\",
+\\"import_test music name 3\\",MUSIC,\\"this is the description for music name 3\\",<removed-for-testing-purposes>,1,\\"10/import_test music name 3.wav\\",\\"11/import_test music name 3.wav\\"
+",
+}
+`;
+
+exports[`[mutagen audio import] should print usage when file to import is not specified: import usage 1`] = `
+Object {
+  "stderr": "",
+  "stdout": "Missing required parameter: inputFile
+Usage: import [-?] [--encoding=<encoding>] inputFile
+Import audio files in ARM
+      inputFile               Input audio description file.
+      --encoding=<encoding>   Encoding of the input file. Defaults to UTF-8.
+  -?, -h, --help              Show this help message.
+",
+}
+`;
+
+exports[`[mutagen audio import] should validate duplicated messages: duplicated messages 1`] = `
+Object {
+  "stderr": "Audio import failed: the following messages' names already exist on the gax server
+import_test music name 1
+import_test message name 1
+import_test music name 2
+import_test message name 2
+import_test music name 3
+",
+  "stdout": "",
+}
+`;
