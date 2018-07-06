@@ -1,5 +1,6 @@
 package com.nuecho.genesys.cli.preferences
 
+import com.nuecho.genesys.cli.Console
 import com.nuecho.genesys.cli.Logging.debug
 import com.nuecho.genesys.cli.Logging.info
 import com.nuecho.genesys.cli.preferences.environment.Environment
@@ -31,7 +32,7 @@ object Preferences {
                 ?: throw IllegalArgumentException("Environment ($environmentName) does not exist")
 
         if (environment.password == null)
-            environment.password = Password.promptForPassword()
+            environment.password = Console.promptForPassword()
 
         return environment
     }

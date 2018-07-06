@@ -1,5 +1,6 @@
 package com.nuecho.genesys.cli.preferences
 
+import com.nuecho.genesys.cli.Console
 import com.nuecho.genesys.cli.TestResources
 import com.nuecho.genesys.cli.TestResources.toPreferenceFile
 import com.nuecho.genesys.cli.preferences.Preferences.CUSTOM_HOME_VARIABLE
@@ -62,7 +63,7 @@ class PreferencesTest {
     fun `missing password should prompt for one`() {
 
         objectMockk(Password).use {
-            every { Password.promptForPassword() } returns PASSWORD
+            every { Console.promptForPassword() } returns PASSWORD
 
             val environment = loadEnvironment(
                 environmentsFile = toPreferenceFile("environments_nopassword.yml")

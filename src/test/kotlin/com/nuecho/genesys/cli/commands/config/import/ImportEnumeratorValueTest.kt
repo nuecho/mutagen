@@ -2,7 +2,9 @@ package com.nuecho.genesys.cli.commands.config.import
 
 import com.genesyslab.platform.applicationblocks.com.objects.CfgEnumeratorValue
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectType.CFGEnumerator
-import com.nuecho.genesys.cli.commands.config.import.Import.Companion.importConfigurationObject
+import com.nuecho.genesys.cli.models.ImportPlan
+import com.nuecho.genesys.cli.models.ImportPlan.Companion.importConfigurationObject
+import com.nuecho.genesys.cli.models.ImportPlanOperation
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_OBJECT_DBID
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgEnumerator
@@ -49,11 +51,11 @@ class ImportEnumeratorValueTest {
                 every { service.retrieveObject(CfgEnumeratorValue::class.java, any()) } returns retrieveEnumeratorValueResult
                 every { service.retrieveObject(CFGEnumerator, any()) } returns enumerator
                 every { service.getObjectDbid(any()) } returns DEFAULT_OBJECT_DBID
-                every { Import.save(any()) } just Runs
+                every { ImportPlan.save(any()) } just Runs
 
-                val hasImportedObject = importConfigurationObject(enumeratorValue, service)
+                val hasImportedObject = importConfigurationObject(ImportPlanOperation(service, enumeratorValue))
                 assertThat(hasImportedObject, `is`(true))
-                verify(exactly = 1) { Import.save(ofType(CfgEnumeratorValue::class)) }
+                verify(exactly = 1) { ImportPlan.save(ofType(CfgEnumeratorValue::class)) }
             }
         }
     }

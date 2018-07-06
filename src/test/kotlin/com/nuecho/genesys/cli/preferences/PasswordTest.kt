@@ -3,7 +3,6 @@ package com.nuecho.genesys.cli.preferences
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.`is`
 import org.hamcrest.Matchers.equalTo
-import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
 
 class PasswordTest {
@@ -29,12 +28,5 @@ class PasswordTest {
     @Test
     fun `calling encryptAndDigest should return encrypted text with digest`() {
         assertThat(Password.encryptAndDigest(clearPassword), equalTo(encryptedPassword))
-    }
-
-    @Test
-    fun `calling promptPassword with no console attached should throw`() {
-        assertThrows(IllegalStateException::class.java) {
-            Password.promptForPassword()
-        }
     }
 }

@@ -1,0 +1,37 @@
+{
+  "__metadata__": {
+    "formatName": "JSON",
+    "formatVersion": "1.0.0"
+  },
+  "gvpResellers": [
+    {
+      "tenant": "Environment",
+      "state": "enabled",
+      "startDate": "2018-05-06T21:17:50.105+0000",
+      "name": "areseller",
+      "timeZone": "GMT"
+    }
+  ],
+  "gvpCustomers": [
+    {
+      "notes": "some notes",
+      "channel": "achannel",
+      "tenant": "Environment",
+      "reseller": "areseller",
+      "name": "acustomer",
+      "state": "enabled",
+      "timeZone": "GMT"
+    }
+  ],
+  "gvpIVRProfiles": [
+    {
+      "state": "enabled",
+      "type": "outbound",
+      "description": "a description",
+      "tenant": "Environment",
+      "name": "aprofile",
+      "displayName": "a display name",
+      "notes": "a note"
+    }
+  ]
+}

@@ -5,8 +5,11 @@ import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgGVPReseller
 import com.genesyslab.platform.applicationblocks.com.objects.CfgTenant
 import com.genesyslab.platform.applicationblocks.com.objects.CfgTimeZone
-import com.nuecho.genesys.cli.commands.config.import.Import.Companion.importConfigurationObject
+import com.nuecho.genesys.cli.models.ImportPlan
+import com.nuecho.genesys.cli.models.ImportPlan.Companion.importConfigurationObject
+import com.nuecho.genesys.cli.models.ImportPlanOperation
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObject
+import com.nuecho.genesys.cli.services.ConfService
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveReseller
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveTenant
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveTimeZone
@@ -26,20 +29,20 @@ abstract class ImportObjectSpec(val cfgObject: CfgObject, val configurationObjec
 
     fun testImportConfigurationObject(create: Boolean) {
         val retrieveObjectResult = if (create) null else cfgObject
-        val service = cfgObject.configurationService
+        val service = cfgObject.configurationService as ConfService
 
         objectMockk(Import.Companion).use {
             every { service.retrieveObject(cfgObject.javaClass, any()) } returns retrieveObjectResult
-            every { Import.save(any()) } just Runs
+            every { ImportPlan.save(any()) } just Runs
 
             if (cfgObject !is CfgTenant) {
                 mockRetrieveTenant(service)
             }
 
             mockRetrieveDefaultObjects(service, cfgObject)
-            val hasImportedObject = importConfigurationObject(configurationObject, service)
+            val hasImportedObject = importConfigurationObject(ImportPlanOperation(service, configurationObject))
             assertThat(hasImportedObject, `is`(true))
-            verify(exactly = 1) { Import.save(any()) }
+            verify(exactly = 1) { ImportPlan.save(any()) }
         }
     }
 

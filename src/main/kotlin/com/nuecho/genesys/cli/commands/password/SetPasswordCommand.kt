@@ -1,5 +1,6 @@
 package com.nuecho.genesys.cli.commands.password
 
+import com.nuecho.genesys.cli.Console.promptForPassword
 import com.nuecho.genesys.cli.GenesysCli
 import com.nuecho.genesys.cli.GenesysCliCommand
 import com.nuecho.genesys.cli.Logging.debug
@@ -24,7 +25,7 @@ class SetPasswordCommand : GenesysCliCommand() {
         val environment = environments[environmentName]
                 ?: throw IllegalArgumentException("Environment ($environmentName) does not exist")
 
-        val password = Password.promptForPassword()
+        val password = promptForPassword()
         environment.password = Password.encryptAndDigest(password)
 
         debug { "Saving encrypted password to environment file." }

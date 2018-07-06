@@ -11,8 +11,8 @@ Completed. 1 object(s) imported.
 
 exports[`[mutagen gvpCustomers config import-export] should throw exception when new gvpCustomers to import miss mandatory properties gvpCustomers: exception has been thrown 1`] = `
 Object {
-  "stderr": "Mandatory properties [channel, reseller, tenant] not set in gvpcustomer 'emptyCfgObjectTest'
-Cannot import configuration: some configuration objects' mandatory properties for creation are not set.
+  "stderr": "Cannot import configuration: some configuration objects' mandatory properties for creation are not set.
+	Mandatory properties [channel, reseller, tenant] not set in gvpcustomer 'emptyCfgObjectTest'
 ",
   "stdout": "",
 }
