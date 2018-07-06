@@ -15,7 +15,9 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgFolder
 import com.genesyslab.platform.applicationblocks.com.objects.CfgGVPCustomer
 import com.genesyslab.platform.applicationblocks.com.objects.CfgGVPIVRProfile
 import com.genesyslab.platform.applicationblocks.com.objects.CfgGVPReseller
+import com.genesyslab.platform.applicationblocks.com.objects.CfgHost
 import com.genesyslab.platform.applicationblocks.com.objects.CfgID
+import com.genesyslab.platform.applicationblocks.com.objects.CfgOS
 import com.genesyslab.platform.applicationblocks.com.objects.CfgObjectiveTable
 import com.genesyslab.platform.applicationblocks.com.objects.CfgOwnerID
 import com.genesyslab.platform.applicationblocks.com.objects.CfgParentID
@@ -36,6 +38,7 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgTransaction
 import com.genesyslab.platform.commons.collections.KeyValueCollection
 import com.genesyslab.platform.commons.collections.KeyValuePair
 import com.genesyslab.platform.configuration.protocol.types.CfgIVRProfileType
+import com.genesyslab.platform.configuration.protocol.types.CfgOSType
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectType
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectType.CFGFolder
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectType.CFGTenant
@@ -214,11 +217,23 @@ object ConfigurationObjectMocks {
             every { it.type } returns type
         }
 
+    fun mockCfgHost(name: String?) =
+        mockk<CfgHost>().also {
+            every { it.name } returns name
+            every { it.dbid } returns DEFAULT_OBJECT_DBID
+        }
+
     fun mockCfgObjectiveTable(name: String?, tenant: CfgTenant = mockCfgTenant(DEFAULT_TENANT)) =
         mockk<CfgObjectiveTable>().also {
             every { it.name } returns name
             every { it.tenant } returns tenant
             every { it.objectDbid } returns DEFAULT_OBJECT_DBID
+        }
+
+    fun mockCfgOS(osType: CfgOSType?, osVersion: String?) =
+        mockk<CfgOS>().also {
+            every { it.oStype } returns osType
+            every { it.oSversion } returns osVersion
         }
 
     fun mockCfgPerson(employeeID: String?, tenant: CfgTenant = mockCfgTenant(DEFAULT_TENANT)) =

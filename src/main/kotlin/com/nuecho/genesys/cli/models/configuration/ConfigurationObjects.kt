@@ -18,8 +18,10 @@ import com.genesyslab.platform.configuration.protocol.types.CfgFlag.CFGFalse
 import com.genesyslab.platform.configuration.protocol.types.CfgFlag.CFGNoFlag
 import com.genesyslab.platform.configuration.protocol.types.CfgFlag.CFGTrue
 import com.genesyslab.platform.configuration.protocol.types.CfgFolderClass
+import com.genesyslab.platform.configuration.protocol.types.CfgHostType
 import com.genesyslab.platform.configuration.protocol.types.CfgIVRProfileType
 import com.genesyslab.platform.configuration.protocol.types.CfgLinkType
+import com.genesyslab.platform.configuration.protocol.types.CfgOSType
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectState
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectType
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectType.CFGMaxObjectType
@@ -91,9 +93,11 @@ object ConfigurationObjects {
     fun toCfgDNGroupType(type: String?) = toGEnum(type, CfgDNGroupType::class.java) as CfgDNGroupType?
     fun toCfgDNType(type: String?) = toGEnum(type, CfgDNType::class.java) as CfgDNType?
     fun toCfgEnumeratorType(type: String?) = toGEnum(type, CfgEnumeratorType::class.java) as CfgEnumeratorType?
+    fun toCfgHostType(type: String?) = toGEnum(type, CfgHostType::class.java) as CfgHostType?
     fun toCfgLinkType(type: String?) = toGEnum(type, CfgLinkType::class.java) as CfgLinkType?
     fun toCfgObjectState(state: String?) = toGEnum(state, CfgObjectState::class.java) as CfgObjectState?
     fun toCfgObjectType(type: String?) = toGEnum(type, CfgObjectType::class.java) as CfgObjectType?
+    fun toCfgOsType(type: String?) = toGEnum(type, CfgOSType::class.java) as CfgOSType?
     fun toCfgRank(rank: String?) = toGEnum(rank, CfgRank::class.java) as CfgRank?
     fun toCfgRouteType(type: String?) = toGEnum(type, CfgRouteType::class.java) as CfgRouteType?
     fun toCfgScriptType(type: String?) = toGEnum(type, CfgScriptType::class.java) as CfgScriptType?

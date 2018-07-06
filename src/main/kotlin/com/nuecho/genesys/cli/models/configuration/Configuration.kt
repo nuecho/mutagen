@@ -15,6 +15,7 @@ data class Configuration(
     val gvpCustomers: List<GVPCustomer> = emptyList(),
     val gvpIVRProfiles: List<GVPIVRProfile> = emptyList(),
     val gvpResellers: List<GVPReseller> = emptyList(),
+    val hosts: List<Host> = emptyList(),
     val persons: List<Person> = emptyList(),
     val physicalSwitches: List<PhysicalSwitch> = emptyList(),
     val roles: List<Role> = emptyList(),
@@ -24,6 +25,7 @@ data class Configuration(
     val tenants: List<Tenant> = emptyList(),
     val transactions: List<Transaction> = emptyList()
 ) {
+
     @get:JsonIgnore
     val asList by lazy {
         listOf(
@@ -38,6 +40,7 @@ data class Configuration(
             gvpCustomers,
             gvpIVRProfiles,
             gvpResellers,
+            hosts,
             persons,
             physicalSwitches,
             roles,

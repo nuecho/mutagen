@@ -11,6 +11,7 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgCampaign
 import com.genesyslab.platform.applicationblocks.com.objects.CfgDN
 import com.genesyslab.platform.applicationblocks.com.objects.CfgDNGroup
 import com.genesyslab.platform.applicationblocks.com.objects.CfgEnumerator
+import com.genesyslab.platform.applicationblocks.com.objects.CfgEnumeratorValue
 import com.genesyslab.platform.applicationblocks.com.objects.CfgFolder
 import com.genesyslab.platform.applicationblocks.com.objects.CfgGVPCustomer
 import com.genesyslab.platform.applicationblocks.com.objects.CfgGVPReseller
@@ -55,6 +56,7 @@ import com.nuecho.genesys.cli.models.configuration.reference.CampaignReference
 import com.nuecho.genesys.cli.models.configuration.reference.DNGroupReference
 import com.nuecho.genesys.cli.models.configuration.reference.DNReference
 import com.nuecho.genesys.cli.models.configuration.reference.EnumeratorReference
+import com.nuecho.genesys.cli.models.configuration.reference.EnumeratorValueReference
 import com.nuecho.genesys.cli.models.configuration.reference.FolderReference
 import com.nuecho.genesys.cli.models.configuration.reference.GVPCustomerReference
 import com.nuecho.genesys.cli.models.configuration.reference.GVPResellerReference
@@ -165,6 +167,7 @@ fun CfgCampaign.getReference() = CampaignReference(name, tenant.getReference())
 fun CfgDN.getReference() = DNReference(this)
 fun CfgDNGroup.getReference() = DNGroupReference(groupInfo.name, groupInfo.tenant.getReference())
 fun CfgEnumerator.getReference() = EnumeratorReference(name, tenant.getReference())
+fun CfgEnumeratorValue.getReference() = EnumeratorValueReference(name, enumerator.getReference())
 fun CfgFolder.getReference() = FolderReference(this)
 fun CfgGVPCustomer.getReference() = GVPCustomerReference(name)
 fun CfgGVPReseller.getReference() = GVPResellerReference(name, tenant.getReference())

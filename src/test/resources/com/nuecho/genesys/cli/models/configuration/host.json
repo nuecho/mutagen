@@ -1,0 +1,28 @@
+{
+  "folder": {
+    "owner": {
+      "name": "tenant",
+      "type": "tenant"
+    },
+    "path": [
+      "folder"
+    ],
+    "type": "folder"
+  },
+  "ipAddress" : "10.0.1.249",
+  "lcaPort" : "4999",
+  "name" : "host",
+  "osInfo" : {
+    "type" : "windows",
+    "version" : "8"
+  },
+  "scs": "application",
+  "state" : "enabled",
+  "type" : "networkserver",
+  "userProperties": {
+    "section": {
+      "number": 456,
+      "string": "def"
+    }
+  }
+}

@@ -54,8 +54,8 @@ data class AccessGroup(
                 }
             }
 
-            setProperty("memberIDs", members?.map { it.toCfgID(service, cfgAccessGroup) }, cfgAccessGroup)
             setProperty("groupInfo", groupInfo, cfgAccessGroup)
+            setProperty("memberIDs", members?.map { it.toCfgID(service, cfgAccessGroup) }, cfgAccessGroup)
             setProperty("type", toCfgAccessGroupType(type), cfgAccessGroup)
             setFolder(folder, cfgAccessGroup)
         }

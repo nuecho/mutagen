@@ -1,0 +1,28 @@
+{
+  "__metadata__": {
+    "formatName": "JSON",
+    "formatVersion": "1.0.0"
+  },
+  "hosts": [
+    {
+      "ipAddress" : "10.0.1.249",
+      "lcaPort" : "4999",
+      "name" : "cfgObjectTest",
+      "osInfo" : {
+        "type" : "windows",
+        "version" : "8"
+      },
+      "state" : "enabled",
+      "type" : "networkserver",
+      "userProperties" : {
+        "rdm" : {
+          "port" : "5000"
+        },
+        "security" : {
+          "gda-tls" : "0",
+          "lca-upgrade" : "0"
+        }
+      }
+    }
+  ]
+}
