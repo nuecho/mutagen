@@ -14,6 +14,7 @@ import com.github.kittinunf.result.Result
 import com.nuecho.genesys.cli.Logging
 import com.nuecho.genesys.cli.Logging.warn
 import com.nuecho.genesys.cli.core.defaultJsonObjectMapper
+import com.nuecho.genesys.cli.preferences.environment.Environment
 import java.io.File
 import java.util.ArrayList
 
@@ -21,11 +22,11 @@ object AudioServices {
 
     // URL Components
     const val HTTP = "http://"
-    const val GAX_BASE_PATH = "/gax/api"
-    const val LOGIN_PATH = "$GAX_BASE_PATH/session/login"
+    const val DEFAULT_GAX_API_PATH = "/gax/api"
+    const val LOGIN_PATH = "/session/login"
     const val UPLOAD_PATH = "/upload/?callback="
-    const val AUDIO_RESOURCES_PATH = "$GAX_BASE_PATH/arm/audioresources"
-    const val PERSONALITIES_PATH = "$GAX_BASE_PATH/arm/personalities/"
+    const val AUDIO_RESOURCES_PATH = "/arm/audioresources"
+    const val PERSONALITIES_PATH = "/arm/personalities/"
     const val AUDIO_MESSAGES_PATH = "$AUDIO_RESOURCES_PATH/?tenantList=1"
     const val FILES_PATH = "/files"
     const val AUDIO_PATH = "/audio?"
@@ -39,6 +40,9 @@ object AudioServices {
     const val CONTENT_TYPE = "Content-Type"
     const val APPLICATION_JSON = "application/json"
     const val LOCATION = "Location"
+
+    fun buildGaxUrl(environment: Environment, apiPath: String) =
+        "$HTTP${environment.host}:${environment.port}$apiPath"
 
     fun login(user: String, password: String, encryptPassword: Boolean, gaxUrl: String) {
         val effectivePassword = if (encryptPassword) encryptPassword(password) else password

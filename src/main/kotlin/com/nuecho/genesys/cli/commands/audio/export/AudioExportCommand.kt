@@ -11,7 +11,8 @@ import com.nuecho.genesys.cli.Logging.warn
 import com.nuecho.genesys.cli.commands.audio.ArmMessage
 import com.nuecho.genesys.cli.commands.audio.Audio
 import com.nuecho.genesys.cli.commands.audio.AudioRequestInfo
-import com.nuecho.genesys.cli.commands.audio.AudioServices.HTTP
+import com.nuecho.genesys.cli.commands.audio.AudioServices.DEFAULT_GAX_API_PATH
+import com.nuecho.genesys.cli.commands.audio.AudioServices.buildGaxUrl
 import com.nuecho.genesys.cli.commands.audio.AudioServices.downloadAudioFile
 import com.nuecho.genesys.cli.commands.audio.AudioServices.getMessagesData
 import com.nuecho.genesys.cli.commands.audio.AudioServices.getPersonalities
@@ -48,6 +49,12 @@ class AudioExportCommand : GenesysCliCommand() {
     )
     private var personalityIds: Set<String>? = null
 
+    @CommandLine.Option(
+        names = ["--gax-api-path"],
+        description = ["GAX API path. Defaults to '$DEFAULT_GAX_API_PATH'."]
+    )
+    private var gaxApiPath: String = DEFAULT_GAX_API_PATH
+
     @CommandLine.Parameters(
         arity = "1",
         index = "0",
@@ -63,7 +70,8 @@ class AudioExportCommand : GenesysCliCommand() {
             getGenesysCli().loadEnvironment(),
             outputFile!!,
             withAudios,
-            personalityIds
+            personalityIds,
+            gaxApiPath
         )
 
         return 0
@@ -76,12 +84,13 @@ object AudioExport {
         environment: Environment,
         outputFile: File,
         withAudios: Boolean,
-        selectedPersonalityIds: Set<String>?
+        selectedPersonalityIds: Set<String>?,
+        gaxApiPath: String
     ) {
         FuelManager.instance.removeAllResponseInterceptors()
         CookieHandler.setDefault(CookieManager())
 
-        val gaxUrl = "$HTTP${environment.host}:${environment.port}"
+        val gaxUrl = buildGaxUrl(environment, gaxApiPath)
 
         info { "Logging in to GAX as '${environment.user}'." }
         login(environment.user, environment.password!!, true, gaxUrl)
