@@ -8,6 +8,7 @@ import com.genesyslab.platform.configuration.protocol.types.CfgObjectType.CFGTen
 import com.nuecho.genesys.cli.TestResources
 import com.nuecho.genesys.cli.models.configuration.ConfigurationAsserts.checkSerialization
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectNotFoundException
 import com.nuecho.genesys.cli.services.ServiceMocks.mockConfService
 import com.nuecho.genesys.cli.toShortName
 import org.hamcrest.MatcherAssert.assertThat
@@ -45,8 +46,8 @@ class FolderReferenceTest {
     }
 
     @Test
-    fun `FolderReference toQuery should throw an UnsupportedOperationException`() {
-        assertThrows<UnsupportedOperationException> {
+    fun `FolderReference toQuery should throw a ConfigurationObjectNotFoundException`() {
+        assertThrows<ConfigurationObjectNotFoundException> {
             folderReference.toQuery(mockConfService())
         }
     }

@@ -10,9 +10,11 @@ import com.nuecho.genesys.cli.models.ImportPlan.Companion.importConfigurationObj
 import com.nuecho.genesys.cli.models.ImportPlanOperation
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObject
 import com.nuecho.genesys.cli.services.ConfService
+import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockConfigurationObjectRepository
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveReseller
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveTenant
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveTimeZone
+import com.nuecho.genesys.cli.services.ConfigurationObjectRepository
 import io.mockk.Runs
 import io.mockk.every
 import io.mockk.just
@@ -20,7 +22,7 @@ import io.mockk.objectMockk
 import io.mockk.use
 import io.mockk.verify
 import org.hamcrest.MatcherAssert.assertThat
-import org.hamcrest.Matchers.`is`
+import org.hamcrest.core.Is.`is`
 import org.junit.jupiter.api.Test
 
 @Suppress("UnnecessaryAbstractClass")
@@ -30,19 +32,24 @@ abstract class ImportObjectSpec(val cfgObject: CfgObject, val configurationObjec
     fun testImportConfigurationObject(create: Boolean) {
         val retrieveObjectResult = if (create) null else cfgObject
         val service = cfgObject.configurationService as ConfService
+        every { service.retrieveObject(cfgObject.javaClass, any()) } returns retrieveObjectResult
 
-        objectMockk(Import.Companion).use {
-            every { service.retrieveObject(cfgObject.javaClass, any()) } returns retrieveObjectResult
+        objectMockk(ImportPlan.Companion).use {
             every { ImportPlan.save(any()) } just Runs
+
+            mockRetrieveDefaultObjects(service, cfgObject)
 
             if (cfgObject !is CfgTenant) {
                 mockRetrieveTenant(service)
             }
 
-            mockRetrieveDefaultObjects(service, cfgObject)
-            val hasImportedObject = importConfigurationObject(ImportPlanOperation(service, configurationObject))
-            assertThat(hasImportedObject, `is`(true))
-            verify(exactly = 1) { ImportPlan.save(any()) }
+            objectMockk(ConfigurationObjectRepository).use {
+                mockConfigurationObjectRepository()
+
+                val hasImportedObject = importConfigurationObject(ImportPlanOperation(service, configurationObject))
+                assertThat(hasImportedObject, `is`(true))
+                verify(exactly = 1) { ImportPlan.save(any()) }
+            }
         }
     }
 
