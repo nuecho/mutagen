@@ -7,6 +7,11 @@
 - The supported way to run Gradle commands is by using Git Bash through ConEmu.
   - Use the following launcher config: `"%ConEmuDir%\..\Git\git-cmd.exe" --no-cd --command=usr/bin/bash.exe -l -i`
 
+## Architecture
+
+Architectural decisions are documented in `doc/arch` following this [blog post](http://thinkrelevance.com/blog/2011/11/15/documenting-architecture-decisions) guidelines.
+The template can be found under `doc/arch/adr-000.md`
+
 ## Development
 
 Before you start, take a look at the [Getting Started](https://sites.google.com/m.nuecho.com/hub/mutagen) section.
