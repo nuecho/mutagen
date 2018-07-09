@@ -39,12 +39,12 @@ class PhysicalSwitchTest : ConfigurationObjectTest(
     val service = mockConfService()
 
     @Test
-    fun `updateCfgObject should properly create CfgPhysicalSwitch`() {
+    fun `createCfgObject should properly create CfgPhysicalSwitch`() {
         every { service.retrieveObject(CfgPhysicalSwitch::class.java, any()) } returns null
 
         objectMockk(ConfigurationObjectRepository).use {
             mockConfigurationObjectRepository()
-            val cfgPhysicalSwitch = physicalSwitch.updateCfgObject(service)
+            val cfgPhysicalSwitch = physicalSwitch.createCfgObject(service)
 
             with(cfgPhysicalSwitch) {
                 assertThat(name, equalTo(physicalSwitch.name))

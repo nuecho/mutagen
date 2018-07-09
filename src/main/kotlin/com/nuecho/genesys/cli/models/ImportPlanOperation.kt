@@ -1,5 +1,6 @@
 package com.nuecho.genesys.cli.models
 
+import com.genesyslab.platform.applicationblocks.com.CfgObject
 import com.nuecho.genesys.cli.core.defaultJsonObjectMapper
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObject
 import com.nuecho.genesys.cli.services.ConfService
@@ -7,8 +8,18 @@ import com.nuecho.genesys.cli.services.retrieveObject
 import com.nuecho.genesys.cli.toShortName
 import org.fusesource.jansi.Ansi
 
+
 class ImportPlanOperation(val service: ConfService, val configurationObject: ConfigurationObject) {
-    var cfgObject = service.retrieveObject(configurationObject.reference)
+
+    var cfgObject: CfgObject?
+        get() = service.retrieveObject(configurationObject.reference) as CfgObject
+        set(value) {
+            cfgObjectBackup = cfgObject?.let { it.clone() }
+            cfgObject = value
+
+        }
+    private var cfgObjectBackup: CfgObject? = null
+
     val type: ImportOperationType = if (cfgObject == null) ImportOperationType.CREATE else ImportOperationType.UPDATE
 
     fun printStatus() {

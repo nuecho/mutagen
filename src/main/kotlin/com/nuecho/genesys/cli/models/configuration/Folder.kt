@@ -3,6 +3,7 @@ package com.nuecho.genesys.cli.models.configuration
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
+import com.genesyslab.platform.applicationblocks.com.ICfgObject
 import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgFolder
 import com.nuecho.genesys.cli.getFolderReference
@@ -13,7 +14,6 @@ import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgFol
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgObjectType
 import com.nuecho.genesys.cli.models.configuration.reference.ConfigurationObjectReference
 import com.nuecho.genesys.cli.models.configuration.reference.FolderReference
-import com.nuecho.genesys.cli.services.retrieveObject
 import com.nuecho.genesys.cli.toShortName
 
 data class Folder(
@@ -40,15 +40,17 @@ data class Folder(
         folder = cfgFolder.getFolderReference() ?: rootFolderReference(cfgFolder)
     )
 
-    override fun updateCfgObject(service: IConfService) =
-        (service.retrieveObject(reference) ?: CfgFolder(service)).also {
-            if (!it.isSaved) {
-                setFolder(folder, it)
-                setProperty("name", name, it)
-                setProperty("ownerID", folder.owner.toCfgOwnerID(it), it)
-                setProperty("type", toCfgObjectType(folder.type), it)
-                setProperty("folderClass", toCfgFolderClass(folderClass), it)
-            }
+    override fun createCfgObject(service: IConfService) =
+        updateCfgObject(service, CfgFolder(service).also {
+            setFolder(folder, it)
+            setProperty("name", name, it)
+            setProperty("ownerID", folder.owner.toCfgOwnerID(it), it)
+            setProperty("type", toCfgObjectType(folder.type), it)
+            setProperty("folderClass", toCfgFolderClass(folderClass), it)
+        })
+
+    override fun updateCfgObject(service: IConfService, cfgObject: ICfgObject) =
+        (cfgObject as CfgFolder).also {
 
             setProperty("description", description, it)
             setProperty("customType", customType, it)

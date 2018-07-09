@@ -118,11 +118,11 @@ class ImportPlan(val configuration: Configuration, val service: ConfService) {
         internal fun importConfigurationObject(operation: ImportPlanOperation): Boolean {
             val reference = operation.configurationObject.reference
 
-            // TODO we need to re-wire the update process
-            // Providing an update on the Operation which would delegate to the actual configuration
-            // object (with an operation type so we can fully distinguish between create/update
-            // without yet another retrieve)
-            operation.cfgObject = operation.configurationObject.updateCfgObject(operation.service)
+            operation.cfgObject = when (operation.type) {
+                ImportOperationType.CREATE -> operation.configurationObject.createCfgObject(operation.service)
+                else -> operation.configurationObject.updateCfgObject(operation.service, operation.cfgObject!!)
+            }
+
             val type = operation.cfgObject!!.objectType.toShortName()
 
             Logging.info { "Processing $type '$reference'." }

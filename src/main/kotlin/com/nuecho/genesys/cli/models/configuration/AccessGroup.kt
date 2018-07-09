@@ -1,6 +1,7 @@
 package com.nuecho.genesys.cli.models.configuration
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import com.genesyslab.platform.applicationblocks.com.ICfgObject
 import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgAccessGroup
 import com.genesyslab.platform.applicationblocks.com.objects.CfgPerson
@@ -17,7 +18,6 @@ import com.nuecho.genesys.cli.models.configuration.reference.FolderReference
 import com.nuecho.genesys.cli.models.configuration.reference.PersonReference
 import com.nuecho.genesys.cli.models.configuration.reference.TenantReference
 import com.nuecho.genesys.cli.models.configuration.reference.referenceSetBuilder
-import com.nuecho.genesys.cli.services.retrieveObject
 import com.nuecho.genesys.cli.toShortName
 
 data class AccessGroup(
@@ -46,8 +46,11 @@ data class AccessGroup(
         group = Group(tenant, name)
     )
 
-    override fun updateCfgObject(service: IConfService) =
-        (service.retrieveObject(reference) ?: CfgAccessGroup(service)).also { cfgAccessGroup ->
+    override fun createCfgObject(service: IConfService) =
+        updateCfgObject(service, CfgAccessGroup(service))
+
+    override fun updateCfgObject(service: IConfService, cfgObject: ICfgObject) =
+        (cfgObject as CfgAccessGroup).also { cfgAccessGroup ->
             val groupInfo = group.toCfgGroup(service, cfgAccessGroup).also {
                 cfgAccessGroup.dbid?.let { dbid ->
                     it.dbid = dbid

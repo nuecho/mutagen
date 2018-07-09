@@ -82,7 +82,7 @@ class AgentGroupTest : ConfigurationObjectTest(
     val service = ServiceMocks.mockConfService()
 
     @Test
-    fun `updateCfgObject should properly create CfgAgentGroup`() {
+    fun `createCfgObject should properly create CfgAgentGroup`() {
         val cfgSwitch = mockCfgSwitch("switch")
         every { service.retrieveObject(CfgAgentGroup::class.java, any()) } returns null
         every { service.retrieveObject(CfgSwitch::class.java, any()) } returns cfgSwitch
@@ -96,7 +96,7 @@ class AgentGroupTest : ConfigurationObjectTest(
 
         objectMockk(ConfigurationObjectRepository).use {
             mockConfigurationObjectRepository()
-            val cfgAgentGroup = agentGroup.updateCfgObject(service)
+            val cfgAgentGroup = agentGroup.createCfgObject(service)
 
             with(cfgAgentGroup) {
                 assertThat(agentDBIDs, contains(DEFAULT_OBJECT_DBID, DEFAULT_OBJECT_DBID, DEFAULT_OBJECT_DBID))

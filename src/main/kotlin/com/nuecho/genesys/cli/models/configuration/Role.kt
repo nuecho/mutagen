@@ -3,6 +3,7 @@ package com.nuecho.genesys.cli.models.configuration
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
+import com.genesyslab.platform.applicationblocks.com.ICfgObject
 import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgAccessGroup
 import com.genesyslab.platform.applicationblocks.com.objects.CfgPerson
@@ -20,7 +21,6 @@ import com.nuecho.genesys.cli.models.configuration.reference.RoleReference
 import com.nuecho.genesys.cli.models.configuration.reference.TenantReference
 import com.nuecho.genesys.cli.models.configuration.reference.referenceSetBuilder
 import com.nuecho.genesys.cli.services.getObjectDbid
-import com.nuecho.genesys.cli.services.retrieveObject
 import com.nuecho.genesys.cli.toShortName
 import java.util.SortedSet
 
@@ -65,8 +65,12 @@ data class Role(
         }?.toSortedSet()
     )
 
-    override fun updateCfgObject(service: IConfService) =
-        (service.retrieveObject(reference) ?: CfgRole(service)).also {
+    override fun createCfgObject(service: IConfService) =
+        updateCfgObject(service, CfgRole(service))
+
+    override fun updateCfgObject(service: IConfService, cfgObject: ICfgObject) =
+        (cfgObject as CfgRole).also {
+
             // members are not updated
             setProperty("tenantDBID", service.getObjectDbid(tenant), it)
             setProperty("name", name, it)

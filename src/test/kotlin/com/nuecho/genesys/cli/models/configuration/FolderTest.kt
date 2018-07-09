@@ -41,7 +41,7 @@ class FolderTest : ConfigurationObjectTest(
     Folder(mockCfgFolder())
 ) {
     @Test
-    fun `updateCfgObject should properly create CfgFolder`() {
+    fun `createCfgObject should properly create CfgFolder`() {
         val service = mockConfService()
 
         staticMockk("com.nuecho.genesys.cli.services.ConfServiceExtensionsKt").use {
@@ -50,7 +50,7 @@ class FolderTest : ConfigurationObjectTest(
             objectMockk(ConfigurationObjectRepository).use {
                 mockConfigurationObjectRepository()
 
-                val cfgFolder = folder.updateCfgObject(service)
+                val cfgFolder = folder.createCfgObject(service)
 
                 with(cfgFolder) {
                     assertThat(name, equalTo(folder.name))

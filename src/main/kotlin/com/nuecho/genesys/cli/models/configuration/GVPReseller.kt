@@ -3,6 +3,7 @@ package com.nuecho.genesys.cli.models.configuration
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
+import com.genesyslab.platform.applicationblocks.com.ICfgObject
 import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgGVPReseller
 import com.nuecho.genesys.cli.asBoolean
@@ -21,7 +22,6 @@ import com.nuecho.genesys.cli.models.configuration.reference.TenantReference
 import com.nuecho.genesys.cli.models.configuration.reference.TimeZoneReference
 import com.nuecho.genesys.cli.models.configuration.reference.referenceSetBuilder
 import com.nuecho.genesys.cli.services.getObjectDbid
-import com.nuecho.genesys.cli.services.retrieveObject
 import com.nuecho.genesys.cli.toShortName
 import java.time.ZoneId
 import java.time.ZonedDateTime
@@ -62,8 +62,12 @@ data class GVPReseller(
         folder = gvpReseller.getFolderReference()
     )
 
-    override fun updateCfgObject(service: IConfService) =
-        (service.retrieveObject(reference) ?: CfgGVPReseller(service)).also {
+    override fun createCfgObject(service: IConfService) =
+        updateCfgObject(service, CfgGVPReseller(service))
+
+    override fun updateCfgObject(service: IConfService, cfgObject: ICfgObject) =
+        (cfgObject as CfgGVPReseller).also {
+
             setProperty("tenantDBID", service.getObjectDbid(tenant), it)
             setProperty("name", name, it)
             setProperty(DISPLAY_NAME, displayName ?: name, it)

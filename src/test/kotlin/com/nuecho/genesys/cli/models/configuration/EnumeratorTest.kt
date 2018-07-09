@@ -43,14 +43,14 @@ class EnumeratorTest : ConfigurationObjectTest(
     Enumerator(mockCfgEnumerator())
 ) {
     @Test
-    fun `updateCfgObject should properly create CfgEnumerator`() {
+    fun `createCfgObject should properly create CfgEnumerator`() {
         val service = mockConfService()
         every { service.retrieveObject(CfgEnumerator::class.java, any()) } returns null
         mockRetrieveTenant(service)
 
         objectMockk(ConfigurationObjectRepository).use {
             mockConfigurationObjectRepository()
-            val cfgEnumerator = enumerator.updateCfgObject(service)
+            val cfgEnumerator = enumerator.createCfgObject(service)
 
             with(cfgEnumerator) {
                 assertThat(name, equalTo(enumerator.name))
@@ -64,12 +64,12 @@ class EnumeratorTest : ConfigurationObjectTest(
     }
 
     @Test
-    fun `updateCfgObject should use name when displayName is not specified`() {
+    fun `createCfgObject should use name when displayName is not specified`() {
         val service = mockConfService()
         every { service.retrieveObject(CfgEnumerator::class.java, any()) } returns null
         mockRetrieveTenant(service)
 
-        val cfgEnumerator = Enumerator(DEFAULT_TENANT_REFERENCE, NAME).updateCfgObject(service)
+        val cfgEnumerator = Enumerator(DEFAULT_TENANT_REFERENCE, NAME).createCfgObject(service)
 
         with(cfgEnumerator) {
             assertThat(name, equalTo(NAME))

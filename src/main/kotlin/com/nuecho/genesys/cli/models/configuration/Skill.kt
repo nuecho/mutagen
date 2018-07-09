@@ -3,6 +3,7 @@ package com.nuecho.genesys.cli.models.configuration
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
+import com.genesyslab.platform.applicationblocks.com.ICfgObject
 import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgSkill
 import com.nuecho.genesys.cli.getFolderReference
@@ -16,7 +17,6 @@ import com.nuecho.genesys.cli.models.configuration.reference.SkillReference
 import com.nuecho.genesys.cli.models.configuration.reference.TenantReference
 import com.nuecho.genesys.cli.models.configuration.reference.referenceSetBuilder
 import com.nuecho.genesys.cli.services.getObjectDbid
-import com.nuecho.genesys.cli.services.retrieveObject
 import com.nuecho.genesys.cli.toShortName
 
 data class Skill(
@@ -39,8 +39,12 @@ data class Skill(
         folder = skill.getFolderReference()
     )
 
-    override fun updateCfgObject(service: IConfService) =
-        (service.retrieveObject(reference) ?: CfgSkill(service)).also {
+    override fun createCfgObject(service: IConfService) =
+        updateCfgObject(service, CfgSkill(service))
+
+    override fun updateCfgObject(service: IConfService, cfgObject: ICfgObject) =
+        (cfgObject as CfgSkill).also {
+
             setProperty("tenantDBID", service.getObjectDbid(tenant), it)
             setProperty("name", name, it)
             setProperty("userProperties", toKeyValueCollection(userProperties), it)

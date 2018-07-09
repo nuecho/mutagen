@@ -89,7 +89,7 @@ class SwitchTest : ConfigurationObjectTest(
     Switch(mockMainCfgSwitch())
 ) {
     @Test
-    fun `updateCfgObject should properly create CfgSwitch`() {
+    fun `createCfgObject should properly create CfgSwitch`() {
         val service = mockConfService()
         mockRetrieveTenant(service)
         mockRetrievePhysicalSwitch(service)
@@ -102,7 +102,7 @@ class SwitchTest : ConfigurationObjectTest(
 
             objectMockk(ConfigurationObjectRepository).use {
                 mockConfigurationObjectRepository()
-                val cfgSwitch = mainSwitch.updateCfgObject(service)
+                val cfgSwitch = mainSwitch.createCfgObject(service)
 
                 with(cfgSwitch) {
                     assertThat(name, equalTo(mainSwitch.name))

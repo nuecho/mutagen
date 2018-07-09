@@ -3,6 +3,7 @@ package com.nuecho.genesys.cli.models.configuration
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
+import com.genesyslab.platform.applicationblocks.com.ICfgObject
 import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgAppRank
 import com.genesyslab.platform.applicationblocks.com.objects.CfgPerson
@@ -23,7 +24,6 @@ import com.nuecho.genesys.cli.models.configuration.reference.PersonReference
 import com.nuecho.genesys.cli.models.configuration.reference.TenantReference
 import com.nuecho.genesys.cli.models.configuration.reference.referenceSetBuilder
 import com.nuecho.genesys.cli.services.getObjectDbid
-import com.nuecho.genesys.cli.services.retrieveObject
 import com.nuecho.genesys.cli.toShortName
 
 /**
@@ -75,8 +75,12 @@ data class Person(
         agentInfo = if (person.agentInfo != null) AgentInfo(person.agentInfo) else null
     )
 
-    override fun updateCfgObject(service: IConfService) =
-        (service.retrieveObject(reference) ?: CfgPerson(service)).also {
+    override fun createCfgObject(service: IConfService) =
+        updateCfgObject(service, CfgPerson(service))
+
+    override fun updateCfgObject(service: IConfService, cfgObject: ICfgObject) =
+        (cfgObject as CfgPerson).also {
+
             setProperty("tenantDBID", service.getObjectDbid(tenant), it)
             setProperty("employeeID", employeeId, it)
             setProperty(USER_NAME, userName, it)

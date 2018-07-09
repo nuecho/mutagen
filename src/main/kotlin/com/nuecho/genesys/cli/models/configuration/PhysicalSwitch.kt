@@ -3,6 +3,7 @@ package com.nuecho.genesys.cli.models.configuration
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
+import com.genesyslab.platform.applicationblocks.com.ICfgObject
 import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgPhysicalSwitch
 import com.nuecho.genesys.cli.getFolderReference
@@ -15,7 +16,6 @@ import com.nuecho.genesys.cli.models.configuration.reference.ConfigurationObject
 import com.nuecho.genesys.cli.models.configuration.reference.FolderReference
 import com.nuecho.genesys.cli.models.configuration.reference.PhysicalSwitchReference
 import com.nuecho.genesys.cli.models.configuration.reference.referenceSetBuilder
-import com.nuecho.genesys.cli.services.retrieveObject
 import com.nuecho.genesys.cli.toShortName
 
 /**
@@ -41,8 +41,12 @@ data class PhysicalSwitch(
         folder = physicalSwitch.getFolderReference()
     )
 
-    override fun updateCfgObject(service: IConfService) =
-        (service.retrieveObject(reference) ?: CfgPhysicalSwitch(service)).also {
+    override fun createCfgObject(service: IConfService) =
+        updateCfgObject(service, CfgPhysicalSwitch(service))
+
+    override fun updateCfgObject(service: IConfService, cfgObject: ICfgObject) =
+        (cfgObject as CfgPhysicalSwitch).also {
+
             setProperty("name", name, it)
             setProperty(TYPE, toCfgSwitchType(type), it)
             setProperty("state", toCfgObjectState(state), it)

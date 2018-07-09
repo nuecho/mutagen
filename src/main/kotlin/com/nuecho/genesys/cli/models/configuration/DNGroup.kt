@@ -1,6 +1,7 @@
 package com.nuecho.genesys.cli.models.configuration
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import com.genesyslab.platform.applicationblocks.com.ICfgObject
 import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgDN
 import com.genesyslab.platform.applicationblocks.com.objects.CfgDNGroup
@@ -49,8 +50,11 @@ data class DNGroup(
         group = Group(tenant, name)
     )
 
-    override fun updateCfgObject(service: IConfService) =
-        (service.retrieveObject(reference) ?: CfgDNGroup(service)).also { cfgDNGroup ->
+    override fun createCfgObject(service: IConfService) =
+        updateCfgObject(service, CfgDNGroup(service))
+
+    override fun updateCfgObject(service: IConfService, cfgObject: ICfgObject) =
+        (cfgObject as CfgDNGroup).also { cfgDNGroup ->
 
             val groupInfo = group.toCfgGroup(service, cfgDNGroup).also {
                 cfgDNGroup.dbid?.let { dbid ->
