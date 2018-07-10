@@ -4,6 +4,7 @@ import com.nuecho.genesys.cli.TestResources.loadJsonConfiguration
 import com.nuecho.genesys.cli.models.configuration.ConfigurationAsserts.checkSerialization
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.equalTo
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 
 @Suppress("UnnecessaryAbstractClass")
@@ -50,5 +51,15 @@ abstract class ConfigurationObjectTest(
         // since ConfigurationObjectWithUserProperties.equals is broken because of ByteArray.equals, this should do
         // the trick for now.
         checkSerialization(deserializedConfigurationObject, configurationObjectType)
+    }
+
+    @Disabled
+    @Test
+    fun `should report object as modified`() {
+    }
+
+    @Disabled
+    @Test
+    fun `should report object as not modified`() {
     }
 }

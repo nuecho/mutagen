@@ -1,1 +1,1 @@
-cfgObjectTests("actionCodes", "action-codes-config.json");
+cfgObjectTests("actionCodes");

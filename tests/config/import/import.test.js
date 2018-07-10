@@ -21,8 +21,12 @@ test(`[mutagen config import file] should not import the object if it has an inv
   assertMutagenResult(`config import --auto-confirm ${INVALID_TENANT_CONFIGURATION_PATH}`, "no object has been imported", 1);
 });
 
-test(`[mutagen config import file] should import multiple objects of different types`, () => {
-  assertMutagenResult(`config import --auto-confirm ${MULTIPLE_OBJECTS_CONFIGURATION_PATH}`, "every object has been imported", 0);
+test(`[mutagen config import file] should create multiple objects of different types`, () => {
+  assertMutagenResult(`config import --auto-confirm ${MULTIPLE_OBJECTS_CONFIGURATION_PATH}`, "every object has been created", 0);
+});
+
+test(`[mutagen config import file] should update multiple objects of different types`, () => {
+  assertMutagenResult(`config import --auto-confirm ${MULTIPLE_OBJECTS_CONFIGURATION_PATH}`, "every object has been updated", 0);
 });
 
 test(`[mutagen config import file] should only import objects with a unique key`, () => {

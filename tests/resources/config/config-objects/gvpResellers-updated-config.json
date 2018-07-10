@@ -1,0 +1,14 @@
+{
+  "__metadata__": {
+    "formatName": "JSON",
+    "formatVersion": "1.0.0"
+  },
+  "gvpResellers": [
+    {
+      "tenant": "Environment",
+      "startDate": "2018-06-06T21:17:50.105+0000",
+      "name": "cfgObjectTest"
+    }
+  ]
+}
+

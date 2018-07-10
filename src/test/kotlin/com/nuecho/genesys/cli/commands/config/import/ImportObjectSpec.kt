@@ -5,8 +5,6 @@ import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgGVPReseller
 import com.genesyslab.platform.applicationblocks.com.objects.CfgTenant
 import com.genesyslab.platform.applicationblocks.com.objects.CfgTimeZone
-import com.nuecho.genesys.cli.models.ImportPlan
-import com.nuecho.genesys.cli.models.ImportPlan.Companion.importConfigurationObject
 import com.nuecho.genesys.cli.models.ImportPlanOperation
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObject
 import com.nuecho.genesys.cli.services.ConfService
@@ -34,8 +32,8 @@ abstract class ImportObjectSpec(val cfgObject: CfgObject, val configurationObjec
         val service = cfgObject.configurationService as ConfService
         every { service.retrieveObject(cfgObject.javaClass, any()) } returns retrieveObjectResult
 
-        objectMockk(ImportPlan.Companion).use {
-            every { ImportPlan.save(any()) } just Runs
+        objectMockk(ImportPlanOperation.Companion).use {
+            every { ImportPlanOperation.save(any()) } just Runs
 
             mockRetrieveDefaultObjects(service, cfgObject)
 
@@ -46,9 +44,9 @@ abstract class ImportObjectSpec(val cfgObject: CfgObject, val configurationObjec
             objectMockk(ConfigurationObjectRepository).use {
                 mockConfigurationObjectRepository()
 
-                val hasImportedObject = importConfigurationObject(ImportPlanOperation(service, configurationObject))
+                val hasImportedObject = ImportPlanOperation(service, configurationObject).apply()
                 assertThat(hasImportedObject, `is`(true))
-                verify(exactly = 1) { ImportPlan.save(any()) }
+                verify(exactly = 1) { ImportPlanOperation.save(any()) }
             }
         }
     }

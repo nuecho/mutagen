@@ -9,7 +9,16 @@ Completed. 1 object(s) imported.
 }
 `;
 
-exports[`[mutagen tenants config import-export] should update the tenants: the tenants have been updated 1`] = `
+exports[`[mutagen tenants config import-export] should update the modified tenants: the modified tenants have been updated 1`] = `
+Object {
+  "stderr": "",
+  "stdout": "~ tenant => cfgObjectTest
+Completed. 1 object(s) imported.
+",
+}
+`;
+
+exports[`[mutagen tenants config import-export] should update the same tenants: the tenants have been updated 1`] = `
 Object {
   "stderr": "",
   "stdout": "~ tenant => cfgObjectTest

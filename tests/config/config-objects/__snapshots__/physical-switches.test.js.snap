@@ -18,7 +18,16 @@ Object {
 }
 `;
 
-exports[`[mutagen physicalSwitches config import-export] should update the physicalSwitches: the physicalSwitches have been updated 1`] = `
+exports[`[mutagen physicalSwitches config import-export] should update the modified physicalSwitches: the modified physicalSwitches have been updated 1`] = `
+Object {
+  "stderr": "",
+  "stdout": "~ physicalswitch => cfgObjectTest
+Completed. 1 object(s) imported.
+",
+}
+`;
+
+exports[`[mutagen physicalSwitches config import-export] should update the same physicalSwitches: the physicalSwitches have been updated 1`] = `
 Object {
   "stderr": "",
   "stdout": "~ physicalswitch => cfgObjectTest

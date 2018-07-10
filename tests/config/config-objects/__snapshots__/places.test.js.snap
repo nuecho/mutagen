@@ -13,7 +13,16 @@ Completed. 5 object(s) imported.
 }
 `;
 
-exports[`[mutagen places config import-export] should update the places: the places have been updated 1`] = `
+exports[`[mutagen places config import-export] should update the modified places: the modified places have been updated 1`] = `
+Object {
+  "stderr": "",
+  "stdout": "~ place => Environment/cfgObjectTest
+Completed. 1 object(s) imported.
+",
+}
+`;
+
+exports[`[mutagen places config import-export] should update the same places: the places have been updated 1`] = `
 Object {
   "stderr": "",
   "stdout": "~ physicalswitch => placePhysicalSwitch

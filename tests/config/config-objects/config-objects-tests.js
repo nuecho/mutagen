@@ -7,7 +7,6 @@ const defaultOptions = {
 
 function cfgObjectTests (
   cfgObjectType,
-  configurationFile,
   options = {}
 ) {
   describe(`[mutagen ${cfgObjectType} config import-export]`, () => {
@@ -17,10 +16,11 @@ function cfgObjectTests (
       cfgObjectInitialExportTest(cfgObjectType, mergedOptions.initialNumberOfObjects);
     }
     if (mergedOptions.checkMandatoryProperties) {
-      cfgObjectMissingPropertiesTest(cfgObjectType, getResourcePath(`config/config-objects/invalid-${configurationFile}`));
+      cfgObjectMissingPropertiesTest(cfgObjectType, getResourcePath(`config/config-objects/${cfgObjectType}-invalid-config.json`));
     }
-    cfgObjectCreationTest(cfgObjectType, getResourcePath(`config/config-objects/${configurationFile}`));
-    cfgObjectUpdateTest(cfgObjectType, getResourcePath(`config/config-objects/${configurationFile}`));
+    cfgObjectImportNewTest(cfgObjectType, getResourcePath(`config/config-objects/${cfgObjectType}-config.json`));
+    cfgObjectImportUnmodifiedTest(cfgObjectType, getResourcePath(`config/config-objects/${cfgObjectType}-config.json`));
+    cfgObjectImportModifiedTest(cfgObjectType, getResourcePath(`config/config-objects/${cfgObjectType}-updated-config.json`));
     cfgObjectExportTest(cfgObjectType, mergedOptions.checkKey);
   });
 };
@@ -47,15 +47,21 @@ function cfgObjectMissingPropertiesTest(cfgObjectType, emptyConfigurationPath) {
   });
 };
 
-function cfgObjectCreationTest(cfgObjectType, configurationPath) {
+function cfgObjectImportNewTest(cfgObjectType, configurationPath) {
   test(`should create the ${cfgObjectType}`, () => {
     assertMutagenResult(`config import --auto-confirm ${configurationPath}`, `the ${cfgObjectType} have been created`, 0);
   });
 };
 
-function cfgObjectUpdateTest(cfgObjectType, configurationPath) {
-  test(`should update the ${cfgObjectType}`, () => {
+function cfgObjectImportUnmodifiedTest(cfgObjectType, configurationPath) {
+  test(`should update the same ${cfgObjectType}`, () => {
     assertMutagenResult(`config import --auto-confirm ${configurationPath}`, `the ${cfgObjectType} have been updated`, 0);
+  });
+};
+
+function cfgObjectImportModifiedTest(cfgObjectType, configurationPath) {
+  test(`should update the modified ${cfgObjectType}`, () => {
+    assertMutagenResult(`config import --auto-confirm ${configurationPath}`, `the modified ${cfgObjectType} have been updated`, 0);
   });
 };
 

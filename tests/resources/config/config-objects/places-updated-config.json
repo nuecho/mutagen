@@ -1,0 +1,17 @@
+{
+  "__metadata__": {
+    "formatName": "JSON",
+    "formatVersion": "1.0.0"
+  },
+  "places": [
+    {
+      "name": "cfgObjectTest",
+      "tenant": "Environment",
+      "userProperties": {
+        "section": {
+          "number": 123
+        }
+      }
+    }
+  ]
+}

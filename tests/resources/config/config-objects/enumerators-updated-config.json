@@ -1,0 +1,13 @@
+{
+  "__metadata__": {
+    "formatName": "JSON",
+    "formatVersion": "1.0.0"
+  },
+  "enumerators": [
+    {
+      "description": "a new description",
+      "name": "cfgObjectTest",
+      "tenant": "Environment"
+    }
+  ]
+}

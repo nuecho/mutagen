@@ -79,7 +79,7 @@ class PlaceTest : ConfigurationObjectTest(
         objectMockk(ConfigurationObjectRepository).use {
             mockConfigurationObjectRepository()
 
-            val cfgPlace = place.updateCfgObject(service)
+            val cfgPlace = place.createCfgObject(service)
 
             with(cfgPlace) {
                 assertThat(name, equalTo(place.name))

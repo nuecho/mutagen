@@ -18,7 +18,16 @@ Object {
 }
 `;
 
-exports[`[mutagen switches config import-export] should update the switches: the switches have been updated 1`] = `
+exports[`[mutagen switches config import-export] should update the modified switches: the modified switches have been updated 1`] = `
+Object {
+  "stderr": "",
+  "stdout": "~ switch => Environment/cfgObjectTest
+Completed. 1 object(s) imported.
+",
+}
+`;
+
+exports[`[mutagen switches config import-export] should update the same switches: the switches have been updated 1`] = `
 Object {
   "stderr": "",
   "stdout": "~ switch => Environment/cfgObjectTest

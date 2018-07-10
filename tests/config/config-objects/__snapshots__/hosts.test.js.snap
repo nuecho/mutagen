@@ -18,7 +18,16 @@ Object {
 }
 `;
 
-exports[`[mutagen hosts config import-export] should update the hosts: the hosts have been updated 1`] = `
+exports[`[mutagen hosts config import-export] should update the modified hosts: the modified hosts have been updated 1`] = `
+Object {
+  "stderr": "",
+  "stdout": "~ host => cfgObjectTest
+Completed. 1 object(s) imported.
+",
+}
+`;
+
+exports[`[mutagen hosts config import-export] should update the same hosts: the hosts have been updated 1`] = `
 Object {
   "stderr": "",
   "stdout": "~ host => cfgObjectTest

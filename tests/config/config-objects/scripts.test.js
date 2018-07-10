@@ -1,1 +1,1 @@
-cfgObjectTests("scripts", "scripts-config.json");
+cfgObjectTests("scripts")

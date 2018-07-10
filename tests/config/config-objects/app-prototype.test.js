@@ -1,1 +1,1 @@
-cfgObjectTests("appPrototypes", "app-prototype-config.json", {initialNumberOfObjects: 6});
+cfgObjectTests("appPrototypes", {initialNumberOfObjects: 6});

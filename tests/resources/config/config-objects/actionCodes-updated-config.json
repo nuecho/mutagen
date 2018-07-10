@@ -1,0 +1,16 @@
+{
+  "__metadata__": {
+    "formatName": "JSON",
+    "formatVersion": "1.0.0"
+  },
+  "actionCodes": [
+    {
+      "name": "cfgObjectTest",
+      "type": "transfer",
+      "subcodes": {
+        "subname": "newsubcode"
+      },
+      "tenant": "Environment"
+    }
+  ]
+}

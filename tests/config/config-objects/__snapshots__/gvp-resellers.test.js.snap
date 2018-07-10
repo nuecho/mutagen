@@ -9,7 +9,16 @@ Completed. 1 object(s) imported.
 }
 `;
 
-exports[`[mutagen gvpResellers config import-export] should update the gvpResellers: the gvpResellers have been updated 1`] = `
+exports[`[mutagen gvpResellers config import-export] should update the modified gvpResellers: the modified gvpResellers have been updated 1`] = `
+Object {
+  "stderr": "",
+  "stdout": "~ gvpreseller => Environment/cfgObjectTest
+Completed. 1 object(s) imported.
+",
+}
+`;
+
+exports[`[mutagen gvpResellers config import-export] should update the same gvpResellers: the gvpResellers have been updated 1`] = `
 Object {
   "stderr": "",
   "stdout": "~ gvpreseller => Environment/cfgObjectTest

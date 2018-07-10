@@ -18,7 +18,16 @@ Object {
 }
 `;
 
-exports[`[mutagen persons config import-export] should update the persons: the persons have been updated 1`] = `
+exports[`[mutagen persons config import-export] should update the modified persons: the modified persons have been updated 1`] = `
+Object {
+  "stderr": "",
+  "stdout": "~ person => Environment/cfgObjectTest
+Completed. 1 object(s) imported.
+",
+}
+`;
+
+exports[`[mutagen persons config import-export] should update the same persons: the persons have been updated 1`] = `
 Object {
   "stderr": "",
   "stdout": "~ person => Environment/cfgObjectTest

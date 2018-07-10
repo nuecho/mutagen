@@ -9,7 +9,16 @@ Completed. 1 object(s) imported.
 }
 `;
 
-exports[`[mutagen agentGroups config import-export] should update the agentGroups: the agentGroups have been updated 1`] = `
+exports[`[mutagen agentGroups config import-export] should update the modified agentGroups: the modified agentGroups have been updated 1`] = `
+Object {
+  "stderr": "",
+  "stdout": "~ agentgroup => Environment/cfgObjectTest
+Completed. 1 object(s) imported.
+",
+}
+`;
+
+exports[`[mutagen agentGroups config import-export] should update the same agentGroups: the agentGroups have been updated 1`] = `
 Object {
   "stderr": "",
   "stdout": "~ agentgroup => Environment/cfgObjectTest

@@ -3,6 +3,7 @@ package com.nuecho.genesys.cli.models.configuration
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
+import com.genesyslab.platform.applicationblocks.com.ICfgObject
 import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgAppPrototype
 import com.nuecho.genesys.cli.getFolderReference
@@ -14,7 +15,6 @@ import com.nuecho.genesys.cli.models.configuration.reference.AppPrototypeReferen
 import com.nuecho.genesys.cli.models.configuration.reference.ConfigurationObjectReference
 import com.nuecho.genesys.cli.models.configuration.reference.FolderReference
 import com.nuecho.genesys.cli.models.configuration.reference.referenceSetBuilder
-import com.nuecho.genesys.cli.services.retrieveObject
 import com.nuecho.genesys.cli.toShortName
 
 data class AppPrototype(
@@ -43,8 +43,11 @@ data class AppPrototype(
         folder = appPrototype.getFolderReference()
     )
 
-    override fun updateCfgObject(service: IConfService) =
-        (service.retrieveObject(reference) ?: CfgAppPrototype(service)).also {
+    override fun createCfgObject(service: IConfService) =
+        updateCfgObject(service, CfgAppPrototype(service))
+
+    override fun updateCfgObject(service: IConfService, cfgObject: ICfgObject) =
+        (cfgObject as CfgAppPrototype).also {
             setProperty("name", name, it)
             setProperty(TYPE, toCfgAppType(type), it)
             setProperty(VERSION, version, it)

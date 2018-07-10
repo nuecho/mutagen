@@ -48,7 +48,8 @@ class TenantTest : ConfigurationObjectTest(tenant, Tenant("foo"), emptySet(), Te
     fun `createCfgObject should properly create CfgTenant`() {
         val defaultTenant = mockCfgTenant(DEFAULT_TENANT)
         val service = mockConfService()
-        every { service.retrieveObject(CfgTenant::class.java, any()) } returns null andThen defaultTenant
+        every { service.retrieveObject(CfgTenant::class.java, any()) } returns defaultTenant
+
         mockRetrieveObjectiveTable(service)
         mockRetrieveScript(service)
 

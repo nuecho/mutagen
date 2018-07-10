@@ -18,7 +18,16 @@ Object {
 }
 `;
 
-exports[`[mutagen appPrototypes config import-export] should update the appPrototypes: the appPrototypes have been updated 1`] = `
+exports[`[mutagen appPrototypes config import-export] should update the modified appPrototypes: the modified appPrototypes have been updated 1`] = `
+Object {
+  "stderr": "",
+  "stdout": "~ appprototype => cfgObjectTest
+Completed. 1 object(s) imported.
+",
+}
+`;
+
+exports[`[mutagen appPrototypes config import-export] should update the same appPrototypes: the appPrototypes have been updated 1`] = `
 Object {
   "stderr": "",
   "stdout": "~ appprototype => cfgObjectTest

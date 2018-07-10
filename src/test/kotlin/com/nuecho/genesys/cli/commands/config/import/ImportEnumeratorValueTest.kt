@@ -2,8 +2,6 @@ package com.nuecho.genesys.cli.commands.config.import
 
 import com.genesyslab.platform.applicationblocks.com.objects.CfgEnumeratorValue
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectType.CFGEnumerator
-import com.nuecho.genesys.cli.models.ImportPlan
-import com.nuecho.genesys.cli.models.ImportPlan.Companion.importConfigurationObject
 import com.nuecho.genesys.cli.models.ImportPlanOperation
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_OBJECT_DBID
@@ -45,17 +43,17 @@ class ImportEnumeratorValueTest {
 
         val enumerator = mockCfgEnumerator("enumerator")
 
-        objectMockk(ImportPlan.Companion).use {
+        objectMockk(ImportPlanOperation.Companion).use {
             staticMockk("com.nuecho.genesys.cli.services.ConfServiceExtensionsKt").use {
                 val service = mockConfService()
                 every { service.retrieveObject(CfgEnumeratorValue::class.java, any()) } returns retrieveEnumeratorValueResult
                 every { service.retrieveObject(CFGEnumerator, any()) } returns enumerator
                 every { service.getObjectDbid(any()) } returns DEFAULT_OBJECT_DBID
-                every { ImportPlan.save(any()) } just Runs
+                every { ImportPlanOperation.save(any()) } just Runs
 
-                val hasImportedObject = importConfigurationObject(ImportPlanOperation(service, enumeratorValue))
+                val hasImportedObject = ImportPlanOperation(service, enumeratorValue).apply()
                 assertThat(hasImportedObject, `is`(true))
-                verify(exactly = 1) { ImportPlan.save(ofType(CfgEnumeratorValue::class)) }
+                verify(exactly = 1) { ImportPlanOperation.save(ofType(CfgEnumeratorValue::class)) }
             }
         }
     }
