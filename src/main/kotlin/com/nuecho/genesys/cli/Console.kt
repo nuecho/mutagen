@@ -1,5 +1,6 @@
 package com.nuecho.genesys.cli
 
+import com.nuecho.genesys.cli.preferences.SecurePassword
 import org.fusesource.jansi.AnsiConsole
 
 const val YES: String = "y"
@@ -16,17 +17,18 @@ object Console {
         return confirmed == YES
     }
 
-    fun promptForPassword(): String {
+    fun promptForPassword(): SecurePassword {
         Logging.debug { "Password not found in environment. Prompting." }
         val console = System.console() ?: throw IllegalStateException(
             """
-            |Can't prompt for password process not attached to console.
-            |Either add password in your environment file or use `mutagen set-password`
-            |to store an encrypted version of it.
+            |Can't prompt for password process not attached to console.  You may:
+            |  - Add password in your environment file
+            |  - Pass it on standard input using `mutagen -p ...`
+            |  - Use `mutagen set-password` to store an encrypted version of it.
             """.trimMargin()
         )
 
-        return String(console.readPassword("Password: "))
+        return SecurePassword(console.readPassword("Password: "))
     }
 
     fun enableAnsiMode() {

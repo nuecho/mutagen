@@ -4,7 +4,7 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgPhysicalSwitch
 import com.nuecho.genesys.cli.CliOutputCaptureWrapper.execute
 import com.nuecho.genesys.cli.commands.config.ConfigMocks.mockMetadata
 import com.nuecho.genesys.cli.commands.config.export.ExportFormat.JSON
-import com.nuecho.genesys.cli.commands.config.import.Import.Companion.importConfiguration
+import com.nuecho.genesys.cli.commands.config.import.Import.importConfiguration
 import com.nuecho.genesys.cli.models.ImportPlan
 import com.nuecho.genesys.cli.models.configuration.Configuration
 import com.nuecho.genesys.cli.models.configuration.ConfigurationBuilder

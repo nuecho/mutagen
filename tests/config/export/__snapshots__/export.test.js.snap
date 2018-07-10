@@ -1,5 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`[mutagen -p config export] should allow passing password on standard input: export stdin password 1`] = `""`;
+
 exports[`[mutagen config export --help] should print import usage: export usage 1`] = `
 Object {
   "stderr": "",

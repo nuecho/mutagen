@@ -61,14 +61,14 @@ class PreferencesTest {
 
     @Test
     fun `missing password should prompt for one`() {
-
         objectMockk(Console).use {
-            every { Console.promptForPassword() } returns PASSWORD
+            every { Console.promptForPassword() } returns SecurePassword(PASSWORD.toCharArray())
 
             val environment = loadEnvironment(
                 environmentsFile = toPreferenceFile("environments_nopassword.yml")
             )
-            assertThat(environment.password, equalTo(PASSWORD))
+
+            assertThat(environment.password!!.value, equalTo(PASSWORD))
         }
     }
 }

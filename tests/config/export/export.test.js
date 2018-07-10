@@ -16,6 +16,12 @@ test(`[mutagen config export] should not throw an exception when no encoding is 
   expect(code).toBe(0);
 });
 
+test(`[mutagen -p config export] should allow passing password on standard input`, () => {
+  const { code, output } = exec(`echo "password" | ${MUTAGEN_PATH} -p --env=nopassword config export`)
+  expect(output.stderr).toMatchSnapshot("export stdin password");
+  expect(code).toBe(0);
+});
+
 test(`[mutagen config export] should export the config in raw format`, () => {
   const { code, output } = mutagen(`config export`);
   const exportedConfig = JSON.parse(output.stdout);
