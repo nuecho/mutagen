@@ -35,8 +35,8 @@ class ImportPlanTest {
     fun `dependency cycles should be detected and abort the import`() {
         val service = ServiceMocks.mockConfService()
 
-        val scriptName = "script"
-        val tenantName = "tenant"
+        val scriptName = "script1"
+        val tenantName = "tenant1"
 
         val tenantReference = TenantReference(tenantName)
         val scriptReference = ScriptReference(scriptName, tenantReference)
@@ -44,7 +44,7 @@ class ImportPlanTest {
         val configuration = Configuration(
             __metadata__ = ConfigMocks.mockMetadata(ExportFormat.JSON),
             tenants = listOf(Tenant(tenantName, defaultCapacityRule = scriptReference)),
-            scripts = listOf(Script(tenant = tenantReference, name = scriptName)),
+            scripts = listOf(Script(tenant = tenantReference, name = scriptName, type = "voiceFile")),
             physicalSwitches = listOf(PhysicalSwitch(PHYSICAL_SWITCH_NAME, PHYSICAL_SWITCH_TYPE))
         )
 
@@ -61,8 +61,8 @@ class ImportPlanTest {
     fun `missing configuration object dependencies should be detected and abort the import`() {
         val configuration = Configuration(
             __metadata__ = ConfigMocks.mockMetadata(ExportFormat.JSON),
-            scripts = listOf(Script(tenant = TenantReference("tenant"), name = "script1")),
-            physicalSwitches = listOf(PhysicalSwitch(PHYSICAL_SWITCH_NAME))
+            scripts = listOf(Script(tenant = TenantReference("tenant"), name = "script1", type = "voiceFile")),
+            physicalSwitches = listOf(PhysicalSwitch(PHYSICAL_SWITCH_NAME, type = "nortelMeridian"))
         )
 
         val service = ServiceMocks.mockConfService()

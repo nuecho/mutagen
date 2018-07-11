@@ -52,8 +52,9 @@ class ImportDNTest {
             every { name } returns "aswitch"
         }
 
-        objectMockk(Import.Companion).use {
+        objectMockk(ImportPlan.Companion).use {
             staticMockk("com.nuecho.genesys.cli.services.ConfServiceExtensionsKt").use {
+
                 val service = mockConfService()
                 every { service.retrieveObject(CfgDN::class.java, any()) } returns retrieveDNResult
                 every { service.retrieveObject(CfgSwitch::class.java, any()) } returns switch
