@@ -14,6 +14,7 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgEnumerator
 import com.genesyslab.platform.applicationblocks.com.objects.CfgGVPCustomer
 import com.genesyslab.platform.applicationblocks.com.objects.CfgGVPIVRProfile
 import com.genesyslab.platform.applicationblocks.com.objects.CfgGVPReseller
+import com.genesyslab.platform.applicationblocks.com.objects.CfgHost
 import com.genesyslab.platform.applicationblocks.com.objects.CfgID
 import com.genesyslab.platform.applicationblocks.com.objects.CfgIVR
 import com.genesyslab.platform.applicationblocks.com.objects.CfgObjectiveTable
@@ -35,6 +36,7 @@ import com.genesyslab.platform.applicationblocks.com.queries.CfgCampaignQuery
 import com.genesyslab.platform.applicationblocks.com.queries.CfgDNGroupQuery
 import com.genesyslab.platform.applicationblocks.com.queries.CfgEnumeratorQuery
 import com.genesyslab.platform.applicationblocks.com.queries.CfgGVPIVRProfileQuery
+import com.genesyslab.platform.applicationblocks.com.queries.CfgHostQuery
 import com.genesyslab.platform.applicationblocks.com.queries.CfgIVRQuery
 import com.genesyslab.platform.applicationblocks.com.queries.CfgObjectiveTableQuery
 import com.genesyslab.platform.applicationblocks.com.queries.CfgPersonQuery
@@ -133,6 +135,13 @@ class GVPResellerReference(name: String, tenant: TenantReference?) :
             this.setProperty("name", primaryKey)
             this.setProperty("tenant_dbid", getTenantDbid(tenant, service))
         }
+}
+
+@JsonSerialize(using = SimpleObjectReferenceSerializer::class)
+@JsonDeserialize(using = SimpleObjectReferenceDeserializer::class)
+class HostReference(name: String) :
+    SimpleObjectReference<CfgHost>(CfgHost::class.java, name) {
+    override fun toQuery(service: IConfService) = CfgHostQuery(primaryKey)
 }
 
 @JsonSerialize(using = SimpleObjectReferenceSerializer::class)

@@ -44,7 +44,7 @@ data class Script(
         userProperties = script.userProperties?.asCategorizedProperties(),
         folder = script.getFolderReference()
     ) {
-        script.resources?.let { warn { "Unsupported ResourceObject collection. Ignoring." } }
+        script.resources?.let { warn { "Unsupported ResourceObject collection in script object. Ignoring." } }
     }
 
     override fun updateCfgObject(service: IConfService) =

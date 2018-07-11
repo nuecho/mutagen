@@ -75,7 +75,7 @@ object Export {
 
             processor.end()
         } catch (exception: Exception) {
-            throw ExportException("Error occured while exporting configuration.", exception)
+            throw ExportException("Error occurred while exporting configuration.", exception)
         }
     }
 
