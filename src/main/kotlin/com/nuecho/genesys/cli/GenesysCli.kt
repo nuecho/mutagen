@@ -6,7 +6,6 @@ import com.nuecho.genesys.cli.commands.config.Config
 import com.nuecho.genesys.cli.commands.password.SetPasswordCommand
 import com.nuecho.genesys.cli.commands.services.Services
 import com.nuecho.genesys.cli.preferences.Preferences
-import org.fusesource.jansi.AnsiConsole
 import picocli.CommandLine
 import picocli.CommandLine.DefaultExceptionHandler
 import picocli.CommandLine.Help
@@ -40,17 +39,21 @@ const val EXTRA_FOOTER = "Please specify a command."
     subcommands = [Agent::class, Audio::class, Config::class, SetPasswordCommand::class, Services::class]
 )
 open class GenesysCli : GenesysCliCommand() {
+
     companion object {
         @JvmStatic
         fun main(args: Array<String>) {
-            System.exit(execute(GenesysCli(), *args))
+            try {
+                Console.enableAnsiMode()
+                System.exit(execute(GenesysCli(), *args))
+            } finally {
+                Console.disableAnsiMode()
+            }
         }
 
         @Suppress("PrintStackTrace")
         fun execute(genesysCli: GenesysCli, vararg args: String): Int {
             try {
-                AnsiConsole.systemInstall()
-
                 val exceptionHandler = CliExceptionHandler()
                 val result = CommandLine(genesysCli)
                     .parseWithHandlers(RunLast(), System.out, Help.Ansi.AUTO, exceptionHandler, *args)
@@ -73,8 +76,6 @@ open class GenesysCli : GenesysCliCommand() {
                 }
 
                 return 1
-            } finally {
-                AnsiConsole.systemUninstall()
             }
         }
     }

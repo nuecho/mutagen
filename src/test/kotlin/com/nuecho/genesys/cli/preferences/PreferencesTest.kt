@@ -62,7 +62,7 @@ class PreferencesTest {
     @Test
     fun `missing password should prompt for one`() {
 
-        objectMockk(Password).use {
+        objectMockk(Console).use {
             every { Console.promptForPassword() } returns PASSWORD
 
             val environment = loadEnvironment(

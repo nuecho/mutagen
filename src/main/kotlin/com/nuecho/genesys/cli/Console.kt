@@ -1,5 +1,7 @@
 package com.nuecho.genesys.cli
 
+import org.fusesource.jansi.AnsiConsole
+
 const val YES: String = "y"
 const val NO: String = "n"
 
@@ -25,5 +27,13 @@ object Console {
         )
 
         return String(console.readPassword("Password: "))
+    }
+
+    fun enableAnsiMode() {
+        AnsiConsole.systemInstall()
+    }
+
+    fun disableAnsiMode() {
+        AnsiConsole.systemUninstall()
     }
 }

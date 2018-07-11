@@ -45,7 +45,7 @@ class ImportEnumeratorValueTest {
 
         val enumerator = mockCfgEnumerator("enumerator")
 
-        objectMockk(Import.Companion).use {
+        objectMockk(ImportPlan.Companion).use {
             staticMockk("com.nuecho.genesys.cli.services.ConfServiceExtensionsKt").use {
                 val service = mockConfService()
                 every { service.retrieveObject(CfgEnumeratorValue::class.java, any()) } returns retrieveEnumeratorValueResult

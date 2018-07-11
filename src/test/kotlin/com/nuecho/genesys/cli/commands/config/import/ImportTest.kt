@@ -38,7 +38,9 @@ class ImportTest {
         val configuration = ConfigurationBuilder().build(metadata)
         val service = mockConfService()
 
-        objectMockk(Import.Companion).use {
+        objectMockk(ImportPlan.Companion).use {
+            every { ImportPlan.save(any()) } just Runs
+
             importConfiguration(configuration, service, true)
             verify(exactly = 0) { ImportPlan.save(any()) }
         }
@@ -57,7 +59,9 @@ class ImportTest {
             every { readLine() } returns "n"
             every { service.retrieveObject(CfgPhysicalSwitch::class.java, any()) } returns null
 
-            objectMockk(Import.Companion).use {
+            objectMockk(ImportPlan.Companion).use {
+                every { ImportPlan.save(any()) } just Runs
+
                 importConfiguration(configuration, service, false)
                 verify(exactly = 0) { ImportPlan.save(any()) }
             }
@@ -77,7 +81,7 @@ class ImportTest {
             every { readLine() } returns "y"
             every { service.retrieveObject(CfgPhysicalSwitch::class.java, any()) } returns null
 
-            objectMockk(Import.Companion).use {
+            objectMockk(ImportPlan.Companion).use {
                 every { ImportPlan.save(any()) } just Runs
 
                 importConfiguration(configuration, service, false)
