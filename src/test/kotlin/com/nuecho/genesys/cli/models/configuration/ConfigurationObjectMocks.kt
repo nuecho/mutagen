@@ -5,6 +5,7 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgActionCode
 import com.genesyslab.platform.applicationblocks.com.objects.CfgAgentGroup
 import com.genesyslab.platform.applicationblocks.com.objects.CfgAgentLogin
 import com.genesyslab.platform.applicationblocks.com.objects.CfgAgentLoginInfo
+import com.genesyslab.platform.applicationblocks.com.objects.CfgAppPrototype
 import com.genesyslab.platform.applicationblocks.com.objects.CfgApplication
 import com.genesyslab.platform.applicationblocks.com.objects.CfgDN
 import com.genesyslab.platform.applicationblocks.com.objects.CfgDNGroup
@@ -141,6 +142,12 @@ object ConfigurationObjectMocks {
 
     fun mockCfgApplication(name: String) =
         mockk<CfgApplication>().also {
+            every { it.name } returns name
+            every { it.objectDbid } returns DEFAULT_OBJECT_DBID
+        }
+
+    fun mockCfgAppPrototype(name: String?) =
+        mockk<CfgAppPrototype>().also {
             every { it.name } returns name
             every { it.objectDbid } returns DEFAULT_OBJECT_DBID
         }

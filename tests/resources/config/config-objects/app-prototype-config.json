@@ -1,0 +1,30 @@
+{
+  "__metadata__": {
+    "formatName": "JSON",
+    "formatVersion": "1.0.0"
+  },
+  "appPrototypes": [
+    {
+      "name": "cfgObjectTest",
+      "options": {
+        "general": {
+          "options1": "true",
+          "options2": "default"
+        },
+        "other-section": {
+          "options3": "bonjour"
+        }
+      },
+      "state": "enabled",
+      "type": "orchestrationserver",
+      "userProperties": {
+        "section": {
+          "number": 456,
+          "string": "def"
+        }
+      },
+      "version": "1.2.3"
+    }
+  ]
+}
+

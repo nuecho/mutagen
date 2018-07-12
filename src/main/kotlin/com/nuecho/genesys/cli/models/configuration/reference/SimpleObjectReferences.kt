@@ -7,6 +7,7 @@ import com.genesyslab.platform.applicationblocks.com.CfgObject
 import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgAccessGroup
 import com.genesyslab.platform.applicationblocks.com.objects.CfgAgentGroup
+import com.genesyslab.platform.applicationblocks.com.objects.CfgAppPrototype
 import com.genesyslab.platform.applicationblocks.com.objects.CfgApplication
 import com.genesyslab.platform.applicationblocks.com.objects.CfgCampaign
 import com.genesyslab.platform.applicationblocks.com.objects.CfgDNGroup
@@ -31,6 +32,7 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgTenant
 import com.genesyslab.platform.applicationblocks.com.objects.CfgTimeZone
 import com.genesyslab.platform.applicationblocks.com.queries.CfgAccessGroupQuery
 import com.genesyslab.platform.applicationblocks.com.queries.CfgAgentGroupQuery
+import com.genesyslab.platform.applicationblocks.com.queries.CfgAppPrototypeQuery
 import com.genesyslab.platform.applicationblocks.com.queries.CfgApplicationQuery
 import com.genesyslab.platform.applicationblocks.com.queries.CfgCampaignQuery
 import com.genesyslab.platform.applicationblocks.com.queries.CfgDNGroupQuery
@@ -78,6 +80,13 @@ class AgentGroupReference(name: String, tenant: TenantReference) :
 class ApplicationReference(name: String) :
     SimpleObjectReference<CfgApplication>(CfgApplication::class.java, name) {
     override fun toQuery(service: IConfService) = CfgApplicationQuery(primaryKey)
+}
+
+@JsonSerialize(using = SimpleObjectReferenceSerializer::class)
+@JsonDeserialize(using = SimpleObjectReferenceDeserializer::class)
+class AppPrototypeReference(name: String) :
+    SimpleObjectReference<CfgAppPrototype>(CfgAppPrototype::class.java, name) {
+    override fun toQuery(service: IConfService) = CfgAppPrototypeQuery(primaryKey)
 }
 
 @JsonSerialize(using = SimpleObjectReferenceSerializer::class)

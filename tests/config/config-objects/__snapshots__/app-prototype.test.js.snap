@@ -1,0 +1,28 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`[mutagen appPrototypes config import-export] should create the appPrototypes: the appPrototypes have been created 1`] = `
+Object {
+  "stderr": "",
+  "stdout": "+ appprototype => cfgObjectTest
+Completed. 1 object(s) imported.
+",
+}
+`;
+
+exports[`[mutagen appPrototypes config import-export] should throw exception when new appPrototypes to import miss mandatory properties appPrototypes: exception has been thrown 1`] = `
+Object {
+  "stderr": "Cannot import configuration: some configuration objects' mandatory properties for creation are not set.
+	Mandatory properties [type, version] not set in appprototype 'cfgObjectTest'
+",
+  "stdout": "",
+}
+`;
+
+exports[`[mutagen appPrototypes config import-export] should update the appPrototypes: the appPrototypes have been updated 1`] = `
+Object {
+  "stderr": "",
+  "stdout": "~ appprototype => cfgObjectTest
+Completed. 1 object(s) imported.
+",
+}
+`;

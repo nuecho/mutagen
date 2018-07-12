@@ -4,6 +4,7 @@ import com.genesyslab.platform.applicationblocks.com.ICfgObject
 import com.genesyslab.platform.applicationblocks.com.objects.CfgAccessGroup
 import com.genesyslab.platform.applicationblocks.com.objects.CfgActionCode
 import com.genesyslab.platform.applicationblocks.com.objects.CfgAgentGroup
+import com.genesyslab.platform.applicationblocks.com.objects.CfgAppPrototype
 import com.genesyslab.platform.applicationblocks.com.objects.CfgDN
 import com.genesyslab.platform.applicationblocks.com.objects.CfgDNGroup
 import com.genesyslab.platform.applicationblocks.com.objects.CfgEnumerator
@@ -27,6 +28,7 @@ class ConfigurationBuilder {
     private val accessGroups = ArrayList<AccessGroup>()
     private val actionCodes = ArrayList<ActionCode>()
     private val agentGroups = ArrayList<AgentGroup>()
+    private val appPrototypes = ArrayList<AppPrototype>()
     private val dnGroups = ArrayList<DNGroup>()
     private val dns = ArrayList<DN>()
     private val enumerators = ArrayList<Enumerator>()
@@ -50,6 +52,7 @@ class ConfigurationBuilder {
             is CfgAccessGroup -> accessGroups += AccessGroup(cfgObject)
             is CfgActionCode -> actionCodes += ActionCode(cfgObject)
             is CfgAgentGroup -> agentGroups += AgentGroup(cfgObject)
+            is CfgAppPrototype -> appPrototypes += AppPrototype(cfgObject)
             is CfgDNGroup -> dnGroups += DNGroup(cfgObject)
             is CfgDN -> dns += DN(cfgObject)
             is CfgEnumerator -> enumerators += Enumerator(cfgObject)
@@ -75,6 +78,7 @@ class ConfigurationBuilder {
         accessGroups.sorted(),
         actionCodes.sorted(),
         agentGroups.sorted(),
+        appPrototypes.sorted(),
         dnGroups.sorted(),
         dns.sorted(),
         enumerators.sorted(),
