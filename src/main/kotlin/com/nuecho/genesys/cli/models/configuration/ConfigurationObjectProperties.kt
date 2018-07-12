@@ -2,6 +2,9 @@ package com.nuecho.genesys.cli.models.configuration
 
 const val ALIAS = "alias"
 const val AUTO_RESTART = "autoRestart"
+const val ALARM_DETECT_EVENT = "alarmDetectEvent"
+const val ALARM_DETECT_EVENT_LOG_EVENT_ID = "alarmDetectEvent.logEventID"
+const val CATEGORY = "category"
 const val CHANNEL = "channel"
 const val CODE = "code"
 const val DISPLAY_NAME = "displayName"

@@ -8,6 +8,7 @@ import com.genesyslab.platform.commons.collections.KeyValueCollection
 import com.genesyslab.platform.commons.collections.KeyValuePair
 import com.genesyslab.platform.configuration.protocol.types.CfgAccessGroupType
 import com.genesyslab.platform.configuration.protocol.types.CfgActionCodeType
+import com.genesyslab.platform.configuration.protocol.types.CfgAlarmCategory
 import com.genesyslab.platform.configuration.protocol.types.CfgAppComponentType
 import com.genesyslab.platform.configuration.protocol.types.CfgAppType
 import com.genesyslab.platform.configuration.protocol.types.CfgDNGroupType
@@ -31,6 +32,7 @@ import com.genesyslab.platform.configuration.protocol.types.CfgObjectType.CFGNoO
 import com.genesyslab.platform.configuration.protocol.types.CfgRank
 import com.genesyslab.platform.configuration.protocol.types.CfgRouteType
 import com.genesyslab.platform.configuration.protocol.types.CfgScriptType
+import com.genesyslab.platform.configuration.protocol.types.CfgSelectionMode
 import com.genesyslab.platform.configuration.protocol.types.CfgSwitchType
 import com.genesyslab.platform.configuration.protocol.types.CfgTargetType
 import com.genesyslab.platform.configuration.protocol.types.CfgTraceMode
@@ -92,8 +94,9 @@ object ConfigurationObjects {
 
     fun toCfgAccessGroupType(type: String?) = toGEnum(type, CfgAccessGroupType::class.java) as CfgAccessGroupType?
     fun toCfgActionCodeType(type: String?) = toGEnum(type, CfgActionCodeType::class.java) as CfgActionCodeType?
-    fun toCfgAppType(type: String?) = toGEnum(type, CfgAppType::class.java) as CfgAppType?
+    fun toCfgAlarmCategory(category: String?) = toGEnum(category, CfgAlarmCategory::class.java) as CfgAlarmCategory?
     fun toCfgAppComponentType(type: String?) = toGEnum(type, CfgAppComponentType::class.java) as CfgAppComponentType?
+    fun toCfgAppType(type: String?) = toGEnum(type, CfgAppType::class.java) as CfgAppType?
     fun toCfgDNGroupType(type: String?) = toGEnum(type, CfgDNGroupType::class.java) as CfgDNGroupType?
     fun toCfgDNType(type: String?) = toGEnum(type, CfgDNType::class.java) as CfgDNType?
     fun toCfgEnumeratorType(type: String?) = toGEnum(type, CfgEnumeratorType::class.java) as CfgEnumeratorType?
@@ -106,6 +109,9 @@ object ConfigurationObjects {
     fun toCfgRank(rank: String?) = toGEnum(rank, CfgRank::class.java) as CfgRank?
     fun toCfgRouteType(type: String?) = toGEnum(type, CfgRouteType::class.java) as CfgRouteType?
     fun toCfgScriptType(type: String?) = toGEnum(type, CfgScriptType::class.java) as CfgScriptType?
+    fun toCfgSelectionMode(selectionMode: String?) =
+        toGEnum(selectionMode, CfgSelectionMode::class.java) as CfgSelectionMode?
+
     fun toCfgSwitchType(type: String?) = toGEnum(type, CfgSwitchType::class.java) as CfgSwitchType?
     fun toCfgTargetType(type: String?) = toGEnum(type, CfgTargetType::class.java) as CfgTargetType?
     fun toCfgTraceMode(mode: String?) = toGEnum(mode, CfgTraceMode::class.java) as CfgTraceMode?

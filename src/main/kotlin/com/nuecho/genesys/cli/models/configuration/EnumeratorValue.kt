@@ -5,9 +5,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.genesyslab.platform.applicationblocks.com.ICfgObject
 import com.genesyslab.platform.applicationblocks.com.IConfService
-import com.genesyslab.platform.applicationblocks.com.objects.CfgEnumerator
 import com.genesyslab.platform.applicationblocks.com.objects.CfgEnumeratorValue
-import com.genesyslab.platform.configuration.protocol.types.CfgObjectType.CFGEnumerator
 import com.nuecho.genesys.cli.asBoolean
 import com.nuecho.genesys.cli.core.InitializingBean
 import com.nuecho.genesys.cli.getFolderReference
@@ -47,8 +45,7 @@ data class EnumeratorValue(
         default = enumeratorValue.isDefault.asBoolean()!!,
         description = enumeratorValue.description,
         displayName = enumeratorValue.displayName,
-        enumerator = enumeratorValue.enumeratorDBID.let {
-            val enumerator = enumeratorValue.configurationService.retrieveObject(CFGEnumerator, it) as CfgEnumerator
+        enumerator = enumeratorValue.enumerator.let { enumerator ->
             EnumeratorReference(enumerator.name, TenantReference(enumeratorValue.tenant.name))
         },
         name = enumeratorValue.name,

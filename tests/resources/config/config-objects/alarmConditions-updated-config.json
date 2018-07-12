@@ -1,0 +1,12 @@
+{
+  "__metadata__": {
+    "formatName": "JSON",
+    "formatVersion": "1.0.0"
+  },
+  "alarmConditions": [
+    {
+      "name": "cfgObjectTest",
+      "description": "a new description"
+    }
+  ]
+}
