@@ -16,8 +16,7 @@ import com.nuecho.genesys.cli.core.defaultJsonObjectMapper
 import com.nuecho.genesys.cli.models.configuration.Configuration
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgTenant
-import com.nuecho.genesys.cli.preferences.environment.Environment
-import com.nuecho.genesys.cli.services.ConfService
+import com.nuecho.genesys.cli.services.ServiceMocks.mockConfService
 import io.mockk.every
 import io.mockk.spyk
 import org.hamcrest.MatcherAssert.assertThat
@@ -26,7 +25,7 @@ import org.junit.jupiter.api.Test
 import java.io.ByteArrayOutputStream
 
 class JsonExportProcessorTest {
-    private val service = ConfService(Environment(host = "test", user = "test", rawPassword = "test"))
+    private val service = mockConfService()
 
     @Test
     fun `exporting an empty list of configuration objects should yield an empty configuration`() {

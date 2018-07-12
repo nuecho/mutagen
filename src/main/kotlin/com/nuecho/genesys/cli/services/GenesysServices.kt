@@ -23,8 +23,8 @@ object GenesysServices {
         "iso-8859-9", "ebcdic-cp-us", "ibm1140", "gb2312", "big5", "koi8-r", "shift_jis", "euc-kr"
     )
 
-    fun createConfServerProtocol(environment: Environment): ConfServerProtocol {
-        val endpoint = GenesysServices.createConfServerEndpoint(environment)
+    fun createConfServerProtocol(environment: Environment, checkCertificate: Boolean): ConfServerProtocol {
+        val endpoint = GenesysServices.createConfServerEndpoint(environment, checkCertificate)
         val protocol = ConfServerProtocol(endpoint)
         protocol.clientApplicationType = CfgAppType.CFGSCE.ordinal()
         protocol.userName = environment.user
@@ -34,7 +34,7 @@ object GenesysServices {
         return protocol
     }
 
-    private fun createConfServerEndpoint(environment: Environment): Endpoint {
+    private fun createConfServerEndpoint(environment: Environment, checkCertificate: Boolean): Endpoint {
         if (!VALID_ENCODINGS.contains(environment.encoding.toLowerCase())) {
             throw InvalidEncodingException(
                 "Encoding '${environment.encoding}' specified in " +
@@ -57,14 +57,16 @@ object GenesysServices {
             environment.port,
             propertyConfiguration,
             environment.tls,
-            createSslContext(),
+            createSslContext(checkCertificate),
             null
         )
     }
 
-    private fun createSslContext(): SSLContext {
+    private fun createSslContext(checkCertificate: Boolean): SSLContext {
         val keyManager = KeyManagerHelper.createEmptyKeyManager()
-        val trustManager = TrustManagerHelper.createDefaultTrustManager()
+        val trustManager =
+            if (checkCertificate) TrustManagerHelper.createDefaultTrustManager()
+            else TrustManagerHelper.createTrustEveryoneTrustManager()
         return SSLContextHelper.createSSLContext(keyManager, trustManager)
     }
 }

@@ -3,9 +3,11 @@
 exports[`[mutagen config export --help] should print import usage: export usage 1`] = `
 Object {
   "stderr": "",
-  "stdout": "Usage: export [-?] [--format=<format>]
+  "stdout": "Usage: export [-?] [--trust-insecure-certificate] [--format=<format>]
 Export configuration objects.
       --format=<format>       Export format [RAW|JSON|COMPACT_JSON].
+      --trust-insecure-certificate
+                              Don't validate the server's TLS certificate.
   -?, -h, --help              Show this help message.
 ",
 }

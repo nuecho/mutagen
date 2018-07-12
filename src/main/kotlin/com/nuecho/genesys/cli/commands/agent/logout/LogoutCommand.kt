@@ -5,8 +5,8 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgSwitch
 import com.genesyslab.platform.applicationblocks.com.queries.CfgSwitchQuery
 import com.genesyslab.platform.commons.protocol.Endpoint
 import com.genesyslab.platform.reporting.protocol.statserver.AgentStatus
+import com.nuecho.genesys.cli.ConfigServerCommand
 import com.nuecho.genesys.cli.GenesysCli
-import com.nuecho.genesys.cli.GenesysCliCommand
 import com.nuecho.genesys.cli.Logging
 import com.nuecho.genesys.cli.Logging.info
 import com.nuecho.genesys.cli.commands.agent.Agent
@@ -25,7 +25,7 @@ import picocli.CommandLine
     name = "logout",
     description = ["Logout Agent"]
 )
-class LogoutCommand : GenesysCliCommand() {
+class LogoutCommand : ConfigServerCommand() {
     @CommandLine.ParentCommand
     private var agent: Agent? = null
 

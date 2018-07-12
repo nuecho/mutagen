@@ -14,7 +14,11 @@ class ConfService private constructor(
     private val protocol: ConfServerProtocol,
     private val confService: ConfService
 ) : Service, IConfService by confService {
-    constructor(environment: Environment) : this(createConfServerProtocol(environment))
+    constructor(
+        environment: Environment,
+        checkCertificate: Boolean
+    ) : this(createConfServerProtocol(environment, checkCertificate))
+
     internal constructor(protocol: ConfServerProtocol) : this(
         protocol,
         ConfServiceFactory.createConfService(protocol, true) as ConfService

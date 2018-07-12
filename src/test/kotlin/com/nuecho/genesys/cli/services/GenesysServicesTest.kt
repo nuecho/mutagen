@@ -24,7 +24,7 @@ class GenesysServicesTest {
             rawPassword = password
         )
 
-        val protocol = createConfServerProtocol(environment)
+        val protocol = createConfServerProtocol(environment, true)
         val endpoint = protocol.endpoint
 
         assertThat(endpoint.host, equalTo(host))
@@ -46,7 +46,7 @@ class GenesysServicesTest {
             encoding = "invalidEncoding"
         )
 
-        assertThrows(InvalidEncodingException::class.java) { createConfServerProtocol(environment) }
+        assertThrows(InvalidEncodingException::class.java) { createConfServerProtocol(environment, true) }
     }
 
     @Test
@@ -59,7 +59,7 @@ class GenesysServicesTest {
             encoding = "gb2312"
         )
 
-        val protocol = createConfServerProtocol(environment)
+        val protocol = createConfServerProtocol(environment, true)
         val endpoint = protocol.endpoint
 
         assertThat(endpoint.configuration.getOption("string-attributes-encoding"), equalTo("gb2312"))
