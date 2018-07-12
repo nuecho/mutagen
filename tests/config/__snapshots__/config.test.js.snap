@@ -12,3 +12,10 @@ Commands:
 ",
 }
 `;
+
+exports[`[mutagen config export --trust-insecure-certificate] should allow connecting tls even without ca certificate: export without exception 1`] = `""`;
+
+exports[`[mutagen config export] should not allow connecting tls if ca certificate is missing: error while connecting 1`] = `
+"Error while connecting to Config Server [configserver:2022].
+"
+`;

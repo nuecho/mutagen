@@ -6,7 +6,7 @@ import com.genesyslab.platform.applicationblocks.com.ICfgObject
 import com.genesyslab.platform.applicationblocks.com.queries.CfgTenantQuery
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectType
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectType.CFGPersonLastLogin
-import com.nuecho.genesys.cli.GenesysCliCommand
+import com.nuecho.genesys.cli.ConfigServerCommand
 import com.nuecho.genesys.cli.Logging.debug
 import com.nuecho.genesys.cli.Logging.info
 import com.nuecho.genesys.cli.commands.config.Config
@@ -29,7 +29,7 @@ import java.io.OutputStream
     name = "export",
     description = ["Export configuration objects."]
 )
-class ExportCommand : GenesysCliCommand() {
+class ExportCommand : ConfigServerCommand() {
     @CommandLine.ParentCommand
     private var config: Config? = null
 
@@ -40,20 +40,10 @@ class ExportCommand : GenesysCliCommand() {
     private var format: ExportFormat? = RAW
 
     override fun execute(): Int {
-        val environment = getGenesysCli().loadEnvironment()
-        val service = ConfService(environment)
-        service.open()
-        ConfigurationObjectRepository.prefetchConfigurationObjects(service)
-
-        try {
-            exportConfiguration(
-                createExportProcessor(format!!, environment, System.out),
-                service
-            )
-        } finally {
-            service.close()
+        withEnvironmentConfService {
+            ConfigurationObjectRepository.prefetchConfigurationObjects(it)
+            exportConfiguration(createExportProcessor(format!!, getGenesysCli().loadEnvironment(), System.out), it)
         }
-
         return 0
     }
 

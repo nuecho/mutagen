@@ -1,7 +1,7 @@
 package com.nuecho.genesys.cli.commands.config.import
 
+import com.nuecho.genesys.cli.ConfigServerCommand
 import com.nuecho.genesys.cli.Console.confirm
-import com.nuecho.genesys.cli.GenesysCliCommand
 import com.nuecho.genesys.cli.Logging.info
 import com.nuecho.genesys.cli.commands.config.Config
 import com.nuecho.genesys.cli.core.defaultJsonObjectMapper
@@ -16,7 +16,7 @@ import java.io.File
     name = "import",
     description = ["[INCUBATION] Import configuration objects."]
 )
-class Import : GenesysCliCommand() {
+class Import : ConfigServerCommand() {
     @CommandLine.ParentCommand
     private var config: Config? = null
 

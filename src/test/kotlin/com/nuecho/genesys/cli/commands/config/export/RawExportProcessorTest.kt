@@ -9,8 +9,7 @@ import com.nuecho.genesys.cli.TestResources.loadRawConfiguration
 import com.nuecho.genesys.cli.commands.config.ConfigMocks.mockMetadata
 import com.nuecho.genesys.cli.commands.config.export.ExportFormat.RAW
 import com.nuecho.genesys.cli.core.defaultJsonObjectMapper
-import com.nuecho.genesys.cli.preferences.environment.Environment
-import com.nuecho.genesys.cli.services.ConfService
+import com.nuecho.genesys.cli.services.ServiceMocks.mockConfService
 import io.mockk.every
 import io.mockk.spyk
 import org.hamcrest.MatcherAssert.assertThat
@@ -19,7 +18,7 @@ import org.junit.jupiter.api.Test
 import java.io.ByteArrayOutputStream
 
 class RawExportProcessorTest {
-    private val service = ConfService(Environment(host = "test", user = "test", rawPassword = "test"))
+    private val service = mockConfService()
 
     @Test
     fun `exporting multiple objects of the same type should generate an ordered result by dbid`() {

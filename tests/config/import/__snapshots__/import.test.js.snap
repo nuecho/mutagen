@@ -3,10 +3,12 @@
 exports[`[mutagen config import --help] should print import usage: import usage 1`] = `
 Object {
   "stderr": "",
-  "stdout": "Usage: import [-?] [--auto-confirm] inputFile
+  "stdout": "Usage: import [-?] [--auto-confirm] [--trust-insecure-certificate] inputFile
 [INCUBATION] Import configuration objects.
       inputFile               Input configuration file.
       --auto-confirm          Skip interactive approval before applying.
+      --trust-insecure-certificate
+                              Don't validate the server's TLS certificate.
   -?, -h, --help              Show this help message.
 ",
 }

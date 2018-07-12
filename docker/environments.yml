@@ -3,13 +3,20 @@ default:
   user: default
   password: password
 
+configserver-tls:
+  host: configserver
+  user: default
+  password: password
+  tls: true
+  port: 2022
+
 gax:
   host: gax
   port: 8080
   user: default
   password: password
 
-invalidEncoding:
+invalid-encoding:
   host: configserver
   user: default
   password: password

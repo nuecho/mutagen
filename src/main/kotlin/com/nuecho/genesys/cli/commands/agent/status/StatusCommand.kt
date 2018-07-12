@@ -30,8 +30,8 @@ import com.genesyslab.platform.reporting.protocol.statserver.StatisticSubject
 import com.genesyslab.platform.reporting.protocol.statserver.events.EventInfo
 import com.genesyslab.platform.reporting.protocol.statserver.events.EventStatisticOpened
 import com.genesyslab.platform.reporting.protocol.statserver.requests.RequestOpenStatisticEx
+import com.nuecho.genesys.cli.ConfigServerCommand
 import com.nuecho.genesys.cli.GenesysCli
-import com.nuecho.genesys.cli.GenesysCliCommand
 import com.nuecho.genesys.cli.Logging.debug
 import com.nuecho.genesys.cli.Logging.info
 import com.nuecho.genesys.cli.commands.agent.Agent
@@ -55,7 +55,7 @@ private const val DEFAULT_STAT_TIME_PROFILE = "Default"
     name = "status",
     description = ["Get Agent Status"]
 )
-class StatusCommand : GenesysCliCommand() {
+class StatusCommand : ConfigServerCommand() {
     @CommandLine.ParentCommand
     private var agent: Agent? = null
 

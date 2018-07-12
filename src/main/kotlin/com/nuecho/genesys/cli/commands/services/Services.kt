@@ -5,8 +5,8 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgApplication
 import com.genesyslab.platform.applicationblocks.com.queries.CfgApplicationQuery
 import com.genesyslab.platform.commons.protocol.Endpoint
 import com.genesyslab.platform.configuration.protocol.types.CfgFlag
+import com.nuecho.genesys.cli.ConfigServerCommand
 import com.nuecho.genesys.cli.GenesysCli
-import com.nuecho.genesys.cli.GenesysCliCommand
 import com.nuecho.genesys.cli.Logging.debug
 import com.nuecho.genesys.cli.Logging.info
 import com.nuecho.genesys.cli.core.defaultJsonGenerator
@@ -24,7 +24,7 @@ const val DEFAULT_SOCKET_TIMEOUT = 200
     description = ["Discover services"],
     showDefaultValues = true
 )
-class Services : GenesysCliCommand() {
+class Services : ConfigServerCommand() {
 
     @CommandLine.ParentCommand
     private var genesysCli: GenesysCli? = null
