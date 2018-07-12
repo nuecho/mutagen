@@ -9,6 +9,7 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgPerson
 import com.genesyslab.platform.applicationblocks.com.objects.CfgRole
 import com.nuecho.genesys.cli.Logging.warn
 import com.nuecho.genesys.cli.getFolderReference
+import com.nuecho.genesys.cli.getReference
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setFolder
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setProperty
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgObjectState
@@ -38,7 +39,7 @@ data class Role(
     override val reference = RoleReference(name)
 
     constructor(role: CfgRole) : this(
-        tenant = TenantReference(role.tenant.name),
+        tenant = role.tenant.getReference(),
         name = role.name,
         description = role.description,
         state = role.state?.toShortName(),

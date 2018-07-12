@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgEnumerator
 import com.nuecho.genesys.cli.getFolderReference
+import com.nuecho.genesys.cli.getReference
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setFolder
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setProperty
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgEnumeratorType
@@ -35,7 +36,7 @@ data class Enumerator(
     override val reference = EnumeratorReference(name, tenant)
 
     constructor(enumerator: CfgEnumerator) : this(
-        tenant = TenantReference(enumerator.tenant.name),
+        tenant = enumerator.tenant.getReference(),
         name = enumerator.name,
         displayName = enumerator.displayName,
         description = enumerator.description,

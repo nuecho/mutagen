@@ -1,0 +1,45 @@
+{
+  "capacityRule": "capacityRule",
+  "contract": "contract",
+  "dns": [
+    {
+      "number": "123",
+      "switch": "switch",
+      "type": "cellular"
+    },
+    {
+      "number": "456",
+      "switch": "switch",
+      "type": "cellular"
+    }
+  ],
+  "folder": {
+    "owner": {
+      "name": "tenant",
+      "type": "tenant"
+    },
+    "path": [
+      "folder"
+    ],
+    "type": "folder"
+  },
+  "name": "name",
+  "site": {
+    "owner": {
+      "name": "tenant",
+      "type": "tenant"
+    },
+    "path": [
+      "folder"
+    ],
+    "type": "folder"
+  },
+  "state": "enabled",
+  "tenant": "tenant",
+  "userProperties": {
+    "section": {
+      "number": 456,
+      "string": "def"
+    }
+  }
+}

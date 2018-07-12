@@ -4,10 +4,14 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgAgentInfo
 import com.genesyslab.platform.applicationblocks.com.objects.CfgAppRank
 import com.genesyslab.platform.applicationblocks.com.objects.CfgPerson
 import com.genesyslab.platform.configuration.protocol.types.CfgAppType
+import com.genesyslab.platform.configuration.protocol.types.CfgAppType.CFGAdvisors
+import com.genesyslab.platform.configuration.protocol.types.CfgAppType.CFGAgentDesktop
 import com.genesyslab.platform.configuration.protocol.types.CfgFlag
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectState
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectType.CFGFolder
 import com.genesyslab.platform.configuration.protocol.types.CfgRank
+import com.genesyslab.platform.configuration.protocol.types.CfgRank.CFGDesigner
+import com.genesyslab.platform.configuration.protocol.types.CfgRank.CFGUser
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_FOLDER
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_FOLDER_REFERENCE
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_OBJECT_DBID
@@ -67,8 +71,8 @@ private val person = Person(
     agent = true,
     externalAuth = false,
     appRanks = mapOf(
-        CfgAppType.CFGAdvisors.toShortName() to CfgRank.CFGUser.toShortName(),
-        CfgAppType.CFGAgentDesktop.toShortName() to CfgRank.CFGDesigner.toShortName()
+        CFGAdvisors.toShortName() to CFGUser.toShortName(),
+        CFGAgentDesktop.toShortName() to CFGDesigner.toShortName()
     ),
     userProperties = defaultProperties(),
     agentInfo = AgentInfo(
@@ -162,8 +166,8 @@ private fun mockCfgPerson(): CfgPerson {
     mockRetrieveFolderByDbid(service)
 
     val cfgAppRanks = listOf(
-        mockCfgAppRank(CfgAppType.CFGAdvisors, CfgRank.CFGUser),
-        mockCfgAppRank(CfgAppType.CFGAgentDesktop, CfgRank.CFGDesigner)
+        mockCfgAppRank(CFGAdvisors, CFGUser),
+        mockCfgAppRank(CFGAgentDesktop, CFGDesigner)
     )
 
     val cfgAgentInfo = mockCfgAgentInfo()

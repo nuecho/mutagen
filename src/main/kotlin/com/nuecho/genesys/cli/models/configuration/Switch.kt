@@ -49,7 +49,7 @@ data class Switch(
     override val reference = SwitchReference(name, tenant)
 
     constructor(switch: CfgSwitch) : this(
-        tenant = TenantReference(switch.tenant.name),
+        tenant = switch.tenant.getReference(),
         name = switch.name,
         physicalSwitch = switch.physSwitch?.getReference(),
         tServer = switch.tServer?.getReference(),

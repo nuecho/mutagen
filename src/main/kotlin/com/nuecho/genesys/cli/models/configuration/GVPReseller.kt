@@ -50,7 +50,7 @@ data class GVPReseller(
     override val reference = GVPResellerReference(name, tenant)
 
     constructor(gvpReseller: CfgGVPReseller) : this(
-        tenant = TenantReference(gvpReseller.tenant.name),
+        tenant = gvpReseller.tenant.getReference(),
         name = gvpReseller.name,
         displayName = gvpReseller.displayName,
         startDate = gvpReseller.startDate?.time,

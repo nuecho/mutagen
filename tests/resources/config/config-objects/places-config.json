@@ -1,0 +1,57 @@
+{
+  "__metadata__": {
+    "formatName": "JSON",
+    "formatVersion": "1.0.0"
+  },
+  "dns": [
+    {
+      "number": "placeDN",
+      "switch": "placeSwitch",
+      "tenant": "Environment",
+      "type": "cellular",
+      "routeType": "default"
+    }
+  ],
+  "physicalSwitches": [
+    {
+      "name": "placePhysicalSwitch",
+      "state": "enabled",
+      "type": "fujitsu"
+    }
+  ],
+  "places": [
+    {
+      "capacityRule": "placeCapacityRule",
+      "dns": [
+        {
+          "number": "placeDN",
+          "switch": "placeSwitch",
+          "type": "cellular"
+        }
+      ],
+      "name": "cfgObjectTest",
+      "state": "enabled",
+      "tenant": "Environment",
+      "userProperties": {
+        "section": {
+          "number": 456,
+          "string": "def"
+        }
+      }
+    }
+  ],
+  "scripts": [
+    {
+      "name": "placeCapacityRule",
+      "tenant": "Environment",
+      "type": "capacityRule"
+    }
+  ],
+  "switches": [
+    {
+      "name": "placeSwitch",
+      "physicalSwitch": "placePhysicalSwitch",
+      "tenant": "Environment"
+    }
+  ]
+}

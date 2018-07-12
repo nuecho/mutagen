@@ -38,6 +38,7 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgTimeZone
 import com.genesyslab.platform.applicationblocks.com.objects.CfgTransaction
 import com.genesyslab.platform.commons.collections.KeyValueCollection
 import com.genesyslab.platform.commons.collections.KeyValuePair
+import com.genesyslab.platform.configuration.protocol.types.CfgDNType
 import com.genesyslab.platform.configuration.protocol.types.CfgIVRProfileType
 import com.genesyslab.platform.configuration.protocol.types.CfgOSType
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectType
@@ -152,14 +153,19 @@ object ConfigurationObjectMocks {
             every { it.objectDbid } returns DEFAULT_OBJECT_DBID
         }
 
-    fun mockCfgDN(number: String?, tenant: CfgTenant = mockCfgTenant(DEFAULT_TENANT)) =
-        mockk<CfgDN>().also {
-            every { it.number } returns number
-            every { it.tenant } returns tenant
-            every { it.objectDbid } returns DEFAULT_OBJECT_DBID
-        }
+    fun mockCfgDN(
+        number: String,
+        type: CfgDNType = CfgDNType.CFGNoDN,
+        tenant: CfgTenant = mockCfgTenant(DEFAULT_TENANT),
+        dbid: Int = DEFAULT_OBJECT_DBID
+    ) = mockk<CfgDN>().also {
+        every { it.number } returns number
+        every { it.type } returns type
+        every { it.tenant } returns tenant
+        every { it.objectDbid } returns dbid
+    }
 
-    fun mockCfgDNGroup(name: String?, tenant: CfgTenant = mockCfgTenant(DEFAULT_TENANT)) =
+    fun mockCfgDNGroup(name: String, tenant: CfgTenant = mockCfgTenant(DEFAULT_TENANT)) =
         mockk<CfgDNGroup>().also {
             every { it.groupInfo.name } returns name
             every { it.groupInfo.tenant } returns tenant

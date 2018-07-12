@@ -9,6 +9,7 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgPerson
 import com.nuecho.genesys.cli.asBoolean
 import com.nuecho.genesys.cli.core.InitializingBean
 import com.nuecho.genesys.cli.getFolderReference
+import com.nuecho.genesys.cli.getReference
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setFolder
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setProperty
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgAppType
@@ -54,7 +55,7 @@ data class Person(
     override val reference = PersonReference(employeeId, tenant)
 
     constructor(person: CfgPerson) : this(
-        tenant = TenantReference(person.tenant.name),
+        tenant = person.tenant.getReference(),
         employeeId = person.employeeID,
         externalId = person.externalID,
         firstName = person.firstName,

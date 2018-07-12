@@ -64,7 +64,7 @@ data class GVPIVRProfile(
         name = gvpivrProfile.name,
         customer = gvpivrProfile.customer?.getReference(),
         reseller = gvpivrProfile.reseller?.getReference(),
-        tenant = TenantReference(gvpivrProfile.tenant.name),
+        tenant = gvpivrProfile.tenant.getReference(),
         displayName = gvpivrProfile.displayName,
         type = gvpivrProfile.type?.toShortName(),
         notes = gvpivrProfile.notes,
