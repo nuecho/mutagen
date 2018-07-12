@@ -6,9 +6,9 @@ import com.genesyslab.platform.applicationblocks.com.ICfgObject
 import com.genesyslab.platform.applicationblocks.com.queries.CfgTenantQuery
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectType
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectType.CFGPersonLastLogin
-import com.nuecho.genesys.cli.ConfigServerCommand
 import com.nuecho.genesys.cli.Logging.debug
 import com.nuecho.genesys.cli.Logging.info
+import com.nuecho.genesys.cli.commands.ConfigServerCommand
 import com.nuecho.genesys.cli.commands.config.Config
 import com.nuecho.genesys.cli.commands.config.export.Export.createExportProcessor
 import com.nuecho.genesys.cli.commands.config.export.Export.exportConfiguration
@@ -40,9 +40,12 @@ class ExportCommand : ConfigServerCommand() {
     private var format: ExportFormat? = RAW
 
     override fun execute(): Int {
-        withEnvironmentConfService {
-            ConfigurationObjectRepository.prefetchConfigurationObjects(it)
-            exportConfiguration(createExportProcessor(format!!, getGenesysCli().loadEnvironment(), System.out), it)
+        withEnvironmentConfService { service: ConfService, environment: Environment ->
+            ConfigurationObjectRepository.prefetchConfigurationObjects(service)
+            exportConfiguration(
+                createExportProcessor(format!!, environment, System.out),
+                service
+            )
         }
         return 0
     }

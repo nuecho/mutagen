@@ -21,3 +21,7 @@ invalid-encoding:
   user: default
   password: password
   encoding: test
+
+nopassword:
+  host: configserver
+  user: default

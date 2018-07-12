@@ -9,6 +9,8 @@ Object {
   -d, --debug                 Set log level to debug.
   -e, --env=<environmentName> Environment name used for the execution.
   -i, --info                  Set log level to info.
+  -p, --read-password-from-stdin
+                              Read password from standard input.
   -s, --stacktrace            Print out the stacktrace for all exceptions.
   -v, --version               Show version info.
 
@@ -46,6 +48,8 @@ Usage: mutagen [OPTIONS] <command>
   -d, --debug                 Set log level to debug.
   -e, --env=<environmentName> Environment name used for the execution.
   -i, --info                  Set log level to info.
+  -p, --read-password-from-stdin
+                              Read password from standard input.
   -s, --stacktrace            Print out the stacktrace for all exceptions.
   -v, --version               Show version info.
 

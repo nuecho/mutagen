@@ -5,14 +5,15 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgSwitch
 import com.genesyslab.platform.applicationblocks.com.queries.CfgSwitchQuery
 import com.genesyslab.platform.commons.protocol.Endpoint
 import com.genesyslab.platform.reporting.protocol.statserver.AgentStatus
-import com.nuecho.genesys.cli.ConfigServerCommand
 import com.nuecho.genesys.cli.GenesysCli
 import com.nuecho.genesys.cli.Logging
 import com.nuecho.genesys.cli.Logging.info
+import com.nuecho.genesys.cli.commands.ConfigServerCommand
 import com.nuecho.genesys.cli.commands.agent.Agent
 import com.nuecho.genesys.cli.commands.agent.status.Status
 import com.nuecho.genesys.cli.getDefaultEndpoint
 import com.nuecho.genesys.cli.isLoggedOut
+import com.nuecho.genesys.cli.preferences.environment.Environment
 import com.nuecho.genesys.cli.services.ConfService
 import com.nuecho.genesys.cli.services.StatService
 import com.nuecho.genesys.cli.services.TService
@@ -54,8 +55,8 @@ class LogoutCommand : ConfigServerCommand() {
     private var employeeId: String? = null
 
     override fun execute(): Int {
-        withEnvironmentConfService {
-            Logout.logoutAgent(it, StatService(Endpoint(statHost!!, statPort!!)), employeeId!!)
+        withEnvironmentConfService { service: ConfService, _: Environment ->
+            Logout.logoutAgent(service, StatService(Endpoint(statHost!!, statPort!!)), employeeId!!)
         }
 
         return 0

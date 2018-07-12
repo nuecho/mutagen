@@ -1,11 +1,13 @@
 package com.nuecho.genesys.cli
 
+import com.nuecho.genesys.cli.commands.GenesysCliCommand
 import com.nuecho.genesys.cli.commands.agent.Agent
 import com.nuecho.genesys.cli.commands.audio.Audio
 import com.nuecho.genesys.cli.commands.config.Config
 import com.nuecho.genesys.cli.commands.password.SetPasswordCommand
 import com.nuecho.genesys.cli.commands.services.Services
 import com.nuecho.genesys.cli.preferences.Preferences
+import com.nuecho.genesys.cli.preferences.SecurePassword
 import picocli.CommandLine
 import picocli.CommandLine.DefaultExceptionHandler
 import picocli.CommandLine.Help
@@ -104,6 +106,12 @@ open class GenesysCli : GenesysCliCommand() {
     )
     var environmentName = Preferences.DEFAULT_ENVIRONMENT
 
+    @CommandLine.Option(
+        names = ["-p", "--read-password-from-stdin"],
+        description = ["Read password from standard input."]
+    )
+    var readPasswordFromStdin = false
+
     @Suppress("unused")
     @CommandLine.Option(
         names = ["-v", "--version"],
@@ -120,7 +128,10 @@ open class GenesysCli : GenesysCliCommand() {
 
     override fun getGenesysCli() = this
 
-    internal fun loadEnvironment() = Preferences.loadEnvironment(environmentName)
+    internal fun loadEnvironment(password: SecurePassword?) = Preferences.loadEnvironment(
+        environmentName = environmentName,
+        password = password
+    )
 }
 
 @CommandLine.Command(

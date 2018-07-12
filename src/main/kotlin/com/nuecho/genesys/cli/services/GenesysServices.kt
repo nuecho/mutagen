@@ -17,7 +17,7 @@ object GenesysServices {
     const val DEFAULT_APPLICATION_NAME = "default"
     const val DEFAULT_CLIENT_TIMEOUT = 10
     private const val DEFAULT_SERVER_TIMEOUT = 20
-    private val VALID_ENCODINGS = listOf<String>(
+    private val VALID_ENCODINGS = listOf(
         "utf-8", "utf-16", "ascii", "iso-8859-1",
         "iso-8859-2", "iso-8859-3", "iso-8859-4", "iso-8859-5", "iso-8859-6", "iso-8859-7", "iso-8859-8",
         "iso-8859-9", "ebcdic-cp-us", "ibm1140", "gb2312", "big5", "koi8-r", "shift_jis", "euc-kr"
@@ -28,7 +28,7 @@ object GenesysServices {
         val protocol = ConfServerProtocol(endpoint)
         protocol.clientApplicationType = CfgAppType.CFGSCE.ordinal()
         protocol.userName = environment.user
-        protocol.userPassword = environment.password
+        protocol.userPassword = environment.password!!.value
         protocol.clientName = environment.application
 
         return protocol

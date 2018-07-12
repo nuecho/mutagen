@@ -5,7 +5,8 @@
   execAsync,
   getResourcePath,
   mutagen,
-  mutagenAsync
+  mutagenAsync,
+  MUTAGEN_PATH
 } = require("./helpers.js"));
 
 ({ cfgObjectTests, importDependencies } = require("./config/config-objects/config-objects-tests.js"));

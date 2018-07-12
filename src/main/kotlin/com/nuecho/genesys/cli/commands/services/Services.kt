@@ -5,12 +5,14 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgApplication
 import com.genesyslab.platform.applicationblocks.com.queries.CfgApplicationQuery
 import com.genesyslab.platform.commons.protocol.Endpoint
 import com.genesyslab.platform.configuration.protocol.types.CfgFlag
-import com.nuecho.genesys.cli.ConfigServerCommand
 import com.nuecho.genesys.cli.GenesysCli
 import com.nuecho.genesys.cli.Logging.debug
 import com.nuecho.genesys.cli.Logging.info
+import com.nuecho.genesys.cli.commands.ConfigServerCommand
 import com.nuecho.genesys.cli.core.defaultJsonGenerator
 import com.nuecho.genesys.cli.getDefaultEndpoint
+import com.nuecho.genesys.cli.preferences.environment.Environment
+import com.nuecho.genesys.cli.services.ConfService
 import com.nuecho.genesys.cli.toShortName
 import picocli.CommandLine
 import java.net.InetSocketAddress
@@ -52,8 +54,8 @@ class Services : ConfigServerCommand() {
 
     override fun execute(): Int {
         info { "Discovering services" }
-        withEnvironmentConfService {
-            val applications = it.retrieveMultipleObjects(
+        withEnvironmentConfService { service: ConfService, _: Environment ->
+            val applications = service.retrieveMultipleObjects(
                 CfgApplication::class.java,
                 CfgApplicationQuery()
             ) ?: emptyList()

@@ -68,5 +68,6 @@ module.exports = {
   execAsync,
   getResourcePath,
   mutagen,
-  mutagenAsync
+  mutagenAsync,
+  MUTAGEN_PATH
 };

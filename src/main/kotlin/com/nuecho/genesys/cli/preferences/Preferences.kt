@@ -20,7 +20,8 @@ object Preferences {
 
     fun loadEnvironment(
         environmentName: String = DEFAULT_ENVIRONMENT,
-        environmentsFile: File? = null
+        environmentsFile: File? = null,
+        password: SecurePassword? = null
     ): Environment {
         val environmentVariables = System.getenv().toMutableMap()
         environmentVariables[WORKING_DIRECTORY_VARIABLE] = System.getProperty(WORKING_DIRECTORY_VARIABLE)
@@ -31,8 +32,9 @@ object Preferences {
         val environment = Environments.load(effectiveEnvironmentsFile)[environmentName]
                 ?: throw IllegalArgumentException("Environment ($environmentName) does not exist")
 
-        if (environment.password == null)
-            environment.password = Console.promptForPassword()
+        if (environment.password == null) {
+            environment.password = if (password != null) password else Console.promptForPassword()
+        }
 
         return environment
     }

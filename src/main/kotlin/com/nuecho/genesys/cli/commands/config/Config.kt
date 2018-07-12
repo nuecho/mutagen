@@ -1,15 +1,15 @@
 package com.nuecho.genesys.cli.commands.config
 
 import com.nuecho.genesys.cli.GenesysCli
-import com.nuecho.genesys.cli.GenesysCliCommand
+import com.nuecho.genesys.cli.commands.GenesysCliCommand
 import com.nuecho.genesys.cli.commands.config.export.ExportCommand
-import com.nuecho.genesys.cli.commands.config.import.Import
+import com.nuecho.genesys.cli.commands.config.import.ImportCommand
 import picocli.CommandLine
 
 @CommandLine.Command(
     name = "config",
     description = ["Genesys Config Server tool"],
-    subcommands = [ExportCommand::class, Import::class]
+    subcommands = [ExportCommand::class, ImportCommand::class]
 )
 class Config : GenesysCliCommand() {
     @CommandLine.ParentCommand

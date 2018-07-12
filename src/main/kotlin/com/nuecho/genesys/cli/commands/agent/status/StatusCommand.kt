@@ -30,11 +30,12 @@ import com.genesyslab.platform.reporting.protocol.statserver.StatisticSubject
 import com.genesyslab.platform.reporting.protocol.statserver.events.EventInfo
 import com.genesyslab.platform.reporting.protocol.statserver.events.EventStatisticOpened
 import com.genesyslab.platform.reporting.protocol.statserver.requests.RequestOpenStatisticEx
-import com.nuecho.genesys.cli.ConfigServerCommand
 import com.nuecho.genesys.cli.GenesysCli
 import com.nuecho.genesys.cli.Logging.debug
 import com.nuecho.genesys.cli.Logging.info
+import com.nuecho.genesys.cli.commands.ConfigServerCommand
 import com.nuecho.genesys.cli.commands.agent.Agent
+import com.nuecho.genesys.cli.preferences.environment.Environment
 import com.nuecho.genesys.cli.services.ConfService
 import com.nuecho.genesys.cli.services.GenesysServices
 import com.nuecho.genesys.cli.services.StatService
@@ -85,7 +86,9 @@ class StatusCommand : ConfigServerCommand() {
 
     override fun execute(): Int {
         val statService = StatService(Endpoint(statHost!!, statPort!!))
-        withEnvironmentConfService { println(Status.getAgentStatus(it, statService, employeeId!!).toConsoleString()) }
+        withEnvironmentConfService { confService: ConfService, _: Environment ->
+            println(Status.getAgentStatus(confService, statService, employeeId!!).toConsoleString())
+        }
 
         return 0
     }

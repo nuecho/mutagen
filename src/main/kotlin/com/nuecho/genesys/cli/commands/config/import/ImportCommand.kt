@@ -1,12 +1,14 @@
 package com.nuecho.genesys.cli.commands.config.import
 
-import com.nuecho.genesys.cli.ConfigServerCommand
 import com.nuecho.genesys.cli.Console.confirm
 import com.nuecho.genesys.cli.Logging.info
+import com.nuecho.genesys.cli.commands.ConfigServerCommand
 import com.nuecho.genesys.cli.commands.config.Config
+import com.nuecho.genesys.cli.commands.config.import.Import.importConfiguration
 import com.nuecho.genesys.cli.core.defaultJsonObjectMapper
 import com.nuecho.genesys.cli.models.ImportPlan
 import com.nuecho.genesys.cli.models.configuration.Configuration
+import com.nuecho.genesys.cli.preferences.environment.Environment
 import com.nuecho.genesys.cli.services.ConfService
 import com.nuecho.genesys.cli.services.ConfigurationObjectRepository
 import picocli.CommandLine
@@ -16,7 +18,7 @@ import java.io.File
     name = "import",
     description = ["[INCUBATION] Import configuration objects."]
 )
-class Import : ConfigServerCommand() {
+class ImportCommand : ConfigServerCommand() {
     @CommandLine.ParentCommand
     private var config: Config? = null
 
@@ -37,34 +39,34 @@ class Import : ConfigServerCommand() {
     override fun getGenesysCli() = config!!.getGenesysCli()
 
     override fun execute(): Int {
-        val result = withEnvironmentConfService {
-            ConfigurationObjectRepository.prefetchConfigurationObjects(it)
+        val result = withEnvironmentConfService { service: ConfService, _: Environment ->
+            ConfigurationObjectRepository.prefetchConfigurationObjects(service)
             val configuration = defaultJsonObjectMapper().readValue(inputFile, Configuration::class.java)
-            importConfiguration(configuration, it, autoConfirm)
+            importConfiguration(configuration, service, autoConfirm)
         }
         return if (result) 0 else 1
     }
+}
 
-    companion object {
-        fun importConfiguration(configuration: Configuration, service: ConfService, autoConfirm: Boolean): Boolean {
-            info { "Preparing import." }
+object Import {
+    fun importConfiguration(configuration: Configuration, service: ConfService, autoConfirm: Boolean): Boolean {
+        info { "Preparing import." }
 
-            val plan = ImportPlan(configuration, service)
+        val plan = ImportPlan(configuration, service)
 
-            if (!autoConfirm) {
-                plan.print()
+        if (!autoConfirm) {
+            plan.print()
 
-                if (!confirm()) {
-                    println("Import cancelled.")
-                    return false
-                }
+            if (!confirm()) {
+                println("Import cancelled.")
+                return false
             }
-
-            info { "Beginning import." }
-            val count = plan.apply()
-
-            println("Completed. $count object(s) imported.")
-            return true
         }
+
+        info { "Beginning import." }
+        val count = plan.apply()
+
+        println("Completed. $count object(s) imported.")
+        return true
     }
 }

@@ -6,7 +6,7 @@ import javax.crypto.Cipher
 import javax.crypto.SecretKey
 import javax.crypto.spec.SecretKeySpec
 
-object Password {
+object Passwords {
     private const val KEY = "***REMOVED***"
 
     private const val KEY_TYPE = "AES"

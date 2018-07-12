@@ -1,7 +1,7 @@
 package com.nuecho.genesys.cli.commands.agent
 
 import com.nuecho.genesys.cli.GenesysCli
-import com.nuecho.genesys.cli.GenesysCliCommand
+import com.nuecho.genesys.cli.commands.GenesysCliCommand
 import com.nuecho.genesys.cli.commands.agent.logout.LogoutCommand
 import com.nuecho.genesys.cli.commands.agent.status.StatusCommand
 import picocli.CommandLine
