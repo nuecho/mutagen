@@ -1,0 +1,9 @@
+Usage: logout [-?] [--trust-insecure-certificate] --stat-host=<statHost>
+              --stat-port=<statPort> employeeId
+Logout Agent
+      employeeId              EmployeeId of the agent to logout.
+      --stat-host=<statHost>  Stat server hostname.
+      --stat-port=<statPort>  Stat server port.
+      --trust-insecure-certificate
+                              Don't validate the server's TLS certificate.
+  -?, -h, --help              Show this help message.

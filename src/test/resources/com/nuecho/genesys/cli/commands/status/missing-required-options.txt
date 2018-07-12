@@ -1,0 +1,10 @@
+Missing required options [--stat-host=<statHost>, --stat-port=<statPort>, params[0]=employeeId]
+Usage: status [-?] [--trust-insecure-certificate] --stat-host=<statHost>
+              --stat-port=<statPort> employeeId
+Get Agent Status
+      employeeId              EmployeeID of the agent to disconnect.
+      --stat-host=<statHost>  Stat server hostname.
+      --stat-port=<statPort>  Stat server port.
+      --trust-insecure-certificate
+                              Don't validate the server's TLS certificate.
+  -?, -h, --help              Show this help message.

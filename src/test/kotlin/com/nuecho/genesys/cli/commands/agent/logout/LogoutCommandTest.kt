@@ -5,6 +5,7 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgSwitch
 import com.genesyslab.platform.commons.protocol.Endpoint
 import com.genesyslab.platform.reporting.protocol.statserver.AgentStatus
 import com.nuecho.genesys.cli.CliOutputCaptureWrapper.execute
+import com.nuecho.genesys.cli.TestResources
 import com.nuecho.genesys.cli.commands.agent.mockAgentStatus
 import com.nuecho.genesys.cli.commands.agent.status.Status
 import com.nuecho.genesys.cli.getDefaultEndpoint
@@ -21,23 +22,26 @@ import io.mockk.use
 import io.mockk.verify
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.equalTo
-import org.hamcrest.Matchers.startsWith
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
-private const val MISSING_REQUIRED_OPTIONS = "Missing required options [--stat-host=<statHost>, --stat-port=<statPort>, params[ 0]=employeeId]"
-private const val USAGE_PREFIX = "Usage: logout [-?] --stat-host=<statHost> --stat-port=<statPort> employeeId"
+private const val RESOURCE_PREFIX = "commands/logout"
+private const val MISSING_REQUIRED_OPTIONS_PATH = "$RESOURCE_PREFIX/missing-required-options.txt"
+private const val USAGE_PREFIX_PATH = "$RESOURCE_PREFIX/usage.txt"
 
 class LogoutCommandTest {
     @Test
     fun `executing Logout with no arguments should print an error message`() {
+        val expectedOutput = TestResources.getTestResource(MISSING_REQUIRED_OPTIONS_PATH).readText()
         val output = execute("agent", "logout")
-        assertThat(output, startsWith(MISSING_REQUIRED_OPTIONS))
+        assertEquals(expectedOutput, output)
     }
 
     @Test
     fun `executing Logout with -h argument should print usage`() {
+        val expectedOutput = TestResources.getTestResource(USAGE_PREFIX_PATH).readText()
         val output = execute("agent", "logout", "-h")
-        assertThat(output, startsWith(USAGE_PREFIX))
+        assertEquals(expectedOutput, output)
     }
 
     @Test

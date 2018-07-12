@@ -9,6 +9,7 @@ import com.genesyslab.platform.reporting.protocol.statserver.events.EventStatist
 import com.genesyslab.platform.reporting.protocol.statserver.events.EventStatisticOpened
 import com.genesyslab.platform.reporting.protocol.statserver.requests.RequestOpenStatisticEx
 import com.nuecho.genesys.cli.CliOutputCaptureWrapper.execute
+import com.nuecho.genesys.cli.TestResources
 import com.nuecho.genesys.cli.commands.agent.mockAgentStatus
 import com.nuecho.genesys.cli.services.StatService
 import com.nuecho.genesys.cli.services.StatServiceException
@@ -20,25 +21,28 @@ import io.mockk.slot
 import kotlinx.coroutines.experimental.launch
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.equalTo
-import org.hamcrest.Matchers.startsWith
+import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
 
-private const val MISSING_REQUIRED_OPTIONS = "Missing required options [--stat-host=<statHost>, --stat-port=<statPort>, params[0]=employeeId]"
-private const val USAGE_PREFIX = "Usage: status [-?] --stat-host=<statHost> --stat-port=<statPort> employeeId"
+private const val RESOURCE_PREFIX = "commands/status"
+private const val MISSING_REQUIRED_OPTIONS_PATH = "$RESOURCE_PREFIX/missing-required-options.txt"
+private const val USAGE_PREFIX_PATH = "$RESOURCE_PREFIX/usage.txt"
 private const val TEST_TIMEOUT = 1L
 
 class StatusCommandTest {
     @Test
     fun `executing Status with no arguments should print usage`() {
+        val expectedOutput = TestResources.getTestResource(MISSING_REQUIRED_OPTIONS_PATH).readText()
         val output = execute("agent", "status")
-        assertThat(output, startsWith(MISSING_REQUIRED_OPTIONS))
+        assertEquals(expectedOutput, output)
     }
 
     @Test
     fun `executing Status with -h argument should print usage`() {
+        val expectedOutput = TestResources.getTestResource(USAGE_PREFIX_PATH).readText()
         val output = execute("agent", "status", "-h")
-        assertThat(output, startsWith(USAGE_PREFIX))
+        assertEquals(expectedOutput, output)
     }
 
     @Test
