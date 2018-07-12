@@ -6,7 +6,6 @@ object ConfigurationTestData {
 
     fun defaultProperties(): CategorizedProperties? =
         mapOf(
-            @Suppress("MagicNumber")
             "section" to mapOf(
                 "number" to CATEGORIZED_PROPERTIES_NUMBER,
                 "string" to CATEGORIZED_PROPERTIES_STRING
