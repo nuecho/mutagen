@@ -7,6 +7,7 @@ import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgActionCode
 import com.genesyslab.platform.applicationblocks.com.objects.CfgSubcode
 import com.nuecho.genesys.cli.getFolderReference
+import com.nuecho.genesys.cli.getReference
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setFolder
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setProperty
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgActionCodeType
@@ -37,7 +38,7 @@ data class ActionCode(
     override val reference = ActionCodeReference(name, type, tenant)
 
     constructor(actionCode: CfgActionCode) : this(
-        tenant = TenantReference(actionCode.tenant.name),
+        tenant = actionCode.tenant.getReference(),
         name = actionCode.name,
         type = actionCode.type.toShortName(),
         code = actionCode.code,

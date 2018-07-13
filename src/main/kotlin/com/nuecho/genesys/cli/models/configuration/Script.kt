@@ -7,6 +7,7 @@ import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgScript
 import com.nuecho.genesys.cli.Logging.warn
 import com.nuecho.genesys.cli.getFolderReference
+import com.nuecho.genesys.cli.getReference
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setFolder
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setProperty
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgObjectState
@@ -36,7 +37,7 @@ data class Script(
     override val reference = ScriptReference(name, tenant)
 
     constructor(script: CfgScript) : this(
-        tenant = TenantReference(script.tenant.name),
+        tenant = script.tenant.getReference(),
         name = script.name,
         type = script.type?.toShortName(),
         index = script.index,

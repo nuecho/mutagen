@@ -38,7 +38,7 @@ data class Group(
     val contract: ObjectiveTableReference? = null
 ) {
     constructor(group: CfgGroup) : this(
-        tenant = TenantReference(group.tenant.name),
+        tenant = group.tenant.getReference(),
         name = group.name,
         managers = group.managers?.map { it.getReference() },
         routeDNs = group.routeDNs?.map { it.getReference() },

@@ -10,6 +10,7 @@ import com.genesyslab.platform.configuration.protocol.types.CfgObjectType.CFGEnu
 import com.nuecho.genesys.cli.asBoolean
 import com.nuecho.genesys.cli.core.InitializingBean
 import com.nuecho.genesys.cli.getFolderReference
+import com.nuecho.genesys.cli.getReference
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setFolder
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setProperty
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgObjectState
@@ -41,7 +42,7 @@ data class EnumeratorValue(
     override val reference = EnumeratorValueReference(name, enumerator)
 
     constructor(enumeratorValue: CfgEnumeratorValue) : this(
-        tenant = TenantReference(enumeratorValue.tenant.name),
+        tenant = enumeratorValue.tenant.getReference(),
         default = enumeratorValue.isDefault.asBoolean()!!,
         description = enumeratorValue.description,
         displayName = enumeratorValue.displayName,

@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgSkill
 import com.nuecho.genesys.cli.getFolderReference
+import com.nuecho.genesys.cli.getReference
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setFolder
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setProperty
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toKeyValueCollection
@@ -31,7 +32,7 @@ data class Skill(
     override val reference = SkillReference(name, tenant)
 
     constructor(skill: CfgSkill) : this(
-        tenant = TenantReference(skill.tenant.name),
+        tenant = skill.tenant.getReference(),
         name = skill.name,
         state = skill.state?.toShortName(),
         userProperties = skill.userProperties?.asCategorizedProperties(),

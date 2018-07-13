@@ -15,8 +15,8 @@ data class DNReference(
     val number: String,
     val switch: SwitchReference,
     val type: String,
-    val name: String?,
-    @JsonIgnore var tenant: TenantReference?
+    val name: String? = null,
+    @JsonIgnore var tenant: TenantReference? = null
 ) : ConfigurationObjectReference<CfgDN>(CfgDN::class.java) {
 
     constructor(

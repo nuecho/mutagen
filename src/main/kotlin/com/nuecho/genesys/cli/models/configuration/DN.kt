@@ -72,7 +72,7 @@ data class DN(
     override val reference = DNReference(number, switch, type, name, tenant)
 
     constructor(dn: CfgDN) : this(
-        tenant = TenantReference(dn.tenant.name),
+        tenant = dn.tenant.getReference(),
         number = dn.number,
         switch = dn.switch.getReference(),
         type = dn.type!!.toShortName(),

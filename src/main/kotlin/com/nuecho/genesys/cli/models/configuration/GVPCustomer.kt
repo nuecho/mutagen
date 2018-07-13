@@ -51,7 +51,7 @@ data class GVPCustomer(
 
     constructor(gvpCustomer: CfgGVPCustomer) : this(
         name = gvpCustomer.name,
-        tenant = TenantReference(gvpCustomer.tenant.name),
+        tenant = gvpCustomer.tenant.getReference(),
         reseller = gvpCustomer.reseller.getReference(),
 
         channel = gvpCustomer.channel,

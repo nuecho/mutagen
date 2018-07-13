@@ -17,6 +17,7 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgGVPReseller
 import com.genesyslab.platform.applicationblocks.com.objects.CfgHost
 import com.genesyslab.platform.applicationblocks.com.objects.CfgPerson
 import com.genesyslab.platform.applicationblocks.com.objects.CfgPhysicalSwitch
+import com.genesyslab.platform.applicationblocks.com.objects.CfgPlace
 import com.genesyslab.platform.applicationblocks.com.objects.CfgRole
 import com.genesyslab.platform.applicationblocks.com.objects.CfgScript
 import com.genesyslab.platform.applicationblocks.com.objects.CfgSkill
@@ -39,6 +40,7 @@ class ConfigurationBuilder {
     private val gvpIVRProfiles = ArrayList<GVPIVRProfile>()
     private val hosts = ArrayList<Host>()
     private val persons = ArrayList<Person>()
+    private val places = ArrayList<Place>()
     private val physicalSwitches = ArrayList<PhysicalSwitch>()
     private val roles = ArrayList<Role>()
     private val scripts = ArrayList<Script>()
@@ -63,6 +65,7 @@ class ConfigurationBuilder {
             is CfgGVPReseller -> gvpResellers += GVPReseller(cfgObject)
             is CfgHost -> hosts += Host(cfgObject)
             is CfgPerson -> persons += Person(cfgObject)
+            is CfgPlace -> places += Place(cfgObject)
             is CfgPhysicalSwitch -> physicalSwitches += PhysicalSwitch(cfgObject)
             is CfgRole -> roles += Role(cfgObject)
             is CfgScript -> scripts += Script(cfgObject)
@@ -89,6 +92,7 @@ class ConfigurationBuilder {
         gvpResellers.sorted(),
         hosts.sorted(),
         persons.sorted(),
+        places.sorted(),
         physicalSwitches.sorted(),
         roles.sorted(),
         scripts.sorted(),

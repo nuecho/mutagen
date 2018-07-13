@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgTransaction
 import com.nuecho.genesys.cli.getFolderReference
+import com.nuecho.genesys.cli.getReference
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setFolder
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setProperty
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgTransactionType
@@ -36,7 +37,7 @@ data class Transaction(
     override val reference = TransactionReference(name, type, tenant)
 
     constructor(transaction: CfgTransaction) : this(
-        tenant = TenantReference(transaction.tenant.name),
+        tenant = transaction.tenant.getReference(),
         name = transaction.name,
         alias = transaction.alias,
         description = transaction.description,
