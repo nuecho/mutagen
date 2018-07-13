@@ -1,5 +1,6 @@
 package com.nuecho.genesys.cli.models.configuration.reference
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import com.genesyslab.platform.applicationblocks.com.CfgObject
 import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgFolder
@@ -19,7 +20,7 @@ import com.nuecho.genesys.cli.services.getObjectDbid
 import com.nuecho.genesys.cli.services.retrieveObject
 import com.nuecho.genesys.cli.toShortName
 
-data class FolderReference(val type: String, val owner: OwnerReference, val path: List<String>) :
+data class FolderReference(val type: String, val owner: OwnerReference, val path: List<String> = emptyList()) :
     ConfigurationObjectReference<CfgFolder>(CfgFolder::class.java) {
 
     constructor(folder: CfgFolder) : this(folder.type.toShortName(), folder.ownerID.getReference(), folder.getPath())
@@ -40,6 +41,10 @@ data class FolderReference(val type: String, val owner: OwnerReference, val path
 
     fun toFolderDbid(service: IConfService) = service.retrieveObject(this)?.objectDbid
             ?: throw ConfigurationObjectNotFoundException(this)
+
+    @JsonIgnore
+    @Suppress("DataClassContainsFunctions")
+    fun isRoot() = path.isEmpty()
 }
 
 data class OwnerReference(val type: String, val name: String, val tenant: TenantReference? = null) :

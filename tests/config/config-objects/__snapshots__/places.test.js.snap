@@ -3,12 +3,13 @@
 exports[`[mutagen places config import-export] should create the places: the places have been created 1`] = `
 Object {
   "stderr": "",
-  "stdout": "+ physicalswitch => placePhysicalSwitch
+  "stdout": "+ folder => type: 'folder', owner: 'tenant/Environment', path: 'placeSite'
++ physicalswitch => placePhysicalSwitch
 + script => Environment/placeCapacityRule
 + switch => Environment/placeSwitch
 + dn => number: 'placeDN', switch: 'placeSwitch', type: 'cellular', tenant: 'Environment'
 + place => Environment/cfgObjectTest
-Completed. 5 object(s) imported.
+Completed. 6 object(s) imported.
 ",
 }
 `;
@@ -25,12 +26,13 @@ Completed. 1 object(s) imported.
 exports[`[mutagen places config import-export] should update the same places: the places have been updated 1`] = `
 Object {
   "stderr": "",
-  "stdout": "~ physicalswitch => placePhysicalSwitch
+  "stdout": "~ folder => type: 'folder', owner: 'tenant/Environment', path: 'placeSite'
+~ physicalswitch => placePhysicalSwitch
 ~ script => Environment/placeCapacityRule
 ~ switch => Environment/placeSwitch
 ~ dn => number: 'placeDN', switch: 'placeSwitch', type: 'cellular', tenant: 'Environment'
 ~ place => Environment/cfgObjectTest
-Completed. 5 object(s) imported.
+Completed. 6 object(s) imported.
 ",
 }
 `;

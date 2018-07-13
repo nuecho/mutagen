@@ -42,7 +42,10 @@ data class Folder(
 
     override fun createCfgObject(service: IConfService) =
         updateCfgObject(service, CfgFolder(service).also {
-            setFolder(folder, it)
+            if (!folder.isRoot()) {
+                setFolder(folder, it)
+            }
+
             setProperty("name", name, it)
             setProperty("ownerID", folder.owner.toCfgOwnerID(it), it)
             setProperty("type", toCfgObjectType(folder.type), it)
@@ -51,19 +54,18 @@ data class Folder(
 
     override fun updateCfgObject(service: IConfService, cfgObject: ICfgObject) =
         (cfgObject as CfgFolder).also {
-
             setProperty("description", description, it)
             setProperty("customType", customType, it)
             setProperty("state", ConfigurationObjects.toCfgObjectState(state), it)
             setProperty("userProperties", ConfigurationObjects.toKeyValueCollection(userProperties), it)
         }
 
-    override fun getReferences(): Set<ConfigurationObjectReference<*>> = setOf(folder)
+    override fun getReferences(): Set<ConfigurationObjectReference<*>> =
+        if (folder.isRoot()) emptySet() else setOf(folder)
 }
 
 private fun rootFolderReference(rootFolder: CfgFolder) =
     FolderReference(
         rootFolder.type.toShortName(),
-        rootFolder.ownerID.getReference(),
-        listOf(rootFolder.name)
+        rootFolder.ownerID.getReference()
     )

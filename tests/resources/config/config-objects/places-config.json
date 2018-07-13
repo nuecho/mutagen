@@ -12,6 +12,20 @@
       "routeType": "default"
     }
   ],
+  "folders": [
+    {
+      "folder": {
+        "path": [],
+        "type": "folder",
+        "owner": {
+          "name": "Environment",
+          "type": "tenant"
+        }
+      },
+      "folderClass": "site",
+      "name": "placeSite"
+    }
+  ],
   "physicalSwitches": [
     {
       "name": "placePhysicalSwitch",
@@ -30,6 +44,16 @@
         }
       ],
       "name": "cfgObjectTest",
+      "site": {
+        "path": [
+          "placeSite"
+        ],
+        "type": "folder",
+        "owner": {
+          "name": "Environment",
+          "type": "tenant"
+        }
+      },
       "state": "enabled",
       "tenant": "Environment",
       "userProperties": {
