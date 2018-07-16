@@ -101,7 +101,7 @@ class PersonTest : ConfigurationObjectTest(
     Person(mockCfgPerson())
 ) {
     @Test
-    fun `updateCfgObject should properly create CfgPerson`() {
+    fun `createCfgObject should properly create CfgPerson`() {
         val service = mockConfService()
 
         every { service.retrieveObject(CfgPerson::class.java, any()) } returns null
@@ -115,7 +115,7 @@ class PersonTest : ConfigurationObjectTest(
         objectMockk(ConfigurationObjectRepository).use {
             mockConfigurationObjectRepository()
 
-            val cfgPerson = person.updateCfgObject(service)
+            val cfgPerson = person.createCfgObject(service)
 
             with(cfgPerson) {
                 assertThat(employeeID, equalTo(person.employeeId))
@@ -147,12 +147,12 @@ class PersonTest : ConfigurationObjectTest(
     }
 
     @Test
-    fun `updateCfgObject should use employeeId when username is not specified`() {
+    fun `createCfgObject should use employeeId when username is not specified`() {
         val service = mockConfService()
         every { service.retrieveObject(CfgPerson::class.java, any()) } returns null
         mockRetrieveTenant(service)
 
-        val cfgPerson = Person(DEFAULT_TENANT_REFERENCE, EMPLOYEE_ID).updateCfgObject(service)
+        val cfgPerson = Person(DEFAULT_TENANT_REFERENCE, EMPLOYEE_ID).createCfgObject(service)
 
         with(cfgPerson) {
             assertThat(employeeID, equalTo(EMPLOYEE_ID))

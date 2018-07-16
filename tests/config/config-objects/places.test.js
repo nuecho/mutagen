@@ -1,1 +1,1 @@
-cfgObjectTests("places", "places-config.json", {checkMandatoryProperties: false});
+cfgObjectTests("places", {checkMandatoryProperties: false});

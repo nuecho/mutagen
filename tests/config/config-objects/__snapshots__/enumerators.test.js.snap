@@ -18,7 +18,16 @@ Object {
 }
 `;
 
-exports[`[mutagen enumerators config import-export] should update the enumerators: the enumerators have been updated 1`] = `
+exports[`[mutagen enumerators config import-export] should update the modified enumerators: the modified enumerators have been updated 1`] = `
+Object {
+  "stderr": "",
+  "stdout": "~ enumerator => Environment/cfgObjectTest
+Completed. 1 object(s) imported.
+",
+}
+`;
+
+exports[`[mutagen enumerators config import-export] should update the same enumerators: the enumerators have been updated 1`] = `
 Object {
   "stderr": "",
   "stdout": "~ enumerator => Environment/cfgObjectTest

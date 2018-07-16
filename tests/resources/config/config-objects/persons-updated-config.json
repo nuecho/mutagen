@@ -1,0 +1,13 @@
+{
+  "__metadata__": {
+    "formatName": "JSON",
+    "formatVersion": "1.0.0"
+  },
+  "persons": [
+    {
+      "tenant": "Environment",
+      "employeeId": "cfgObjectTest",
+      "emailAddress": "emailAddress@example.com"
+    }
+  ]
+}

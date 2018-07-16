@@ -3,6 +3,7 @@ package com.nuecho.genesys.cli.models.configuration
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
+import com.genesyslab.platform.applicationblocks.com.ICfgObject
 import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgEnumerator
 import com.genesyslab.platform.applicationblocks.com.objects.CfgEnumeratorValue
@@ -21,7 +22,6 @@ import com.nuecho.genesys.cli.models.configuration.reference.FolderReference
 import com.nuecho.genesys.cli.models.configuration.reference.TenantReference
 import com.nuecho.genesys.cli.models.configuration.reference.referenceSetBuilder
 import com.nuecho.genesys.cli.services.getObjectDbid
-import com.nuecho.genesys.cli.services.retrieveObject
 import com.nuecho.genesys.cli.toShortName
 
 data class EnumeratorValue(
@@ -65,11 +65,11 @@ data class EnumeratorValue(
                 name = name
             )
 
-    override fun updateCfgObject(service: IConfService) =
-        (service.retrieveObject(reference) ?: CfgEnumeratorValue(service)).also { cfgEnumeratorValue ->
-            if (!cfgEnumeratorValue.isSaved) {
-                applyDefaultValues()
-            }
+    override fun createCfgObject(service: IConfService) =
+        updateCfgObject(service, CfgEnumeratorValue(service).also { applyDefaultValues() })
+
+    override fun updateCfgObject(service: IConfService, cfgObject: ICfgObject) =
+        (cfgObject as CfgEnumeratorValue).also { cfgEnumeratorValue ->
 
             setProperty("tenantDBID", service.getObjectDbid(tenant), cfgEnumeratorValue)
             setProperty("enumeratorDBID", service.getObjectDbid(enumerator), cfgEnumeratorValue)

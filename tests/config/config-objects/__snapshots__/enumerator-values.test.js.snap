@@ -18,7 +18,16 @@ Object {
 }
 `;
 
-exports[`[mutagen enumeratorValues config import-export] should update the enumeratorValues: the enumeratorValues have been updated 1`] = `
+exports[`[mutagen enumeratorValues config import-export] should update the modified enumeratorValues: the modified enumeratorValues have been updated 1`] = `
+Object {
+  "stderr": "",
+  "stdout": "~ enumeratorvalue => name: 'cfgObjectTest', enumerator: 'Environment/MediaType'
+Completed. 1 object(s) imported.
+",
+}
+`;
+
+exports[`[mutagen enumeratorValues config import-export] should update the same enumeratorValues: the enumeratorValues have been updated 1`] = `
 Object {
   "stderr": "",
   "stdout": "~ enumeratorvalue => name: 'cfgObjectTest', enumerator: 'Environment/MediaType'

@@ -67,7 +67,7 @@ class RoleTest : NoImportedObjectConfigurationObjectTest(
     }
 
     @Test
-    fun `updateCfgObject should properly create CfgRole`() {
+    fun `createCfgObject should properly create CfgRole`() {
         val service = mockConfService()
         every { service.retrieveObject(CfgRole::class.java, any()) } returns null
         mockRetrieveTenant(service)
@@ -75,7 +75,7 @@ class RoleTest : NoImportedObjectConfigurationObjectTest(
         objectMockk(ConfigurationObjectRepository).use {
             mockConfigurationObjectRepository()
 
-            val cfgRole = role.updateCfgObject(service)
+            val cfgRole = role.createCfgObject(service)
 
             with(cfgRole) {
                 assertThat(name, equalTo(role.name))

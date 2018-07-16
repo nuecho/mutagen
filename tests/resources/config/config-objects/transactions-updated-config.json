@@ -1,0 +1,14 @@
+{
+  "__metadata__": {
+    "formatName": "JSON",
+    "formatVersion": "1.0.0"
+  },
+  "transactions": [
+    {
+      "description": "some new description",
+      "name": "cfgObjectTest",
+      "tenant": "Environment",
+      "type": "callData"
+    }
+  ]
+}

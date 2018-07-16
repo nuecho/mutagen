@@ -41,14 +41,14 @@ class ScriptTest : ConfigurationObjectTest(
     Script(mockCfgScript())
 ) {
     @Test
-    fun `updateCfgObject should properly create CfgScript`() {
+    fun `createCfgObject should properly create CfgScript`() {
         val service = mockConfService()
         every { service.retrieveObject(CfgScript::class.java, any()) } returns null
         mockRetrieveTenant(service)
 
         objectMockk(ConfigurationObjectRepository).use {
             mockConfigurationObjectRepository()
-            val cfgScript = script.updateCfgObject(service)
+            val cfgScript = script.createCfgObject(service)
 
             with(cfgScript) {
                 assertThat(name, equalTo(script.name))

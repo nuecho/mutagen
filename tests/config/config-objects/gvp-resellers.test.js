@@ -1,1 +1,1 @@
-cfgObjectTests("gvpResellers", "gvp-resellers-config.json", {checkMandatoryProperties: false});
+cfgObjectTests("gvpResellers", {checkMandatoryProperties: false});

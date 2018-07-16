@@ -18,7 +18,16 @@ Object {
 }
 `;
 
-exports[`[mutagen gvpCustomers config import-export] should update the gvpCustomers: the gvpCustomers have been updated 1`] = `
+exports[`[mutagen gvpCustomers config import-export] should update the modified gvpCustomers: the modified gvpCustomers have been updated 1`] = `
+Object {
+  "stderr": "",
+  "stdout": "~ gvpcustomer => cfgObjectTest
+Completed. 1 object(s) imported.
+",
+}
+`;
+
+exports[`[mutagen gvpCustomers config import-export] should update the same gvpCustomers: the gvpCustomers have been updated 1`] = `
 Object {
   "stderr": "",
   "stdout": "~ gvpcustomer => cfgObjectTest

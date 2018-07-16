@@ -88,7 +88,7 @@ class DNTest : ConfigurationObjectTest(
 ) {
 
     @Test
-    fun `updateCfgObject should properly create CfgDN`() {
+    fun `createCfgObject should properly create CfgDN`() {
         val service = mockConfService()
         every { service.retrieveObject(CfgDN::class.java, any()) } returns null
         mockRetrieveTenant(service)
@@ -98,7 +98,7 @@ class DNTest : ConfigurationObjectTest(
 
         objectMockk(ConfigurationObjectRepository).use {
             mockConfigurationObjectRepository()
-            val cfgDN = dn.updateCfgObject(service)
+            val cfgDN = dn.createCfgObject(service)
 
             with(cfgDN) {
                 assertThat(name, equalTo(dn.name))

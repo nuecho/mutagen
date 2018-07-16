@@ -82,7 +82,7 @@ class HostTest : NoImportedObjectConfigurationObjectTest(
             objectMockk(ConfigurationObjectRepository).use {
                 mockConfigurationObjectRepository()
 
-                val cfgHost = host.updateCfgObject(service)
+                val cfgHost = host.createCfgObject(service)
 
                 with(cfgHost) {
                     assertThat(name, equalTo(host.name))

@@ -3,6 +3,7 @@ package com.nuecho.genesys.cli.models.configuration
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
+import com.genesyslab.platform.applicationblocks.com.ICfgObject
 import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgTenant
 import com.nuecho.genesys.cli.asBoolean
@@ -21,7 +22,6 @@ import com.nuecho.genesys.cli.models.configuration.reference.ScriptReference
 import com.nuecho.genesys.cli.models.configuration.reference.TenantReference
 import com.nuecho.genesys.cli.models.configuration.reference.referenceSetBuilder
 import com.nuecho.genesys.cli.services.getObjectDbid
-import com.nuecho.genesys.cli.services.retrieveObject
 import com.nuecho.genesys.cli.toShortName
 
 data class Tenant(
@@ -54,11 +54,11 @@ data class Tenant(
         folder = tenant.getFolderReference()
     )
 
-    override fun updateCfgObject(service: IConfService) =
-        (service.retrieveObject(reference) ?: CfgTenant(service)).also {
-            if (!it.isSaved) {
-                applyDefaultValues()
-            }
+    override fun createCfgObject(service: IConfService) =
+        updateCfgObject(service, CfgTenant(service).also { applyDefaultValues() })
+
+    override fun updateCfgObject(service: IConfService, cfgObject: ICfgObject) =
+        (cfgObject as CfgTenant).also {
 
             setProperty("chargeableNumber", chargeableNumber, it)
             setProperty("defaultCapacityRuleDBID", service.getObjectDbid(defaultCapacityRule), it)

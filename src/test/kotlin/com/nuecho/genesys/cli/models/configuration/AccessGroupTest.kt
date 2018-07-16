@@ -96,7 +96,7 @@ class AccessGroupTest : NoImportedObjectConfigurationObjectTest(
     }
 
     @Test
-    fun `updateCfgObject should properly create CfgAccessGroup`() {
+    fun `createCfgObject should properly create CfgAccessGroup`() {
         val member = mockCfgPerson(MEMBER1)
         val service = mockConfService()
 
@@ -108,7 +108,7 @@ class AccessGroupTest : NoImportedObjectConfigurationObjectTest(
 
             objectMockk(ConfigurationObjectRepository).use {
                 mockConfigurationObjectRepository()
-                val cfgAccessGroup = accessGroup.updateCfgObject(service)
+                val cfgAccessGroup = accessGroup.createCfgObject(service)
 
                 val cfgId = CfgID(service, cfgAccessGroup)
                 cfgId.dbid = DEFAULT_OBJECT_DBID

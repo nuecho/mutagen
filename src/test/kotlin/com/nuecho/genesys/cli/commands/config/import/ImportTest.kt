@@ -5,7 +5,7 @@ import com.nuecho.genesys.cli.CliOutputCaptureWrapper.execute
 import com.nuecho.genesys.cli.commands.config.ConfigMocks.mockMetadata
 import com.nuecho.genesys.cli.commands.config.export.ExportFormat.JSON
 import com.nuecho.genesys.cli.commands.config.import.Import.importConfiguration
-import com.nuecho.genesys.cli.models.ImportPlan
+import com.nuecho.genesys.cli.models.ImportPlanOperation
 import com.nuecho.genesys.cli.models.configuration.Configuration
 import com.nuecho.genesys.cli.models.configuration.ConfigurationBuilder
 import com.nuecho.genesys.cli.models.configuration.PhysicalSwitch
@@ -38,11 +38,11 @@ class ImportTest {
         val configuration = ConfigurationBuilder().build(metadata)
         val service = mockConfService()
 
-        objectMockk(ImportPlan.Companion).use {
-            every { ImportPlan.save(any()) } just Runs
+        objectMockk(ImportPlanOperation.Companion).use {
+            every { ImportPlanOperation.save(any()) } just Runs
 
             importConfiguration(configuration, service, true)
-            verify(exactly = 0) { ImportPlan.save(any()) }
+            verify(exactly = 0) { ImportPlanOperation.save(any()) }
         }
     }
 
@@ -59,11 +59,11 @@ class ImportTest {
             every { readLine() } returns "n"
             every { service.retrieveObject(CfgPhysicalSwitch::class.java, any()) } returns null
 
-            objectMockk(ImportPlan.Companion).use {
-                every { ImportPlan.save(any()) } just Runs
+            objectMockk(ImportPlanOperation.Companion).use {
+                every { ImportPlanOperation.save(any()) } just Runs
 
                 importConfiguration(configuration, service, false)
-                verify(exactly = 0) { ImportPlan.save(any()) }
+                verify(exactly = 0) { ImportPlanOperation.save(any()) }
             }
         }
     }
@@ -81,11 +81,11 @@ class ImportTest {
             every { readLine() } returns "y"
             every { service.retrieveObject(CfgPhysicalSwitch::class.java, any()) } returns null
 
-            objectMockk(ImportPlan.Companion).use {
-                every { ImportPlan.save(any()) } just Runs
+            objectMockk(ImportPlanOperation.Companion).use {
+                every { ImportPlanOperation.save(any()) } just Runs
 
                 importConfiguration(configuration, service, false)
-                verify(exactly = 1) { ImportPlan.save(any()) }
+                verify(exactly = 1) { ImportPlanOperation.save(any()) }
             }
         }
     }

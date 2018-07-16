@@ -1,0 +1,17 @@
+{
+  "__metadata__": {
+    "formatName": "JSON",
+    "formatVersion": "1.0.0"
+  },
+  "physicalSwitches": [
+    {
+      "name": "cfgObjectTest",
+      "userProperties": {
+        "section": {
+          "number": 123
+        }
+      }
+    }
+  ]
+}
+

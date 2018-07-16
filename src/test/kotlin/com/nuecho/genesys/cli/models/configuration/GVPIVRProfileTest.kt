@@ -54,7 +54,7 @@ class GVPIVRProfileTest : ConfigurationObjectTest(
     GVPIVRProfile(mockCfgGVPIVRProfile())
 ) {
     @Test
-    fun `updateCfgObject should properly create CfgGVPIVRProfile`() {
+    fun `createCfgObject should properly create CfgGVPIVRProfile`() {
         val service = mockConfService()
         every { service.retrieveObject(CfgGVPIVRProfile::class.java, any()) } returns null
         mockRetrieveTenant(service)
@@ -63,7 +63,7 @@ class GVPIVRProfileTest : ConfigurationObjectTest(
 
         objectMockk(ConfigurationObjectRepository).use {
             mockConfigurationObjectRepository()
-            val cfgGVPIVRProfile = gvpIVRProfile.updateCfgObject(service)
+            val cfgGVPIVRProfile = gvpIVRProfile.createCfgObject(service)
 
             with(cfgGVPIVRProfile) {
                 assertThat(name, equalTo(gvpIVRProfile.name))

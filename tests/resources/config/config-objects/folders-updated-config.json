@@ -1,0 +1,23 @@
+{
+  "__metadata__": {
+    "formatName": "JSON",
+    "formatVersion": "1.0.0"
+  },
+  "folders": [
+    {
+      "description": "a new description",
+      "folder": {
+        "owner": {
+          "name": "Environment",
+          "type": "tenant"
+        },
+        "path": [
+          "Persons"
+        ],
+        "type": "person"
+      },
+      "name": "cfgObjectTest"
+    }
+  ]
+}
+

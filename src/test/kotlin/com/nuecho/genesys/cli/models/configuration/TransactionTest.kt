@@ -45,14 +45,14 @@ class TransactionTest : ConfigurationObjectTest(
     Transaction(mockCfgTransaction())
 ) {
     @Test
-    fun `updateCfgObject should properly create CfgTransaction`() {
+    fun `createCfgObject should properly create CfgTransaction`() {
         val service = mockConfService()
         every { service.retrieveObject(CfgTransaction::class.java, any()) } returns null
         mockRetrieveTenant(service)
 
         objectMockk(ConfigurationObjectRepository).use {
             mockConfigurationObjectRepository()
-            val cfgTransaction = transaction.updateCfgObject(service)
+            val cfgTransaction = transaction.createCfgObject(service)
 
             with(cfgTransaction) {
                 assertThat(name, equalTo(transaction.name))

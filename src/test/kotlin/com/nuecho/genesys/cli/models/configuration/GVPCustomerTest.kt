@@ -45,7 +45,7 @@ class GVPCustomerTest : ConfigurationObjectTest(
     GVPCustomer(mockCfgGVPCustomer())
 ) {
     @Test
-    fun `updateCfgObject should properly create CfgGVPCustomer`() {
+    fun `createCfgObject should properly create CfgGVPCustomer`() {
         val service = mockConfService()
         every { service.retrieveObject(CfgGVPCustomer::class.java, any()) } returns null
         mockRetrieveTenant(service)
@@ -54,7 +54,7 @@ class GVPCustomerTest : ConfigurationObjectTest(
 
         objectMockk(ConfigurationObjectRepository).use {
             mockConfigurationObjectRepository()
-            val cfgGVPCustomer = gvpCustomer.updateCfgObject(service)
+            val cfgGVPCustomer = gvpCustomer.createCfgObject(service)
 
             with(cfgGVPCustomer) {
                 assertThat(name, equalTo(gvpCustomer.name))

@@ -8,7 +8,6 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgAppPrototype
 import com.genesyslab.platform.applicationblocks.com.objects.CfgDN
 import com.genesyslab.platform.applicationblocks.com.objects.CfgDNGroup
 import com.genesyslab.platform.applicationblocks.com.objects.CfgEnumerator
-
 import com.genesyslab.platform.applicationblocks.com.objects.CfgEnumeratorValue
 import com.genesyslab.platform.applicationblocks.com.objects.CfgFolder
 import com.genesyslab.platform.applicationblocks.com.objects.CfgGVPCustomer
@@ -49,32 +48,38 @@ class ConfigurationBuilder {
     private val tenants = ArrayList<Tenant>()
     private val transactions = ArrayList<Transaction>()
 
-    fun add(cfgObject: ICfgObject) =
-        when (cfgObject) {
-            is CfgAccessGroup -> accessGroups += AccessGroup(cfgObject)
-            is CfgActionCode -> actionCodes += ActionCode(cfgObject)
-            is CfgAgentGroup -> agentGroups += AgentGroup(cfgObject)
-            is CfgAppPrototype -> appPrototypes += AppPrototype(cfgObject)
-            is CfgDNGroup -> dnGroups += DNGroup(cfgObject)
-            is CfgDN -> dns += DN(cfgObject)
-            is CfgEnumerator -> enumerators += Enumerator(cfgObject)
-            is CfgEnumeratorValue -> enumeratorValues += EnumeratorValue(cfgObject)
-            is CfgFolder -> folders += Folder(cfgObject)
-            is CfgGVPCustomer -> gvpCustomers += GVPCustomer(cfgObject)
-            is CfgGVPIVRProfile -> gvpIVRProfiles += GVPIVRProfile(cfgObject)
-            is CfgGVPReseller -> gvpResellers += GVPReseller(cfgObject)
-            is CfgHost -> hosts += Host(cfgObject)
-            is CfgPerson -> persons += Person(cfgObject)
-            is CfgPlace -> places += Place(cfgObject)
-            is CfgPhysicalSwitch -> physicalSwitches += PhysicalSwitch(cfgObject)
-            is CfgRole -> roles += Role(cfgObject)
-            is CfgScript -> scripts += Script(cfgObject)
-            is CfgSkill -> skills += Skill(cfgObject)
-            is CfgSwitch -> switches += Switch(cfgObject)
-            is CfgTenant -> tenants += Tenant(cfgObject)
-            is CfgTransaction -> transactions += Transaction(cfgObject)
-            else -> Unit
+    @SuppressWarnings("ComplexMethod")
+    fun add(cfgObject: ICfgObject) {
+        val configurationObject = toConfigurationObject(cfgObject)
+
+        configurationObject?.let {
+            when (cfgObject) {
+                is CfgAccessGroup -> accessGroups += it as AccessGroup
+                is CfgActionCode -> actionCodes += it as ActionCode
+                is CfgAgentGroup -> agentGroups += it as AgentGroup
+                is CfgAppPrototype -> appPrototypes += it as AppPrototype
+                is CfgDNGroup -> dnGroups += it as DNGroup
+                is CfgDN -> dns += it as DN
+                is CfgEnumerator -> enumerators += it as Enumerator
+                is CfgEnumeratorValue -> enumeratorValues += it as EnumeratorValue
+                is CfgFolder -> folders += it as Folder
+                is CfgGVPCustomer -> gvpCustomers += it as GVPCustomer
+                is CfgGVPIVRProfile -> gvpIVRProfiles += it as GVPIVRProfile
+                is CfgGVPReseller -> gvpResellers += it as GVPReseller
+                is CfgHost -> hosts += it as Host
+                is CfgPerson -> persons += it as Person
+                is CfgPlace -> places += it as Place
+                is CfgPhysicalSwitch -> physicalSwitches += it as PhysicalSwitch
+                is CfgRole -> roles += it as Role
+                is CfgScript -> scripts += it as Script
+                is CfgSkill -> skills += it as Skill
+                is CfgSwitch -> switches += it as Switch
+                is CfgTenant -> tenants += it as Tenant
+                is CfgTransaction -> transactions += it as Transaction
+                else -> Unit
+            }
         }
+    }
 
     fun build(metadata: Metadata) = Configuration(
         metadata,
@@ -101,4 +106,35 @@ class ConfigurationBuilder {
         tenants.sorted(),
         transactions.sorted()
     )
+
+    companion object {
+
+        @SuppressWarnings("ComplexMethod")
+        fun toConfigurationObject(cfgObject: ICfgObject): ConfigurationObject? =
+            when (cfgObject) {
+                is CfgAccessGroup -> AccessGroup(cfgObject)
+                is CfgActionCode -> ActionCode(cfgObject)
+                is CfgAgentGroup -> AgentGroup(cfgObject)
+                is CfgAppPrototype -> AppPrototype(cfgObject)
+                is CfgDNGroup -> DNGroup(cfgObject)
+                is CfgDN -> DN(cfgObject)
+                is CfgEnumerator -> Enumerator(cfgObject)
+                is CfgEnumeratorValue -> EnumeratorValue(cfgObject)
+                is CfgFolder -> Folder(cfgObject)
+                is CfgGVPCustomer -> GVPCustomer(cfgObject)
+                is CfgGVPIVRProfile -> GVPIVRProfile(cfgObject)
+                is CfgGVPReseller -> GVPReseller(cfgObject)
+                is CfgHost -> Host(cfgObject)
+                is CfgPerson -> Person(cfgObject)
+                is CfgPlace -> Place(cfgObject)
+                is CfgPhysicalSwitch -> PhysicalSwitch(cfgObject)
+                is CfgRole -> Role(cfgObject)
+                is CfgScript -> Script(cfgObject)
+                is CfgSkill -> Skill(cfgObject)
+                is CfgSwitch -> Switch(cfgObject)
+                is CfgTenant -> Tenant(cfgObject)
+                is CfgTransaction -> Transaction(cfgObject)
+                else -> null
+            }
+    }
 }

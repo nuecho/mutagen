@@ -68,7 +68,7 @@ class EnumeratorValueTest : NoImportedObjectConfigurationObjectTest(
     }
 
     @Test
-    fun `updateCfgObject should properly create CfgEnumeratorValue`() {
+    fun `createCfgObject should properly create CfgEnumeratorValue`() {
         val service = mockConfService()
         every { service.retrieveObject(CfgEnumeratorValue::class.java, any()) } returns null
         mockRetrieveEnumerator(service, ENUMERATOR)
@@ -78,7 +78,7 @@ class EnumeratorValueTest : NoImportedObjectConfigurationObjectTest(
 
             objectMockk(ConfigurationObjectRepository).use {
                 mockConfigurationObjectRepository()
-                val cfgEnumeratorValue = enumeratorValue.updateCfgObject(service)
+                val cfgEnumeratorValue = enumeratorValue.createCfgObject(service)
 
                 with(cfgEnumeratorValue) {
                     assertThat(name, equalTo(enumeratorValue.name))

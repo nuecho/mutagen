@@ -18,7 +18,16 @@ Object {
 }
 `;
 
-exports[`[mutagen gvpIVRProfiles config import-export] should update the gvpIVRProfiles: the gvpIVRProfiles have been updated 1`] = `
+exports[`[mutagen gvpIVRProfiles config import-export] should update the modified gvpIVRProfiles: the modified gvpIVRProfiles have been updated 1`] = `
+Object {
+  "stderr": "",
+  "stdout": "~ gvpivrprofile => cfgObjectTest
+Completed. 1 object(s) imported.
+",
+}
+`;
+
+exports[`[mutagen gvpIVRProfiles config import-export] should update the same gvpIVRProfiles: the gvpIVRProfiles have been updated 1`] = `
 Object {
   "stderr": "",
   "stdout": "~ gvpivrprofile => cfgObjectTest

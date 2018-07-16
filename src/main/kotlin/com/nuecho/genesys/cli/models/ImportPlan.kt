@@ -1,7 +1,8 @@
 package com.nuecho.genesys.cli.models
 
-import com.genesyslab.platform.applicationblocks.com.CfgObject
-import com.nuecho.genesys.cli.Logging
+import com.nuecho.genesys.cli.models.ImportOperationType.CREATE
+import com.nuecho.genesys.cli.models.ImportOperationType.SKIP
+import com.nuecho.genesys.cli.models.ImportOperationType.UPDATE
 import com.nuecho.genesys.cli.models.configuration.Configuration
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObject
 import com.nuecho.genesys.cli.models.configuration.reference.ConfigurationObjectReference
@@ -14,11 +15,11 @@ import org.jgrapht.graph.DefaultDirectedGraph
 import org.jgrapht.graph.DefaultEdge
 import org.jgrapht.traverse.TopologicalOrderIterator
 
-const val PRINT_MARGIN: String = "\t"
+const val PRINT_MARGIN: String = "  "
 val typeToColor: Map<ImportOperationType, String> = mapOf(
-    ImportOperationType.CREATE to "green",
-    ImportOperationType.UPDATE to "yellow",
-    ImportOperationType.SKIP to "white"
+    CREATE to "green",
+    UPDATE to "yellow",
+    SKIP to "white"
 )
 
 class ImportPlan(val configuration: Configuration, val service: ConfService) {
@@ -30,12 +31,11 @@ class ImportPlan(val configuration: Configuration, val service: ConfService) {
 
     fun check() = Validations(missingDependencies, missingProperties)
 
-    fun print() =
-        printPlan(orderedOperations)
+    fun print() = printPlan(orderedOperations)
 
     fun apply() =
         orderedOperations
-            .map { importConfigurationObject(it) }
+            .map { it.apply() }
             .filter { it }
             .count()
 
@@ -47,7 +47,7 @@ class ImportPlan(val configuration: Configuration, val service: ConfService) {
         private fun checkMissingProperties(operations: List<ImportPlanOperation>): List<MissingProperties> {
 
             val misses = operations
-                .filter { it.type == ImportOperationType.CREATE }
+                .filter { it.type == CREATE }
                 .mapNotNull {
                     val misses = it.configurationObject.checkMandatoryProperties()
                     if (misses.isEmpty()) null else MissingProperties(it.configurationObject, misses)
@@ -114,26 +114,6 @@ class ImportPlan(val configuration: Configuration, val service: ConfService) {
             operations.forEach { it.print() }
             println()
         }
-
-        internal fun importConfigurationObject(operation: ImportPlanOperation): Boolean {
-            val reference = operation.configurationObject.reference
-
-            // TODO we need to re-wire the update process
-            // Providing an update on the Operation which would delegate to the actual configuration
-            // object (with an operation type so we can fully distinguish between create/update
-            // without yet another retrieve)
-            operation.cfgObject = operation.configurationObject.updateCfgObject(operation.service)
-            val type = operation.cfgObject!!.objectType.toShortName()
-
-            Logging.info { "Processing $type '$reference'." }
-            save(operation.cfgObject as CfgObject)
-            operation.printStatus()
-
-            // TODO This should eventually return false if the object was identical and therefore not updated
-            return true
-        }
-
-        internal fun save(cfgObject: CfgObject) = cfgObject.save()
     }
 }
 

@@ -14,7 +14,7 @@ Object {
 }
 `;
 
-exports[`[mutagen config import file] should import multiple objects of different types: every object has been imported 1`] = `
+exports[`[mutagen config import file] should create multiple objects of different types: every object has been created 1`] = `
 Object {
   "stderr": "",
   "stdout": "+ physicalswitch => MultiObjectImportPhysicalSwitch1
@@ -34,33 +34,33 @@ Object {
   "stdout": "The following changes are going to be applied:
 + physicalswitch => AcceptChangesPhysicalSwitch
   {
-	  \\"name\\" : \\"AcceptChangesPhysicalSwitch\\",
-	  \\"state\\" : \\"enabled\\",
-	  \\"type\\" : \\"fujitsu\\"
-	}
+    \\"name\\" : \\"AcceptChangesPhysicalSwitch\\",
+    \\"state\\" : \\"enabled\\",
+    \\"type\\" : \\"fujitsu\\"
+  }
 + switch => Environment/AcceptChangesSwitch
   {
-	  \\"dnRange\\" : \\"74233-74244, 74290\\",
-	  \\"linkType\\" : \\"madgelink\\",
-	  \\"name\\" : \\"AcceptChangesSwitch\\",
-	  \\"physicalSwitch\\" : \\"AcceptChangesPhysicalSwitch\\",
-	  \\"state\\" : \\"enabled\\",
-	  \\"switchAccessCodes\\" : [ ],
-	  \\"tenant\\" : \\"Environment\\"
-	}
+    \\"dnRange\\" : \\"74233-74244, 74290\\",
+    \\"linkType\\" : \\"madgelink\\",
+    \\"name\\" : \\"AcceptChangesSwitch\\",
+    \\"physicalSwitch\\" : \\"AcceptChangesPhysicalSwitch\\",
+    \\"state\\" : \\"enabled\\",
+    \\"switchAccessCodes\\" : [ ],
+    \\"tenant\\" : \\"Environment\\"
+  }
 + dn => number: '123', switch: 'AcceptChangesSwitch', type: 'Extension', name: 'AcceptChangesDN', tenant: 'Environment'
   {
-	  \\"name\\" : \\"AcceptChangesDN\\",
-	  \\"number\\" : \\"123\\",
-	  \\"routeType\\" : \\"default\\",
-	  \\"state\\" : \\"enabled\\",
-	  \\"switch\\" : \\"AcceptChangesSwitch\\",
-	  \\"switchSpecificType\\" : 1,
-	  \\"tenant\\" : \\"Environment\\",
-	  \\"trunks\\" : 1,
-	  \\"type\\" : \\"Extension\\",
-	  \\"useOverride\\" : true
-	}
+    \\"name\\" : \\"AcceptChangesDN\\",
+    \\"number\\" : \\"123\\",
+    \\"routeType\\" : \\"default\\",
+    \\"state\\" : \\"enabled\\",
+    \\"switch\\" : \\"AcceptChangesSwitch\\",
+    \\"switchSpecificType\\" : 1,
+    \\"tenant\\" : \\"Environment\\",
+    \\"trunks\\" : 1,
+    \\"type\\" : \\"Extension\\",
+    \\"useOverride\\" : true
+  }
 
 Please confirm [y|n]: + physicalswitch => AcceptChangesPhysicalSwitch
 + switch => Environment/AcceptChangesSwitch
@@ -74,7 +74,7 @@ exports[`[mutagen config import file] should not import any object if some depen
 Object {
   "stderr": "Cannot import configuration: some configuration objects' dependencies could not be found.
 	Cannot find script 'MissingDependencyTenant1/NonExistingScript1' (referenced by tenant 'MissingDependencyTenant1')
-	Cannot find script 'MissingDependencyTenant2/NonExistingScript2' (referenced by tenant 'MissingDependencyTenant2')
+  Cannot find script 'MissingDependencyTenant2/NonExistingScript2' (referenced by tenant 'MissingDependencyTenant2')
 ",
   "stdout": "",
 }
@@ -103,33 +103,33 @@ Object {
   "stdout": "The following changes are going to be applied:
 + physicalswitch => RejectChangesPhysicalSwitch
   {
-	  \\"name\\" : \\"RejectChangesPhysicalSwitch\\",
-	  \\"state\\" : \\"enabled\\",
-	  \\"type\\" : \\"fujitsu\\"
-	}
+    \\"name\\" : \\"RejectChangesPhysicalSwitch\\",
+    \\"state\\" : \\"enabled\\",
+    \\"type\\" : \\"fujitsu\\"
+  }
 + switch => Environment/RejectChangesSwitch
   {
-	  \\"dnRange\\" : \\"74233-74244, 74290\\",
-	  \\"linkType\\" : \\"madgelink\\",
-	  \\"name\\" : \\"RejectChangesSwitch\\",
-	  \\"physicalSwitch\\" : \\"RejectChangesPhysicalSwitch\\",
-	  \\"state\\" : \\"enabled\\",
-	  \\"switchAccessCodes\\" : [ ],
-	  \\"tenant\\" : \\"Environment\\"
-	}
+    \\"dnRange\\" : \\"74233-74244, 74290\\",
+    \\"linkType\\" : \\"madgelink\\",
+    \\"name\\" : \\"RejectChangesSwitch\\",
+    \\"physicalSwitch\\" : \\"RejectChangesPhysicalSwitch\\",
+    \\"state\\" : \\"enabled\\",
+    \\"switchAccessCodes\\" : [ ],
+    \\"tenant\\" : \\"Environment\\"
+  }
 + dn => number: '123', switch: 'RejectChangesSwitch', type: 'Extension', name: 'RejectChangesDN', tenant: 'Environment'
   {
-	  \\"name\\" : \\"RejectChangesDN\\",
-	  \\"number\\" : \\"123\\",
-	  \\"routeType\\" : \\"default\\",
-	  \\"state\\" : \\"enabled\\",
-	  \\"switch\\" : \\"RejectChangesSwitch\\",
-	  \\"switchSpecificType\\" : 1,
-	  \\"tenant\\" : \\"Environment\\",
-	  \\"trunks\\" : 1,
-	  \\"type\\" : \\"Extension\\",
-	  \\"useOverride\\" : true
-	}
+    \\"name\\" : \\"RejectChangesDN\\",
+    \\"number\\" : \\"123\\",
+    \\"routeType\\" : \\"default\\",
+    \\"state\\" : \\"enabled\\",
+    \\"switch\\" : \\"RejectChangesSwitch\\",
+    \\"switchSpecificType\\" : 1,
+    \\"tenant\\" : \\"Environment\\",
+    \\"trunks\\" : 1,
+    \\"type\\" : \\"Extension\\",
+    \\"useOverride\\" : true
+  }
 
 Please confirm [y|n]: Import cancelled.
 ",
@@ -141,6 +141,20 @@ Object {
   "stderr": "",
   "stdout": "+ switch => Environment/sameSwitch
 Completed. 1 object(s) imported.
+",
+}
+`;
+
+exports[`[mutagen config import file] should update multiple objects of different types: every object has been updated 1`] = `
+Object {
+  "stderr": "",
+  "stdout": "~ physicalswitch => MultiObjectImportPhysicalSwitch1
+~ physicalswitch => MultiObjectImportPhysicalSwitch2
+~ switch => Environment/MultiObjectImportSwitch1
+~ switch => Environment/MultiObjectImportSwitch2
+~ switch => Environment/MultiObjectImportSwitch3
+~ dn => number: '123', switch: 'MultiObjectImportSwitch1', type: 'Extension', name: 'MultiObjectImportDN', tenant: 'Environment'
+Completed. 6 object(s) imported.
 ",
 }
 `;

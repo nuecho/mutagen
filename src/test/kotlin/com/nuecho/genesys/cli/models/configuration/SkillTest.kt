@@ -38,7 +38,7 @@ class SkillTest : ConfigurationObjectTest(
     Skill(mockCfgSkill())
 ) {
     @Test
-    fun `updateCfgObject should properly create CfgSkill`() {
+    fun `createCfgObject should properly create CfgSkill`() {
         val service = mockConfService()
         every { service.retrieveObject(CfgSkill::class.java, any()) } returns null
         mockRetrieveTenant(service)
@@ -46,7 +46,7 @@ class SkillTest : ConfigurationObjectTest(
         objectMockk(ConfigurationObjectRepository).use {
             mockConfigurationObjectRepository()
 
-            val cfgSkill = skill.updateCfgObject(service)
+            val cfgSkill = skill.createCfgObject(service)
 
             with(cfgSkill) {
                 assertThat(name, equalTo(skill.name))

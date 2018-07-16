@@ -45,16 +45,17 @@ private val tenant = Tenant(
 
 class TenantTest : ConfigurationObjectTest(tenant, Tenant("foo"), emptySet(), Tenant(mockCfgTenant())) {
     @Test
-    fun `updateCfgObject should properly create CfgTenant`() {
+    fun `createCfgObject should properly create CfgTenant`() {
         val defaultTenant = mockCfgTenant(DEFAULT_TENANT)
         val service = mockConfService()
-        every { service.retrieveObject(CfgTenant::class.java, any()) } returns null andThen defaultTenant
+        every { service.retrieveObject(CfgTenant::class.java, any()) } returns defaultTenant
+
         mockRetrieveObjectiveTable(service)
         mockRetrieveScript(service)
 
         objectMockk(ConfigurationObjectRepository).use {
             mockConfigurationObjectRepository()
-            val cfgTenant = tenant.updateCfgObject(service)
+            val cfgTenant = tenant.createCfgObject(service)
 
             with(cfgTenant) {
                 assertThat(name, equalTo(tenant.name))

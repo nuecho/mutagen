@@ -102,7 +102,7 @@ class DNGrouptTest : NoImportedObjectConfigurationObjectTest(
     }
 
     @Test
-    fun `updateCfgObject should properly create CfgDNGroup`() {
+    fun `createCfgObject should properly create CfgDNGroup`() {
         val dn1 = mockCfgDN(NUMBER1, DEFAULT_OBJECT_DBID)
         val dn2 = mockCfgDN(NUMBER2, OTHER_DBID)
 
@@ -117,7 +117,7 @@ class DNGrouptTest : NoImportedObjectConfigurationObjectTest(
             objectMockk(ConfigurationObjectRepository).use {
                 mockConfigurationObjectRepository()
 
-                val cfgDNGroup = dnGroup.updateCfgObject(service)
+                val cfgDNGroup = dnGroup.createCfgObject(service)
 
                 with(cfgDNGroup) {
                     assertThat(type, equalTo(CFGACDQueues))

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
+import com.genesyslab.platform.applicationblocks.com.ICfgObject
 import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgSwitch
 import com.nuecho.genesys.cli.core.InitializingBean
@@ -22,7 +23,6 @@ import com.nuecho.genesys.cli.models.configuration.reference.SwitchReference
 import com.nuecho.genesys.cli.models.configuration.reference.TenantReference
 import com.nuecho.genesys.cli.models.configuration.reference.referenceSetBuilder
 import com.nuecho.genesys.cli.services.getObjectDbid
-import com.nuecho.genesys.cli.services.retrieveObject
 import com.nuecho.genesys.cli.toShortName
 
 /**
@@ -61,8 +61,12 @@ data class Switch(
         folder = switch.getFolderReference()
     )
 
-    override fun updateCfgObject(service: IConfService) =
-        (service.retrieveObject(reference) ?: CfgSwitch(service)).also { switch ->
+    override fun createCfgObject(service: IConfService) =
+        updateCfgObject(service, CfgSwitch(service))
+
+    override fun updateCfgObject(service: IConfService, cfgObject: ICfgObject) =
+        (cfgObject as CfgSwitch).also { switch ->
+
             setProperty("tenantDBID", service.getObjectDbid(tenant), switch)
             setProperty("name", name, switch)
             setProperty("physSwitchDBID", service.getObjectDbid(physicalSwitch), switch)

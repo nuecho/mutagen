@@ -50,14 +50,14 @@ class ActionCodeTest : ConfigurationObjectTest(
     ActionCode(mockCfgActionCode())
 ) {
     @Test
-    fun `updateCfgObject should properly create CfgActionCode`() {
+    fun `createCfgObject should properly create CfgActionCode`() {
         val service = mockConfService()
         every { service.retrieveObject(CfgActionCode::class.java, any()) } returns null
         mockRetrieveTenant(service)
 
         objectMockk(ConfigurationObjectRepository).use {
             mockConfigurationObjectRepository()
-            val cfgActionCode = actionCode.updateCfgObject(service)
+            val cfgActionCode = actionCode.createCfgObject(service)
 
             with(cfgActionCode) {
                 assertThat(name, equalTo(actionCode.name))

@@ -3,6 +3,7 @@ package com.nuecho.genesys.cli.models.configuration
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
+import com.genesyslab.platform.applicationblocks.com.ICfgObject
 import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgTransaction
 import com.nuecho.genesys.cli.getFolderReference
@@ -17,7 +18,6 @@ import com.nuecho.genesys.cli.models.configuration.reference.TenantReference
 import com.nuecho.genesys.cli.models.configuration.reference.TransactionReference
 import com.nuecho.genesys.cli.models.configuration.reference.referenceSetBuilder
 import com.nuecho.genesys.cli.services.getObjectDbid
-import com.nuecho.genesys.cli.services.retrieveObject
 import com.nuecho.genesys.cli.toShortName
 
 data class Transaction(
@@ -48,11 +48,11 @@ data class Transaction(
         folder = transaction.getFolderReference()
     )
 
-    override fun updateCfgObject(service: IConfService) =
-        (service.retrieveObject(reference) ?: CfgTransaction(service)).also {
-            if (!it.isSaved) {
-                applyDefaultValues()
-            }
+    override fun createCfgObject(service: IConfService) =
+        updateCfgObject(service, CfgTransaction(service).also { applyDefaultValues() })
+
+    override fun updateCfgObject(service: IConfService, cfgObject: ICfgObject) =
+        (cfgObject as CfgTransaction).also {
 
             setProperty("tenantDBID", service.getObjectDbid(tenant), it)
             setProperty(ALIAS, alias, it)
