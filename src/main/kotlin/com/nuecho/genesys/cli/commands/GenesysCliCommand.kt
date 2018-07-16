@@ -2,6 +2,9 @@ package com.nuecho.genesys.cli.commands
 
 import com.nuecho.genesys.cli.GenesysCli
 import com.nuecho.genesys.cli.Logging
+import com.nuecho.genesys.cli.core.MetricNames.COMMAND_EXECUTE
+import com.nuecho.genesys.cli.core.Metrics
+import com.nuecho.genesys.cli.core.Metrics.time
 import com.nuecho.genesys.cli.preferences.SecurePassword
 import picocli.CommandLine
 import java.io.BufferedReader
@@ -32,11 +35,20 @@ abstract class GenesysCliCommand : Callable<Int> {
             Logging.setToInfo()
         }
 
-        if (getGenesysCli().readPasswordFromStdin) {
+        if (genesysCli.readPasswordFromStdin) {
             val passwordReader = BufferedReader(InputStreamReader(System.`in`))
             password = SecurePassword(passwordReader.readLine().toCharArray())
         }
 
-        return execute()
+        try {
+            return time(COMMAND_EXECUTE) {
+                execute()
+            }
+        } finally {
+            genesysCli.metricsFile?.let {
+                it.parentFile.mkdirs()
+                it.outputStream().use { Metrics.output(it) }
+            }
+        }
     }
 }

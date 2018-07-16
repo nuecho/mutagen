@@ -2,7 +2,7 @@ package com.nuecho.genesys.cli.commands
 
 import com.nuecho.genesys.cli.preferences.environment.Environment
 import com.nuecho.genesys.cli.services.ConfService
-import com.nuecho.genesys.cli.services.withService
+import com.nuecho.genesys.cli.services.Services.withService
 import picocli.CommandLine
 
 abstract class ConfigServerCommand : GenesysCliCommand() {

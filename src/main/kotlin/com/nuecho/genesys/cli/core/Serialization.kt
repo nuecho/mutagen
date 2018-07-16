@@ -50,7 +50,7 @@ private fun jsonObjectMapperBase() = jacksonObjectMapper()
     .configure(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS, true) // consistent output
     .registerModule(SimpleModule().setDeserializerModifier(InitializingBeanDeserializerModifier())) // InitializingBean
 
-private fun jsonGeneratorBase(outputStream: OutputStream): JsonGenerator = JsonFactory()
+fun jsonGeneratorBase(outputStream: OutputStream): JsonGenerator = JsonFactory()
     .createGenerator(outputStream, JsonEncoding.UTF8)
     .setPrettyPrinter(DefaultPrettyPrinter())
 

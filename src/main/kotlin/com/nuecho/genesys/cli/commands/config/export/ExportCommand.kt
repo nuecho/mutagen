@@ -15,13 +15,17 @@ import com.nuecho.genesys.cli.commands.config.export.Export.exportConfiguration
 import com.nuecho.genesys.cli.commands.config.export.ExportFormat.COMPACT_JSON
 import com.nuecho.genesys.cli.commands.config.export.ExportFormat.JSON
 import com.nuecho.genesys.cli.commands.config.export.ExportFormat.RAW
+import com.nuecho.genesys.cli.core.MetricNames.CONFIG_EXPORT
+import com.nuecho.genesys.cli.core.MetricNames.CONFIG_EXPORT_PROCESS
+import com.nuecho.genesys.cli.core.MetricNames.CONFIG_EXPORT_RETRIEVE
+import com.nuecho.genesys.cli.core.Metrics.time
 import com.nuecho.genesys.cli.core.compactJsonGenerator
 import com.nuecho.genesys.cli.core.defaultJsonGenerator
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects
 import com.nuecho.genesys.cli.models.configuration.Metadata
 import com.nuecho.genesys.cli.preferences.environment.Environment
 import com.nuecho.genesys.cli.services.ConfService
-import com.nuecho.genesys.cli.services.ConfigurationObjectRepository
+import com.nuecho.genesys.cli.services.ConfigurationObjectRepository.prefetchConfigurationObjects
 import picocli.CommandLine
 import java.io.OutputStream
 
@@ -41,12 +45,16 @@ class ExportCommand : ConfigServerCommand() {
 
     override fun execute(): Int {
         withEnvironmentConfService { service: ConfService, environment: Environment ->
-            ConfigurationObjectRepository.prefetchConfigurationObjects(service)
-            exportConfiguration(
-                createExportProcessor(format!!, environment, System.out),
-                service
-            )
+            prefetchConfigurationObjects(service)
+
+            time(CONFIG_EXPORT) {
+                exportConfiguration(
+                    createExportProcessor(format!!, environment, System.out),
+                    service
+                )
+            }
         }
+
         return 0
     }
 
@@ -92,15 +100,19 @@ object Export {
             else -> CfgFilterBasedQuery<ICfgObject>(type)
         }
 
-        val configurationObjects = service.retrieveMultipleObjects(
-            CfgObject::class.java,
-            query
-        ) ?: emptyList()
+        val configurationObjects = time(CONFIG_EXPORT_RETRIEVE) {
+            service.retrieveMultipleObjects(
+                CfgObject::class.java,
+                query
+            ) ?: emptyList()
+        }
 
         debug { "Found ${configurationObjects.size} $type objects." }
 
-        configurationObjects.forEach {
-            processor.processObject(it)
+        time(CONFIG_EXPORT_PROCESS) {
+            configurationObjects.forEach {
+                processor.processObject(it)
+            }
         }
 
         processor.endType(type)

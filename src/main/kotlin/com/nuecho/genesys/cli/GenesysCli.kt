@@ -13,6 +13,7 @@ import picocli.CommandLine.DefaultExceptionHandler
 import picocli.CommandLine.Help
 import picocli.CommandLine.ParameterException
 import picocli.CommandLine.RunLast
+import java.io.File
 import java.io.PrintStream
 
 const val BANNER = """
@@ -111,6 +112,12 @@ open class GenesysCli : GenesysCliCommand() {
         description = ["Read password from standard input."]
     )
     var readPasswordFromStdin = false
+
+    @CommandLine.Option(
+        names = ["--metrics"],
+        description = ["Performance metrics output file."]
+    )
+    var metricsFile: File? = null
 
     @Suppress("unused")
     @CommandLine.Option(

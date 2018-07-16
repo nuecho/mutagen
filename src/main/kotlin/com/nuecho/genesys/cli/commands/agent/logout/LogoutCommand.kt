@@ -15,9 +15,9 @@ import com.nuecho.genesys.cli.getDefaultEndpoint
 import com.nuecho.genesys.cli.isLoggedOut
 import com.nuecho.genesys.cli.preferences.environment.Environment
 import com.nuecho.genesys.cli.services.ConfService
+import com.nuecho.genesys.cli.services.Services.withService
 import com.nuecho.genesys.cli.services.StatService
 import com.nuecho.genesys.cli.services.TService
-import com.nuecho.genesys.cli.services.withService
 import com.nuecho.genesys.cli.toConsoleString
 import com.nuecho.genesys.cli.toList
 import picocli.CommandLine
