@@ -1,5 +1,5 @@
 {
-  "default": false,
   "enumerator": "enumerator",
+  "isDefault": false,
   "name": "enumeratorValue"
 }

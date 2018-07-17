@@ -1,6 +1,7 @@
 package com.nuecho.genesys.cli.models.configuration
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.genesyslab.platform.applicationblocks.com.ICfgObject
@@ -26,8 +27,9 @@ import com.nuecho.genesys.cli.toShortName
 data class EnumeratorValue(
     val enumerator: EnumeratorReference,
     val name: String,
-    // default will be true if not specified, but an exception is thrown if more than 1 enumeratorValue is default
-    val default: Boolean = false,
+    // isDefault will be true if not specified, but an exception is thrown if more than 1 enumeratorValue is default
+    @get:JsonProperty("isDefault")
+    val isDefault: Boolean = false,
     val description: String? = null,
     val displayName: String? = null,
     val state: String? = null,
@@ -42,7 +44,7 @@ data class EnumeratorValue(
 
     constructor(enumeratorValue: CfgEnumeratorValue) : this(
         tenant = enumeratorValue.tenant.getReference(),
-        default = enumeratorValue.isDefault.asBoolean()!!,
+        isDefault = enumeratorValue.isDefault.asBoolean()!!,
         description = enumeratorValue.description,
         displayName = enumeratorValue.displayName,
         enumerator = enumeratorValue.enumerator.let { enumerator ->
@@ -57,7 +59,7 @@ data class EnumeratorValue(
     constructor(tenant: TenantReference, default: Boolean, displayName: String, enumerator: String, name: String) :
             this(
                 tenant = tenant,
-                default = default,
+                isDefault = default,
                 displayName = displayName,
                 enumerator = EnumeratorReference(enumerator, tenant),
                 name = name
@@ -74,7 +76,7 @@ data class EnumeratorValue(
             setProperty("name", name, cfgEnumeratorValue)
             setProperty("description", description, cfgEnumeratorValue)
             setProperty(DISPLAY_NAME, displayName, cfgEnumeratorValue)
-            setProperty("isDefault", ConfigurationObjects.toCfgFlag(default), cfgEnumeratorValue)
+            setProperty("isDefault", ConfigurationObjects.toCfgFlag(isDefault), cfgEnumeratorValue)
             setProperty("state", toCfgObjectState(state), cfgEnumeratorValue)
             setProperty("userProperties", ConfigurationObjects.toKeyValueCollection(userProperties), cfgEnumeratorValue)
             setFolder(folder, cfgEnumeratorValue)

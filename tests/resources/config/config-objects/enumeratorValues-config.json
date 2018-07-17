@@ -5,7 +5,7 @@
   },
   "enumeratorValues": [
     {
-      "default": false,
+      "isDefault": false,
       "description": "description",
       "displayName": "displayName",
       "enumerator": "MediaType",

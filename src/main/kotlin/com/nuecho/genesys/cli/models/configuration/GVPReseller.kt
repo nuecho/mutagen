@@ -1,6 +1,7 @@
 package com.nuecho.genesys.cli.models.configuration
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.genesyslab.platform.applicationblocks.com.ICfgObject
@@ -37,6 +38,7 @@ data class GVPReseller(
     val timeZone: TimeZoneReference? = null,
     val startDate: Date? = null,
     val displayName: String? = null,
+    @get:JsonProperty("isParentNSP")
     val isParentNSP: Boolean? = null,
     val notes: String? = null,
     val state: String? = null,

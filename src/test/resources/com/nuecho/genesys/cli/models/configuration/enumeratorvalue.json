@@ -1,5 +1,4 @@
 {
-  "default": false,
   "description": "description",
   "displayName": "displayName",
   "enumerator": "enumerator",
@@ -13,6 +12,7 @@
     ],
     "type": "folder"
   },
+  "isDefault": false,
   "name": "enumeratorValue",
   "state": "enabled",
   "tenant": "tenant",

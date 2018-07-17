@@ -1,6 +1,7 @@
 package com.nuecho.genesys.cli.models.configuration
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.genesyslab.platform.applicationblocks.com.ICfgObject
@@ -47,6 +48,7 @@ data class GVPIVRProfile(
     val description: String? = null,
     val startServiceDate: Date? = null,
     val endServiceDate: Date? = null,
+    @get:JsonProperty("isProvisioned")
     val isProvisioned: Boolean? = null,
     val tfn: List<String>? = null,
     val status: String? = null,
