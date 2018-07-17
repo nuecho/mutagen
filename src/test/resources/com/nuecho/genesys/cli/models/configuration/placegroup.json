@@ -1,0 +1,26 @@
+{
+  "folder": {
+    "owner": {
+      "name": "tenant",
+      "type": "tenant"
+    },
+    "path": [
+      "folder"
+    ],
+    "type": "folder"
+  },
+  "group": {
+    "name": "placeGroup",
+    "tenant": "tenant",
+    "userProperties": {
+      "section": {
+        "number": 456,
+        "string": "def"
+      }
+    }
+  },
+  "places": [
+    "place1",
+    "place2"
+  ]
+}

@@ -77,14 +77,13 @@ private val dnGroup = DNGroup(
     folder = DEFAULT_FOLDER_REFERENCE
 )
 
-class DNGrouptTest : NoImportedObjectConfigurationObjectTest(
+class DNGrouptTest : ConfigurationObjectTest(
     dnGroup,
     DNGroup(tenant = DEFAULT_TENANT_REFERENCE, name = DN_GROUP),
     setOf(TYPE)
 ) {
-
     @Test
-    fun `CfgDNGroup initialized Group should properly serialize`() {
+    override fun `initialized object should properly serialize`() {
         val service = mockConfService()
         mockRetrieveFolderByDbid(service)
 

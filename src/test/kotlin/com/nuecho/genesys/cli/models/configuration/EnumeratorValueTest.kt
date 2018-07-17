@@ -47,7 +47,7 @@ private val enumeratorValue = EnumeratorValue(
     folder = DEFAULT_FOLDER_REFERENCE
 )
 
-class EnumeratorValueTest : NoImportedObjectConfigurationObjectTest(
+class EnumeratorValueTest : ConfigurationObjectTest(
     enumeratorValue,
     EnumeratorValue(
         enumerator = ENUMERATOR_REFERENCE,
@@ -55,9 +55,8 @@ class EnumeratorValueTest : NoImportedObjectConfigurationObjectTest(
     ),
     setOf(DISPLAY_NAME, TENANT)
 ) {
-
     @Test
-    fun `CfgEnumeratorValue initialized EnumeratorValue should properly serialize`() {
+    override fun `initialized object should properly serialize`() {
         val service = mockConfService()
 
         mockRetrieveFolderByDbid(service)

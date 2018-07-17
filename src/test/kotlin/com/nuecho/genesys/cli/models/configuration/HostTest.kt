@@ -48,14 +48,13 @@ private val host = Host(
     folder = DEFAULT_FOLDER_REFERENCE
 )
 
-class HostTest : NoImportedObjectConfigurationObjectTest(
+class HostTest : ConfigurationObjectTest(
     host,
     Host(name = NAME),
     setOf("lcaPort", "osInfo", TYPE)
 ) {
-
     @Test
-    fun `CfgHost initialized from Host should properly serialize`() {
+    override fun `initialized object should properly serialize`() {
         val service = mockConfService()
         mockRetrieveFolderByDbid(service)
 

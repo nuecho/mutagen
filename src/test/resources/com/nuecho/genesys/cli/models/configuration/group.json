@@ -1,0 +1,41 @@
+{
+  "capacityRule": "capacityRule",
+  "capacityTable": "capacityTable",
+  "contract": "contract",
+  "managers": [
+    "employee1",
+    "employee2"
+  ],
+  "name": "groupName",
+  "quotaTable": "quotaTable",
+  "routeDNs": [
+    {
+      "number": "number1",
+      "switch": "switch1",
+      "type": "chat"
+    },
+    {
+      "number": "number2",
+      "switch": "switch1",
+      "type": "email"
+    }
+  ],
+  "site": {
+    "owner": {
+      "name": "tenant",
+      "type": "tenant"
+    },
+    "path": [
+      "folder"
+    ],
+    "type": "folder"
+  },
+  "state": "enabled",
+  "tenant": "tenant",
+  "userProperties": {
+    "section": {
+      "number": 456,
+      "string": "def"
+    }
+  }
+}

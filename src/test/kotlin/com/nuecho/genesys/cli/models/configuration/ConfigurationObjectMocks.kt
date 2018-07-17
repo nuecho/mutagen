@@ -25,6 +25,7 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgParentID
 import com.genesyslab.platform.applicationblocks.com.objects.CfgPerson
 import com.genesyslab.platform.applicationblocks.com.objects.CfgPhysicalSwitch
 import com.genesyslab.platform.applicationblocks.com.objects.CfgPlace
+import com.genesyslab.platform.applicationblocks.com.objects.CfgPlaceGroup
 import com.genesyslab.platform.applicationblocks.com.objects.CfgRole
 import com.genesyslab.platform.applicationblocks.com.objects.CfgRoleMember
 import com.genesyslab.platform.applicationblocks.com.objects.CfgScript
@@ -222,6 +223,13 @@ object ConfigurationObjectMocks {
         mockk<CfgParentID>().also {
             every { it.getProperty("DBID") } returns DEFAULT_TENANT_DBID
             every { it.getProperty("type") } returns CFGTenant.ordinal()
+        }
+
+    fun mockCfgPlaceGroup(name: String?, tenant: CfgTenant = mockCfgTenant(DEFAULT_TENANT)) =
+        mockk<CfgPlaceGroup>().also {
+            every { it.groupInfo.name } returns name
+            every { it.groupInfo.tenant } returns tenant
+            every { it.objectDbid } returns DEFAULT_OBJECT_DBID
         }
 
     fun mockCfgID(type: CfgObjectType?) =

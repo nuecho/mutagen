@@ -1,0 +1,22 @@
+{
+  "__metadata__": {
+    "formatName": "JSON",
+    "formatVersion": "1.0.0"
+  },
+  "placeGroups": [
+    {
+      "group": {
+        "capacityRule": "placeGroupCapacityRuleNew",
+        "name": "cfgObjectTest",
+        "tenant": "Environment"
+      }
+    }
+  ],
+  "scripts": [
+    {
+      "name": "placeGroupCapacityRuleNew",
+      "tenant": "Environment",
+      "type": "capacityRule"
+    }
+  ]
+}

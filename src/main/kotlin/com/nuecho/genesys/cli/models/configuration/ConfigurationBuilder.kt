@@ -17,6 +17,7 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgHost
 import com.genesyslab.platform.applicationblocks.com.objects.CfgPerson
 import com.genesyslab.platform.applicationblocks.com.objects.CfgPhysicalSwitch
 import com.genesyslab.platform.applicationblocks.com.objects.CfgPlace
+import com.genesyslab.platform.applicationblocks.com.objects.CfgPlaceGroup
 import com.genesyslab.platform.applicationblocks.com.objects.CfgRole
 import com.genesyslab.platform.applicationblocks.com.objects.CfgScript
 import com.genesyslab.platform.applicationblocks.com.objects.CfgSkill
@@ -35,12 +36,13 @@ class ConfigurationBuilder {
     private val enumeratorValues = ArrayList<EnumeratorValue>()
     private val folders = ArrayList<Folder>()
     private val gvpCustomers = ArrayList<GVPCustomer>()
-    private val gvpResellers = ArrayList<GVPReseller>()
     private val gvpIVRProfiles = ArrayList<GVPIVRProfile>()
+    private val gvpResellers = ArrayList<GVPReseller>()
     private val hosts = ArrayList<Host>()
     private val persons = ArrayList<Person>()
-    private val places = ArrayList<Place>()
     private val physicalSwitches = ArrayList<PhysicalSwitch>()
+    private val placeGroups = ArrayList<PlaceGroup>()
+    private val places = ArrayList<Place>()
     private val roles = ArrayList<Role>()
     private val scripts = ArrayList<Script>()
     private val skills = ArrayList<Skill>()
@@ -58,8 +60,8 @@ class ConfigurationBuilder {
                 is CfgActionCode -> actionCodes += it as ActionCode
                 is CfgAgentGroup -> agentGroups += it as AgentGroup
                 is CfgAppPrototype -> appPrototypes += it as AppPrototype
-                is CfgDNGroup -> dnGroups += it as DNGroup
                 is CfgDN -> dns += it as DN
+                is CfgDNGroup -> dnGroups += it as DNGroup
                 is CfgEnumerator -> enumerators += it as Enumerator
                 is CfgEnumeratorValue -> enumeratorValues += it as EnumeratorValue
                 is CfgFolder -> folders += it as Folder
@@ -68,8 +70,9 @@ class ConfigurationBuilder {
                 is CfgGVPReseller -> gvpResellers += it as GVPReseller
                 is CfgHost -> hosts += it as Host
                 is CfgPerson -> persons += it as Person
-                is CfgPlace -> places += it as Place
                 is CfgPhysicalSwitch -> physicalSwitches += it as PhysicalSwitch
+                is CfgPlace -> places += it as Place
+                is CfgPlaceGroup -> placeGroups += it as PlaceGroup
                 is CfgRole -> roles += it as Role
                 is CfgScript -> scripts += it as Script
                 is CfgSkill -> skills += it as Skill
@@ -97,8 +100,9 @@ class ConfigurationBuilder {
         gvpResellers.sorted(),
         hosts.sorted(),
         persons.sorted(),
-        places.sorted(),
         physicalSwitches.sorted(),
+        placeGroups.sorted(),
+        places.sorted(),
         roles.sorted(),
         scripts.sorted(),
         skills.sorted(),
@@ -108,7 +112,6 @@ class ConfigurationBuilder {
     )
 
     companion object {
-
         @SuppressWarnings("ComplexMethod")
         fun toConfigurationObject(cfgObject: ICfgObject): ConfigurationObject? =
             when (cfgObject) {
@@ -116,8 +119,8 @@ class ConfigurationBuilder {
                 is CfgActionCode -> ActionCode(cfgObject)
                 is CfgAgentGroup -> AgentGroup(cfgObject)
                 is CfgAppPrototype -> AppPrototype(cfgObject)
-                is CfgDNGroup -> DNGroup(cfgObject)
                 is CfgDN -> DN(cfgObject)
+                is CfgDNGroup -> DNGroup(cfgObject)
                 is CfgEnumerator -> Enumerator(cfgObject)
                 is CfgEnumeratorValue -> EnumeratorValue(cfgObject)
                 is CfgFolder -> Folder(cfgObject)
@@ -126,8 +129,9 @@ class ConfigurationBuilder {
                 is CfgGVPReseller -> GVPReseller(cfgObject)
                 is CfgHost -> Host(cfgObject)
                 is CfgPerson -> Person(cfgObject)
-                is CfgPlace -> Place(cfgObject)
                 is CfgPhysicalSwitch -> PhysicalSwitch(cfgObject)
+                is CfgPlace -> Place(cfgObject)
+                is CfgPlaceGroup -> PlaceGroup(cfgObject)
                 is CfgRole -> Role(cfgObject)
                 is CfgScript -> Script(cfgObject)
                 is CfgSkill -> Skill(cfgObject)
