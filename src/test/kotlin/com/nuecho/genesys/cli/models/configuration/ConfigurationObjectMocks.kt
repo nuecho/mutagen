@@ -8,6 +8,9 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgAgentLoginInfo
 import com.genesyslab.platform.applicationblocks.com.objects.CfgAlarmCondition
 import com.genesyslab.platform.applicationblocks.com.objects.CfgAppPrototype
 import com.genesyslab.platform.applicationblocks.com.objects.CfgApplication
+import com.genesyslab.platform.applicationblocks.com.objects.CfgCallingList
+import com.genesyslab.platform.applicationblocks.com.objects.CfgCallingListInfo
+import com.genesyslab.platform.applicationblocks.com.objects.CfgCampaign
 import com.genesyslab.platform.applicationblocks.com.objects.CfgDN
 import com.genesyslab.platform.applicationblocks.com.objects.CfgDNGroup
 import com.genesyslab.platform.applicationblocks.com.objects.CfgDNInfo
@@ -44,6 +47,8 @@ import com.genesyslab.platform.commons.collections.KeyValueCollection
 import com.genesyslab.platform.commons.collections.KeyValuePair
 import com.genesyslab.platform.configuration.protocol.types.CfgAppType
 import com.genesyslab.platform.configuration.protocol.types.CfgDNType
+import com.genesyslab.platform.configuration.protocol.types.CfgFlag
+import com.genesyslab.platform.configuration.protocol.types.CfgFlag.CFGNoFlag
 import com.genesyslab.platform.configuration.protocol.types.CfgIVRProfileType
 import com.genesyslab.platform.configuration.protocol.types.CfgOSType
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectType
@@ -64,8 +69,8 @@ import io.mockk.mockk
 object ConfigurationObjectMocks {
     const val DEFAULT_TENANT = "tenant"
     const val DEFAULT_FOLDER = "folder"
-    const val DEFAULT_TENANT_DBID = 1
     const val DEFAULT_OBJECT_DBID = 101
+    const val DEFAULT_TENANT_DBID = 1
     const val SUBNAME = "subname"
     const val SUBCODE = "subcode"
     val DEFAULT_FOLDER_TYPE = CFGFolder
@@ -180,6 +185,26 @@ object ConfigurationObjectMocks {
         mockk<CfgAppPrototype>().also {
             every { it.name } returns name
             every { it.objectDbid } returns DEFAULT_OBJECT_DBID
+        }
+
+    fun mockCfgCampaign(name: String, tenant: CfgTenant = mockCfgTenant(DEFAULT_TENANT)) =
+        mockk<CfgCampaign>().also {
+            every { it.name } returns name
+            every { it.tenant } returns tenant
+            every { it.objectDbid } returns DEFAULT_OBJECT_DBID
+        }
+
+    fun mockCfgCallingList(name: String) =
+        mockk<CfgCallingList>().also {
+            every { it.name } returns name
+            every { it.objectDbid } returns DEFAULT_OBJECT_DBID
+        }
+
+    fun mockCfgCallingListInfo(callingList: CfgCallingList?, isActive: CfgFlag? = CFGNoFlag, share: Int? = null) =
+        mockk<CfgCallingListInfo>().also {
+            every { it.callingList } returns callingList
+            every { it.isActive } returns isActive
+            every { it.share } returns share
         }
 
     fun mockCfgDN(

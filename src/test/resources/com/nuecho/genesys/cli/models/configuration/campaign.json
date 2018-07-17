@@ -1,0 +1,30 @@
+{
+  "callingLists": [
+    {
+      "callingList": "callingList",
+      "isActive": true,
+      "share": 10
+    }
+  ],
+  "description": "description",
+  "folder": {
+    "owner": {
+      "name": "tenant",
+      "type": "tenant"
+    },
+    "path": [
+      "folder"
+    ],
+    "type": "folder"
+  },
+  "name": "campaign",
+  "script": "script",
+  "state": "enabled",
+  "tenant": "tenant",
+  "userProperties": {
+    "section": {
+      "number": 456,
+      "string": "def"
+    }
+  }
+}

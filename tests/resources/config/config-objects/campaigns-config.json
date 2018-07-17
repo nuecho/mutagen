@@ -1,0 +1,30 @@
+{
+  "__metadata__": {
+    "formatName": "JSON",
+    "formatVersion": "1.0.0"
+  },
+  "campaigns": [
+    {
+      "callingLists": [],
+      "description": "description",
+      "name": "cfgObjectTest",
+      "script": "campaignScript",
+      "state": "enabled",
+      "tenant": "Environment",
+      "userProperties": {
+        "section": {
+          "number": 456,
+          "string": "def"
+        }
+      }
+    }
+  ],
+  "scripts": [
+    {
+      "name": "campaignScript",
+      "state": "enabled",
+      "tenant": "Environment",
+      "type": "OutboundCampaign"
+    }
+  ]
+}

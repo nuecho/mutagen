@@ -1,0 +1,1 @@
+cfgObjectTests("campaigns", {checkMandatoryProperties: false});

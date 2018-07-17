@@ -7,6 +7,7 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgAccessGroup
 import com.genesyslab.platform.applicationblocks.com.objects.CfgAgentGroup
 import com.genesyslab.platform.applicationblocks.com.objects.CfgAgentLogin
 import com.genesyslab.platform.applicationblocks.com.objects.CfgApplication
+import com.genesyslab.platform.applicationblocks.com.objects.CfgCallingList
 import com.genesyslab.platform.applicationblocks.com.objects.CfgCampaign
 import com.genesyslab.platform.applicationblocks.com.objects.CfgDN
 import com.genesyslab.platform.applicationblocks.com.objects.CfgDNGroup
@@ -52,6 +53,7 @@ import com.nuecho.genesys.cli.models.configuration.reference.AccessGroupReferenc
 import com.nuecho.genesys.cli.models.configuration.reference.AgentGroupReference
 import com.nuecho.genesys.cli.models.configuration.reference.AgentLoginReference
 import com.nuecho.genesys.cli.models.configuration.reference.ApplicationReference
+import com.nuecho.genesys.cli.models.configuration.reference.CallingListReference
 import com.nuecho.genesys.cli.models.configuration.reference.CampaignReference
 import com.nuecho.genesys.cli.models.configuration.reference.DNGroupReference
 import com.nuecho.genesys.cli.models.configuration.reference.DNReference
@@ -163,6 +165,7 @@ fun CfgAccessGroup.getReference() = AccessGroupReference(groupInfo.name, groupIn
 fun CfgAgentGroup.getReference() = AgentGroupReference(groupInfo.name, groupInfo.tenant.getReference())
 fun CfgAgentLogin.getReference() = AgentLoginReference(loginCode, switch.getReference())
 fun CfgApplication.getReference() = ApplicationReference(name)
+fun CfgCallingList.getReference() = CallingListReference(name)
 fun CfgCampaign.getReference() = CampaignReference(name, tenant.getReference())
 fun CfgDN.getReference() = DNReference(this)
 fun CfgDNGroup.getReference() = DNGroupReference(groupInfo.name, groupInfo.tenant.getReference())

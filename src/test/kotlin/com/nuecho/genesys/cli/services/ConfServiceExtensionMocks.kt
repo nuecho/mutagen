@@ -4,6 +4,7 @@ import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgAgentLogin
 import com.genesyslab.platform.applicationblocks.com.objects.CfgAppPrototype
 import com.genesyslab.platform.applicationblocks.com.objects.CfgApplication
+import com.genesyslab.platform.applicationblocks.com.objects.CfgCallingList
 import com.genesyslab.platform.applicationblocks.com.objects.CfgDN
 import com.genesyslab.platform.applicationblocks.com.objects.CfgDNGroup
 import com.genesyslab.platform.applicationblocks.com.objects.CfgEnumerator
@@ -49,6 +50,14 @@ object ConfServiceExtensionMocks {
             every { script.dbid } returns dbid
             every { script.objectDbid } returns dbid
             script
+        }
+
+    fun mockRetrieveCallingList(service: IConfService, dbid: Int = DEFAULT_OBJECT_DBID) =
+        every { service.retrieveObject(CfgCallingList::class.java, any()) } answers {
+            val callingList = mockk<CfgCallingList>()
+            every { callingList.dbid } returns dbid
+            every { callingList.objectDbid } returns dbid
+            callingList
         }
 
     fun mockRetrieveObjectiveTable(service: IConfService, dbid: Int = DEFAULT_OBJECT_DBID) =
