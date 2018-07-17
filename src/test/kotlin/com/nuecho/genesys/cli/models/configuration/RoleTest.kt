@@ -42,13 +42,13 @@ private val role = Role(
     folder = DEFAULT_FOLDER_REFERENCE
 )
 
-class RoleTest : NoImportedObjectConfigurationObjectTest(
+class RoleTest : ConfigurationObjectTest(
     role,
     Role(tenant = DEFAULT_TENANT_REFERENCE, name = NAME),
     emptySet()
 ) {
     @Test
-    fun `CfgRole initialized Role should properly serialize`() {
+    override fun `initialized object should properly serialize`() {
         val service = mockConfService()
         mockRetrieveFolderByDbid(service)
 

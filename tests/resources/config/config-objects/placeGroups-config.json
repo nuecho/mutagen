@@ -1,0 +1,89 @@
+{
+  "__metadata__": {
+    "formatName": "JSON",
+    "formatVersion": "1.0.0"
+  },
+  "dns": [
+    {
+      "number": "placeGroupDN1",
+      "switch": "placeGroupSwitch",
+      "tenant": "Environment",
+      "type": "cellular",
+      "routeType": "default"
+    },
+    {
+      "number": "placeGroupDN2",
+      "switch": "placeGroupSwitch",
+      "tenant": "Environment",
+      "type": "fax",
+      "routeType": "default"
+    }
+  ],
+  "physicalSwitches": [
+    {
+      "name": "placeGroupPhysicalSwitch",
+      "state": "enabled",
+      "type": "fujitsu"
+    }
+  ],
+  "placeGroups": [
+    {
+      "group": {
+        "capacityRule": "placeGroupCapacityRule",
+        "name": "cfgObjectTest",
+        "state": "enabled",
+        "tenant": "Environment",
+        "userProperties": {
+          "section": {
+            "number": 456,
+            "string": "def"
+          }
+        }
+      },
+      "places": [
+        "placeGroupPlace1",
+        "placeGroupPlace2"
+      ]
+    }
+  ],
+  "places": [
+    {
+      "dns": [
+        {
+          "number": "placeGroupDN1",
+          "switch": "placeGroupSwitch",
+          "type": "cellular"
+        }
+      ],
+      "name": "placeGroupPlace1",
+      "state": "enabled",
+      "tenant": "Environment"
+    },
+    {
+      "dns": [
+        {
+          "number": "placeGroupDN2",
+          "switch": "placeGroupSwitch",
+          "type": "fax"
+        }
+      ],
+      "name": "placeGroupPlace2",
+      "state": "enabled",
+      "tenant": "Environment"
+    }
+  ],
+  "scripts": [
+    {
+      "name": "placeGroupCapacityRule",
+      "tenant": "Environment",
+      "type": "capacityRule"
+    }
+  ],
+  "switches": [
+    {
+      "name": "placeGroupSwitch",
+      "physicalSwitch": "placeGroupPhysicalSwitch",
+      "tenant": "Environment"
+    }
+  ]
+}

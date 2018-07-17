@@ -1,0 +1,43 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`[mutagen placeGroups config import-export] should create the placeGroups: the placeGroups have been created 1`] = `
+Object {
+  "stderr": "",
+  "stdout": "+ physicalswitch => placeGroupPhysicalSwitch
++ script => Environment/placeGroupCapacityRule
++ switch => Environment/placeGroupSwitch
++ dn => number: 'placeGroupDN1', switch: 'placeGroupSwitch', type: 'cellular', tenant: 'Environment'
++ dn => number: 'placeGroupDN2', switch: 'placeGroupSwitch', type: 'fax', tenant: 'Environment'
++ place => Environment/placeGroupPlace1
++ place => Environment/placeGroupPlace2
++ placegroup => Environment/cfgObjectTest
+Completed. 8 object(s) imported.
+",
+}
+`;
+
+exports[`[mutagen placeGroups config import-export] should update the modified placeGroups: the modified placeGroups have been updated 1`] = `
+Object {
+  "stderr": "",
+  "stdout": "+ script => Environment/placeGroupCapacityRuleNew
+~ placegroup => Environment/cfgObjectTest
+Completed. 2 object(s) imported.
+",
+}
+`;
+
+exports[`[mutagen placeGroups config import-export] should update the same placeGroups: the placeGroups have been updated 1`] = `
+Object {
+  "stderr": "",
+  "stdout": "~ physicalswitch => placeGroupPhysicalSwitch
+~ script => Environment/placeGroupCapacityRule
+~ switch => Environment/placeGroupSwitch
+~ dn => number: 'placeGroupDN1', switch: 'placeGroupSwitch', type: 'cellular', tenant: 'Environment'
+~ dn => number: 'placeGroupDN2', switch: 'placeGroupSwitch', type: 'fax', tenant: 'Environment'
+~ place => Environment/placeGroupPlace1
+~ place => Environment/placeGroupPlace2
+~ placegroup => Environment/cfgObjectTest
+Completed. 8 object(s) imported.
+",
+}
+`;
