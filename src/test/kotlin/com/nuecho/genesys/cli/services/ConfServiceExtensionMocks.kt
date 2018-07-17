@@ -2,12 +2,14 @@ package com.nuecho.genesys.cli.services
 
 import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgAgentLogin
+import com.genesyslab.platform.applicationblocks.com.objects.CfgAppPrototype
 import com.genesyslab.platform.applicationblocks.com.objects.CfgApplication
 import com.genesyslab.platform.applicationblocks.com.objects.CfgDN
 import com.genesyslab.platform.applicationblocks.com.objects.CfgDNGroup
 import com.genesyslab.platform.applicationblocks.com.objects.CfgEnumerator
 import com.genesyslab.platform.applicationblocks.com.objects.CfgGVPCustomer
 import com.genesyslab.platform.applicationblocks.com.objects.CfgGVPReseller
+import com.genesyslab.platform.applicationblocks.com.objects.CfgHost
 import com.genesyslab.platform.applicationblocks.com.objects.CfgObjectiveTable
 import com.genesyslab.platform.applicationblocks.com.objects.CfgPerson
 import com.genesyslab.platform.applicationblocks.com.objects.CfgPhysicalSwitch
@@ -23,9 +25,11 @@ import com.genesyslab.platform.configuration.protocol.types.CfgObjectType.CFGEnu
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_FOLDER_REFERENCE
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_OBJECT_DBID
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgAppPrototype
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgFolder
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgGVPCustomer
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgGVPReseller
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgHost
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgTenant
 import io.mockk.every
 import io.mockk.mockk
@@ -176,6 +180,16 @@ object ConfServiceExtensionMocks {
             mockCfgGVPCustomer(DEFAULT_TENANT)
         }
     }
+
+    fun mockRetrieveHost(service: IConfService) =
+        every { service.retrieveObject(CfgHost::class.java, any()) } answers {
+            mockCfgHost(DEFAULT_TENANT)
+        }
+
+    fun mockRetrieveAppPrototype(service: IConfService) =
+        every { service.retrieveObject(CfgAppPrototype::class.java, any()) } answers {
+            mockCfgAppPrototype(DEFAULT_TENANT)
+        }
 
     fun mockRetrieveFolderByDbid(service: IConfService) {
         val folder = mockCfgFolder()

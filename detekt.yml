@@ -16,6 +16,8 @@ complexity:
     active: false
   ComplexMethod:
     ignoreSingleWhenExpression: true
+  LongMethod:
+    threshold: 25
 
 exceptions:
   TooGenericExceptionCaught:

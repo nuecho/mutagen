@@ -242,6 +242,7 @@ object ConfigurationObjectMocks {
         mockk<CfgHost>().also {
             every { it.name } returns name
             every { it.dbid } returns DEFAULT_OBJECT_DBID
+            every { it.objectDbid } returns DEFAULT_OBJECT_DBID
         }
 
     fun mockCfgObjectiveTable(name: String?, tenant: CfgTenant = mockCfgTenant(DEFAULT_TENANT)) =

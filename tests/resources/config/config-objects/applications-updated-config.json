@@ -1,0 +1,58 @@
+{
+  "__metadata__": {
+    "formatName": "JSON",
+    "formatVersion": "1.0.0"
+  },
+  "applications": [
+    {
+      "appPrototype": "Genesys_Administrator_Server_8",
+      "appServers": [
+        {
+          "appParams": "appParams",
+          "appServer": "confserv",
+          "charField1": "1",
+          "charField2": "2",
+          "charField3": "3",
+          "charField4": "4",
+          "connProtocol": "connProtocol",
+          "description": "description",
+          "id": "default",
+          "longField1": 1,
+          "longField2": 2,
+          "longField3": 3,
+          "longField4": 4,
+          "mode": "tmnone",
+          "proxyParams": "proxyParams",
+          "timeoutLocal": 2,
+          "timeoutRemote": 2,
+          "transportParams": "transportParams"
+        }
+      ],
+      "autoRestart": false,
+      "commandLine": "yes",
+      "componentType": "appcomponentunknown",
+      "name": "cfgObjectTest",
+      "serverInfo": {
+        "attempts": 2,
+        "host": "configserver",
+        "port": "8888",
+        "timeout": 2
+      },
+      "state": "enabled",
+      "tenants": [
+        "Environment"
+      ],
+      "type": "genesysadministratorserver",
+      "userProperties": {
+        "section": {
+          "number": 456,
+          "string": "def"
+        }
+      },
+      "isPrimary": true,
+      "version": "1.2.3",
+      "workDirectory": "/tmp"
+    }
+  ]
+}
+

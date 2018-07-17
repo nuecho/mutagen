@@ -25,7 +25,7 @@ val typeToColor: Map<ImportOperationType, String> = mapOf(
 class ImportPlan(val configuration: Configuration, val service: ConfService) {
 
     private val operations = toOperations(service, configuration)
-    private val missingProperties = checkMissingProperties(operations)
+    private val missingProperties = checkMissingProperties(service, operations)
     private val missingDependencies = checkMissingDependencies(service, configuration)
     private var orderedOperations = applyOperationOrder(configuration, operations)
 
@@ -44,12 +44,15 @@ class ImportPlan(val configuration: Configuration, val service: ConfService) {
         internal fun toOperations(service: ConfService, configuration: Configuration): List<ImportPlanOperation> =
             configuration.asMapByReference.values.map { ImportPlanOperation(service, it) }
 
-        private fun checkMissingProperties(operations: List<ImportPlanOperation>): List<MissingProperties> {
+        private fun checkMissingProperties(
+            service: ConfService,
+            operations: List<ImportPlanOperation>
+        ): List<MissingProperties> {
 
             val misses = operations
                 .filter { it.type == CREATE }
                 .mapNotNull {
-                    val misses = it.configurationObject.checkMandatoryProperties()
+                    val misses = it.configurationObject.checkMandatoryProperties(service)
                     if (misses.isEmpty()) null else MissingProperties(it.configurationObject, misses)
                 }
 

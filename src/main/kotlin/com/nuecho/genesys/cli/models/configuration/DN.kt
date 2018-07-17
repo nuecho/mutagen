@@ -27,6 +27,7 @@ import com.nuecho.genesys.cli.models.configuration.reference.ObjectiveTableRefer
 import com.nuecho.genesys.cli.models.configuration.reference.SwitchReference
 import com.nuecho.genesys.cli.models.configuration.reference.TenantReference
 import com.nuecho.genesys.cli.models.configuration.reference.referenceSetBuilder
+import com.nuecho.genesys.cli.services.ConfService
 import com.nuecho.genesys.cli.services.getObjectDbid
 import com.nuecho.genesys.cli.toShortName
 
@@ -145,7 +146,7 @@ data class DN(
             setFolder(folder, it)
         }
 
-    override fun checkMandatoryProperties(): Set<String> =
+    override fun checkMandatoryProperties(service: ConfService): Set<String> =
         if (routeType == null) setOf(ROUTE_TYPE) else emptySet()
 
     override fun applyDefaultValues() {

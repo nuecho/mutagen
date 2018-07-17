@@ -160,7 +160,6 @@ class PersonTest : ConfigurationObjectTest(
     }
 }
 
-@Suppress("LongMethod")
 private fun mockCfgPerson(): CfgPerson {
     val service = mockConfService()
     mockRetrieveFolderByDbid(service)
@@ -200,7 +199,6 @@ private fun mockCfgAppRank(appType: CfgAppType, appRank: CfgRank): CfgAppRank {
     return cfgAppRank
 }
 
-@Suppress("LongMethod")
 private fun mockCfgAgentInfo(): CfgAgentInfo {
     val capacityRule = mockCfgScript("capacityRule")
     val contract = mockCfgObjectiveTable("contract")

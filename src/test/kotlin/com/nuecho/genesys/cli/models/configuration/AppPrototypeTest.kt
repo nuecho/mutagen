@@ -61,9 +61,9 @@ class AppPrototypeTest : ConfigurationObjectTest(
 
             objectMockk(ConfigurationObjectRepository).use {
                 mockConfigurationObjectRepository()
-                val cfgAppProrotype = appPrototype.createCfgObject(service)
+                val cfgAppPrototype = appPrototype.createCfgObject(service)
 
-                with(cfgAppProrotype) {
+                with(cfgAppPrototype) {
                     assertThat(name, equalTo(appPrototype.name))
                     assertThat(type, equalTo(toCfgAppType(appPrototype.type)))
                     assertThat(version, equalTo(appPrototype.version))

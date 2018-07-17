@@ -1,1 +1,1 @@
-cfgObjectTests("appPrototypes", {initialNumberOfObjects: 6});
+cfgObjectTests("appPrototypes");

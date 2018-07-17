@@ -7,6 +7,7 @@ import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.nuecho.genesys.cli.core.defaultJsonObjectMapper
 import com.nuecho.genesys.cli.models.configuration.reference.ConfigurationObjectReference
 import com.nuecho.genesys.cli.models.configuration.reference.FolderReference
+import com.nuecho.genesys.cli.services.ConfService
 
 @SuppressWarnings("ComplexInterface")
 interface ConfigurationObject : Comparable<ConfigurationObject> {
@@ -20,7 +21,7 @@ interface ConfigurationObject : Comparable<ConfigurationObject> {
 
     fun updateCfgObject(service: IConfService, cfgObject: ICfgObject): CfgObject
 
-    fun checkMandatoryProperties(): Set<String> = emptySet()
+    fun checkMandatoryProperties(service: ConfService): Set<String> = emptySet()
 
     fun applyDefaultValues() {}
 

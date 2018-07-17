@@ -2,6 +2,8 @@ package com.nuecho.genesys.cli.models.configuration
 
 import com.nuecho.genesys.cli.TestResources.loadJsonConfiguration
 import com.nuecho.genesys.cli.models.configuration.ConfigurationAsserts.checkSerialization
+import com.nuecho.genesys.cli.services.ServiceMocks
+import io.mockk.every
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.equalTo
 import org.junit.jupiter.api.Disabled
@@ -22,7 +24,10 @@ abstract class ConfigurationObjectTest(
 
     @Test
     fun `empty object missing mandatory properties should throw MandatoryPropertiesNotSetException`() {
-        assertThat(emptyConfigurationObject.checkMandatoryProperties(), equalTo(mandatoryProperties))
+        val service = ServiceMocks.mockConfService()
+        every { service.retrieveObject(any(), any()) } returns null
+
+        assertThat(emptyConfigurationObject.checkMandatoryProperties(service), equalTo(mandatoryProperties))
     }
 
     @Test
