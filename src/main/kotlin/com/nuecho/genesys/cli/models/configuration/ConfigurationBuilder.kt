@@ -4,6 +4,7 @@ import com.genesyslab.platform.applicationblocks.com.ICfgObject
 import com.genesyslab.platform.applicationblocks.com.objects.CfgAccessGroup
 import com.genesyslab.platform.applicationblocks.com.objects.CfgActionCode
 import com.genesyslab.platform.applicationblocks.com.objects.CfgAgentGroup
+import com.genesyslab.platform.applicationblocks.com.objects.CfgAlarmCondition
 import com.genesyslab.platform.applicationblocks.com.objects.CfgAppPrototype
 import com.genesyslab.platform.applicationblocks.com.objects.CfgApplication
 import com.genesyslab.platform.applicationblocks.com.objects.CfgDN
@@ -30,6 +31,7 @@ class ConfigurationBuilder {
     private val accessGroups = ArrayList<AccessGroup>()
     private val actionCodes = ArrayList<ActionCode>()
     private val agentGroups = ArrayList<AgentGroup>()
+    private val alarmConditions = ArrayList<AlarmCondition>()
     private val applications = ArrayList<Application>()
     private val appPrototypes = ArrayList<AppPrototype>()
     private val dnGroups = ArrayList<DNGroup>()
@@ -61,6 +63,7 @@ class ConfigurationBuilder {
                 is CfgAccessGroup -> accessGroups += it as AccessGroup
                 is CfgActionCode -> actionCodes += it as ActionCode
                 is CfgAgentGroup -> agentGroups += it as AgentGroup
+                is CfgAlarmCondition -> alarmConditions += it as AlarmCondition
                 is CfgApplication -> applications += it as Application
                 is CfgAppPrototype -> appPrototypes += it as AppPrototype
                 is CfgDN -> dns += it as DN
@@ -92,6 +95,7 @@ class ConfigurationBuilder {
         accessGroups.sorted(),
         actionCodes.sorted(),
         agentGroups.sorted(),
+        alarmConditions.sorted(),
         applications.sorted(),
         appPrototypes.sorted(),
         dnGroups.sorted(),
@@ -122,8 +126,9 @@ class ConfigurationBuilder {
                 is CfgAccessGroup -> AccessGroup(cfgObject)
                 is CfgActionCode -> ActionCode(cfgObject)
                 is CfgAgentGroup -> AgentGroup(cfgObject)
-                is CfgAppPrototype -> AppPrototype(cfgObject)
+                is CfgAlarmCondition -> AlarmCondition(cfgObject)
                 is CfgApplication -> Application(cfgObject)
+                is CfgAppPrototype -> AppPrototype(cfgObject)
                 is CfgDN -> DN(cfgObject)
                 is CfgDNGroup -> DNGroup(cfgObject)
                 is CfgEnumerator -> Enumerator(cfgObject)

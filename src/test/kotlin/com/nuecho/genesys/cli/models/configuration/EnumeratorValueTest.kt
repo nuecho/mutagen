@@ -41,7 +41,7 @@ private val enumeratorValue = EnumeratorValue(
     name = NAME,
     description = DESCRIPTION,
     displayName = DISPLAY_NAME,
-    default = false,
+    isDefault = false,
     state = CfgObjectState.CFGEnabled.toShortName(),
     userProperties = ConfigurationTestData.defaultProperties(),
     folder = DEFAULT_FOLDER_REFERENCE
@@ -84,7 +84,7 @@ class EnumeratorValueTest : ConfigurationObjectTest(
                     assertThat(displayName, equalTo(enumeratorValue.displayName))
                     assertThat(description, equalTo(enumeratorValue.description))
                     assertThat(enumeratorDBID, equalTo(DEFAULT_OBJECT_DBID))
-                    assertThat(isDefault, equalTo(toCfgFlag(enumeratorValue.default)))
+                    assertThat(isDefault, equalTo(toCfgFlag(enumeratorValue.isDefault)))
                     assertThat(userProperties.asCategorizedProperties(), equalTo(enumeratorValue.userProperties))
                     assertThat(state, equalTo(toCfgObjectState(enumeratorValue.state)))
                 }

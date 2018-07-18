@@ -1,6 +1,7 @@
 package com.nuecho.genesys.cli.models.configuration
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.genesyslab.platform.applicationblocks.com.ICfgObject
@@ -36,7 +37,9 @@ data class GVPCustomer(
     val channel: String? = null,
     val displayName: String? = null,
     val notes: String? = null,
+    @get:JsonProperty("isProvisioned")
     val isProvisioned: Boolean? = null,
+    @get:JsonProperty("isAdminCustomer")
     val isAdminCustomer: Boolean? = null,
     val timeZone: TimeZoneReference? = null,
 

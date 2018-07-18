@@ -5,11 +5,13 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgActionCode
 import com.genesyslab.platform.applicationblocks.com.objects.CfgAgentGroup
 import com.genesyslab.platform.applicationblocks.com.objects.CfgAgentLogin
 import com.genesyslab.platform.applicationblocks.com.objects.CfgAgentLoginInfo
+import com.genesyslab.platform.applicationblocks.com.objects.CfgAlarmCondition
 import com.genesyslab.platform.applicationblocks.com.objects.CfgAppPrototype
 import com.genesyslab.platform.applicationblocks.com.objects.CfgApplication
 import com.genesyslab.platform.applicationblocks.com.objects.CfgDN
 import com.genesyslab.platform.applicationblocks.com.objects.CfgDNGroup
 import com.genesyslab.platform.applicationblocks.com.objects.CfgDNInfo
+import com.genesyslab.platform.applicationblocks.com.objects.CfgDetectEvent
 import com.genesyslab.platform.applicationblocks.com.objects.CfgEnumerator
 import com.genesyslab.platform.applicationblocks.com.objects.CfgEnumeratorValue
 import com.genesyslab.platform.applicationblocks.com.objects.CfgFolder
@@ -26,6 +28,7 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgPerson
 import com.genesyslab.platform.applicationblocks.com.objects.CfgPhysicalSwitch
 import com.genesyslab.platform.applicationblocks.com.objects.CfgPlace
 import com.genesyslab.platform.applicationblocks.com.objects.CfgPlaceGroup
+import com.genesyslab.platform.applicationblocks.com.objects.CfgRemovalEvent
 import com.genesyslab.platform.applicationblocks.com.objects.CfgRole
 import com.genesyslab.platform.applicationblocks.com.objects.CfgRoleMember
 import com.genesyslab.platform.applicationblocks.com.objects.CfgScript
@@ -39,12 +42,14 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgTimeZone
 import com.genesyslab.platform.applicationblocks.com.objects.CfgTransaction
 import com.genesyslab.platform.commons.collections.KeyValueCollection
 import com.genesyslab.platform.commons.collections.KeyValuePair
+import com.genesyslab.platform.configuration.protocol.types.CfgAppType
 import com.genesyslab.platform.configuration.protocol.types.CfgDNType
 import com.genesyslab.platform.configuration.protocol.types.CfgIVRProfileType
 import com.genesyslab.platform.configuration.protocol.types.CfgOSType
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectType
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectType.CFGFolder
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectType.CFGTenant
+import com.genesyslab.platform.configuration.protocol.types.CfgSelectionMode
 import com.nuecho.genesys.cli.models.configuration.ConfigurationTestData.CATEGORIZED_PROPERTIES_NUMBER
 import com.nuecho.genesys.cli.models.configuration.ConfigurationTestData.CATEGORIZED_PROPERTIES_STRING
 import com.nuecho.genesys.cli.models.configuration.reference.FolderReference
@@ -141,6 +146,29 @@ object ConfigurationObjectMocks {
             every { it.objectDbid } returns DEFAULT_OBJECT_DBID
         }
     }
+
+    fun mockCfgAlarmCondition(name: String?): CfgAlarmCondition =
+        mockk<CfgAlarmCondition>().also {
+            every { it.name } returns name
+        }
+
+    fun mockCfgDetectEvent(
+        application: CfgApplication?,
+        appType: CfgAppType?,
+        logEventID: Int?,
+        selectionMode: CfgSelectionMode?
+    ) = mockk<CfgDetectEvent>().also {
+        every { it.app } returns application
+        every { it.appType } returns appType
+        every { it.logEventID } returns logEventID
+        every { it.selectionMode } returns selectionMode
+    }
+
+    fun mockCfgRemovalEvent(logEventID: Int?, selectionMode: CfgSelectionMode?) =
+        mockk<CfgRemovalEvent>().also {
+            every { it.logEventID } returns logEventID
+            every { it.selectionMode } returns selectionMode
+        }
 
     fun mockCfgApplication(name: String) =
         mockk<CfgApplication>().also {

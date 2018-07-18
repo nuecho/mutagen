@@ -1,5 +1,6 @@
 package com.nuecho.genesys.cli.models.configuration.reference
 
+import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.genesyslab.platform.applicationblocks.com.CfgFilterBasedQuery
@@ -7,6 +8,7 @@ import com.genesyslab.platform.applicationblocks.com.CfgObject
 import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgAccessGroup
 import com.genesyslab.platform.applicationblocks.com.objects.CfgAgentGroup
+import com.genesyslab.platform.applicationblocks.com.objects.CfgAlarmCondition
 import com.genesyslab.platform.applicationblocks.com.objects.CfgAppPrototype
 import com.genesyslab.platform.applicationblocks.com.objects.CfgApplication
 import com.genesyslab.platform.applicationblocks.com.objects.CfgCampaign
@@ -32,6 +34,7 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgTenant
 import com.genesyslab.platform.applicationblocks.com.objects.CfgTimeZone
 import com.genesyslab.platform.applicationblocks.com.queries.CfgAccessGroupQuery
 import com.genesyslab.platform.applicationblocks.com.queries.CfgAgentGroupQuery
+import com.genesyslab.platform.applicationblocks.com.queries.CfgAlarmConditionQuery
 import com.genesyslab.platform.applicationblocks.com.queries.CfgAppPrototypeQuery
 import com.genesyslab.platform.applicationblocks.com.queries.CfgApplicationQuery
 import com.genesyslab.platform.applicationblocks.com.queries.CfgCampaignQuery
@@ -73,6 +76,13 @@ class AgentGroupReference(name: String, tenant: TenantReference) :
     override fun toQuery(service: IConfService) = CfgAgentGroupQuery(primaryKey).apply {
         tenantDbid = getTenantDbid(tenant, service)
     }
+}
+
+@JsonSerialize(using = SimpleObjectReferenceSerializer::class)
+@JsonDeserialize(using = SimpleObjectReferenceDeserializer::class)
+class AlarmConditionReference(name: String) :
+    SimpleObjectReference<CfgAlarmCondition>(CfgAlarmCondition::class.java, name) {
+    override fun toQuery(service: IConfService) = CfgAlarmConditionQuery(primaryKey)
 }
 
 @JsonSerialize(using = SimpleObjectReferenceSerializer::class)
@@ -220,6 +230,18 @@ class RoleReference(name: String) :
 @JsonDeserialize(using = SimpleObjectReferenceWithTenantDeserializer::class)
 class ScriptReference(name: String, tenant: TenantReference?) :
     SimpleObjectReferenceWithTenant<CfgScript>(CfgScript::class.java, name, tenant) {
+    override fun toQuery(service: IConfService) = CfgScriptQuery(primaryKey).apply {
+        tenantDbid = getTenantDbid(tenant, service)
+    }
+}
+
+class AlarmConditionScriptReference(name: String, val tenant: TenantReference) :
+    SimpleObjectReference<CfgScript>(CfgScript::class.java, name) {
+
+    override val primaryKey
+        @JsonProperty("name")
+        get() = super.primaryKey
+
     override fun toQuery(service: IConfService) = CfgScriptQuery(primaryKey).apply {
         tenantDbid = getTenantDbid(tenant, service)
     }

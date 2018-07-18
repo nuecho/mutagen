@@ -10,7 +10,7 @@ import com.fasterxml.jackson.databind.SerializerProvider
 import com.fasterxml.jackson.databind.deser.ContextualDeserializer
 import com.genesyslab.platform.applicationblocks.com.ICfgObject
 
-abstract class SimpleObjectReference<T : ICfgObject>(cfgObjectClass: Class<T>, val primaryKey: String) :
+abstract class SimpleObjectReference<T : ICfgObject>(cfgObjectClass: Class<T>, open val primaryKey: String) :
     ConfigurationObjectReference<T>(cfgObjectClass) {
     override fun compareTo(other: ConfigurationObjectReference<*>): Int {
         if (other !is SimpleObjectReference) return super.compareTo(other)

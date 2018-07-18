@@ -1,0 +1,65 @@
+{
+  "__metadata__": {
+    "formatName": "JSON",
+    "formatVersion": "1.0.0"
+  },
+  "alarmConditions": [
+    {
+      "name": "cfgObjectTest",
+      "alarmDetectEvent": {
+        "logEventID": 2,
+        "selectionMode": "smbyany"
+      },
+      "alarmDetectScript": {
+        "name": "detectionScript",
+        "tenant": "Environment"
+      },
+      "alarmRemovalEvent": {
+        "logEventID": 3,
+        "selectionMode": "smbyany"
+      },
+      "category": "acmajor",
+      "clearanceScripts": [],
+      "clearanceTimeout": 10,
+      "description": "description",
+      "isMasked": false,
+      "reactionScripts": [
+        {
+          "name": "reactionScript1",
+          "tenant": "Environment"
+        },
+        {
+          "name": "reactionScript2",
+          "tenant": "Environment"
+        }
+      ],
+      "state": "enabled",
+      "userProperties": {
+        "section": {
+          "number": 456,
+          "string": "def"
+        }
+      }
+    }
+  ],
+  "scripts": [
+    {
+      "name": "detectionScript",
+      "state": "enabled",
+      "tenant": "Environment",
+      "type": "alarmDetection"
+    },
+    {
+      "name": "reactionScript1",
+      "state": "enabled",
+      "tenant": "Environment",
+      "type": "alarmReaction"
+    },
+    {
+      "name": "reactionScript2",
+      "state": "enabled",
+      "tenant": "Environment",
+      "type": "alarmReaction"
+    }
+  ]
+}
