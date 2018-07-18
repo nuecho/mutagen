@@ -38,9 +38,9 @@ import com.nuecho.genesys.cli.commands.agent.Agent
 import com.nuecho.genesys.cli.preferences.environment.Environment
 import com.nuecho.genesys.cli.services.ConfService
 import com.nuecho.genesys.cli.services.GenesysServices
+import com.nuecho.genesys.cli.services.Services.withService
 import com.nuecho.genesys.cli.services.StatService
 import com.nuecho.genesys.cli.services.StatServiceException
-import com.nuecho.genesys.cli.services.withService
 import com.nuecho.genesys.cli.setBits
 import com.nuecho.genesys.cli.toConsoleString
 import picocli.CommandLine

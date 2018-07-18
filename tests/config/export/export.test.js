@@ -22,6 +22,19 @@ test(`[mutagen -p config export] should allow passing password on standard input
   expect(code).toBe(0);
 });
 
+test(`[mutagen --metrics=$metricsFile config export] should export the metrics in a file`, () => {
+  const fs = require("fs")
+  const metricsFile = "/tmp/mutagen/test/metrics.json"
+  const { code, output } = mutagen(`--metrics=${metricsFile} config export`);
+
+  expect(code).toBe(0);
+  expect(fs.existsSync(metricsFile)).toBe(true);
+
+  const metrics = JSON.parse(fs.readFileSync(metricsFile, 'utf-8'));
+  expect(metrics.version).toEqual('4.0.0');
+  expect(metrics.timers).not.toEqual({});
+});
+
 test(`[mutagen config export] should export the config in raw format`, () => {
   const { code, output } = mutagen(`config export`);
   const exportedConfig = JSON.parse(output.stdout);

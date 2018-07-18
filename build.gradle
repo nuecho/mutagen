@@ -161,6 +161,8 @@ dependencies {
     compile 'org.fusesource.jansi:jansi:1.17.+'
     compile 'org.json:json:20180130'
     compile 'org.jgrapht:jgrapht-core:1.2.+'
+    compile 'io.dropwizard.metrics:metrics-core:4.0.+'
+    compile 'io.dropwizard.metrics:metrics-json:4.0.+'
 
     testImplementation('org.junit.jupiter:junit-jupiter-api:5.1.0')
     testRuntimeOnly('org.junit.jupiter:junit-jupiter-engine:5.1.0')

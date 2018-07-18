@@ -5,6 +5,7 @@ Object {
   "stderr": "",
   "stdout": "Usage: mutagen [OPTIONS] <command>
 
+      --metrics=<metricsFile> Performance metrics output file.
   -?, -h, --help              Show this help message.
   -d, --debug                 Set log level to debug.
   -e, --env=<environmentName> Environment name used for the execution.
@@ -44,6 +45,7 @@ _   .-')                .-') _      ('-.                   ('-.       .-') _
 
 Usage: mutagen [OPTIONS] <command>
 
+      --metrics=<metricsFile> Performance metrics output file.
   -?, -h, --help              Show this help message.
   -d, --debug                 Set log level to debug.
   -e, --env=<environmentName> Environment name used for the execution.
