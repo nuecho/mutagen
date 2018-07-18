@@ -21,6 +21,7 @@ import com.nuecho.genesys.cli.models.configuration.reference.EnumeratorValueRefe
 import com.nuecho.genesys.cli.models.configuration.reference.FolderReference
 import com.nuecho.genesys.cli.models.configuration.reference.TenantReference
 import com.nuecho.genesys.cli.models.configuration.reference.referenceSetBuilder
+import com.nuecho.genesys.cli.services.ConfService
 import com.nuecho.genesys.cli.services.getObjectDbid
 import com.nuecho.genesys.cli.toShortName
 
@@ -82,7 +83,7 @@ data class EnumeratorValue(
             setFolder(folder, cfgEnumeratorValue)
         }
 
-    override fun checkMandatoryProperties(): Set<String> {
+    override fun checkMandatoryProperties(service: ConfService): Set<String> {
         val missingMandatoryProperties = mutableSetOf<String>()
 
         if (displayName == null)

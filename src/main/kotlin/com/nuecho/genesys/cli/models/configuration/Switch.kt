@@ -22,6 +22,7 @@ import com.nuecho.genesys.cli.models.configuration.reference.PhysicalSwitchRefer
 import com.nuecho.genesys.cli.models.configuration.reference.SwitchReference
 import com.nuecho.genesys.cli.models.configuration.reference.TenantReference
 import com.nuecho.genesys.cli.models.configuration.reference.referenceSetBuilder
+import com.nuecho.genesys.cli.services.ConfService
 import com.nuecho.genesys.cli.services.getObjectDbid
 import com.nuecho.genesys.cli.toShortName
 
@@ -83,7 +84,7 @@ data class Switch(
             setFolder(folder, switch)
         }
 
-    override fun checkMandatoryProperties(): Set<String> =
+    override fun checkMandatoryProperties(service: ConfService): Set<String> =
         if (physicalSwitch == null) setOf(PHYSICAL_SWITCH) else emptySet()
 
     override fun afterPropertiesSet() {

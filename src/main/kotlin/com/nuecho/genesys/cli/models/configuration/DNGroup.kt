@@ -19,6 +19,7 @@ import com.nuecho.genesys.cli.models.configuration.reference.DNReference
 import com.nuecho.genesys.cli.models.configuration.reference.FolderReference
 import com.nuecho.genesys.cli.models.configuration.reference.TenantReference
 import com.nuecho.genesys.cli.models.configuration.reference.referenceSetBuilder
+import com.nuecho.genesys.cli.services.ConfService
 import com.nuecho.genesys.cli.services.retrieveObject
 import com.nuecho.genesys.cli.toShortName
 
@@ -74,7 +75,7 @@ data class DNGroup(
             setFolder(folder, cfgDNGroup)
         }
 
-    override fun checkMandatoryProperties(): Set<String> =
+    override fun checkMandatoryProperties(service: ConfService): Set<String> =
         if (type == null) setOf(TYPE) else emptySet()
 
     override fun afterPropertiesSet() {

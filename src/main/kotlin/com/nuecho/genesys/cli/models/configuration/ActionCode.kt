@@ -19,6 +19,7 @@ import com.nuecho.genesys.cli.models.configuration.reference.ConfigurationObject
 import com.nuecho.genesys.cli.models.configuration.reference.FolderReference
 import com.nuecho.genesys.cli.models.configuration.reference.TenantReference
 import com.nuecho.genesys.cli.models.configuration.reference.referenceSetBuilder
+import com.nuecho.genesys.cli.services.ConfService
 import com.nuecho.genesys.cli.services.getObjectDbid
 import com.nuecho.genesys.cli.toShortName
 
@@ -63,7 +64,7 @@ data class ActionCode(
             setFolder(folder, it)
         }
 
-    override fun checkMandatoryProperties(): Set<String> =
+    override fun checkMandatoryProperties(service: ConfService): Set<String> =
         if (code == null) setOf(CODE) else emptySet()
 
     override fun getReferences(): Set<ConfigurationObjectReference<*>> =

@@ -112,7 +112,6 @@ class DNTest : ConfigurationObjectTest(
     }
 }
 
-@Suppress("LongMethod")
 private fun mockCfgDN(): CfgDN {
     val service = mockConfService()
     mockRetrieveFolderByDbid(service)

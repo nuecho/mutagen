@@ -1,0 +1,1 @@
+cfgObjectTests("applications");

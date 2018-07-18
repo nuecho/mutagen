@@ -143,7 +143,6 @@ object Status {
         return agentStatus ?: throw StatServiceException("Error retrieving AgentStatus for agent ($employeeId).")
     }
 
-    @Suppress("LongMethod")
     private fun agentStatusRequest(agent: CfgPerson, referenceId: Int): RequestOpenStatisticEx {
         val stat = StatisticObject.create()
         stat.objectId = agent.employeeID

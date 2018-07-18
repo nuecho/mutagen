@@ -118,7 +118,6 @@ class AgentGroupTest : ConfigurationObjectTest(
     }
 }
 
-@Suppress("LongMethod")
 private fun mockCfgAgentGroup(): CfgAgentGroup {
     val service = mockConfService()
     mockRetrieveFolderByDbid(service)

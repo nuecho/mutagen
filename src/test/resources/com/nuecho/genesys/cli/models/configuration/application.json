@@ -1,0 +1,84 @@
+{
+  "appPrototype": "foo",
+  "appServers": [
+    {
+      "appParams": "appParams",
+      "appServer": "appServer",
+      "charField1": "1",
+      "charField2": "2",
+      "charField3": "3",
+      "charField4": "4",
+      "connProtocol": "connProtocol",
+      "description": "description",
+      "id": "default",
+      "longField1": 1,
+      "longField2": 2,
+      "longField3": 3,
+      "longField4": 4,
+      "mode": "tmnone",
+      "proxyParams": "proxyParams",
+      "timeoutLocal": 2,
+      "timeoutRemote": 2,
+      "transportParams": "transportParams"
+    }
+  ],
+  "autoRestart": true,
+  "commandLine": "yes",
+  "componentType": "appcomponentunknown",
+  "folder": {
+    "owner": {
+      "name": "tenant",
+      "type": "tenant"
+    },
+    "path": [
+      "folder"
+    ],
+    "type": "folder"
+  },
+  "name": "foo",
+  "options": {
+    "section": {
+      "number": 456,
+      "string": "def"
+    }
+  },
+  "portInfos": [
+    {
+      "appParams": "appParams",
+      "charField1": "1",
+      "charField2": "2",
+      "charField3": "3",
+      "charField4": "4",
+      "connProtocol": "connProtocol",
+      "description": "description",
+      "id": "123",
+      "longField1": 1,
+      "longField2": 2,
+      "longField3": 3,
+      "longField4": 4,
+      "port": "8888",
+      "transportParams": "transportParams"
+    }
+  ],
+  "redundancyType": "htcoldstanby",
+  "serverInfo": {
+    "attempts": 2,
+    "host": "host",
+    "port": "8888",
+    "timeout": 2
+  },
+  "state": "enabled",
+  "tenants": [
+    "tenant"
+  ],
+  "type": "agentdesktop",
+  "userProperties": {
+    "section": {
+      "number": 456,
+      "string": "def"
+    }
+  },
+  "isPrimary": true,
+  "version": "1.2.3",
+  "workDirectory": "/tmp"
+}

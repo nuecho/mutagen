@@ -22,6 +22,7 @@ import com.nuecho.genesys.cli.models.configuration.reference.ConfigurationObject
 import com.nuecho.genesys.cli.models.configuration.reference.FolderReference
 import com.nuecho.genesys.cli.models.configuration.reference.HostReference
 import com.nuecho.genesys.cli.models.configuration.reference.referenceSetBuilder
+import com.nuecho.genesys.cli.services.ConfService
 import com.nuecho.genesys.cli.services.getObjectDbid
 import com.nuecho.genesys.cli.toShortName
 
@@ -86,7 +87,7 @@ data class Host(
             setFolder(folder, cfgHost)
         }
 
-    override fun checkMandatoryProperties(): Set<String> {
+    override fun checkMandatoryProperties(service: ConfService): Set<String> {
         val missingMandatoryProperties = mutableSetOf<String>()
 
         if (lcaPort == null)
