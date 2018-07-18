@@ -159,7 +159,7 @@ data class MissingDependencies(
     // XXX formatting should be dealt with externally
     override fun toString(): String =
         dependencies.map {
-            "Cannot find ${it.getCfgObjectType().toShortName()} '$it' " +
+            "Cannot find ${it.getCfgObjectType().toShortName()} [$it] " +
                     "(referenced by ${configurationObject.reference.getCfgObjectType().toShortName()} " +
                     "'${configurationObject.reference}')"
         }.joinToString()
