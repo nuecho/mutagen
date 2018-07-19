@@ -11,6 +11,7 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgAgentGroup
 import com.genesyslab.platform.applicationblocks.com.objects.CfgAlarmCondition
 import com.genesyslab.platform.applicationblocks.com.objects.CfgAppPrototype
 import com.genesyslab.platform.applicationblocks.com.objects.CfgApplication
+import com.genesyslab.platform.applicationblocks.com.objects.CfgCallingList
 import com.genesyslab.platform.applicationblocks.com.objects.CfgCampaign
 import com.genesyslab.platform.applicationblocks.com.objects.CfgDNGroup
 import com.genesyslab.platform.applicationblocks.com.objects.CfgEnumerator
@@ -106,6 +107,17 @@ class CampaignReference(name: String, tenant: TenantReference?) :
     override fun toQuery(service: IConfService) = CfgCampaignQuery(primaryKey).apply {
         tenantDbid = getTenantDbid(tenant, service)
     }
+}
+
+@JsonSerialize(using = SimpleObjectReferenceSerializer::class)
+@JsonDeserialize(using = SimpleObjectReferenceDeserializer::class)
+class CallingListReference(name: String) :
+    SimpleObjectReference<CfgCallingList>(CfgCallingList::class.java, name) {
+
+    override fun toQuery(service: IConfService) =
+        CfgFilterBasedQuery<CfgCallingList>(CfgObjectType.CFGCallingList).apply {
+            this.setProperty("name", primaryKey)
+        }
 }
 
 @JsonSerialize(using = SimpleObjectReferenceSerializer::class)

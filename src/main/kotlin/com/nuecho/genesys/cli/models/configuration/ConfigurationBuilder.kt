@@ -7,6 +7,7 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgAgentGroup
 import com.genesyslab.platform.applicationblocks.com.objects.CfgAlarmCondition
 import com.genesyslab.platform.applicationblocks.com.objects.CfgAppPrototype
 import com.genesyslab.platform.applicationblocks.com.objects.CfgApplication
+import com.genesyslab.platform.applicationblocks.com.objects.CfgCampaign
 import com.genesyslab.platform.applicationblocks.com.objects.CfgDN
 import com.genesyslab.platform.applicationblocks.com.objects.CfgDNGroup
 import com.genesyslab.platform.applicationblocks.com.objects.CfgEnumerator
@@ -34,6 +35,7 @@ class ConfigurationBuilder {
     private val alarmConditions = ArrayList<AlarmCondition>()
     private val applications = ArrayList<Application>()
     private val appPrototypes = ArrayList<AppPrototype>()
+    private val campaigns = ArrayList<Campaign>()
     private val dnGroups = ArrayList<DNGroup>()
     private val dns = ArrayList<DN>()
     private val enumerators = ArrayList<Enumerator>()
@@ -66,6 +68,7 @@ class ConfigurationBuilder {
                 is CfgAlarmCondition -> alarmConditions += it as AlarmCondition
                 is CfgApplication -> applications += it as Application
                 is CfgAppPrototype -> appPrototypes += it as AppPrototype
+                is CfgCampaign -> campaigns += it as Campaign
                 is CfgDN -> dns += it as DN
                 is CfgDNGroup -> dnGroups += it as DNGroup
                 is CfgEnumerator -> enumerators += it as Enumerator
@@ -98,6 +101,7 @@ class ConfigurationBuilder {
         alarmConditions.sorted(),
         applications.sorted(),
         appPrototypes.sorted(),
+        campaigns.sorted(),
         dnGroups.sorted(),
         dns.sorted(),
         enumerators.sorted(),
@@ -129,6 +133,7 @@ class ConfigurationBuilder {
                 is CfgAlarmCondition -> AlarmCondition(cfgObject)
                 is CfgApplication -> Application(cfgObject)
                 is CfgAppPrototype -> AppPrototype(cfgObject)
+                is CfgCampaign -> Campaign(cfgObject)
                 is CfgDN -> DN(cfgObject)
                 is CfgDNGroup -> DNGroup(cfgObject)
                 is CfgEnumerator -> Enumerator(cfgObject)

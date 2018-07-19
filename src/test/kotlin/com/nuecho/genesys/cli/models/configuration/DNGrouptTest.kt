@@ -124,7 +124,7 @@ class DNGrouptTest : ConfigurationObjectTest(
                     assertThat(dNs.toList()[0].trunks, `is`(nullValue()))
                     assertThat(dNs.toList()[0].dndbid, equalTo(DEFAULT_OBJECT_DBID))
                     assertThat(dNs.toList()[1].trunks, equalTo(2))
-                    assertThat(dNs.toList()[1].dndbid, equalTo(102))
+                    assertThat(dNs.toList()[1].dndbid, equalTo(OTHER_DBID))
 
                     assertThat(groupInfo.name, equalTo(dnGroup.group.name))
                     assertThat(groupInfo.managerDBIDs, `is`(nullValue()))
