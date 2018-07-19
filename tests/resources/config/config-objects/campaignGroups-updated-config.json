@@ -1,0 +1,17 @@
+{
+  "__metadata__": {
+    "formatName": "JSON",
+    "formatVersion": "1.0.0"
+  },
+  "campaignGroups": [
+    {
+      "campaign": {
+        "name": "campaignGroupCampaign",
+        "tenant": "Environment"
+      },
+      "name": "cfgObjectTest",
+      "tenant": "Environment",
+      "description": "a new description"
+    }
+  ]
+}

@@ -73,15 +73,6 @@ class AccessGroupReference(name: String, tenant: TenantReference?) :
 }
 
 @JsonSerialize(using = SimpleObjectReferenceSerializer::class)
-@JsonDeserialize(using = SimpleObjectReferenceWithTenantDeserializer::class)
-class AgentGroupReference(name: String, tenant: TenantReference) :
-    SimpleObjectReferenceWithTenant<CfgAgentGroup>(CfgAgentGroup::class.java, name, tenant) {
-    override fun toQuery(service: IConfService) = CfgAgentGroupQuery(primaryKey).apply {
-        tenantDbid = getTenantDbid(tenant, service)
-    }
-}
-
-@JsonSerialize(using = SimpleObjectReferenceSerializer::class)
 @JsonDeserialize(using = SimpleObjectReferenceDeserializer::class)
 class AlarmConditionReference(name: String) :
     SimpleObjectReference<CfgAlarmCondition>(CfgAlarmCondition::class.java, name) {
@@ -102,10 +93,46 @@ class AppPrototypeReference(name: String) :
     override fun toQuery(service: IConfService) = CfgAppPrototypeQuery(primaryKey)
 }
 
+class AgentGroupReference(name: String, tenant: TenantReference?) :
+    GroupReference, SimpleObjectReferenceWithTenant<CfgAgentGroup>(CfgAgentGroup::class.java, name, tenant) {
+
+    override val primaryKey
+        @JsonProperty("name")
+        get() = super.primaryKey
+
+    override fun toQuery(service: IConfService) = CfgAgentGroupQuery(primaryKey).apply {
+        tenantDbid = getTenantDbid(tenant, service)
+    }
+}
+
+class PlaceGroupReference(name: String, tenant: TenantReference?) :
+    GroupReference, SimpleObjectReferenceWithTenant<CfgPlaceGroup>(CfgPlaceGroup::class.java, name, tenant) {
+
+    override val primaryKey
+        @JsonProperty("name")
+        get() = super.primaryKey
+
+    override fun toQuery(service: IConfService) = CfgPlaceGroupQuery(primaryKey).apply {
+        tenantDbid = getTenantDbid(tenant, service)
+    }
+}
+
 @JsonSerialize(using = SimpleObjectReferenceSerializer::class)
 @JsonDeserialize(using = SimpleObjectReferenceWithTenantDeserializer::class)
 class CampaignReference(name: String, tenant: TenantReference?) :
     SimpleObjectReferenceWithTenant<CfgCampaign>(CfgCampaign::class.java, name, tenant) {
+    override fun toQuery(service: IConfService) = CfgCampaignQuery(primaryKey).apply {
+        tenantDbid = getTenantDbid(tenant, service)
+    }
+}
+
+class CampaignGroupCampaignReference(name: String, val tenant: TenantReference) :
+    SimpleObjectReference<CfgCampaign>(CfgCampaign::class.java, name) {
+
+    override val primaryKey
+        @JsonProperty("name")
+        get() = super.primaryKey
+
     override fun toQuery(service: IConfService) = CfgCampaignQuery(primaryKey).apply {
         tenantDbid = getTenantDbid(tenant, service)
     }
@@ -222,15 +249,6 @@ class PersonReference(employeeId: String, tenant: TenantReference?) :
 class PhysicalSwitchReference(name: String) :
     SimpleObjectReference<CfgPhysicalSwitch>(CfgPhysicalSwitch::class.java, name) {
     override fun toQuery(service: IConfService) = CfgPhysicalSwitchQuery(primaryKey)
-}
-
-@JsonSerialize(using = SimpleObjectReferenceSerializer::class)
-@JsonDeserialize(using = SimpleObjectReferenceWithTenantDeserializer::class)
-class PlaceGroupReference(name: String, tenant: TenantReference?) :
-    SimpleObjectReferenceWithTenant<CfgPlaceGroup>(CfgPlaceGroup::class.java, name, tenant) {
-    override fun toQuery(service: IConfService) = CfgPlaceGroupQuery(primaryKey).apply {
-        tenantDbid = getTenantDbid(tenant, service)
-    }
 }
 
 @JsonSerialize(using = SimpleObjectReferenceSerializer::class)

@@ -1,0 +1,7 @@
+{
+  "campaign": {
+    "name": "campaign",
+    "tenant": "tenant"
+  },
+  "name": "campaignGroup"
+}

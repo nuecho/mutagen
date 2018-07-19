@@ -1,0 +1,116 @@
+{
+  "__metadata__": {
+    "formatName": "JSON",
+    "formatVersion": "1.0.0"
+  },
+  "agentGroups": [
+    {
+      "group": {
+        "name": "campaignGroupAgentGroup",
+        "tenant": "Environment"
+      }
+    }
+  ],
+  "applications": [
+    {
+      "autoRestart": true,
+      "commandLine": "yes",
+      "name": "campaignGroupApplication",
+      "redundancyType": "htcoldstanby",
+      "tenants": [
+        "Environment"
+      ],
+      "type": "genesysadministratorserver",
+      "version": "1.2.3",
+      "workDirectory": "/tmp"
+    }
+  ],
+  "campaigns": [
+    {
+      "name": "campaignGroupCampaign",
+      "tenant": "Environment"
+    }
+  ],
+  "campaignGroups": [
+    {
+      "campaign": {
+        "name": "campaignGroupCampaign",
+        "tenant": "Environment"
+      },
+      "name": "cfgObjectTest",
+      "group": {
+        "name": "campaignGroupAgentGroup",
+        "groupType": "agentgroup"
+      },
+      "interactionQueue": "campaignGroupInteractionQueue",
+      "ivrProfile": "campaignGroupIVRProfile",
+      "description": "description",
+      "dialMode": "dmpredict",
+      "maxQueueSize": 1,
+      "minRecBuffSize": 4,
+      "numOfChannels": 1,
+      "operationMode": "ommanual",
+      "optMethod": "omoverdialrate",
+      "optMethodValue": 1,
+      "optRecBuffSize": 6,
+      "origDN": {
+        "number": "campaignGroupDN",
+        "switch": "campaignGroupSwitch",
+        "type": "routingpoint"
+      },
+      "script": "campaignGroupCapacityRule",
+      "servers": [
+        "campaignGroupApplication"
+      ],
+      "state": "enabled",
+      "userProperties": {
+        "section": {
+          "number": 456,
+          "string": "def"
+        }
+      }
+    }
+  ],
+  "dns": [
+    {
+      "number": "campaignGroupDN",
+      "switch": "campaignGroupSwitch",
+      "tenant": "Environment",
+      "type": "routingpoint",
+      "routeType": "default"
+    }
+  ],
+  "gvpIVRProfiles": [
+    {
+      "tenant": "Environment",
+      "name": "campaignGroupIVRProfile",
+      "displayName": "a display name"
+    }
+  ],
+  "physicalSwitches": [
+    {
+      "name": "campaignGroupPhysicalSwitch",
+      "state": "enabled",
+      "type": "fujitsu"
+    }
+  ],
+  "scripts": [
+    {
+      "name": "campaignGroupCapacityRule",
+      "tenant": "Environment",
+      "type": "capacityRule"
+    },
+    {
+      "name": "campaignGroupInteractionQueue",
+      "tenant": "Environment",
+      "type": "interactionQueue"
+    }
+  ],
+  "switches": [
+    {
+      "name": "campaignGroupSwitch",
+      "physicalSwitch": "campaignGroupPhysicalSwitch",
+      "tenant": "Environment"
+    }
+  ]
+}

@@ -11,6 +11,7 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgApplication
 import com.genesyslab.platform.applicationblocks.com.objects.CfgCallingList
 import com.genesyslab.platform.applicationblocks.com.objects.CfgCallingListInfo
 import com.genesyslab.platform.applicationblocks.com.objects.CfgCampaign
+import com.genesyslab.platform.applicationblocks.com.objects.CfgCampaignGroup
 import com.genesyslab.platform.applicationblocks.com.objects.CfgDN
 import com.genesyslab.platform.applicationblocks.com.objects.CfgDNGroup
 import com.genesyslab.platform.applicationblocks.com.objects.CfgDNInfo
@@ -192,6 +193,13 @@ object ConfigurationObjectMocks {
         mockk<CfgCampaign>().also {
             every { it.name } returns name
             every { it.tenant } returns tenant
+            every { it.objectDbid } returns DEFAULT_OBJECT_DBID
+        }
+
+    fun mockCfgCampaignGroup(name: String, campaign: CfgCampaign = mockCfgCampaign("campaign")) =
+        mockk<CfgCampaignGroup>().also {
+            every { it.name } returns name
+            every { it.campaign } returns campaign
             every { it.objectDbid } returns DEFAULT_OBJECT_DBID
         }
 
