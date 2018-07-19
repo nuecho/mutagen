@@ -1,0 +1,28 @@
+{
+  "__metadata__": {
+    "formatName": "JSON",
+    "formatVersion": "1.0.0"
+  },
+  "fields": [
+    {
+      "defaultValue": "foo",
+      "description": "description",
+      "fieldType": "ftinfodigits",
+      "isNullable": false,
+      "isPrimaryKey": false,
+      "isUnique": false,
+      "length": 3,
+      "name": "cfgObjectTest",
+      "state": "enabled",
+      "tenant": "Environment",
+      "type": "dtchar",
+      "userProperties": {
+        "section": {
+          "number": 456,
+          "string": "def"
+        }
+      }
+    }
+  ]
+}
+

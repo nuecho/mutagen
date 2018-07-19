@@ -12,6 +12,7 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgDN
 import com.genesyslab.platform.applicationblocks.com.objects.CfgDNGroup
 import com.genesyslab.platform.applicationblocks.com.objects.CfgEnumerator
 import com.genesyslab.platform.applicationblocks.com.objects.CfgEnumeratorValue
+import com.genesyslab.platform.applicationblocks.com.objects.CfgField
 import com.genesyslab.platform.applicationblocks.com.objects.CfgFolder
 import com.genesyslab.platform.applicationblocks.com.objects.CfgGVPCustomer
 import com.genesyslab.platform.applicationblocks.com.objects.CfgGVPIVRProfile
@@ -40,6 +41,7 @@ class ConfigurationBuilder {
     private val dns = ArrayList<DN>()
     private val enumerators = ArrayList<Enumerator>()
     private val enumeratorValues = ArrayList<EnumeratorValue>()
+    private val fields = ArrayList<Field>()
     private val folders = ArrayList<Folder>()
     private val gvpCustomers = ArrayList<GVPCustomer>()
     private val gvpIVRProfiles = ArrayList<GVPIVRProfile>()
@@ -73,6 +75,7 @@ class ConfigurationBuilder {
                 is CfgDNGroup -> dnGroups += it as DNGroup
                 is CfgEnumerator -> enumerators += it as Enumerator
                 is CfgEnumeratorValue -> enumeratorValues += it as EnumeratorValue
+                is CfgField -> fields += it as Field
                 is CfgFolder -> folders += it as Folder
                 is CfgGVPCustomer -> gvpCustomers += it as GVPCustomer
                 is CfgGVPIVRProfile -> gvpIVRProfiles += it as GVPIVRProfile
@@ -106,6 +109,7 @@ class ConfigurationBuilder {
         dns.sorted(),
         enumerators.sorted(),
         enumeratorValues.sorted(),
+        fields.sorted(),
         folders.sorted(),
         gvpCustomers.sorted(),
         gvpIVRProfiles.sorted(),
@@ -138,6 +142,7 @@ class ConfigurationBuilder {
                 is CfgDNGroup -> DNGroup(cfgObject)
                 is CfgEnumerator -> Enumerator(cfgObject)
                 is CfgEnumeratorValue -> EnumeratorValue(cfgObject)
+                is CfgField -> Field(cfgObject)
                 is CfgFolder -> Folder(cfgObject)
                 is CfgGVPCustomer -> GVPCustomer(cfgObject)
                 is CfgGVPIVRProfile -> GVPIVRProfile(cfgObject)

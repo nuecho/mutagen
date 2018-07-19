@@ -15,6 +15,7 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgCallingList
 import com.genesyslab.platform.applicationblocks.com.objects.CfgCampaign
 import com.genesyslab.platform.applicationblocks.com.objects.CfgDNGroup
 import com.genesyslab.platform.applicationblocks.com.objects.CfgEnumerator
+import com.genesyslab.platform.applicationblocks.com.objects.CfgField
 import com.genesyslab.platform.applicationblocks.com.objects.CfgGVPCustomer
 import com.genesyslab.platform.applicationblocks.com.objects.CfgGVPIVRProfile
 import com.genesyslab.platform.applicationblocks.com.objects.CfgGVPReseller
@@ -41,6 +42,7 @@ import com.genesyslab.platform.applicationblocks.com.queries.CfgApplicationQuery
 import com.genesyslab.platform.applicationblocks.com.queries.CfgCampaignQuery
 import com.genesyslab.platform.applicationblocks.com.queries.CfgDNGroupQuery
 import com.genesyslab.platform.applicationblocks.com.queries.CfgEnumeratorQuery
+import com.genesyslab.platform.applicationblocks.com.queries.CfgFieldQuery
 import com.genesyslab.platform.applicationblocks.com.queries.CfgGVPIVRProfileQuery
 import com.genesyslab.platform.applicationblocks.com.queries.CfgHostQuery
 import com.genesyslab.platform.applicationblocks.com.queries.CfgIVRQuery
@@ -134,6 +136,15 @@ class DNGroupReference(name: String, tenant: TenantReference?) :
 class EnumeratorReference(name: String, tenant: TenantReference?) :
     SimpleObjectReferenceWithTenant<CfgEnumerator>(CfgEnumerator::class.java, name, tenant) {
     override fun toQuery(service: IConfService) = CfgEnumeratorQuery(primaryKey).apply {
+        tenantDbid = getTenantDbid(tenant, service)
+    }
+}
+
+@JsonSerialize(using = SimpleObjectReferenceSerializer::class)
+@JsonDeserialize(using = SimpleObjectReferenceWithTenantDeserializer::class)
+class FieldReference(name: String, tenant: TenantReference?) :
+    SimpleObjectReferenceWithTenant<CfgField>(CfgField::class.java, name, tenant) {
+    override fun toQuery(service: IConfService) = CfgFieldQuery(primaryKey).apply {
         tenantDbid = getTenantDbid(tenant, service)
     }
 }

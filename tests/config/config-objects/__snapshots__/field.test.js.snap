@@ -1,0 +1,37 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`[mutagen fields config import-export] should create the fields: the fields have been created 1`] = `
+Object {
+  "stderr": "",
+  "stdout": "+ field => Environment/cfgObjectTest
+Completed. 1 object(s) imported.
+",
+}
+`;
+
+exports[`[mutagen fields config import-export] should throw exception when new fields to import miss mandatory properties fields: exception has been thrown 1`] = `
+Object {
+  "stderr": "Cannot import configuration: some configuration objects' mandatory properties for creation are not set.
+	Mandatory properties [fieldType] not set in field 'Environment/cfgObjectTest'
+",
+  "stdout": "",
+}
+`;
+
+exports[`[mutagen fields config import-export] should update the modified fields: the modified fields have been updated 1`] = `
+Object {
+  "stderr": "",
+  "stdout": "~ field => Environment/cfgObjectTest
+Completed. 1 object(s) imported.
+",
+}
+`;
+
+exports[`[mutagen fields config import-export] should update the same fields: the fields have been updated 1`] = `
+Object {
+  "stderr": "",
+  "stdout": "~ field => Environment/cfgObjectTest
+Completed. 1 object(s) imported.
+",
+}
+`;

@@ -14,7 +14,9 @@ import com.genesyslab.platform.configuration.protocol.types.CfgAppType
 import com.genesyslab.platform.configuration.protocol.types.CfgDNGroupType
 import com.genesyslab.platform.configuration.protocol.types.CfgDNRegisterFlag
 import com.genesyslab.platform.configuration.protocol.types.CfgDNType
+import com.genesyslab.platform.configuration.protocol.types.CfgDataType
 import com.genesyslab.platform.configuration.protocol.types.CfgEnumeratorType
+import com.genesyslab.platform.configuration.protocol.types.CfgFieldType
 import com.genesyslab.platform.configuration.protocol.types.CfgFlag
 import com.genesyslab.platform.configuration.protocol.types.CfgFlag.CFGFalse
 import com.genesyslab.platform.configuration.protocol.types.CfgFlag.CFGNoFlag
@@ -97,9 +99,11 @@ object ConfigurationObjects {
     fun toCfgAlarmCategory(category: String?) = toGEnum(category, CfgAlarmCategory::class.java) as CfgAlarmCategory?
     fun toCfgAppComponentType(type: String?) = toGEnum(type, CfgAppComponentType::class.java) as CfgAppComponentType?
     fun toCfgAppType(type: String?) = toGEnum(type, CfgAppType::class.java) as CfgAppType?
+    fun toCfgDataType(type: String?) = toGEnum(type, CfgDataType::class.java) as CfgDataType?
     fun toCfgDNGroupType(type: String?) = toGEnum(type, CfgDNGroupType::class.java) as CfgDNGroupType?
     fun toCfgDNType(type: String?) = toGEnum(type, CfgDNType::class.java) as CfgDNType?
     fun toCfgEnumeratorType(type: String?) = toGEnum(type, CfgEnumeratorType::class.java) as CfgEnumeratorType?
+    fun toCfgFieldType(type: String?) = toGEnum(type, CfgFieldType::class.java) as CfgFieldType?
     fun toCfgHAType(type: String?) = toGEnum(type, CfgHAType::class.java) as CfgHAType?
     fun toCfgHostType(type: String?) = toGEnum(type, CfgHostType::class.java) as CfgHostType?
     fun toCfgLinkType(type: String?) = toGEnum(type, CfgLinkType::class.java) as CfgLinkType?
