@@ -41,7 +41,11 @@ class ImportCommand : ConfigServerCommand() {
     override fun execute(): Int {
         val result = withEnvironmentConfService { service: ConfService, _: Environment ->
             ConfigurationObjectRepository.prefetchConfigurationObjects(service)
-            val configuration = defaultJsonObjectMapper().readValue(inputFile, Configuration::class.java)
+
+            val configurationString = inputFile!!.readText()
+            Configuration.interpolateVariables(configurationString, System.getenv().toMap())
+
+            val configuration = defaultJsonObjectMapper().readValue(configurationString, Configuration::class.java)
             importConfiguration(configuration, service, autoConfirm)
         }
         return if (result) 0 else 1

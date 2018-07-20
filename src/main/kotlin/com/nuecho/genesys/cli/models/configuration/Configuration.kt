@@ -70,4 +70,24 @@ data class Configuration(
     val asMapByReference by lazy {
         asList.map { it.reference to it }.toMap()
     }
+
+    companion object {
+        fun interpolateVariables(
+            configurationString: String,
+            variables: Map<String, String>
+        ): String {
+            val regex = Regex("\\$\\{([a-zA-Z_][a-zA-Z0-9_]*)}")
+            if (!regex.containsMatchIn(configurationString)) return configurationString
+
+            return regex.replace(configurationString) { match ->
+                val variable = match.groupValues[1]
+                variables[variable]
+                        ?: throw UndefinedVariableException(
+                            "Interpolation of variable [$variable] failed. Variable is undefined."
+                        )
+            }
+        }
+    }
 }
+
+class UndefinedVariableException(override val message: String?) : Exception(message)
