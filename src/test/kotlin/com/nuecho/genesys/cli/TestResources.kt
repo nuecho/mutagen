@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode
 import com.nuecho.genesys.cli.core.defaultJsonObjectMapper
 import com.nuecho.genesys.cli.models.configuration.Configuration
 import com.nuecho.genesys.cli.preferences.environment.Environments
+import java.io.BufferedReader
 import java.io.File
 
 object TestResources {
@@ -27,3 +28,6 @@ object TestResources {
     fun getTestResource(path: String) =
         ClassLoader.getSystemClassLoader().getResource("com/nuecho/genesys/cli/$path")
 }
+
+fun Class<*>.getResourceAsString(name: String): String =
+    getResourceAsStream(name).bufferedReader().use(BufferedReader::readText)
