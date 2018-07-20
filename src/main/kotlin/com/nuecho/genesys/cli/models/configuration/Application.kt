@@ -144,7 +144,12 @@ data class Application(
 
     override fun getReferences(): Set<ConfigurationObjectReference<*>> =
         referenceSetBuilder()
+            .add(appPrototype)
+            .add(appServers?.mapNotNull { it.appServer })
             .add(folder)
+            .add(serverInfo?.backupServer)
+            .add(serverInfo?.host)
+            .add(tenants)
             .toSet()
 }
 

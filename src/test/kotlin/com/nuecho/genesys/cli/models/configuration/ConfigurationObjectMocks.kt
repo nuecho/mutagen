@@ -17,6 +17,7 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgDNInfo
 import com.genesyslab.platform.applicationblocks.com.objects.CfgDetectEvent
 import com.genesyslab.platform.applicationblocks.com.objects.CfgEnumerator
 import com.genesyslab.platform.applicationblocks.com.objects.CfgEnumeratorValue
+import com.genesyslab.platform.applicationblocks.com.objects.CfgField
 import com.genesyslab.platform.applicationblocks.com.objects.CfgFolder
 import com.genesyslab.platform.applicationblocks.com.objects.CfgGVPCustomer
 import com.genesyslab.platform.applicationblocks.com.objects.CfgGVPIVRProfile
@@ -246,6 +247,13 @@ object ConfigurationObjectMocks {
         mockk<CfgEnumeratorValue>().also {
             every { it.name } returns name
             every { it.enumerator } returns enumerator
+        }
+
+    fun mockCfgField(name: String?, tenant: CfgTenant = mockCfgTenant(DEFAULT_TENANT)) =
+        mockk<CfgField>().also {
+            every { it.tenant } returns tenant
+            every { it.name } returns name
+            every { it.objectDbid } returns DEFAULT_OBJECT_DBID
         }
 
     fun mockCfgFolder(name: String = DEFAULT_FOLDER, type: CfgObjectType = DEFAULT_FOLDER_TYPE) =

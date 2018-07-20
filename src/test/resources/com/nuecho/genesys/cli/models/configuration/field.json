@@ -1,0 +1,29 @@
+{
+  "defaultValue": "foo",
+  "description": "description",
+  "fieldType": "ftinfodigits",
+  "folder": {
+    "owner": {
+      "name": "tenant",
+      "type": "tenant"
+    },
+    "path": [
+      "folder"
+    ],
+    "type": "folder"
+  },
+  "isNullable": false,
+  "isPrimaryKey": false,
+  "isUnique": false,
+  "length": 3,
+  "name": "foo",
+  "state": "enabled",
+  "tenant": "tenant",
+  "type": "dtchar",
+  "userProperties": {
+    "section": {
+      "number": 456,
+      "string": "def"
+    }
+  }
+}
