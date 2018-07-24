@@ -89,6 +89,8 @@ data class GVPReseller(
             setFolder(folder, it)
         }
 
+    override fun cloneBare() = GVPReseller(tenant, name)
+
     override fun afterPropertiesSet() {
         timeZone?.tenant = tenant
     }

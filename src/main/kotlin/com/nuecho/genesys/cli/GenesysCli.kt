@@ -75,7 +75,7 @@ open class GenesysCli : GenesysCliCommand() {
                     // The only acceptable place to print the stack trace
                     cause.printStackTrace()
                 } else {
-                    System.err.println(cause.message)
+                    System.err.println(cause.message ?: cause::class.qualifiedName)
                 }
 
                 return 1

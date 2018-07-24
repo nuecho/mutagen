@@ -22,8 +22,8 @@ Completed. 1 object(s) imported.
 exports[`[mutagen campaigns config import-export] should update the same campaigns: the campaigns have been updated 1`] = `
 Object {
   "stderr": "",
-  "stdout": "~ script => Environment/campaignScript
-~ campaign => Environment/cfgObjectTest
+  "stdout": "~ campaign => Environment/cfgObjectTest
+~ script => Environment/campaignScript
 Completed. 2 object(s) imported.
 ",
 }

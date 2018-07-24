@@ -3,10 +3,11 @@ package com.nuecho.genesys.cli.models.configuration
 import com.nuecho.genesys.cli.TestResources.loadJsonConfiguration
 import com.nuecho.genesys.cli.models.configuration.ConfigurationAsserts.checkSerialization
 import com.nuecho.genesys.cli.services.ServiceMocks
+import com.nuecho.genesys.cli.services.ServiceMocks.mockConfService
 import io.mockk.every
 import org.hamcrest.MatcherAssert.assertThat
+import org.hamcrest.Matchers.empty
 import org.hamcrest.Matchers.equalTo
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 
 @Suppress("UnnecessaryAbstractClass")
@@ -20,7 +21,7 @@ abstract class ConfigurationObjectTest(
     constructor(configurationObject: ConfigurationObject, emptyConfigurationObject: ConfigurationObject, mandatoryProperties: Set<String>) :
             this(configurationObject, emptyConfigurationObject, mandatoryProperties, null)
 
-    val configurationObjectType = configurationObject::class.simpleName!!.toLowerCase()
+    private val configurationObjectType = configurationObject::class.simpleName!!.toLowerCase()
 
     @Test
     fun `empty object missing mandatory properties should throw MandatoryPropertiesNotSetException`() {
@@ -58,13 +59,11 @@ abstract class ConfigurationObjectTest(
         checkSerialization(deserializedConfigurationObject, configurationObjectType)
     }
 
-    @Disabled
     @Test
-    fun `should report object as modified`() {
-    }
-
-    @Disabled
-    @Test
-    fun `should report object as not modified`() {
+    fun `cloneBare() should return a close that contains all mandatory properties`() {
+        val bare = configurationObject.cloneBare()
+        bare?.let {
+            assertThat(bare.checkMandatoryProperties(mockConfService()), empty())
+        }
     }
 }

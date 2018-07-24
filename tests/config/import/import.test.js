@@ -2,6 +2,7 @@ const INVALID_TENANT_CONFIGURATION_PATH = getResourcePath("config/import/switch-
 const MULTIPLE_OBJECTS_CONFIGURATION_PATH = getResourcePath("config/import/multiple-objects-config.json");
 const REPEATED_KEYS_CONFIGURATION_PATH = getResourcePath("config/import/same-key-switches-config.json");
 const CYCLE_CONFIGURATION_PATH = getResourcePath("config/import/cycle-config.json");
+const MULTIPLE_CYCLE_CONFIGURATION_PATH = getResourcePath("config/import/multiple-cycle-config.json");
 const MISSING_DEPENDENCY_CONFIGURATION_PATH = getResourcePath("config/import/missing-dependency-config.json");
 const ACCEPT_CHANGES_CONFIGURATION_PATH = getResourcePath("config/import/accept-changes-config.json");
 const REJECT_CHANGES_CONFIGURATION_PATH = getResourcePath("config/import/reject-changes-config.json");
@@ -33,8 +34,14 @@ test(`[mutagen config import file] should only import objects with a unique key`
   assertMutagenResult(`config import --auto-confirm ${REPEATED_KEYS_CONFIGURATION_PATH}`, "only one object with the key has been imported", 0);
 });
 
-test(`[mutagen config import file] should not import any object if there's a cycle between object dependencies`, () => {
-  assertMutagenResult(`config import --auto-confirm ${CYCLE_CONFIGURATION_PATH}`, "cycle detected", 1);
+test(`[mutagen config import file] should import objects even if there's dependency cycles between object`, () => {
+  assertMutagenResult(`config import --auto-confirm ${CYCLE_CONFIGURATION_PATH}`, "all objects have been created", 0);
+});
+
+test(`[mutagen config import file] should import objects even if there's multiple dependency cycles between object`, () => {
+  const { code, output } = mutagen(`config import --auto-confirm ${MULTIPLE_CYCLE_CONFIGURATION_PATH}`);
+  // Only checking return code since the import operations ordering is not always the same.
+  expect(code).toBe(0);
 });
 
 test(`[mutagen config import file] should not import any object if some dependencies cannot be resolved`, () => {

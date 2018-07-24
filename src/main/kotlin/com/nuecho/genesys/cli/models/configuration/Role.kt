@@ -80,6 +80,8 @@ data class Role(
             setFolder(folder, it)
         }
 
+    override fun cloneBare() = null
+
     override fun getReferences(): Set<ConfigurationObjectReference<*>> =
         referenceSetBuilder()
             .add(tenant)

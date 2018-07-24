@@ -1,0 +1,18 @@
+The following changes are going to be applied:
++ physicalswitch => physSwitch
+  {
+    "name" : "physSwitch",
+    "type" : "fujitsu"
+  }
+~ switch => existingTenant/switch
+  {
+    "dnRange" : "12-15",
+    "name" : "switch",
+    "tenant" : "existingTenant"
+  }
+~ tenant => existingTenant
+  {
+    "defaultCapacityRule" : "script",
+    "name" : "existingTenant"
+  }
+

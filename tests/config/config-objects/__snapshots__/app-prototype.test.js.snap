@@ -12,7 +12,7 @@ Completed. 1 object(s) imported.
 exports[`[mutagen appPrototypes config import-export] should throw exception when new appPrototypes to import miss mandatory properties appPrototypes: exception has been thrown 1`] = `
 Object {
   "stderr": "Cannot import configuration: some configuration objects' mandatory properties for creation are not set.
-	Mandatory properties [type, version] not set in appprototype 'cfgObjectTest'
+  Properties [type, version] not set in appprototype [cfgObjectTest].
 ",
   "stdout": "",
 }

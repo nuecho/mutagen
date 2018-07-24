@@ -1,5 +1,6 @@
 package com.nuecho.genesys.cli
 
+import org.fusesource.jansi.Ansi
 import picocli.CommandLine
 import java.io.ByteArrayOutputStream
 import java.io.PrintStream
@@ -11,9 +12,11 @@ object CliOutputCaptureWrapper {
 
         System.setOut(printStream)
         System.setErr(printStream)
+        Ansi.setEnabled(false)
 
         val returnValue = command()
 
+        Ansi.setEnabled(true)
         System.setOut(System.out)
         System.setErr(System.err)
 

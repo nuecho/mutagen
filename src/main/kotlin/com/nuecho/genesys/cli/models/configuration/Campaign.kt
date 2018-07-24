@@ -73,6 +73,8 @@ data class Campaign(
             setFolder(folder, it)
         }
 
+    override fun cloneBare() = Campaign(tenant, name)
+
     override fun afterPropertiesSet() {
         script?.tenant = tenant
     }

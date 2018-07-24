@@ -1,7 +1,5 @@
 const defaultOptions = {
   checkKey: null,
-  initialNumberOfObjects: 0,
-  checkInitialExport: true,
   checkMandatoryProperties: true
 };
 
@@ -12,9 +10,7 @@ function cfgObjectTests (
   describe(`[mutagen ${cfgObjectType} config import-export]`, () => {
     const mergedOptions = {...defaultOptions, ...options}
 
-    if (mergedOptions.checkInitialExport) {
-      cfgObjectInitialExportTest(cfgObjectType, mergedOptions.initialNumberOfObjects);
-    }
+    cfgObjectInitialExportTest(cfgObjectType, mergedOptions.checkKey);
     if (mergedOptions.checkMandatoryProperties) {
       cfgObjectMissingPropertiesTest(cfgObjectType, getResourcePath(`config/config-objects/${cfgObjectType}-invalid-config.json`));
     }
@@ -25,19 +21,9 @@ function cfgObjectTests (
   });
 };
 
-function cfgObjectInitialExportTest(cfgObjectType, initialNumberOfObjects) {
-  const shouldExport = initialNumberOfObjects ? "" : "not ";
-
-  test(`should ${shouldExport}initially export ${cfgObjectType}`, () => {
-    const { code, output } = mutagen(`config export --format JSON`);
-    const exportedConfig = JSON.parse(output.stdout);
-    // every tenant has a copy of every enumerator, and the number of tenants in the config varies if other tests have already imported tenants
-    const expectedNumberOfObjects = cfgObjectType === "enumerators" ? exportedConfig.tenants.length * initialNumberOfObjects : initialNumberOfObjects;
-
-    if (initialNumberOfObjects)
-      expect(exportedConfig[cfgObjectType].length).toBe(expectedNumberOfObjects);
-    else expect(exportedConfig[cfgObjectType]).toBeUndefined;
-    expect(code).toBe(0);
+function cfgObjectInitialExportTest(cfgObjectType, checkKey) {
+  test(`cfgObject ${cfgObjectType} should not initially exists on the configuration server`, () => {
+    checkObjectCount(cfgObjectType, 0, checkKey);
   });
 };
 
@@ -65,19 +51,23 @@ function cfgObjectImportModifiedTest(cfgObjectType, configurationPath) {
   });
 };
 
-function cfgObjectExportTest(cfgObjectType, checkKey = null) {
+function cfgObjectExportTest(cfgObjectType, checkKey) {
   test(`should properly export the imported ${cfgObjectType}`, () => {
-    const { code, output } = mutagen(`config export --format JSON`);
-    const exportedConfig = JSON.parse(output.stdout);
-
-    expect(code).toBe(0);    
-    expect(exportedConfig[cfgObjectType]).toBeDefined;
-    if(checkKey)
-      expect(exportedConfig[cfgObjectType].filter(checkKey).length).toBe(1);
-    else    
-      expect(exportedConfig[cfgObjectType].filter(cfgObject => cfgObject.name === "cfgObjectTest").length).toBe(1);
+    checkObjectCount(cfgObjectType, 1, checkKey);
   });
 };
+
+function checkObjectCount(cfgObjectType, objectCount, checkKey = null) {
+  const { code, output } = mutagen(`config export --format JSON`);
+  const exportedConfig = JSON.parse(output.stdout);
+
+  expect(code).toBe(0);
+  expect(exportedConfig[cfgObjectType]).toBeDefined;
+  if(checkKey)
+    expect(exportedConfig[cfgObjectType].filter(checkKey).length).toBe(objectCount);
+  else
+    expect(exportedConfig[cfgObjectType].filter(cfgObject => cfgObject.name === "cfgObjectTest").length).toBe(objectCount);
+}
 
 const importDependencies = (dependenciesFile) => {mutagen(`config import --auto-confirm ${getResourcePath(`config/config-objects/${dependenciesFile}`)}`);}
 

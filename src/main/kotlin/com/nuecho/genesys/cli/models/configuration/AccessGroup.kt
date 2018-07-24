@@ -63,6 +63,8 @@ data class AccessGroup(
             setFolder(folder, cfgAccessGroup)
         }
 
+    override fun cloneBare() = AccessGroup(Group(group.tenant, group.name))
+
     override fun afterPropertiesSet() {
         group.updateTenantReferences()
         members?.forEach { it.tenant = group.tenant }

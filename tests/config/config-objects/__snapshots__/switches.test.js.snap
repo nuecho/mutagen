@@ -12,7 +12,7 @@ Completed. 1 object(s) imported.
 exports[`[mutagen switches config import-export] should throw exception when new switches to import miss mandatory properties switches: exception has been thrown 1`] = `
 Object {
   "stderr": "Cannot import configuration: some configuration objects' mandatory properties for creation are not set.
-	Mandatory properties [physicalSwitch] not set in switch 'Environment/emptyCfgObjectTest'
+  Properties [physicalSwitch] not set in switch [Environment/emptyCfgObjectTest].
 ",
   "stdout": "",
 }

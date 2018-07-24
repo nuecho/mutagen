@@ -59,6 +59,8 @@ data class PlaceGroup(
             setFolder(folder, cfgPlaceGroup)
         }
 
+    override fun cloneBare() = PlaceGroup(Group(group.tenant, group.name))
+
     override fun afterPropertiesSet() {
         group.updateTenantReferences()
         places?.forEach { it.tenant = group.tenant }

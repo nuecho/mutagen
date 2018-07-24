@@ -1,1 +1,1 @@
-cfgObjectTests("physicalSwitches", {checkInitialExport: false});
+cfgObjectTests("physicalSwitches");

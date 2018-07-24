@@ -84,6 +84,8 @@ data class Field(
             setFolder(folder, it)
         }
 
+    override fun cloneBare() = null
+
     override fun checkMandatoryProperties(service: ConfService): Set<String> {
         val missingMandatoryProperties = mutableSetOf<String>()
         fieldType ?: missingMandatoryProperties.add(FIELD_TYPE)

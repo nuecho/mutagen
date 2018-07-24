@@ -15,7 +15,7 @@ Completed. 4 object(s) imported.
 exports[`[mutagen alarmConditions config import-export] should throw exception when new alarmConditions to import miss mandatory properties alarmConditions: exception has been thrown 1`] = `
 Object {
   "stderr": "Cannot import configuration: some configuration objects' mandatory properties for creation are not set.
-	Mandatory properties [alarmDetectEvent, alarmDetectEvent.logEventID, category] not set in alarmcondition 'emptyCfgObjectTest'
+  Properties [alarmDetectEvent, alarmDetectEvent.logEventID, category] not set in alarmcondition [emptyCfgObjectTest].
 ",
   "stdout": "",
 }
@@ -33,10 +33,10 @@ Completed. 1 object(s) imported.
 exports[`[mutagen alarmConditions config import-export] should update the same alarmConditions: the alarmConditions have been updated 1`] = `
 Object {
   "stderr": "",
-  "stdout": "~ script => Environment/detectionScript
+  "stdout": "~ alarmcondition => cfgObjectTest
+~ script => Environment/detectionScript
 ~ script => Environment/reactionScript1
 ~ script => Environment/reactionScript2
-~ alarmcondition => cfgObjectTest
 Completed. 4 object(s) imported.
 ",
 }

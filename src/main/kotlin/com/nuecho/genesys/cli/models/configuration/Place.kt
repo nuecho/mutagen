@@ -66,6 +66,8 @@ class Place(
             setFolder(folder, it)
         }
 
+    override fun cloneBare() = Place(tenant, name)
+
     override fun afterPropertiesSet() {
         dns?.forEach { it.updateTenantReferences(tenant) }
         capacityRule?.tenant = tenant

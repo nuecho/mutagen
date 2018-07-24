@@ -67,6 +67,8 @@ data class Transaction(
             setFolder(folder, it)
         }
 
+    override fun cloneBare() = null
+
     override fun checkMandatoryProperties(service: ConfService): Set<String> =
         if (alias == null) setOf(ALIAS) else emptySet()
 

@@ -92,16 +92,18 @@ data class GVPCustomer(
             setFolder(folder, it)
         }
 
+    override fun cloneBare() = GVPCustomer(
+        name = name,
+        channel = channel,
+        reseller = reseller,
+        tenant = tenant
+    )
+
     override fun checkMandatoryProperties(service: ConfService): Set<String> {
         val missingMandatoryProperties = mutableSetOf<String>()
-
-        if (channel == null)
-            missingMandatoryProperties.add(CHANNEL)
-        if (reseller == null)
-            missingMandatoryProperties.add(RESELLER)
-        if (tenant == null)
-            missingMandatoryProperties.add(TENANT)
-
+        channel ?: missingMandatoryProperties.add(CHANNEL)
+        reseller ?: missingMandatoryProperties.add(RESELLER)
+        tenant ?: missingMandatoryProperties.add(TENANT)
         return missingMandatoryProperties
     }
 

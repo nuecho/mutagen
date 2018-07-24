@@ -102,6 +102,12 @@ data class Person(
             setFolder(folder, it)
         }
 
+    override fun cloneBare() = Person(
+        tenant = tenant,
+        employeeId = employeeId,
+        userName = userName
+    )
+
     override fun checkMandatoryProperties(service: ConfService): Set<String> =
         if (userName == null) setOf(USER_NAME) else emptySet()
 

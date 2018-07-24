@@ -82,14 +82,12 @@ data class EnumeratorValue(
             setFolder(folder, cfgEnumeratorValue)
         }
 
+    override fun cloneBare() = null
+
     override fun checkMandatoryProperties(service: ConfService): Set<String> {
         val missingMandatoryProperties = mutableSetOf<String>()
-
-        if (displayName == null)
-            missingMandatoryProperties.add(DISPLAY_NAME)
-        if (tenant == null)
-            missingMandatoryProperties.add(TENANT)
-
+        displayName ?: missingMandatoryProperties.add(DISPLAY_NAME)
+        tenant ?: missingMandatoryProperties.add(TENANT)
         return missingMandatoryProperties
     }
 

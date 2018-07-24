@@ -58,6 +58,8 @@ data class AppPrototype(
             setFolder(folder, it)
         }
 
+    override fun cloneBare() = null
+
     override fun checkMandatoryProperties(service: ConfService): Set<String> {
         val missingMandatoryProperties = mutableSetOf<String>()
         type ?: missingMandatoryProperties.add(TYPE)
