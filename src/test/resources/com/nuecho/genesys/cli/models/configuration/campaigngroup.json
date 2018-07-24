@@ -1,0 +1,47 @@
+{
+  "campaign": {
+    "name": "campaign",
+    "tenant": "tenant"
+  },
+  "description": "description",
+  "dialMode": "dmpredict",
+  "folder": {
+    "owner": {
+      "name": "tenant",
+      "type": "tenant"
+    },
+    "path": [
+      "folder"
+    ],
+    "type": "folder"
+  },
+  "group": {
+    "groupType": "agentgroup",
+    "name": "group"
+  },
+  "interactionQueue": "script1",
+  "ivrProfile": "ivrProfile",
+  "maxQueueSize": 1,
+  "minRecBuffSize": 4,
+  "name": "campaignGroup",
+  "numOfChannels": 1,
+  "operationMode": "ommanual",
+  "optMethod": "omoverdialrate",
+  "optMethodValue": 1,
+  "optRecBuffSize": 6,
+  "origDN": {
+    "number": "dn",
+    "switch": "switch",
+    "type": "acdqueue"
+  },
+  "script": "script2",
+  "servers": [ "applicationServer" ],
+  "state": "enabled",
+  "tenant": "tenant",
+  "userProperties": {
+    "section": {
+      "number": 456,
+      "string": "def"
+    }
+  }
+}

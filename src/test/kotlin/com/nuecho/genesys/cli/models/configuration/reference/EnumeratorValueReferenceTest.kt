@@ -37,9 +37,9 @@ class EnumeratorValueReferenceTest {
             "models/configuration/reference/enumerator_value_reference.json",
             EnumeratorValueReference::class.java
         )
+        val expectedEnumeratorValueReference = EnumeratorValueReference(NAME, EnumeratorReference(ENUMERATOR, null))
 
-        assertThat(deserializedEnumeratorValueReference.enumerator, equalTo(EnumeratorReference(ENUMERATOR, null)))
-        assertThat(deserializedEnumeratorValueReference.name, equalTo(NAME))
+        assertThat(deserializedEnumeratorValueReference, equalTo(expectedEnumeratorValueReference))
     }
 
     @Test

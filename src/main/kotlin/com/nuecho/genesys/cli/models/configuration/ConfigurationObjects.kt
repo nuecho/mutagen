@@ -15,6 +15,7 @@ import com.genesyslab.platform.configuration.protocol.types.CfgDNGroupType
 import com.genesyslab.platform.configuration.protocol.types.CfgDNRegisterFlag
 import com.genesyslab.platform.configuration.protocol.types.CfgDNType
 import com.genesyslab.platform.configuration.protocol.types.CfgDataType
+import com.genesyslab.platform.configuration.protocol.types.CfgDialMode
 import com.genesyslab.platform.configuration.protocol.types.CfgEnumeratorType
 import com.genesyslab.platform.configuration.protocol.types.CfgFieldType
 import com.genesyslab.platform.configuration.protocol.types.CfgFlag
@@ -31,6 +32,8 @@ import com.genesyslab.platform.configuration.protocol.types.CfgObjectState
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectType
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectType.CFGMaxObjectType
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectType.CFGNoObject
+import com.genesyslab.platform.configuration.protocol.types.CfgOperationMode
+import com.genesyslab.platform.configuration.protocol.types.CfgOptimizationMethod
 import com.genesyslab.platform.configuration.protocol.types.CfgRank
 import com.genesyslab.platform.configuration.protocol.types.CfgRouteType
 import com.genesyslab.platform.configuration.protocol.types.CfgScriptType
@@ -100,6 +103,7 @@ object ConfigurationObjects {
     fun toCfgAppComponentType(type: String?) = toGEnum(type, CfgAppComponentType::class.java) as CfgAppComponentType?
     fun toCfgAppType(type: String?) = toGEnum(type, CfgAppType::class.java) as CfgAppType?
     fun toCfgDataType(type: String?) = toGEnum(type, CfgDataType::class.java) as CfgDataType?
+    fun toCfgDialMode(mode: String?) = toGEnum(mode, CfgDialMode::class.java) as CfgDialMode?
     fun toCfgDNGroupType(type: String?) = toGEnum(type, CfgDNGroupType::class.java) as CfgDNGroupType?
     fun toCfgDNType(type: String?) = toGEnum(type, CfgDNType::class.java) as CfgDNType?
     fun toCfgEnumeratorType(type: String?) = toGEnum(type, CfgEnumeratorType::class.java) as CfgEnumeratorType?
@@ -109,6 +113,10 @@ object ConfigurationObjects {
     fun toCfgLinkType(type: String?) = toGEnum(type, CfgLinkType::class.java) as CfgLinkType?
     fun toCfgObjectState(state: String?) = toGEnum(state, CfgObjectState::class.java) as CfgObjectState?
     fun toCfgObjectType(type: String?) = toGEnum(type, CfgObjectType::class.java) as CfgObjectType?
+    fun toCfgOperationMode(mode: String?) = toGEnum(mode, CfgOperationMode::class.java) as CfgOperationMode?
+    fun toCfgOptimizationMethod(method: String?) =
+        toGEnum(method, CfgOptimizationMethod::class.java) as CfgOptimizationMethod?
+
     fun toCfgOsType(type: String?) = toGEnum(type, CfgOSType::class.java) as CfgOSType?
     fun toCfgRank(rank: String?) = toGEnum(rank, CfgRank::class.java) as CfgRank?
     fun toCfgRouteType(type: String?) = toGEnum(type, CfgRouteType::class.java) as CfgRouteType?

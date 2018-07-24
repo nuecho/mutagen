@@ -1,10 +1,12 @@
 package com.nuecho.genesys.cli.services
 
 import com.genesyslab.platform.applicationblocks.com.IConfService
+import com.genesyslab.platform.applicationblocks.com.objects.CfgAgentGroup
 import com.genesyslab.platform.applicationblocks.com.objects.CfgAgentLogin
 import com.genesyslab.platform.applicationblocks.com.objects.CfgAppPrototype
 import com.genesyslab.platform.applicationblocks.com.objects.CfgApplication
 import com.genesyslab.platform.applicationblocks.com.objects.CfgCallingList
+import com.genesyslab.platform.applicationblocks.com.objects.CfgCampaign
 import com.genesyslab.platform.applicationblocks.com.objects.CfgDN
 import com.genesyslab.platform.applicationblocks.com.objects.CfgDNGroup
 import com.genesyslab.platform.applicationblocks.com.objects.CfgEnumerator
@@ -105,6 +107,22 @@ object ConfServiceExtensionMocks {
             every { agentLogin.dbid } returns dbid
             every { agentLogin.objectDbid } returns dbid
             agentLogin
+        }
+
+    fun mockRetrieveAgentGroup(service: IConfService, dbid: Int = DEFAULT_OBJECT_DBID) =
+        every { service.retrieveObject(CfgAgentGroup::class.java, any()) } answers {
+            val agentGroup = mockk<CfgAgentGroup>()
+            every { agentGroup.dbid } returns dbid
+            every { agentGroup.objectDbid } returns dbid
+            agentGroup
+        }
+
+    fun mockRetrieveCampaign(service: IConfService, dbid: Int = DEFAULT_OBJECT_DBID) =
+        every { service.retrieveObject(CfgCampaign::class.java, any()) } answers {
+            val campaign = mockk<CfgCampaign>()
+            every { campaign.dbid } returns dbid
+            every { campaign.objectDbid } returns dbid
+            campaign
         }
 
     fun mockRetrievePerson(service: IConfService, dbid: Int = DEFAULT_OBJECT_DBID) {

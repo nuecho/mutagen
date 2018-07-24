@@ -9,12 +9,14 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgAgentLogin
 import com.genesyslab.platform.applicationblocks.com.objects.CfgApplication
 import com.genesyslab.platform.applicationblocks.com.objects.CfgCallingList
 import com.genesyslab.platform.applicationblocks.com.objects.CfgCampaign
+import com.genesyslab.platform.applicationblocks.com.objects.CfgCampaignGroup
 import com.genesyslab.platform.applicationblocks.com.objects.CfgDN
 import com.genesyslab.platform.applicationblocks.com.objects.CfgDNGroup
 import com.genesyslab.platform.applicationblocks.com.objects.CfgEnumerator
 import com.genesyslab.platform.applicationblocks.com.objects.CfgEnumeratorValue
 import com.genesyslab.platform.applicationblocks.com.objects.CfgFolder
 import com.genesyslab.platform.applicationblocks.com.objects.CfgGVPCustomer
+import com.genesyslab.platform.applicationblocks.com.objects.CfgGVPIVRProfile
 import com.genesyslab.platform.applicationblocks.com.objects.CfgGVPReseller
 import com.genesyslab.platform.applicationblocks.com.objects.CfgIVR
 import com.genesyslab.platform.applicationblocks.com.objects.CfgObjectiveTable
@@ -54,6 +56,8 @@ import com.nuecho.genesys.cli.models.configuration.reference.AgentGroupReference
 import com.nuecho.genesys.cli.models.configuration.reference.AgentLoginReference
 import com.nuecho.genesys.cli.models.configuration.reference.ApplicationReference
 import com.nuecho.genesys.cli.models.configuration.reference.CallingListReference
+import com.nuecho.genesys.cli.models.configuration.reference.CampaignGroupCampaignReference
+import com.nuecho.genesys.cli.models.configuration.reference.CampaignGroupReference
 import com.nuecho.genesys.cli.models.configuration.reference.CampaignReference
 import com.nuecho.genesys.cli.models.configuration.reference.DNGroupReference
 import com.nuecho.genesys.cli.models.configuration.reference.DNReference
@@ -61,6 +65,7 @@ import com.nuecho.genesys.cli.models.configuration.reference.EnumeratorReference
 import com.nuecho.genesys.cli.models.configuration.reference.EnumeratorValueReference
 import com.nuecho.genesys.cli.models.configuration.reference.FolderReference
 import com.nuecho.genesys.cli.models.configuration.reference.GVPCustomerReference
+import com.nuecho.genesys.cli.models.configuration.reference.GVPIVRProfileReference
 import com.nuecho.genesys.cli.models.configuration.reference.GVPResellerReference
 import com.nuecho.genesys.cli.models.configuration.reference.IVRReference
 import com.nuecho.genesys.cli.models.configuration.reference.ObjectiveTableReference
@@ -167,12 +172,16 @@ fun CfgAgentLogin.getReference() = AgentLoginReference(loginCode, switch.getRefe
 fun CfgApplication.getReference() = ApplicationReference(name)
 fun CfgCallingList.getReference() = CallingListReference(name)
 fun CfgCampaign.getReference() = CampaignReference(name, tenant.getReference())
+fun CfgCampaignGroup.getReference() =
+    CampaignGroupReference(CampaignGroupCampaignReference(campaign.name, campaign.tenant.getReference()), name)
+
 fun CfgDN.getReference() = DNReference(this)
 fun CfgDNGroup.getReference() = DNGroupReference(groupInfo.name, groupInfo.tenant.getReference())
 fun CfgEnumerator.getReference() = EnumeratorReference(name, tenant.getReference())
 fun CfgEnumeratorValue.getReference() = EnumeratorValueReference(name, enumerator.getReference())
 fun CfgFolder.getReference() = FolderReference(this)
 fun CfgGVPCustomer.getReference() = GVPCustomerReference(name)
+fun CfgGVPIVRProfile.getReference() = GVPIVRProfileReference(name)
 fun CfgGVPReseller.getReference() = GVPResellerReference(name, tenant.getReference())
 fun CfgIVR.getReference() = IVRReference(name)
 fun CfgObjectiveTable.getReference() = ObjectiveTableReference(name, tenant.getReference())
