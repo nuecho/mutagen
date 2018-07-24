@@ -29,14 +29,14 @@ Completed. 2 object(s) imported.
 exports[`[mutagen placeGroups config import-export] should update the same placeGroups: the placeGroups have been updated 1`] = `
 Object {
   "stderr": "",
-  "stdout": "~ physicalswitch => placeGroupPhysicalSwitch
-~ script => Environment/placeGroupCapacityRule
-~ switch => Environment/placeGroupSwitch
-~ dn => number: 'placeGroupDN1', switch: 'placeGroupSwitch', type: 'cellular', tenant: 'Environment'
+  "stdout": "~ dn => number: 'placeGroupDN1', switch: 'placeGroupSwitch', type: 'cellular', tenant: 'Environment'
 ~ dn => number: 'placeGroupDN2', switch: 'placeGroupSwitch', type: 'fax', tenant: 'Environment'
+~ physicalswitch => placeGroupPhysicalSwitch
+~ placegroup => Environment/cfgObjectTest
 ~ place => Environment/placeGroupPlace1
 ~ place => Environment/placeGroupPlace2
-~ placegroup => Environment/cfgObjectTest
+~ script => Environment/placeGroupCapacityRule
+~ switch => Environment/placeGroupSwitch
 Completed. 8 object(s) imported.
 ",
 }

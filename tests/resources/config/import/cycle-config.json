@@ -15,7 +15,7 @@
       "name": "CycleConfigScript",
       "state": "enabled",
       "tenant": "CycleConfigTenant",
-      "type": "schedule"
+      "type": "capacityrule"
     }
   ],
   "tenants" : [

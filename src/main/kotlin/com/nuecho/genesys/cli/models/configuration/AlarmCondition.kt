@@ -130,13 +130,17 @@ data class AlarmCondition(
             setFolder(folder, cfgAlarmCondition)
         }
 
+    override fun cloneBare() = AlarmCondition(
+        name = name,
+        alarmDetectEvent = alarmDetectEvent,
+        category = category
+    )
+
     override fun checkMandatoryProperties(service: ConfService): Set<String> {
         val missingMandatoryProperties = mutableSetOf<String>()
-
         alarmDetectEvent ?: missingMandatoryProperties.add(ALARM_DETECT_EVENT)
         alarmDetectEvent?.logEventID ?: missingMandatoryProperties.add(ALARM_DETECT_EVENT_LOG_EVENT_ID)
         category ?: missingMandatoryProperties.add(CATEGORY)
-
         return missingMandatoryProperties
     }
 

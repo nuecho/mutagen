@@ -52,6 +52,8 @@ data class Skill(
             setFolder(folder, it)
         }
 
+    override fun cloneBare() = null
+
     override fun getReferences(): Set<ConfigurationObjectReference<*>> =
         referenceSetBuilder()
             .add(tenant)

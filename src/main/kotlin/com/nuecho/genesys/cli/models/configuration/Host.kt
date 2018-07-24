@@ -87,13 +87,18 @@ data class Host(
             setFolder(folder, cfgHost)
         }
 
+    override fun cloneBare() = Host(
+        name = name,
+        lcaPort = lcaPort,
+        osInfo = osInfo,
+        type = type
+    )
+
     override fun checkMandatoryProperties(service: ConfService): Set<String> {
         val missingMandatoryProperties = mutableSetOf<String>()
-
         lcaPort ?: missingMandatoryProperties.add("lcaPort")
         osInfo ?: missingMandatoryProperties.add("osInfo")
         type ?: missingMandatoryProperties.add(TYPE)
-
         return missingMandatoryProperties
     }
 

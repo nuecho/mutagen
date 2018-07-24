@@ -64,6 +64,8 @@ data class Script(
             setFolder(folder, it)
         }
 
+    override fun cloneBare() = null
+
     override fun checkMandatoryProperties(service: ConfService): Set<String> =
         if (type == null) setOf(TYPE) else emptySet()
 

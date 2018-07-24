@@ -75,6 +75,11 @@ data class DNGroup(
             setFolder(folder, cfgDNGroup)
         }
 
+    override fun cloneBare() = DNGroup(
+        group = Group(group.tenant, group.name),
+        type = type
+    )
+
     override fun checkMandatoryProperties(service: ConfService): Set<String> =
         if (type == null) setOf(TYPE) else emptySet()
 

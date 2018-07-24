@@ -1,6 +1,7 @@
 package com.nuecho.genesys.cli
 
 import com.nuecho.genesys.cli.preferences.SecurePassword
+import org.fusesource.jansi.Ansi
 import org.fusesource.jansi.AnsiConsole
 
 const val YES: String = "y"
@@ -29,6 +30,14 @@ object Console {
         )
 
         return SecurePassword(console.readPassword("Password: "))
+    }
+
+    fun ansiPrint(string: String) {
+        print(Ansi.ansi().render(string))
+    }
+
+    fun ansiPrintln(string: String) {
+        println(Ansi.ansi().render(string))
     }
 
     fun enableAnsiMode() {

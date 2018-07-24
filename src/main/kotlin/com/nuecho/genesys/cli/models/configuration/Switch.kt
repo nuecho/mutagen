@@ -84,6 +84,12 @@ data class Switch(
             setFolder(folder, switch)
         }
 
+    override fun cloneBare() = Switch(
+        tenant = tenant,
+        name = name,
+        physicalSwitch = physicalSwitch
+    )
+
     override fun checkMandatoryProperties(service: ConfService): Set<String> =
         if (physicalSwitch == null) setOf(PHYSICAL_SWITCH) else emptySet()
 

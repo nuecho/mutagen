@@ -146,6 +146,14 @@ data class DN(
             setFolder(folder, it)
         }
 
+    override fun cloneBare() = DN(
+        tenant = tenant,
+        number = number,
+        switch = switch,
+        type = type,
+        routeType = routeType
+    )
+
     override fun checkMandatoryProperties(service: ConfService): Set<String> =
         if (routeType == null) setOf(ROUTE_TYPE) else emptySet()
 

@@ -55,6 +55,8 @@ data class AgentGroup(
             setFolder(folder, cfgAgentGroup)
         }
 
+    override fun cloneBare() = AgentGroup(group = Group(group.tenant, group.name))
+
     override fun afterPropertiesSet() = group.updateTenantReferences()
 
     override fun getReferences(): Set<ConfigurationObjectReference<*>> =

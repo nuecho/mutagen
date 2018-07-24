@@ -73,6 +73,8 @@ data class Tenant(
             setFolder(folder, it)
         }
 
+    override fun cloneBare() = Tenant(name)
+
     override fun applyDefaultValues() {
         // serviceProvider = false
     }

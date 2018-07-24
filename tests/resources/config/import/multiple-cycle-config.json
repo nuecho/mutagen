@@ -1,0 +1,85 @@
+{
+  "__metadata__": {
+    "formatName": "JSON",
+    "formatVersion": "1.0.0"
+  },
+  "scripts": [
+    {
+      "name": "MultipleCycle-Cycle1-Script",
+      "state": "enabled",
+      "tenant": "MultipleCycle-Cycle1-Tenant",
+      "type": "capacityrule"
+    }
+  ],
+  "tenants": [
+    {
+      "name": "MultipleCycle-Cycle1-Tenant",
+      "state": "enabled",
+      "serviceProvider": true,
+      "defaultCapacityRule": "MultipleCycle-Cycle1-Script"
+    }
+  ],
+  "applications": [
+    {
+      "appServers" : [ ],
+      "autoRestart" : false,
+      "commandLine" : "agentsetup_nssm64.exe",
+      "componentType" : "appcomponent",
+      "isPrimary" : true,
+      "name" : "MultipleCycle-Cycle2-Application1",
+      "redundancyType" : "htcoldstanby",
+      "serverInfo" : {
+        "attempts" : 1,
+        "host" : "MultipleCycle-Cycle2-Host1",
+        "port" : "8094",
+        "timeout" : 10
+      },
+      "state" : "enabled",
+      "type" : "scs",
+      "version" : "8.0",
+      "workDirectory" : "c:\\Program Files\\GCTI\\AgentSetup\\"
+    },
+    {
+      "appServers" : [ ],
+      "autoRestart" : false,
+      "commandLine" : "agentsetup_nssm64.exe",
+      "componentType" : "appcomponent",
+      "isPrimary" : true,
+      "name" : "MultipleCycle-Cycle2-Application2",
+      "redundancyType" : "htcoldstanby",
+      "serverInfo" : {
+        "attempts" : 1,
+        "host" : "MultipleCycle-Cycle2-Host2",
+        "port" : "8094",
+        "timeout" : 10
+      },
+      "state" : "enabled",
+      "type" : "scs",
+      "version" : "8.0",
+      "workDirectory" : "c:\\Program Files\\GCTI\\AgentSetup\\"
+    }
+  ],
+  "hosts": [
+    {
+      "name": "MultipleCycle-Cycle2-Host1",
+      "scs": "MultipleCycle-Cycle2-Application2",
+      "type": "networkserver",
+      "lcaPort": "4999",
+      "osInfo": {
+        "type": "windows",
+        "version": "8"
+      }
+    },
+    {
+      "name": "MultipleCycle-Cycle2-Host2",
+      "scs": "MultipleCycle-Cycle2-Application1",
+      "type": "networkserver",
+      "lcaPort": "4999",
+      "osInfo": {
+        "type": "windows",
+        "version": "8"
+      }
+    }
+  ]
+}
+

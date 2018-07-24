@@ -60,6 +60,8 @@ data class Folder(
             setProperty("userProperties", ConfigurationObjects.toKeyValueCollection(userProperties), it)
         }
 
+    override fun cloneBare() = Folder(name = name, folder = folder)
+
     override fun getReferences(): Set<ConfigurationObjectReference<*>> =
         if (folder.isRoot()) emptySet() else setOf(folder)
 }

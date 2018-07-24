@@ -1,0 +1,4 @@
++ physicalswitch => physSwitch
+  {
+    "name" : "physSwitch"
+  }

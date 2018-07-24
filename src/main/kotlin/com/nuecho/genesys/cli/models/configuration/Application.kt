@@ -131,6 +131,18 @@ data class Application(
             setFolder(folder, it)
         }
 
+    override fun cloneBare() = Application(
+        name = name,
+        type = type,
+        version = version,
+        autoRestart = autoRestart,
+        redundancyType = redundancyType,
+        workDirectory = workDirectory,
+        commandLine = commandLine,
+        startupTimeout = startupTimeout,
+        shutdownTimeout = shutdownTimeout
+    )
+
     override fun checkMandatoryProperties(service: ConfService): Set<String> {
         val prototype: CfgAppPrototype? = if (appPrototype != null) service.retrieveObject(appPrototype) else null
 

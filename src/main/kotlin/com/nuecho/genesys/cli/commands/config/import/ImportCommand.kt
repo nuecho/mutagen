@@ -6,11 +6,17 @@ import com.nuecho.genesys.cli.commands.ConfigServerCommand
 import com.nuecho.genesys.cli.commands.config.Config
 import com.nuecho.genesys.cli.commands.config.import.Import.importConfiguration
 import com.nuecho.genesys.cli.core.defaultJsonObjectMapper
-import com.nuecho.genesys.cli.models.ImportPlan
+import com.nuecho.genesys.cli.commands.config.import.operation.ImportPlan
+import com.nuecho.genesys.cli.commands.config.import.operation.MissingDependencies
+import com.nuecho.genesys.cli.commands.config.import.operation.MissingProperties
+import com.nuecho.genesys.cli.commands.config.import.operation.PRINT_MARGIN
 import com.nuecho.genesys.cli.models.configuration.Configuration
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObject
+import com.nuecho.genesys.cli.models.configuration.reference.ConfigurationObjectReference
 import com.nuecho.genesys.cli.preferences.environment.Environment
 import com.nuecho.genesys.cli.services.ConfService
 import com.nuecho.genesys.cli.services.ConfigurationObjectRepository
+import com.nuecho.genesys.cli.toShortName
 import picocli.CommandLine
 import java.io.File
 
@@ -53,10 +59,19 @@ class ImportCommand : ConfigServerCommand() {
 }
 
 object Import {
-    fun importConfiguration(configuration: Configuration, service: ConfService, autoConfirm: Boolean): Boolean {
+    internal fun importConfiguration(
+        configuration: Configuration,
+        service: ConfService,
+        autoConfirm: Boolean
+    ): Boolean {
         info { "Preparing import." }
 
         val plan = ImportPlan(configuration, service)
+
+        if (plan.missingProperties.isNotEmpty())
+            throw MandatoryPropertiesNotSetException(plan.missingProperties)
+        if (plan.missingDependencies.isNotEmpty())
+            throw UnresolvedConfigurationObjectReferenceException(plan.missingDependencies)
 
         if (!autoConfirm) {
             plan.print()
@@ -72,5 +87,36 @@ object Import {
 
         println("Completed. $count object(s) imported.")
         return true
+    }
+}
+
+class MandatoryPropertiesNotSetException(misses: List<MissingProperties>) : Exception(
+    "Cannot import configuration: some configuration objects' mandatory properties for creation are not set.\n" +
+            misses.joinToString(separator = "\n$PRINT_MARGIN", prefix = PRINT_MARGIN, transform = ::format)
+) {
+    companion object {
+        fun format(missingProperties: MissingProperties) = with(missingProperties) {
+            "Properties [${properties.joinToString()}] " +
+                    "not set in ${configurationObject.reference.getCfgObjectType().toShortName()} " +
+                    "[${configurationObject.reference}]."
+        }
+    }
+}
+
+class UnresolvedConfigurationObjectReferenceException(misses: List<MissingDependencies>) : Exception(
+    "Cannot import configuration: some configuration objects' dependencies could not be found.\n" +
+            misses.joinToString(separator = "\n", transform = ::format)
+) {
+    companion object {
+        fun format(missingDependencies: MissingDependencies) =
+            missingDependencies.dependencies.joinToString(
+                prefix = PRINT_MARGIN,
+                separator = "\n$PRINT_MARGIN",
+                transform = { format(missingDependencies.configurationObject, it) }
+            )
+
+        private fun format(source: ConfigurationObject, dependency: ConfigurationObjectReference<*>) =
+            "Cannot find ${dependency.getCfgObjectType().toShortName()} [$dependency] " +
+                    "(referenced by ${source.reference.getCfgObjectType().toShortName()} [${source.reference}])."
     }
 }

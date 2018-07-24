@@ -108,14 +108,16 @@ data class GVPIVRProfile(
             setFolder(folder, it)
         }
 
+    override fun cloneBare() = GVPIVRProfile(
+        name = name,
+        displayName = displayName,
+        tenant = tenant
+    )
+
     override fun checkMandatoryProperties(service: ConfService): Set<String> {
         val missingMandatoryProperties = mutableSetOf<String>()
-
-        if (displayName == null)
-            missingMandatoryProperties.add(DISPLAY_NAME)
-        if (tenant == null)
-            missingMandatoryProperties.add(TENANT)
-
+        displayName ?: missingMandatoryProperties.add(DISPLAY_NAME)
+        tenant ?: missingMandatoryProperties.add(TENANT)
         return missingMandatoryProperties
     }
 
