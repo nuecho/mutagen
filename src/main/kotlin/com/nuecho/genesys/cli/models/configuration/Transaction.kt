@@ -69,7 +69,7 @@ data class Transaction(
 
     override fun cloneBare() = null
 
-    override fun checkMandatoryProperties(service: ConfService): Set<String> =
+    override fun checkMandatoryProperties(configuration: Configuration, service: ConfService): Set<String> =
         if (alias == null) setOf(ALIAS) else emptySet()
 
     override fun applyDefaultValues() {

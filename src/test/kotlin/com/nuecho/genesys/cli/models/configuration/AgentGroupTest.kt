@@ -75,10 +75,10 @@ private val agentGroup = AgentGroup(
 )
 
 class AgentGroupTest : ConfigurationObjectTest(
-    agentGroup,
-    AgentGroup(tenant = DEFAULT_TENANT_REFERENCE, name = NAME),
-    emptySet(),
-    AgentGroup(mockCfgAgentGroup())
+    configurationObject = agentGroup,
+    emptyConfigurationObject = AgentGroup(tenant = DEFAULT_TENANT_REFERENCE, name = NAME),
+    mandatoryProperties = emptySet(),
+    importedConfigurationObject = AgentGroup(mockCfgAgentGroup())
 ) {
     val service = ServiceMocks.mockConfService()
 

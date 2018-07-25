@@ -44,10 +44,10 @@ private val actionCode = ActionCode(
 )
 
 class ActionCodeTest : ConfigurationObjectTest(
-    actionCode,
-    ActionCode(tenant = DEFAULT_TENANT_REFERENCE, name = NAME, type = TYPE),
-    setOf(CODE),
-    ActionCode(mockCfgActionCode())
+    configurationObject = actionCode,
+    emptyConfigurationObject = ActionCode(tenant = DEFAULT_TENANT_REFERENCE, name = NAME, type = TYPE),
+    mandatoryProperties = setOf(CODE),
+    importedConfigurationObject = ActionCode(mockCfgActionCode())
 ) {
     @Test
     fun `createCfgObject should properly create CfgActionCode`() {

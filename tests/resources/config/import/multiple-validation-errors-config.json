@@ -1,0 +1,34 @@
+{
+  "__metadata__": {
+    "formatName": "JSON",
+    "formatVersion": "1.0.0"
+  },
+  "enumerators": [
+    {
+      "name": "emptyCfgObjectTest",
+      "tenant": "Environment"
+    }
+  ],
+  "physicalSwitches": [
+    {
+      "name": "CycleConfigPhysicalSwitch",
+      "state": "enabled",
+      "type": "fujitsu"
+    }
+  ],
+  "tenants" : [
+    {
+      "name" : "MissingDependencyTenant1",
+      "state" : "enabled",
+      "serviceProvider" : true,
+      "defaultCapacityRule": "NonExistingScript1"
+    },
+    {
+      "name" : "MissingDependencyTenant2",
+      "state" : "enabled",
+      "serviceProvider" : true,
+      "defaultCapacityRule": "NonExistingScript2"
+    }
+  ]
+}
+

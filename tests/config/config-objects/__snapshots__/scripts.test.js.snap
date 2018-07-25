@@ -3,7 +3,7 @@
 exports[`[mutagen scripts config import-export] should create the scripts: the scripts have been created 1`] = `
 Object {
   "stderr": "",
-  "stdout": "+ script => Environment/cfgObjectTest
+  "stdout": "+ script [Environment/cfgObjectTest]
 Completed. 1 object(s) imported.
 ",
 }
@@ -11,8 +11,10 @@ Completed. 1 object(s) imported.
 
 exports[`[mutagen scripts config import-export] should throw exception when new scripts to import miss mandatory properties scripts: exception has been thrown 1`] = `
 Object {
-  "stderr": "Cannot import configuration: some configuration objects' mandatory properties for creation are not set.
-  Properties [type] not set in script [Environment/emptyCfgObjectTest].
+  "stderr": "Validation failed.
+Missing properties:
+  - script [Environment/emptyCfgObjectTest]:
+    - type
 ",
   "stdout": "",
 }
@@ -21,7 +23,7 @@ Object {
 exports[`[mutagen scripts config import-export] should update the modified scripts: the modified scripts have been updated 1`] = `
 Object {
   "stderr": "",
-  "stdout": "~ script => Environment/cfgObjectTest
+  "stdout": "~ script [Environment/cfgObjectTest]
 Completed. 1 object(s) imported.
 ",
 }
@@ -30,7 +32,7 @@ Completed. 1 object(s) imported.
 exports[`[mutagen scripts config import-export] should update the same scripts: the scripts have been updated 1`] = `
 Object {
   "stderr": "",
-  "stdout": "~ script => Environment/cfgObjectTest
+  "stdout": "~ script [Environment/cfgObjectTest]
 Completed. 1 object(s) imported.
 ",
 }

@@ -3,7 +3,7 @@
 exports[`[mutagen tenants config import-export] should create the tenants: the tenants have been created 1`] = `
 Object {
   "stderr": "",
-  "stdout": "+ tenant => cfgObjectTest
+  "stdout": "+ tenant [cfgObjectTest]
 Completed. 1 object(s) imported.
 ",
 }
@@ -12,7 +12,7 @@ Completed. 1 object(s) imported.
 exports[`[mutagen tenants config import-export] should update the modified tenants: the modified tenants have been updated 1`] = `
 Object {
   "stderr": "",
-  "stdout": "~ tenant => cfgObjectTest
+  "stdout": "~ tenant [cfgObjectTest]
 Completed. 1 object(s) imported.
 ",
 }
@@ -21,7 +21,7 @@ Completed. 1 object(s) imported.
 exports[`[mutagen tenants config import-export] should update the same tenants: the tenants have been updated 1`] = `
 Object {
   "stderr": "",
-  "stdout": "~ tenant => cfgObjectTest
+  "stdout": "~ tenant [cfgObjectTest]
 Completed. 1 object(s) imported.
 ",
 }

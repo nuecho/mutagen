@@ -11,8 +11,16 @@
       }
     }
   ],
+  "appPrototypes": [
+    {
+      "name": "campaignGroupAppPrototype",
+      "type": "genesysadministratorserver",
+      "version": "1.2.3"
+    }
+  ],
   "applications": [
     {
+      "appPrototype": "campaignGroupAppPrototype",
       "autoRestart": true,
       "commandLine": "yes",
       "name": "campaignGroupApplication",
@@ -20,8 +28,6 @@
       "tenants": [
         "Environment"
       ],
-      "type": "genesysadministratorserver",
-      "version": "1.2.3",
       "workDirectory": "/tmp"
     }
   ],

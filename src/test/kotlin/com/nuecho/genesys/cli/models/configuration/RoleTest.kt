@@ -43,9 +43,9 @@ private val role = Role(
 )
 
 class RoleTest : ConfigurationObjectTest(
-    role,
-    Role(tenant = DEFAULT_TENANT_REFERENCE, name = NAME),
-    emptySet()
+    configurationObject = role,
+    emptyConfigurationObject = Role(tenant = DEFAULT_TENANT_REFERENCE, name = NAME),
+    mandatoryProperties = emptySet()
 ) {
     @Test
     override fun `initialized object should properly serialize`() {

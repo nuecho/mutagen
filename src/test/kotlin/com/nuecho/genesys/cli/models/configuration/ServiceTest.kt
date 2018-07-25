@@ -64,10 +64,10 @@ private val service = Service(
 )
 
 class ServiceTest : ConfigurationObjectTest(
-    service,
-    Service("foo"),
-    setOf(SOLUTION_TYPE, VERSION),
-    Service(mockService())
+    configurationObject = service,
+    emptyConfigurationObject = Service("foo"),
+    mandatoryProperties = setOf(SOLUTION_TYPE, VERSION),
+    importedConfigurationObject = Service(mockService())
 ) {
     val confService = mockConfService()
 

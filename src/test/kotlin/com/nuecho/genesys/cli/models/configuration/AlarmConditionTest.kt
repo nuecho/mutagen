@@ -72,10 +72,10 @@ private val alarmCondition = AlarmCondition(
 )
 
 class AlarmConditionTest : ConfigurationObjectTest(
-    alarmCondition,
-    AlarmCondition(NAME),
-    setOf(ALARM_DETECT_EVENT, ALARM_DETECT_EVENT_LOG_EVENT_ID, CATEGORY),
-    AlarmCondition(mockAlarmCondition())
+    configurationObject = alarmCondition,
+    emptyConfigurationObject = AlarmCondition(NAME),
+    mandatoryProperties = setOf(ALARM_DETECT_EVENT, ALARM_DETECT_EVENT_LOG_EVENT_ID, CATEGORY),
+    importedConfigurationObject = AlarmCondition(mockAlarmCondition())
 ) {
     val service = mockConfService()
     val application = mockCfgApplication(APPLICATION_NAME)

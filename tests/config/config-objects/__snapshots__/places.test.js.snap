@@ -3,12 +3,12 @@
 exports[`[mutagen places config import-export] should create the places: the places have been created 1`] = `
 Object {
   "stderr": "",
-  "stdout": "+ folder => type: 'folder', owner: 'tenant/Environment', path: 'placeSite'
-+ physicalswitch => placePhysicalSwitch
-+ script => Environment/placeCapacityRule
-+ switch => Environment/placeSwitch
-+ dn => number: 'placeDN', switch: 'placeSwitch', type: 'cellular', tenant: 'Environment'
-+ place => Environment/cfgObjectTest
+  "stdout": "+ folder [type: 'folder', owner: 'tenant/Environment', path: 'placeSite']
++ physicalswitch [placePhysicalSwitch]
++ script [Environment/placeCapacityRule]
++ switch [Environment/placeSwitch]
++ dn [number: 'placeDN', switch: 'placeSwitch', type: 'cellular', tenant: 'Environment']
++ place [Environment/cfgObjectTest]
 Completed. 6 object(s) imported.
 ",
 }
@@ -17,7 +17,7 @@ Completed. 6 object(s) imported.
 exports[`[mutagen places config import-export] should update the modified places: the modified places have been updated 1`] = `
 Object {
   "stderr": "",
-  "stdout": "~ place => Environment/cfgObjectTest
+  "stdout": "~ place [Environment/cfgObjectTest]
 Completed. 1 object(s) imported.
 ",
 }
@@ -26,12 +26,12 @@ Completed. 1 object(s) imported.
 exports[`[mutagen places config import-export] should update the same places: the places have been updated 1`] = `
 Object {
   "stderr": "",
-  "stdout": "~ dn => number: 'placeDN', switch: 'placeSwitch', type: 'cellular', tenant: 'Environment'
-~ folder => type: 'folder', owner: 'tenant/Environment', path: 'placeSite'
-~ physicalswitch => placePhysicalSwitch
-~ place => Environment/cfgObjectTest
-~ script => Environment/placeCapacityRule
-~ switch => Environment/placeSwitch
+  "stdout": "~ dn [number: 'placeDN', switch: 'placeSwitch', type: 'cellular', tenant: 'Environment']
+~ folder [type: 'folder', owner: 'tenant/Environment', path: 'placeSite']
+~ physicalswitch [placePhysicalSwitch]
+~ place [Environment/cfgObjectTest]
+~ script [Environment/placeCapacityRule]
+~ switch [Environment/placeSwitch]
 Completed. 6 object(s) imported.
 ",
 }

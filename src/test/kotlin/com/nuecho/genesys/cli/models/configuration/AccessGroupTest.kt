@@ -74,9 +74,9 @@ private val accessGroup = AccessGroup(
 )
 
 class AccessGroupTest : ConfigurationObjectTest(
-    accessGroup,
-    AccessGroup(tenant = DEFAULT_TENANT_REFERENCE, name = NAME),
-    emptySet()
+    configurationObject = accessGroup,
+    emptyConfigurationObject = AccessGroup(tenant = DEFAULT_TENANT_REFERENCE, name = NAME),
+    mandatoryProperties = emptySet()
 ) {
     @Test
     override fun `initialized object should properly serialize`() {

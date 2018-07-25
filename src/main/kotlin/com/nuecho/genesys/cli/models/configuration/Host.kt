@@ -93,11 +93,12 @@ data class Host(
         type = type
     )
 
-    override fun checkMandatoryProperties(service: ConfService): Set<String> {
+    override fun checkMandatoryProperties(configuration: Configuration, service: ConfService): Set<String> {
         val missingMandatoryProperties = mutableSetOf<String>()
         lcaPort ?: missingMandatoryProperties.add("lcaPort")
         osInfo ?: missingMandatoryProperties.add("osInfo")
         type ?: missingMandatoryProperties.add(TYPE)
+
         return missingMandatoryProperties
     }
 

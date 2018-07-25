@@ -99,11 +99,12 @@ data class GVPCustomer(
         tenant = tenant
     )
 
-    override fun checkMandatoryProperties(service: ConfService): Set<String> {
+    override fun checkMandatoryProperties(configuration: Configuration, service: ConfService): Set<String> {
         val missingMandatoryProperties = mutableSetOf<String>()
         channel ?: missingMandatoryProperties.add(CHANNEL)
         reseller ?: missingMandatoryProperties.add(RESELLER)
         tenant ?: missingMandatoryProperties.add(TENANT)
+
         return missingMandatoryProperties
     }
 

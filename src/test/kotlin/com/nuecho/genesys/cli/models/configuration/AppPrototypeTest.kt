@@ -42,10 +42,10 @@ private val appPrototype = AppPrototype(
 )
 
 class AppPrototypeTest : ConfigurationObjectTest(
-    appPrototype,
-    AppPrototype("foo"),
-    setOf(TYPE, VERSION),
-    AppPrototype(mockAppPrototype())
+    configurationObject = appPrototype,
+    emptyConfigurationObject = AppPrototype("foo"),
+    mandatoryProperties = setOf(TYPE, VERSION),
+    importedConfigurationObject = AppPrototype(mockAppPrototype())
 ) {
     val service = mockConfService()
 
@@ -70,13 +70,16 @@ class AppPrototypeTest : ConfigurationObjectTest(
     }
 }
 
-private fun mockAppPrototype() = mockCfgAppPrototype(appPrototype.name).apply {
+private fun mockAppPrototype() = mockCfgAppPrototype(
+    name = appPrototype.name,
+    dbid = 102,
+    type = CFGAgentDesktop,
+    version = "1.2.3"
+).apply {
     val service = mockConfService()
     mockRetrieveFolderByDbid(service)
 
     every { configurationService } returns service
-    every { type } returns toCfgAppType(appPrototype.type)
-    every { version } returns appPrototype.version
     every { options } returns ConfigurationObjects.toKeyValueCollection(appPrototype.options)
     every { state } returns toCfgObjectState(appPrototype.state)
     every { userProperties } returns mockKeyValueCollection()

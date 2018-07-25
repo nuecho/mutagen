@@ -66,7 +66,7 @@ data class ActionCode(
 
     override fun cloneBare() = null
 
-    override fun checkMandatoryProperties(service: ConfService): Set<String> =
+    override fun checkMandatoryProperties(configuration: Configuration, service: ConfService): Set<String> =
         if (code == null) setOf(CODE) else emptySet()
 
     override fun getReferences(): Set<ConfigurationObjectReference<*>> =

@@ -46,10 +46,10 @@ private val field = Field(
 )
 
 class FieldTest : ConfigurationObjectTest(
-    field,
-    Field(DEFAULT_TENANT_REFERENCE, "foo"),
-    setOf(FIELD_TYPE),
-    Field(mockField())
+    configurationObject = field,
+    emptyConfigurationObject = Field(DEFAULT_TENANT_REFERENCE, "foo"),
+    mandatoryProperties = setOf(FIELD_TYPE),
+    importedConfigurationObject = Field(mockField())
 ) {
     val service = mockConfService()
 

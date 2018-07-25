@@ -3,8 +3,8 @@
 exports[`[mutagen campaigns config import-export] should create the campaigns: the campaigns have been created 1`] = `
 Object {
   "stderr": "",
-  "stdout": "+ script => Environment/campaignScript
-+ campaign => Environment/cfgObjectTest
+  "stdout": "+ script [Environment/campaignScript]
++ campaign [Environment/cfgObjectTest]
 Completed. 2 object(s) imported.
 ",
 }
@@ -13,7 +13,7 @@ Completed. 2 object(s) imported.
 exports[`[mutagen campaigns config import-export] should update the modified campaigns: the modified campaigns have been updated 1`] = `
 Object {
   "stderr": "",
-  "stdout": "~ campaign => Environment/cfgObjectTest
+  "stdout": "~ campaign [Environment/cfgObjectTest]
 Completed. 1 object(s) imported.
 ",
 }
@@ -22,8 +22,8 @@ Completed. 1 object(s) imported.
 exports[`[mutagen campaigns config import-export] should update the same campaigns: the campaigns have been updated 1`] = `
 Object {
   "stderr": "",
-  "stdout": "~ campaign => Environment/cfgObjectTest
-~ script => Environment/campaignScript
+  "stdout": "~ campaign [Environment/cfgObjectTest]
+~ script [Environment/campaignScript]
 Completed. 2 object(s) imported.
 ",
 }

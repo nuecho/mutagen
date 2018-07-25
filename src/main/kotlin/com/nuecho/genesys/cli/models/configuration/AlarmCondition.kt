@@ -63,16 +63,10 @@ data class AlarmCondition(
             )
         },
         alarmDetectScript = alarmCondition.alarmDetectScript?.run {
-            AlarmConditionScriptReference(
-                name,
-                tenant.getReference()
-            )
+            AlarmConditionScriptReference(name, tenant.getReference())
         },
         alarmRemovalEvent = alarmCondition.alarmRemovalEvent?.run {
-            RemovalEvent(
-                logEventID,
-                selectionMode?.toShortName()
-            )
+            RemovalEvent(logEventID, selectionMode?.toShortName())
         },
         category = alarmCondition.category?.toShortName(),
         clearanceScripts = alarmCondition.clearanceScripts?.map {
@@ -136,11 +130,12 @@ data class AlarmCondition(
         category = category
     )
 
-    override fun checkMandatoryProperties(service: ConfService): Set<String> {
+    override fun checkMandatoryProperties(configuration: Configuration, service: ConfService): Set<String> {
         val missingMandatoryProperties = mutableSetOf<String>()
         alarmDetectEvent ?: missingMandatoryProperties.add(ALARM_DETECT_EVENT)
         alarmDetectEvent?.logEventID ?: missingMandatoryProperties.add(ALARM_DETECT_EVENT_LOG_EVENT_ID)
         category ?: missingMandatoryProperties.add(CATEGORY)
+
         return missingMandatoryProperties
     }
 

@@ -31,10 +31,10 @@ private val physicalSwitch = PhysicalSwitch(
 )
 
 class PhysicalSwitchTest : ConfigurationObjectTest(
-    physicalSwitch,
-    PhysicalSwitch("foo"),
-    setOf(TYPE),
-    PhysicalSwitch(mockPhysicalSwitch())
+    configurationObject = physicalSwitch,
+    emptyConfigurationObject = PhysicalSwitch("foo"),
+    mandatoryProperties = setOf(TYPE),
+    importedConfigurationObject = PhysicalSwitch(mockPhysicalSwitch())
 ) {
     val service = mockConfService()
 

@@ -86,11 +86,8 @@ data class Field(
 
     override fun cloneBare() = null
 
-    override fun checkMandatoryProperties(service: ConfService): Set<String> {
-        val missingMandatoryProperties = mutableSetOf<String>()
-        fieldType ?: missingMandatoryProperties.add(FIELD_TYPE)
-        return missingMandatoryProperties
-    }
+    override fun checkMandatoryProperties(configuration: Configuration, service: ConfService): Set<String> =
+        if (fieldType == null) setOf(FIELD_TYPE) else emptySet()
 
     override fun getReferences(): Set<ConfigurationObjectReference<*>> =
         referenceSetBuilder()

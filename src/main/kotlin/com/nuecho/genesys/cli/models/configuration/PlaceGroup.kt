@@ -17,6 +17,7 @@ import com.nuecho.genesys.cli.models.configuration.reference.PlaceGroupReference
 import com.nuecho.genesys.cli.models.configuration.reference.PlaceReference
 import com.nuecho.genesys.cli.models.configuration.reference.TenantReference
 import com.nuecho.genesys.cli.models.configuration.reference.referenceSetBuilder
+import com.nuecho.genesys.cli.services.ConfService
 import com.nuecho.genesys.cli.services.getObjectDbid
 
 data class PlaceGroup(
@@ -60,6 +61,8 @@ data class PlaceGroup(
         }
 
     override fun cloneBare() = PlaceGroup(Group(group.tenant, group.name))
+
+    override fun checkMandatoryProperties(configuration: Configuration, service: ConfService): Set<String> = emptySet()
 
     override fun afterPropertiesSet() {
         group.updateTenantReferences()

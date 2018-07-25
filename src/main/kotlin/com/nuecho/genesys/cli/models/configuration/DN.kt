@@ -154,7 +154,7 @@ data class DN(
         routeType = routeType
     )
 
-    override fun checkMandatoryProperties(service: ConfService): Set<String> =
+    override fun checkMandatoryProperties(configuration: Configuration, service: ConfService): Set<String> =
         if (routeType == null) setOf(ROUTE_TYPE) else emptySet()
 
     override fun applyDefaultValues() {

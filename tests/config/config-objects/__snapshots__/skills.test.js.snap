@@ -3,7 +3,7 @@
 exports[`[mutagen skills config import-export] should create the skills: the skills have been created 1`] = `
 Object {
   "stderr": "",
-  "stdout": "+ skill => Environment/cfgObjectTest
+  "stdout": "+ skill [Environment/cfgObjectTest]
 Completed. 1 object(s) imported.
 ",
 }
@@ -12,7 +12,7 @@ Completed. 1 object(s) imported.
 exports[`[mutagen skills config import-export] should update the modified skills: the modified skills have been updated 1`] = `
 Object {
   "stderr": "",
-  "stdout": "~ skill => Environment/cfgObjectTest
+  "stdout": "~ skill [Environment/cfgObjectTest]
 Completed. 1 object(s) imported.
 ",
 }
@@ -21,7 +21,7 @@ Completed. 1 object(s) imported.
 exports[`[mutagen skills config import-export] should update the same skills: the skills have been updated 1`] = `
 Object {
   "stderr": "",
-  "stdout": "~ skill => Environment/cfgObjectTest
+  "stdout": "~ skill [Environment/cfgObjectTest]
 Completed. 1 object(s) imported.
 ",
 }

@@ -57,7 +57,7 @@ data class PhysicalSwitch(
 
     override fun cloneBare() = null
 
-    override fun checkMandatoryProperties(service: ConfService): Set<String> =
+    override fun checkMandatoryProperties(configuration: Configuration, service: ConfService): Set<String> =
         if (type == null) setOf(TYPE) else emptySet()
 
     override fun getReferences(): Set<ConfigurationObjectReference<*>> =

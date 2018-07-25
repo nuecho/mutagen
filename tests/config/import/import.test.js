@@ -4,6 +4,7 @@ const REPEATED_KEYS_CONFIGURATION_PATH = getResourcePath("config/import/same-key
 const CYCLE_CONFIGURATION_PATH = getResourcePath("config/import/cycle-config.json");
 const MULTIPLE_CYCLE_CONFIGURATION_PATH = getResourcePath("config/import/multiple-cycle-config.json");
 const MISSING_DEPENDENCY_CONFIGURATION_PATH = getResourcePath("config/import/missing-dependency-config.json");
+const MULTIPLE_VALIDATION_ERRORS_PATH = getResourcePath("config/import/multiple-validation-errors-config.json");
 const ACCEPT_CHANGES_CONFIGURATION_PATH = getResourcePath("config/import/accept-changes-config.json");
 const REJECT_CHANGES_CONFIGURATION_PATH = getResourcePath("config/import/reject-changes-config.json");
 const SWITCH_DEPENDENCIES_CONFIGURATION_PATH = getResourcePath("config/config-objects/switch-dependencies-config.json");
@@ -34,18 +35,22 @@ test(`[mutagen config import file] should only import objects with a unique key`
   assertMutagenResult(`config import --auto-confirm ${REPEATED_KEYS_CONFIGURATION_PATH}`, "only one object with the key has been imported", 0);
 });
 
-test(`[mutagen config import file] should import objects even if there's dependency cycles between object`, () => {
+test(`[mutagen config import file] should import objects even if there are dependency cycles between objects`, () => {
   assertMutagenResult(`config import --auto-confirm ${CYCLE_CONFIGURATION_PATH}`, "all objects have been created", 0);
 });
 
-test(`[mutagen config import file] should import objects even if there's multiple dependency cycles between object`, () => {
+test(`[mutagen config import file] should import objects even if there are multiple dependency cycles between objects`, () => {
   const { code, output } = mutagen(`config import --auto-confirm ${MULTIPLE_CYCLE_CONFIGURATION_PATH}`);
   // Only checking return code since the import operations ordering is not always the same.
   expect(code).toBe(0);
 });
 
-test(`[mutagen config import file] should not import any object if some dependencies cannot be resolved`, () => {
+test(`[mutagen config import file] should not import any objects if some dependencies cannot be resolved`, () => {
   assertMutagenResult(`config import --auto-confirm ${MISSING_DEPENDENCY_CONFIGURATION_PATH}`, "found missing dependency", 1);
+});
+
+test(`[mutagen config import file] should not import any objects if some dependencies cannot be resolved and some mandatory properties for creation are missing`, () => {
+  assertMutagenResult(`config import --auto-confirm ${MULTIPLE_VALIDATION_ERRORS_PATH}`, "found missing dependencies and properties", 1);
 });
 
 test(`[mutagen config import file] should not import the objects if the user does not confirm the changes`, (done) => {

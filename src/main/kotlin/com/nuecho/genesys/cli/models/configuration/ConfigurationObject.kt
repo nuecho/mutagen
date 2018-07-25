@@ -21,7 +21,7 @@ interface ConfigurationObject : Comparable<ConfigurationObject> {
 
     fun updateCfgObject(service: IConfService, cfgObject: ICfgObject): CfgObject
 
-    fun checkMandatoryProperties(service: ConfService): Set<String> = emptySet()
+    fun checkMandatoryProperties(configuration: Configuration, service: ConfService): Set<String>
 
     fun applyDefaultValues() {}
 
@@ -29,14 +29,14 @@ interface ConfigurationObject : Comparable<ConfigurationObject> {
      * Returns a bare clone of this configuration object containing only:
      * - mandatory properties
      * - properties that, once set, cannot be modified
-     * Don't forget to check properties inside sub-objects.
+     * Don't forget to check properties inside mandatory sub-objects.
      *
      * This method is used to break dependency cycles when importing configuration objects.
      *
      * Note that you can safely optimize the cycle breaking process by following those rules:
-     * - Ignore the `TenantReference` - cycles with tenants can always be break at the tenant's level.
-     * - Ignore the `folder` field - cycles with folders can always be break at the Folder's level.
-     * Those are just optimisations. In the doubt, just override this method with a non-null configuration object.
+     * - Ignore the `TenantReference` - cycles with tenants can always be broken at the tenant's level.
+     * - Ignore the `folder` field - cycles with folders can always be broken at the Folder's level.
+     * Those are just optimizations. When in doubt, just override this method with a non-null configuration object.
      */
     fun cloneBare(): ConfigurationObject?
 

@@ -37,10 +37,10 @@ private val gvpReseller = GVPReseller(
 )
 
 class GVPResellerTest : ConfigurationObjectTest(
-    gvpReseller,
-    GVPReseller(tenant = DEFAULT_TENANT_REFERENCE, name = NAME),
-    emptySet(),
-    GVPReseller(mockCfgGVPReseller())
+    configurationObject = gvpReseller,
+    emptyConfigurationObject = GVPReseller(tenant = DEFAULT_TENANT_REFERENCE, name = NAME),
+    mandatoryProperties = emptySet(),
+    importedConfigurationObject = GVPReseller(mockCfgGVPReseller())
 ) {
     @Test
     fun `createCfgObject should properly create CfgGVPReseller`() {

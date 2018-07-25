@@ -1,5 +1,6 @@
 package com.nuecho.genesys.cli.models.configuration
 
+import com.genesyslab.platform.applicationblocks.com.objects.CfgAppPrototype
 import com.genesyslab.platform.applicationblocks.com.objects.CfgApplication
 import com.genesyslab.platform.applicationblocks.com.objects.CfgConnInfo
 import com.genesyslab.platform.applicationblocks.com.objects.CfgPortInfo
@@ -18,7 +19,6 @@ import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mock
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgApplication
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgHost
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockKeyValueCollection
-import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgAppType
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgObjectState
 import com.nuecho.genesys.cli.models.configuration.ConfigurationTestData.defaultProperties
 import com.nuecho.genesys.cli.models.configuration.reference.AppPrototypeReference
@@ -36,8 +36,11 @@ import io.mockk.objectMockk
 import io.mockk.use
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat
+import org.hamcrest.Matchers
 import org.junit.jupiter.api.Test
 
+private const val APP_PROTOTYPE_DBID = 102
+private const val APP_PROTOTYPE_VERSION = "1.2.3"
 private val application = Application(
     name = "foo",
     appPrototype = AppPrototypeReference("foo"),
@@ -94,8 +97,6 @@ private val application = Application(
         timeout = 2
     ),
     tenants = listOf(DEFAULT_TENANT_REFERENCE),
-    type = CFGAgentDesktop.toShortName(),
-    version = "1.2.3",
     workDirectory = "/tmp",
     state = CFGEnabled.toShortName(),
     userProperties = defaultProperties(),
@@ -103,26 +104,42 @@ private val application = Application(
 )
 
 class ApplicationTest : ConfigurationObjectTest(
-    application,
-    Application("foo"),
-    setOf(AUTO_RESTART, REDUNDANCY_TYPE, TYPE, VERSION),
-    Application(mockCfgApplication())
+    configurationObject = application,
+    emptyConfigurationObject = Application(name = "foo"),
+    mandatoryProperties = setOf(APP_PROTOTYPE, AUTO_RESTART, REDUNDANCY_TYPE),
+    importedConfigurationObject = Application(mockCfgApplication())
 ) {
     val service = mockConfService()
+
+    @Test
+    fun `server application missing mandatory server properties should return the missing properties' names`() {
+        val configuration = Configuration(
+            Metadata(formatName = "JSON", formatVersion = "1.0.0"),
+            appPrototypes = listOf(AppPrototype(name = "appPrototype", type = "tserver"))
+        )
+        val application = Application(
+            name = "application", appPrototype = AppPrototypeReference("appPrototype"),
+            autoRestart = true,
+            redundancyType = CFGHTColdStanby.toShortName()
+        )
+
+        every { service.retrieveObject(CfgAppPrototype::class.java, any()) } returns null
+        assertThat(application.checkMandatoryProperties(configuration, service), Matchers.equalTo(setOf(COMMAND_LINE, WORK_DIRECTORY)))
+    }
 
     @Test
     fun `updateCfgObject should properly create CfgApplication`() {
         every { service.retrieveObject(CfgApplication::class.java, any()) } returns null
         ConfServiceExtensionMocks.mockRetrieveHost(service)
         ConfServiceExtensionMocks.mockRetrieveTenant(service)
-        ConfServiceExtensionMocks.mockRetrieveAppPrototype(service)
+        ConfServiceExtensionMocks.mockRetrieveAppPrototype(service, APP_PROTOTYPE_DBID, CFGAgentDesktop, APP_PROTOTYPE_VERSION)
 
         objectMockk(ConfigurationObjectRepository).use {
             mockConfigurationObjectRepository()
             val cfgApplication = application.createCfgObject(service)
 
             with(cfgApplication) {
-                assertThat(appPrototypeDBID, equalTo(DEFAULT_OBJECT_DBID))
+                assertThat(appPrototypeDBID, equalTo(APP_PROTOTYPE_DBID))
                 assertThat(appServers.toList(), equalTo(
                     application.appServers?.map { it.toCfgConnInfo(this) } as Collection<CfgConnInfo>
                 ))
@@ -139,9 +156,9 @@ class ApplicationTest : ConfigurationObjectTest(
                 assertThat(redundancyType.toShortName(), equalTo(application.redundancyType))
                 assertThat(serverInfo, equalTo(application.serverInfo?.toCfgServer(this)))
                 assertThat(state, equalTo(toCfgObjectState(application.state)))
-                assertThat(type, equalTo(toCfgAppType(application.type)))
+                assertThat(type, equalTo(CFGAgentDesktop))
                 assertThat(userProperties.asCategorizedProperties(), equalTo(application.userProperties))
-                assertThat(version, equalTo(application.version))
+                assertThat(version, equalTo(APP_PROTOTYPE_VERSION))
                 assertThat(workDirectory, equalTo(application.workDirectory))
             }
         }
@@ -156,7 +173,7 @@ private fun mockCfgApplication() = mockCfgApplication(application.name).apply {
     val server = mockCfgServer()
     val portInfo = mockCfgPortInfo()
     val tenant = ConfigurationObjectMocks.mockCfgTenant("tenant")
-    val prototype = mockCfgAppPrototype("foo")
+    val prototype = mockCfgAppPrototype("foo", 102)
 
     every { configurationService } returns service
 
@@ -181,9 +198,7 @@ private fun mockCfgApplication() = mockCfgApplication(application.name).apply {
     every { state } returns toCfgObjectState(application.state)
     every { tenantDBIDs } returns listOf(1234)
     every { tenants } returns listOf(tenant)
-    every { type } returns toCfgAppType(application.type)
     every { userProperties } returns mockKeyValueCollection()
-    every { version } returns application.version
     every { workDirectory } returns application.workDirectory
 }
 

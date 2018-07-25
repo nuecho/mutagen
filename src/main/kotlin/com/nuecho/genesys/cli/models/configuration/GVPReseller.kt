@@ -22,6 +22,7 @@ import com.nuecho.genesys.cli.models.configuration.reference.GVPResellerReferenc
 import com.nuecho.genesys.cli.models.configuration.reference.TenantReference
 import com.nuecho.genesys.cli.models.configuration.reference.TimeZoneReference
 import com.nuecho.genesys.cli.models.configuration.reference.referenceSetBuilder
+import com.nuecho.genesys.cli.services.ConfService
 import com.nuecho.genesys.cli.services.getObjectDbid
 import com.nuecho.genesys.cli.toShortName
 import java.time.ZoneId
@@ -90,6 +91,8 @@ data class GVPReseller(
         }
 
     override fun cloneBare() = GVPReseller(tenant, name)
+
+    override fun checkMandatoryProperties(configuration: Configuration, service: ConfService): Set<String> = emptySet()
 
     override fun afterPropertiesSet() {
         timeZone?.tenant = tenant

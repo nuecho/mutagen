@@ -3,7 +3,7 @@
 exports[`[mutagen gvpIVRProfiles config import-export] should create the gvpIVRProfiles: the gvpIVRProfiles have been created 1`] = `
 Object {
   "stderr": "",
-  "stdout": "+ gvpivrprofile => cfgObjectTest
+  "stdout": "+ gvpivrprofile [cfgObjectTest]
 Completed. 1 object(s) imported.
 ",
 }
@@ -11,8 +11,11 @@ Completed. 1 object(s) imported.
 
 exports[`[mutagen gvpIVRProfiles config import-export] should throw exception when new gvpIVRProfiles to import miss mandatory properties gvpIVRProfiles: exception has been thrown 1`] = `
 Object {
-  "stderr": "Cannot import configuration: some configuration objects' mandatory properties for creation are not set.
-  Properties [displayName, tenant] not set in gvpivrprofile [emptyCfgObjectTest].
+  "stderr": "Validation failed.
+Missing properties:
+  - gvpivrprofile [emptyCfgObjectTest]:
+    - displayName
+    - tenant
 ",
   "stdout": "",
 }
@@ -21,7 +24,7 @@ Object {
 exports[`[mutagen gvpIVRProfiles config import-export] should update the modified gvpIVRProfiles: the modified gvpIVRProfiles have been updated 1`] = `
 Object {
   "stderr": "",
-  "stdout": "~ gvpivrprofile => cfgObjectTest
+  "stdout": "~ gvpivrprofile [cfgObjectTest]
 Completed. 1 object(s) imported.
 ",
 }
@@ -30,7 +33,7 @@ Completed. 1 object(s) imported.
 exports[`[mutagen gvpIVRProfiles config import-export] should update the same gvpIVRProfiles: the gvpIVRProfiles have been updated 1`] = `
 Object {
   "stderr": "",
-  "stdout": "~ gvpivrprofile => cfgObjectTest
+  "stdout": "~ gvpivrprofile [cfgObjectTest]
 Completed. 1 object(s) imported.
 ",
 }

@@ -3,25 +3,28 @@
 exports[`[mutagen campaignGroups config import-export] should create the campaignGroups: the campaignGroups have been created 1`] = `
 Object {
   "stderr": "",
-  "stdout": "+ agentgroup => Environment/campaignGroupAgentGroup
-+ application => campaignGroupApplication
-+ campaign => Environment/campaignGroupCampaign
-+ gvpivrprofile => campaignGroupIVRProfile
-+ physicalswitch => campaignGroupPhysicalSwitch
-+ script => Environment/campaignGroupCapacityRule
-+ script => Environment/campaignGroupInteractionQueue
-+ switch => Environment/campaignGroupSwitch
-+ dn => number: 'campaignGroupDN', switch: 'campaignGroupSwitch', type: 'routingpoint', tenant: 'Environment'
-+ campaigngroup => name: 'cfgObjectTest', campaign: 'campaignGroupCampaign'
-Completed. 10 object(s) imported.
+  "stdout": "+ agentgroup [Environment/campaignGroupAgentGroup]
++ appprototype [campaignGroupAppPrototype]
++ campaign [Environment/campaignGroupCampaign]
++ gvpivrprofile [campaignGroupIVRProfile]
++ physicalswitch [campaignGroupPhysicalSwitch]
++ script [Environment/campaignGroupCapacityRule]
++ script [Environment/campaignGroupInteractionQueue]
++ application [campaignGroupApplication]
++ switch [Environment/campaignGroupSwitch]
++ dn [number: 'campaignGroupDN', switch: 'campaignGroupSwitch', type: 'routingpoint', tenant: 'Environment']
++ campaigngroup [name: 'cfgObjectTest', campaign: 'campaignGroupCampaign']
+Completed. 11 object(s) imported.
 ",
 }
 `;
 
 exports[`[mutagen campaignGroups config import-export] should throw exception when new campaignGroups to import miss mandatory properties campaignGroups: exception has been thrown 1`] = `
 Object {
-  "stderr": "Cannot import configuration: some configuration objects' mandatory properties for creation are not set.
-  Properties [group] not set in campaigngroup [name: 'cfgObjectTest', campaign: 'campaignGroupCampaign'].
+  "stderr": "Validation failed.
+Missing properties:
+  - campaigngroup [name: 'cfgObjectTest', campaign: 'campaignGroupCampaign']:
+    - group
 ",
   "stdout": "",
 }
@@ -30,7 +33,7 @@ Object {
 exports[`[mutagen campaignGroups config import-export] should update the modified campaignGroups: the modified campaignGroups have been updated 1`] = `
 Object {
   "stderr": "",
-  "stdout": "~ campaigngroup => name: 'cfgObjectTest', campaign: 'campaignGroupCampaign'
+  "stdout": "~ campaigngroup [name: 'cfgObjectTest', campaign: 'campaignGroupCampaign']
 Completed. 1 object(s) imported.
 ",
 }
@@ -39,17 +42,18 @@ Completed. 1 object(s) imported.
 exports[`[mutagen campaignGroups config import-export] should update the same campaignGroups: the campaignGroups have been updated 1`] = `
 Object {
   "stderr": "",
-  "stdout": "~ agentgroup => Environment/campaignGroupAgentGroup
-~ application => campaignGroupApplication
-~ campaigngroup => name: 'cfgObjectTest', campaign: 'campaignGroupCampaign'
-~ campaign => Environment/campaignGroupCampaign
-~ dn => number: 'campaignGroupDN', switch: 'campaignGroupSwitch', type: 'routingpoint', tenant: 'Environment'
-~ gvpivrprofile => campaignGroupIVRProfile
-~ physicalswitch => campaignGroupPhysicalSwitch
-~ script => Environment/campaignGroupCapacityRule
-~ script => Environment/campaignGroupInteractionQueue
-~ switch => Environment/campaignGroupSwitch
-Completed. 10 object(s) imported.
+  "stdout": "~ agentgroup [Environment/campaignGroupAgentGroup]
+~ application [campaignGroupApplication]
+~ appprototype [campaignGroupAppPrototype]
+~ campaigngroup [name: 'cfgObjectTest', campaign: 'campaignGroupCampaign']
+~ campaign [Environment/campaignGroupCampaign]
+~ dn [number: 'campaignGroupDN', switch: 'campaignGroupSwitch', type: 'routingpoint', tenant: 'Environment']
+~ gvpivrprofile [campaignGroupIVRProfile]
+~ physicalswitch [campaignGroupPhysicalSwitch]
+~ script [Environment/campaignGroupCapacityRule]
+~ script [Environment/campaignGroupInteractionQueue]
+~ switch [Environment/campaignGroupSwitch]
+Completed. 11 object(s) imported.
 ",
 }
 `;

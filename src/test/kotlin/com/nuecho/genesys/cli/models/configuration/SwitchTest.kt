@@ -83,10 +83,10 @@ private val mainSwitch = Switch(
 )
 
 class SwitchTest : ConfigurationObjectTest(
-    mainSwitch,
-    Switch(tenant = DEFAULT_TENANT_REFERENCE, name = MAIN_SWITCH),
-    setOf(PHYSICAL_SWITCH),
-    Switch(mockMainCfgSwitch())
+    configurationObject = mainSwitch,
+    emptyConfigurationObject = Switch(tenant = DEFAULT_TENANT_REFERENCE, name = MAIN_SWITCH),
+    mandatoryProperties = setOf(PHYSICAL_SWITCH),
+    importedConfigurationObject = Switch(mockMainCfgSwitch())
 ) {
     @Test
     fun `createCfgObject should properly create CfgSwitch`() {

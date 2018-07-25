@@ -1,14 +1,16 @@
 package com.nuecho.genesys.cli.models.configuration
 
+import com.genesyslab.platform.applicationblocks.com.objects.CfgAppPrototype
 import com.nuecho.genesys.cli.TestResources.loadJsonConfiguration
 import com.nuecho.genesys.cli.models.configuration.ConfigurationAsserts.checkSerialization
 import com.nuecho.genesys.cli.services.ServiceMocks
 import com.nuecho.genesys.cli.services.ServiceMocks.mockConfService
 import io.mockk.every
 import org.hamcrest.MatcherAssert.assertThat
-import org.hamcrest.Matchers.empty
 import org.hamcrest.Matchers.equalTo
 import org.junit.jupiter.api.Test
+
+private val EMPTY_CONFIGURATION = Configuration(Metadata(formatName = "JSON", formatVersion = "1.0.0"))
 
 @Suppress("UnnecessaryAbstractClass")
 abstract class ConfigurationObjectTest(
@@ -25,10 +27,7 @@ abstract class ConfigurationObjectTest(
 
     @Test
     fun `empty object missing mandatory properties should throw MandatoryPropertiesNotSetException`() {
-        val service = ServiceMocks.mockConfService()
-        every { service.retrieveObject(any(), any()) } returns null
-
-        assertThat(emptyConfigurationObject.checkMandatoryProperties(service), equalTo(mandatoryProperties))
+        assertThat(emptyConfigurationObject.checkMandatoryProperties(EMPTY_CONFIGURATION, mockConfService()), equalTo(mandatoryProperties))
     }
 
     @Test
@@ -61,9 +60,12 @@ abstract class ConfigurationObjectTest(
 
     @Test
     fun `cloneBare() should return a clone that contains all mandatory properties`() {
+        val service = ServiceMocks.mockConfService()
+        every { service.retrieveObject(CfgAppPrototype::class.java, any()) } returns null
+
         val bare = configurationObject.cloneBare()
         bare?.let {
-            assertThat(bare.checkMandatoryProperties(mockConfService()), empty())
+            assertThat(bare.checkMandatoryProperties(EMPTY_CONFIGURATION, service), equalTo(emptySet()))
         }
     }
 }

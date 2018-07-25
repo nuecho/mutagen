@@ -43,7 +43,12 @@ private val tenant = Tenant(
     folder = DEFAULT_FOLDER_REFERENCE
 )
 
-class TenantTest : ConfigurationObjectTest(tenant, Tenant("foo"), emptySet(), Tenant(mockCfgTenant())) {
+class TenantTest : ConfigurationObjectTest(
+    configurationObject = tenant,
+    emptyConfigurationObject = Tenant("foo"),
+    mandatoryProperties = emptySet(),
+    importedConfigurationObject = Tenant(mockCfgTenant())
+) {
     @Test
     fun `createCfgObject should properly create CfgTenant`() {
         val defaultTenant = mockCfgTenant(DEFAULT_TENANT_NAME)

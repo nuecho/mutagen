@@ -90,7 +90,7 @@ data class Switch(
         physicalSwitch = physicalSwitch
     )
 
-    override fun checkMandatoryProperties(service: ConfService): Set<String> =
+    override fun checkMandatoryProperties(configuration: Configuration, service: ConfService): Set<String> =
         if (physicalSwitch == null) setOf(PHYSICAL_SWITCH) else emptySet()
 
     override fun afterPropertiesSet() {

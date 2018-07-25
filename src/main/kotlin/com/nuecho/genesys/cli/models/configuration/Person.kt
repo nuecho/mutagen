@@ -108,7 +108,7 @@ data class Person(
         userName = userName
     )
 
-    override fun checkMandatoryProperties(service: ConfService): Set<String> =
+    override fun checkMandatoryProperties(configuration: Configuration, service: ConfService): Set<String> =
         if (userName == null) setOf(USER_NAME) else emptySet()
 
     override fun afterPropertiesSet() {
