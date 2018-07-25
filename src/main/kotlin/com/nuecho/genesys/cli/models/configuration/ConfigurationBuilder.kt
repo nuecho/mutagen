@@ -25,6 +25,7 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgPlace
 import com.genesyslab.platform.applicationblocks.com.objects.CfgPlaceGroup
 import com.genesyslab.platform.applicationblocks.com.objects.CfgRole
 import com.genesyslab.platform.applicationblocks.com.objects.CfgScript
+import com.genesyslab.platform.applicationblocks.com.objects.CfgService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgSkill
 import com.genesyslab.platform.applicationblocks.com.objects.CfgSwitch
 import com.genesyslab.platform.applicationblocks.com.objects.CfgTenant
@@ -55,6 +56,7 @@ class ConfigurationBuilder {
     private val places = ArrayList<Place>()
     private val roles = ArrayList<Role>()
     private val scripts = ArrayList<Script>()
+    private val services = ArrayList<Service>()
     private val skills = ArrayList<Skill>()
     private val switches = ArrayList<Switch>()
     private val tenants = ArrayList<Tenant>()
@@ -90,6 +92,7 @@ class ConfigurationBuilder {
                 is CfgPlaceGroup -> placeGroups += it as PlaceGroup
                 is CfgRole -> roles += it as Role
                 is CfgScript -> scripts += it as Script
+                is CfgService -> services += it as Service
                 is CfgSkill -> skills += it as Skill
                 is CfgSwitch -> switches += it as Switch
                 is CfgTenant -> tenants += it as Tenant
@@ -125,6 +128,7 @@ class ConfigurationBuilder {
         places.sorted(),
         roles.sorted(),
         scripts.sorted(),
+        services.sorted(),
         skills.sorted(),
         switches.sorted(),
         tenants.sorted(),
@@ -159,6 +163,7 @@ class ConfigurationBuilder {
                 is CfgPlaceGroup -> PlaceGroup(cfgObject)
                 is CfgRole -> Role(cfgObject)
                 is CfgScript -> Script(cfgObject)
+                is CfgService -> Service(cfgObject)
                 is CfgSkill -> Skill(cfgObject)
                 is CfgSwitch -> Switch(cfgObject)
                 is CfgTenant -> Tenant(cfgObject)

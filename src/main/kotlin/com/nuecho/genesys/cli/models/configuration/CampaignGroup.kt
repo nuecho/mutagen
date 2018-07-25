@@ -61,6 +61,7 @@ data class CampaignGroup(
     override val userProperties: CategorizedProperties? = null,
     override val folder: FolderReference? = null
 ) : ConfigurationObject, InitializingBean {
+
     @get:JsonIgnore
     override val reference = CampaignGroupReference(campaign, name)
 
@@ -142,6 +143,8 @@ data class CampaignGroup(
             setProperty("userProperties", toKeyValueCollection(userProperties), cfgCampaignGroup)
             setFolder(folder, cfgCampaignGroup)
         }
+
+    override fun cloneBare() = CampaignGroup(campaign = campaign, name = name, group = group)
 
     override fun checkMandatoryProperties(service: ConfService): Set<String> =
         if (group == null) setOf(GROUP) else emptySet()

@@ -1,0 +1,71 @@
+{
+  "__metadata__": {
+    "formatName": "JSON",
+    "formatVersion": "1.0.0"
+  },
+  "applications": [
+    {
+      "appServers": [],
+      "autoRestart": false,
+      "commandLine": "agentsetup_nssm64.exe",
+      "componentType": "appcomponent",
+      "isPrimary": true,
+      "name": "Application1",
+      "redundancyType": "htcoldstanby",
+      "serverInfo": {
+        "attempts": 1,
+        "host": "Host1",
+        "port": "8094",
+        "timeout": 10
+      },
+      "state": "enabled",
+      "type": "scs",
+      "version": "8.0",
+      "workDirectory": "c:\\Program Files\\GCTI\\AgentSetup\\"
+    }
+  ],
+  "hosts": [
+    {
+      "name": "Host1",
+      "type": "networkserver",
+      "lcaPort": "4999",
+      "osInfo": {
+        "type": "windows",
+        "version": "8"
+      }
+    }
+  ],
+  "services": [
+    {
+      "assignedTenant": "Environment",
+      "componentDefinitions": [
+        {
+          "isOptional": true,
+          "startupPriority": 1,
+          "type": "genesysadministrator",
+          "version": "1234"
+        }
+      ],
+      "components": [
+        {
+          "app": "Genesys Administrator",
+          "isOptional": true,
+          "startupPriority": 1
+        }
+      ],
+      "name": "cfgObjectTest",
+      "scs": "Application1",
+      "solutionType": "stbranchoffice",
+      "startupType": "sutautomatic",
+      "state": "enabled",
+      "userProperties": {
+        "section": {
+          "number": 456,
+          "string": "toto"
+        }
+      },
+      "version": "1234"
+    }
+  ]
+}
+

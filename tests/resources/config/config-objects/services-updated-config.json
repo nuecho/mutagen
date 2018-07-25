@@ -1,0 +1,38 @@
+{
+  "__metadata__": {
+    "formatName": "JSON",
+    "formatVersion": "1.0.0"
+  },
+  "services": [
+    {
+      "assignedTenant": "Environment",
+      "componentDefinitions": [
+        {
+          "isOptional": true,
+          "startupPriority": 2,
+          "type": "genesysadministrator",
+          "version": "1234"
+        }
+      ],
+      "components": [
+        {
+          "app": "Genesys Administrator",
+          "isOptional": true,
+          "startupPriority": 2
+        }
+      ],
+      "name": "cfgObjectTest",
+      "solutionType": "stbranchoffice",
+      "startupType": "sutautomatic",
+      "state": "enabled",
+      "userProperties": {
+        "section": {
+          "number": 456,
+          "string": "def"
+        }
+      },
+      "version": "1234"
+    }
+  ]
+}
+
