@@ -29,6 +29,7 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgPlace
 import com.genesyslab.platform.applicationblocks.com.objects.CfgPlaceGroup
 import com.genesyslab.platform.applicationblocks.com.objects.CfgRole
 import com.genesyslab.platform.applicationblocks.com.objects.CfgScript
+import com.genesyslab.platform.applicationblocks.com.objects.CfgService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgSkill
 import com.genesyslab.platform.applicationblocks.com.objects.CfgStatTable
 import com.genesyslab.platform.applicationblocks.com.objects.CfgSwitch
@@ -53,6 +54,7 @@ import com.genesyslab.platform.applicationblocks.com.queries.CfgPlaceGroupQuery
 import com.genesyslab.platform.applicationblocks.com.queries.CfgPlaceQuery
 import com.genesyslab.platform.applicationblocks.com.queries.CfgRoleQuery
 import com.genesyslab.platform.applicationblocks.com.queries.CfgScriptQuery
+import com.genesyslab.platform.applicationblocks.com.queries.CfgServiceQuery
 import com.genesyslab.platform.applicationblocks.com.queries.CfgSkillQuery
 import com.genesyslab.platform.applicationblocks.com.queries.CfgStatTableQuery
 import com.genesyslab.platform.applicationblocks.com.queries.CfgSwitchQuery
@@ -265,6 +267,13 @@ class PlaceReference(name: String, tenant: TenantReference?) :
 class RoleReference(name: String) :
     SimpleObjectReference<CfgRole>(CfgRole::class.java, name) {
     override fun toQuery(service: IConfService) = CfgRoleQuery(primaryKey)
+}
+
+@JsonSerialize(using = SimpleObjectReferenceSerializer::class)
+@JsonDeserialize(using = SimpleObjectReferenceDeserializer::class)
+class ServiceReference(name: String) :
+    SimpleObjectReference<CfgService>(CfgService::class.java, name) {
+    override fun toQuery(service: IConfService) = CfgServiceQuery(primaryKey)
 }
 
 @JsonSerialize(using = SimpleObjectReferenceSerializer::class)

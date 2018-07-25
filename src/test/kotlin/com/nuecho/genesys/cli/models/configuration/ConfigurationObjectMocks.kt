@@ -37,6 +37,7 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgRemovalEvent
 import com.genesyslab.platform.applicationblocks.com.objects.CfgRole
 import com.genesyslab.platform.applicationblocks.com.objects.CfgRoleMember
 import com.genesyslab.platform.applicationblocks.com.objects.CfgScript
+import com.genesyslab.platform.applicationblocks.com.objects.CfgService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgSkill
 import com.genesyslab.platform.applicationblocks.com.objects.CfgSkillLevel
 import com.genesyslab.platform.applicationblocks.com.objects.CfgStatTable
@@ -358,6 +359,11 @@ object ConfigurationObjectMocks {
         mockk<CfgRoleMember>().also {
             every { it.objectDBID } returns DEFAULT_OBJECT_DBID
             every { it.objectType } returns type
+        }
+
+    fun mockCfgService(name: String?): CfgService =
+        mockk<CfgService>().also {
+            every { it.name } returns name
         }
 
     fun mockCfgScript(name: String?, tenant: CfgTenant = mockCfgTenant(DEFAULT_TENANT)) =

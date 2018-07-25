@@ -38,6 +38,8 @@ import com.genesyslab.platform.configuration.protocol.types.CfgRank
 import com.genesyslab.platform.configuration.protocol.types.CfgRouteType
 import com.genesyslab.platform.configuration.protocol.types.CfgScriptType
 import com.genesyslab.platform.configuration.protocol.types.CfgSelectionMode
+import com.genesyslab.platform.configuration.protocol.types.CfgSolutionType
+import com.genesyslab.platform.configuration.protocol.types.CfgStartupType
 import com.genesyslab.platform.configuration.protocol.types.CfgSwitchType
 import com.genesyslab.platform.configuration.protocol.types.CfgTargetType
 import com.genesyslab.platform.configuration.protocol.types.CfgTraceMode
@@ -124,6 +126,8 @@ object ConfigurationObjects {
     fun toCfgSelectionMode(selectionMode: String?) =
         toGEnum(selectionMode, CfgSelectionMode::class.java) as CfgSelectionMode?
 
+    fun toCfgSolutionType(type: String?) = toGEnum(type, CfgSolutionType::class.java) as CfgSolutionType?
+    fun toCfgStartupType(type: String?) = toGEnum(type, CfgStartupType::class.java) as CfgStartupType?
     fun toCfgSwitchType(type: String?) = toGEnum(type, CfgSwitchType::class.java) as CfgSwitchType?
     fun toCfgTargetType(type: String?) = toGEnum(type, CfgTargetType::class.java) as CfgTargetType?
     fun toCfgTraceMode(mode: String?) = toGEnum(mode, CfgTraceMode::class.java) as CfgTraceMode?
