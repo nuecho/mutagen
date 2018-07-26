@@ -41,8 +41,8 @@ Object {
   "stderr": "",
   "stdout": "~ agentgroup => Environment/campaignGroupAgentGroup
 ~ application => campaignGroupApplication
-~ campaign => Environment/campaignGroupCampaign
 ~ campaigngroup => name: 'cfgObjectTest', campaign: 'campaignGroupCampaign'
+~ campaign => Environment/campaignGroupCampaign
 ~ dn => number: 'campaignGroupDN', switch: 'campaignGroupSwitch', type: 'routingpoint', tenant: 'Environment'
 ~ gvpivrprofile => campaignGroupIVRProfile
 ~ physicalswitch => campaignGroupPhysicalSwitch

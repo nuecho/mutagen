@@ -25,6 +25,7 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgGVPIVRProfile
 import com.genesyslab.platform.applicationblocks.com.objects.CfgGVPReseller
 import com.genesyslab.platform.applicationblocks.com.objects.CfgHost
 import com.genesyslab.platform.applicationblocks.com.objects.CfgID
+import com.genesyslab.platform.applicationblocks.com.objects.CfgIVR
 import com.genesyslab.platform.applicationblocks.com.objects.CfgOS
 import com.genesyslab.platform.applicationblocks.com.objects.CfgObjectiveTable
 import com.genesyslab.platform.applicationblocks.com.objects.CfgOwnerID
@@ -306,6 +307,13 @@ object ConfigurationObjectMocks {
         mockk<CfgID>().also {
             every { it.dbid } returns DEFAULT_OBJECT_DBID
             every { it.type } returns type
+        }
+
+    fun mockCfgIvr(name: String?) =
+        mockk<CfgIVR>().also {
+            every { it.name } returns name
+            every { it.dbid } returns DEFAULT_OBJECT_DBID
+            every { it.objectDbid } returns DEFAULT_OBJECT_DBID
         }
 
     fun mockCfgHost(name: String?) =

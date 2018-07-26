@@ -1,0 +1,40 @@
+{
+  "__metadata__": {
+    "formatName": "JSON",
+    "formatVersion": "1.0.0"
+  },
+  "ivrs": [
+    {
+      "description": "my-ivr-description",
+      "ivrServer": "IVRServer-Application",
+      "name": "cfgObjectTest",
+      "state": "enabled",
+      "tenant": "Environment",
+      "type": "ivrtintervoice",
+      "userProperties": {
+        "section": {
+          "number": 456,
+          "string": "def"
+        }
+      },
+      "version": "1.2.3"
+    }
+  ],
+  "applications": [
+    {
+      "autoRestart": false,
+      "commandLine": "start.exe",
+      "componentType": "appcomponent",
+      "isPrimary": true,
+      "name": "IVRServer-Application",
+      "redundancyType": "htcoldstanby",
+      "state": "enabled",
+      "type": "ivrinterfaceserver",
+      "version": "8.0",
+      "workDirectory": "/tmp/",
+      "tenants": [
+        "Environment"
+      ]
+    }
+  ]
+}

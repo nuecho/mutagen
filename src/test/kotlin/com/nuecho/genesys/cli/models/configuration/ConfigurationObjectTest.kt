@@ -60,7 +60,7 @@ abstract class ConfigurationObjectTest(
     }
 
     @Test
-    fun `cloneBare() should return a close that contains all mandatory properties`() {
+    fun `cloneBare() should return a clone that contains all mandatory properties`() {
         val bare = configurationObject.cloneBare()
         bare?.let {
             assertThat(bare.checkMandatoryProperties(mockConfService()), empty())

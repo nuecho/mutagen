@@ -26,6 +26,7 @@ import com.genesyslab.platform.configuration.protocol.types.CfgFolderClass
 import com.genesyslab.platform.configuration.protocol.types.CfgHAType
 import com.genesyslab.platform.configuration.protocol.types.CfgHostType
 import com.genesyslab.platform.configuration.protocol.types.CfgIVRProfileType
+import com.genesyslab.platform.configuration.protocol.types.CfgIVRType
 import com.genesyslab.platform.configuration.protocol.types.CfgLinkType
 import com.genesyslab.platform.configuration.protocol.types.CfgOSType
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectState
@@ -112,6 +113,7 @@ object ConfigurationObjects {
     fun toCfgFieldType(type: String?) = toGEnum(type, CfgFieldType::class.java) as CfgFieldType?
     fun toCfgHAType(type: String?) = toGEnum(type, CfgHAType::class.java) as CfgHAType?
     fun toCfgHostType(type: String?) = toGEnum(type, CfgHostType::class.java) as CfgHostType?
+    fun toCfgIVRType(type: String?) = toGEnum(type, CfgIVRType::class.java) as CfgIVRType?
     fun toCfgLinkType(type: String?) = toGEnum(type, CfgLinkType::class.java) as CfgLinkType?
     fun toCfgObjectState(state: String?) = toGEnum(state, CfgObjectState::class.java) as CfgObjectState?
     fun toCfgObjectType(type: String?) = toGEnum(type, CfgObjectType::class.java) as CfgObjectType?

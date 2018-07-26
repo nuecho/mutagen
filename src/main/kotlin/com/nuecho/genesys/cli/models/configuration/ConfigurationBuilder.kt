@@ -19,6 +19,7 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgGVPCustomer
 import com.genesyslab.platform.applicationblocks.com.objects.CfgGVPIVRProfile
 import com.genesyslab.platform.applicationblocks.com.objects.CfgGVPReseller
 import com.genesyslab.platform.applicationblocks.com.objects.CfgHost
+import com.genesyslab.platform.applicationblocks.com.objects.CfgIVR
 import com.genesyslab.platform.applicationblocks.com.objects.CfgPerson
 import com.genesyslab.platform.applicationblocks.com.objects.CfgPhysicalSwitch
 import com.genesyslab.platform.applicationblocks.com.objects.CfgPlace
@@ -38,8 +39,8 @@ class ConfigurationBuilder {
     private val alarmConditions = ArrayList<AlarmCondition>()
     private val applications = ArrayList<Application>()
     private val appPrototypes = ArrayList<AppPrototype>()
-    private val campaigns = ArrayList<Campaign>()
     private val campaignGroups = ArrayList<CampaignGroup>()
+    private val campaigns = ArrayList<Campaign>()
     private val dnGroups = ArrayList<DNGroup>()
     private val dns = ArrayList<DN>()
     private val enumerators = ArrayList<Enumerator>()
@@ -50,6 +51,7 @@ class ConfigurationBuilder {
     private val gvpIVRProfiles = ArrayList<GVPIVRProfile>()
     private val gvpResellers = ArrayList<GVPReseller>()
     private val hosts = ArrayList<Host>()
+    private val ivrs = ArrayList<Ivr>()
     private val persons = ArrayList<Person>()
     private val physicalSwitches = ArrayList<PhysicalSwitch>()
     private val placeGroups = ArrayList<PlaceGroup>()
@@ -86,6 +88,7 @@ class ConfigurationBuilder {
                 is CfgGVPIVRProfile -> gvpIVRProfiles += it as GVPIVRProfile
                 is CfgGVPReseller -> gvpResellers += it as GVPReseller
                 is CfgHost -> hosts += it as Host
+                is CfgIVR -> ivrs += it as Ivr
                 is CfgPerson -> persons += it as Person
                 is CfgPhysicalSwitch -> physicalSwitches += it as PhysicalSwitch
                 is CfgPlace -> places += it as Place
@@ -110,8 +113,8 @@ class ConfigurationBuilder {
         alarmConditions.sorted(),
         applications.sorted(),
         appPrototypes.sorted(),
-        campaigns.sorted(),
         campaignGroups.sorted(),
+        campaigns.sorted(),
         dnGroups.sorted(),
         dns.sorted(),
         enumerators.sorted(),
@@ -122,6 +125,7 @@ class ConfigurationBuilder {
         gvpIVRProfiles.sorted(),
         gvpResellers.sorted(),
         hosts.sorted(),
+        ivrs.sorted(),
         persons.sorted(),
         physicalSwitches.sorted(),
         placeGroups.sorted(),
@@ -157,6 +161,7 @@ class ConfigurationBuilder {
                 is CfgGVPIVRProfile -> GVPIVRProfile(cfgObject)
                 is CfgGVPReseller -> GVPReseller(cfgObject)
                 is CfgHost -> Host(cfgObject)
+                is CfgIVR -> Ivr(cfgObject)
                 is CfgPerson -> Person(cfgObject)
                 is CfgPhysicalSwitch -> PhysicalSwitch(cfgObject)
                 is CfgPlace -> Place(cfgObject)

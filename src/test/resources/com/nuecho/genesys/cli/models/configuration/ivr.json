@@ -1,0 +1,25 @@
+{
+  "description": "my-ivr-description",
+  "folder": {
+    "owner": {
+      "name": "tenant",
+      "type": "tenant"
+    },
+    "path": [
+      "folder"
+    ],
+    "type": "folder"
+  },
+  "ivrServer": "ivr-server",
+  "name": "ivr-name",
+  "state": "enabled",
+  "tenant": "tenant",
+  "type": "ivrtagility",
+  "userProperties": {
+    "section": {
+      "number": 456,
+      "string": "def"
+    }
+  },
+  "version": "1.2.3"
+}
