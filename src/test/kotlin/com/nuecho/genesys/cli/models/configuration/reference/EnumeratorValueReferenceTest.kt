@@ -4,7 +4,7 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgEnumerator
 import com.genesyslab.platform.applicationblocks.com.objects.CfgTenant
 import com.nuecho.genesys.cli.TestResources.loadJsonConfiguration
 import com.nuecho.genesys.cli.models.configuration.ConfigurationAsserts.checkSerialization
-import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_NAME
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_REFERENCE
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgTenant
 import com.nuecho.genesys.cli.services.ServiceMocks
@@ -44,7 +44,7 @@ class EnumeratorValueReferenceTest {
 
     @Test
     fun `EnumeratorValueReference toQuery should create the proper query`() {
-        val cfgTenant = mockCfgTenant(DEFAULT_TENANT)
+        val cfgTenant = mockCfgTenant(DEFAULT_TENANT_NAME)
 
         val service = ServiceMocks.mockConfService()
         every { service.retrieveObject(CfgTenant::class.java, any()) } returns cfgTenant

@@ -7,6 +7,7 @@ import com.genesyslab.platform.configuration.protocol.types.CfgFlag
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectState.CFGEnabled
 import com.genesyslab.platform.configuration.protocol.types.CfgSolutionType.CFGSTBranchOffice
 import com.genesyslab.platform.configuration.protocol.types.CfgStartupType.CFGSUTAutomatic
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_FOLDER_DBID
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_FOLDER_REFERENCE
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_OBJECT_DBID
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_DBID
@@ -18,19 +19,16 @@ import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgSol
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgStartupType
 import com.nuecho.genesys.cli.models.configuration.ConfigurationTestData.defaultProperties
 import com.nuecho.genesys.cli.models.configuration.reference.ApplicationReference
-import com.nuecho.genesys.cli.models.configuration.reference.FolderReference
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockConfigurationObjectRepository
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveApplication
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveFolderByDbid
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveTenant
 import com.nuecho.genesys.cli.services.ConfigurationObjectRepository
 import com.nuecho.genesys.cli.services.ServiceMocks.mockConfService
-import com.nuecho.genesys.cli.services.getObjectDbid
 import com.nuecho.genesys.cli.toShortName
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.objectMockk
-import io.mockk.staticMockk
 import io.mockk.use
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat
@@ -78,32 +76,28 @@ class ServiceTest : ConfigurationObjectTest(
         mockRetrieveApplication(confService)
         mockRetrieveTenant(confService)
 
-        staticMockk("com.nuecho.genesys.cli.services.ConfServiceExtensionsKt").use {
-            every { confService.getObjectDbid(ofType(FolderReference::class)) } answers { FOLDER_OBJECT_DBID }
+        objectMockk(ConfigurationObjectRepository).use {
+            mockConfigurationObjectRepository()
+            val cfgService = service.createCfgObject(confService)
 
-            objectMockk(ConfigurationObjectRepository).use {
-                mockConfigurationObjectRepository()
-                val cfgService = service.createCfgObject(confService)
-
-                with(cfgService) {
-                    assertThat(name, equalTo(service.name))
-                    assertThat(assignedTenantDBID, equalTo(DEFAULT_TENANT_DBID))
-                    assertThat(componentDefinitions.toList(), equalTo(
-                        service.componentDefinitions?.map {
-                            it.toCfgSolutionComponentDefinition(this)
-                        } as Collection<CfgSolutionComponentDefinition>
-                    ))
-                    assertThat(components.toList(), equalTo(
-                        service.components?.map { it.toCfgSolutionComponent(this) } as Collection<CfgSolutionComponent>
-                    ))
-                    assertThat(scsdbid, equalTo(DEFAULT_OBJECT_DBID))
-                    assertThat(solutionType, equalTo(toCfgSolutionType(service.solutionType)))
-                    assertThat(startupType, equalTo(toCfgStartupType(service.startupType)))
-                    assertThat(version, equalTo(service.version))
-                    assertThat(state, equalTo(toCfgObjectState(service.state)))
-                    assertThat(userProperties.asCategorizedProperties(), equalTo(service.userProperties))
-                    assertThat(folderId, equalTo(FOLDER_OBJECT_DBID))
-                }
+            with(cfgService) {
+                assertThat(name, equalTo(service.name))
+                assertThat(assignedTenantDBID, equalTo(DEFAULT_TENANT_DBID))
+                assertThat(componentDefinitions.toList(), equalTo(
+                    service.componentDefinitions?.map {
+                        it.toCfgSolutionComponentDefinition(this)
+                    } as Collection<CfgSolutionComponentDefinition>
+                ))
+                assertThat(components.toList(), equalTo(
+                    service.components?.map { it.toCfgSolutionComponent(this) } as Collection<CfgSolutionComponent>
+                ))
+                assertThat(scsdbid, equalTo(DEFAULT_OBJECT_DBID))
+                assertThat(solutionType, equalTo(toCfgSolutionType(service.solutionType)))
+                assertThat(startupType, equalTo(toCfgStartupType(service.startupType)))
+                assertThat(version, equalTo(service.version))
+                assertThat(state, equalTo(toCfgObjectState(service.state)))
+                assertThat(userProperties.asCategorizedProperties(), equalTo(service.userProperties))
+                assertThat(folderId, equalTo(DEFAULT_FOLDER_DBID))
             }
         }
     }

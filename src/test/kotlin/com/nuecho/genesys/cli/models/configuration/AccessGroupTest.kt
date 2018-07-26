@@ -13,6 +13,7 @@ import com.genesyslab.platform.configuration.protocol.types.CfgObjectType.CFGFol
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectType.CFGPerson
 import com.nuecho.genesys.cli.models.configuration.ConfigurationAsserts.checkSerialization
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_FOLDER
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_FOLDER_DBID
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_FOLDER_REFERENCE
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_OBJECT_DBID
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_REFERENCE
@@ -116,7 +117,7 @@ class AccessGroupTest : ConfigurationObjectTest(
 
                 with(cfgAccessGroup) {
                     assertThat(type, equalTo(CFGDefaultGroup))
-                    assertThat(folderId, equalTo(DEFAULT_OBJECT_DBID))
+                    assertThat(folderId, equalTo(DEFAULT_FOLDER_DBID))
                     assertThat(memberIDs, hasSize(2))
                     assertThat(memberIDs.toList()[0].dbid, equalTo(DEFAULT_OBJECT_DBID))
                     assertThat(memberIDs.toList()[1].dbid, equalTo(DEFAULT_OBJECT_DBID))

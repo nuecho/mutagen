@@ -4,6 +4,7 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgCampaign
 import com.genesyslab.platform.configuration.protocol.types.CfgFlag.CFGTrue
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectState.CFGEnabled
 import com.nuecho.genesys.cli.models.configuration.ConfigurationAsserts.checkSerialization
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_FOLDER_DBID
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_FOLDER_REFERENCE
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_OBJECT_DBID
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_REFERENCE
@@ -84,7 +85,7 @@ class CampaignTest : ConfigurationObjectTest(
                 assertThat(name, equalTo(campaign.name))
                 assertThat(scriptDBID, equalTo(SCRIPT_DBID))
 
-                assertThat(folderId, equalTo(DEFAULT_OBJECT_DBID))
+                assertThat(folderId, equalTo(DEFAULT_FOLDER_DBID))
                 assertThat(state, equalTo(toCfgObjectState(campaign.state)))
                 assertThat(userProperties.asCategorizedProperties(), equalTo(campaign.userProperties))
             }

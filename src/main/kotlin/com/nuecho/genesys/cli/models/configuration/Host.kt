@@ -9,7 +9,6 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgApplication
 import com.genesyslab.platform.applicationblocks.com.objects.CfgHost
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectType.CFGApplication
 import com.nuecho.genesys.cli.Logging
-import com.nuecho.genesys.cli.core.InitializingBean
 import com.nuecho.genesys.cli.getFolderReference
 import com.nuecho.genesys.cli.getReference
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setFolder
@@ -41,7 +40,7 @@ data class Host(
     @JsonDeserialize(using = CategorizedPropertiesDeserializer::class)
     override val userProperties: CategorizedProperties? = null,
     override val folder: FolderReference? = null
-) : ConfigurationObject, InitializingBean {
+) : ConfigurationObject {
     @get:JsonIgnore
     override val reference = HostReference(name)
 
@@ -101,8 +100,6 @@ data class Host(
         type ?: missingMandatoryProperties.add(TYPE)
         return missingMandatoryProperties
     }
-
-    override fun afterPropertiesSet() {}
 
     override fun getReferences(): Set<ConfigurationObjectReference<*>> =
         referenceSetBuilder()

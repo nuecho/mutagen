@@ -7,7 +7,7 @@ import com.genesyslab.platform.configuration.protocol.types.CfgObjectType.CFGSwi
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectType.CFGTenant
 import com.nuecho.genesys.cli.TestResources
 import com.nuecho.genesys.cli.models.configuration.ConfigurationAsserts.checkSerialization
-import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_NAME
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectNotFoundException
 import com.nuecho.genesys.cli.services.ServiceMocks.mockConfService
 import com.nuecho.genesys.cli.toShortName
@@ -17,7 +17,7 @@ import org.hamcrest.Matchers.equalTo
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
-private val OWNER = OwnerReference(type = CFGTenant.toShortName(), name = DEFAULT_TENANT)
+private val OWNER = OwnerReference(type = CFGTenant.toShortName(), name = DEFAULT_TENANT_NAME)
 private val PATH = listOf("Objects", "Persons")
 private val TYPE = CFGPerson.toShortName()
 

@@ -10,7 +10,7 @@ import com.genesyslab.platform.applicationblocks.com.queries.CfgSkillQuery
 import com.genesyslab.platform.applicationblocks.com.queries.CfgSwitchQuery
 import com.nuecho.genesys.cli.TestResources.loadJsonConfiguration
 import com.nuecho.genesys.cli.models.configuration.ConfigurationAsserts.checkSerialization
-import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_NAME
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_REFERENCE
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveTenant
 import com.nuecho.genesys.cli.services.ServiceMocks.mockConfService
@@ -79,13 +79,13 @@ class SimpleObjectReferenceTest {
 
     @Test
     fun `SimpleObjectReference toString() should generate the proper String`() {
-        assertThat(TenantReference(DEFAULT_TENANT).toString(), equalTo(DEFAULT_TENANT))
+        assertThat(TenantReference(DEFAULT_TENANT_NAME).toString(), equalTo(DEFAULT_TENANT_NAME))
     }
 
     @Test
     fun `SimpleObjectReferenceWithTenant toString() should generate the proper String`() {
         val employeeId = "employeeId"
-        assertThat(PersonReference(employeeId, DEFAULT_TENANT_REFERENCE).toString(), equalTo("$DEFAULT_TENANT/$employeeId"))
+        assertThat(PersonReference(employeeId, DEFAULT_TENANT_REFERENCE).toString(), equalTo("$DEFAULT_TENANT_NAME/$employeeId"))
     }
 
     @Test

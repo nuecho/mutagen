@@ -6,9 +6,10 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgPlaceGroup
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectType.CFGFolder
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectType.CFGPlace
 import com.nuecho.genesys.cli.models.configuration.ConfigurationAsserts.checkSerialization
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_FOLDER_DBID
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_FOLDER_REFERENCE
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_OBJECT_DBID
-import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_NAME
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_REFERENCE
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgFolder
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgPlace
@@ -91,7 +92,7 @@ class PlaceGroupTest : ConfigurationObjectTest(
                 val cfgPlaceGroup = placeGroup.createCfgObject(service)
 
                 with(cfgPlaceGroup) {
-                    assertThat(folderId, equalTo(DEFAULT_OBJECT_DBID))
+                    assertThat(folderId, equalTo(DEFAULT_FOLDER_DBID))
                     assertThat(placeDBIDs.toList(), equalTo(listOf(PLACE1_DBID, PLACE2_DBID)))
 
                     assertThat(groupInfo.name, equalTo(placeGroup.group.name))
@@ -105,7 +106,7 @@ class PlaceGroupTest : ConfigurationObjectTest(
 
 private fun mockCfgPlaceGroup(service: IConfService): CfgPlaceGroup {
     val cfgPlaceGroup = mockCfgPlaceGroup(placeGroup.group.name)
-    val tenant = mockCfgTenant(DEFAULT_TENANT)
+    val tenant = mockCfgTenant(DEFAULT_TENANT_NAME)
 
     return cfgPlaceGroup.apply {
         every { configurationService } returns service

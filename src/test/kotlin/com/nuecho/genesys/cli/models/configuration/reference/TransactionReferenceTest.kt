@@ -48,7 +48,7 @@ class TransactionReferenceTest {
 
     @Test
     fun `TransactionReference toQuery should create the proper query`() {
-        val cfgTenant = mockCfgTenant(ConfigurationObjectMocks.DEFAULT_TENANT)
+        val cfgTenant = mockCfgTenant(ConfigurationObjectMocks.DEFAULT_TENANT_NAME)
 
         val service = mockConfService()
         every { service.retrieveObject(CfgTenant::class.java, any()) } returns cfgTenant
@@ -61,7 +61,7 @@ class TransactionReferenceTest {
 
     @Test
     fun `toString should generate the proper string`() {
-        assertThat("name: '$NAME', type: '${TYPE.toShortName()}', tenant: '${ConfigurationObjectMocks.DEFAULT_TENANT}'", equalTo(transactionReference.toString()))
+        assertThat("name: '$NAME', type: '${TYPE.toShortName()}', tenant: '${ConfigurationObjectMocks.DEFAULT_TENANT_NAME}'", equalTo(transactionReference.toString()))
     }
 
     @Test

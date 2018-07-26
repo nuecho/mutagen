@@ -5,7 +5,7 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgTenant
 import com.nuecho.genesys.cli.TestResources.loadJsonConfiguration
 import com.nuecho.genesys.cli.models.configuration.ConfigurationAsserts.checkSerialization
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_OBJECT_DBID
-import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_NAME
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_REFERENCE
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgSwitch
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgTenant
@@ -47,7 +47,7 @@ class AgentLoginReferenceTest {
 
     @Test
     fun `AgentLoginReference toQuery should create the proper query`() {
-        val cfgTenant = mockCfgTenant(DEFAULT_TENANT)
+        val cfgTenant = mockCfgTenant(DEFAULT_TENANT_NAME)
         val cfgSwitch = mockCfgSwitch(SWITCH)
 
         val service = mockConfService()
@@ -61,7 +61,7 @@ class AgentLoginReferenceTest {
 
     @Test
     fun `toString should generate the proper string`() {
-        assertThat("loginCode: '$LOGIN_CODE', switch: '$DEFAULT_TENANT/$SWITCH'", equalTo(agentLoginReference.toString()))
+        assertThat("loginCode: '$LOGIN_CODE', switch: '$DEFAULT_TENANT_NAME/$SWITCH'", equalTo(agentLoginReference.toString()))
     }
 
     @Test

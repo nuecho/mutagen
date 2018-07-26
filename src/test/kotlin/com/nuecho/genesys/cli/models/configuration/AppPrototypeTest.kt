@@ -3,6 +3,7 @@ package com.nuecho.genesys.cli.models.configuration
 import com.genesyslab.platform.applicationblocks.com.objects.CfgAppPrototype
 import com.genesyslab.platform.configuration.protocol.types.CfgAppType.CFGAgentDesktop
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectState.CFGEnabled
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_FOLDER_DBID
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_FOLDER_REFERENCE
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_OBJECT_DBID
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgAppPrototype
@@ -10,16 +11,13 @@ import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mock
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgAppType
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgObjectState
 import com.nuecho.genesys.cli.models.configuration.ConfigurationTestData.defaultProperties
-import com.nuecho.genesys.cli.models.configuration.reference.FolderReference
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockConfigurationObjectRepository
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveFolderByDbid
 import com.nuecho.genesys.cli.services.ConfigurationObjectRepository
 import com.nuecho.genesys.cli.services.ServiceMocks.mockConfService
-import com.nuecho.genesys.cli.services.getObjectDbid
 import com.nuecho.genesys.cli.toShortName
 import io.mockk.every
 import io.mockk.objectMockk
-import io.mockk.staticMockk
 import io.mockk.use
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.equalTo
@@ -27,7 +25,6 @@ import org.junit.jupiter.api.Test
 
 const val OPTIONS_NUMBER = 123
 const val OPTIONS_STRING = "dude"
-const val FOLDER_OBJECT_DBID = 101
 
 private val appPrototype = AppPrototype(
     name = "foo",
@@ -56,22 +53,18 @@ class AppPrototypeTest : ConfigurationObjectTest(
     fun `updateCfgObject should properly create CfgAppPrototype`() {
         every { service.retrieveObject(CfgAppPrototype::class.java, any()) } returns null
 
-        staticMockk("com.nuecho.genesys.cli.services.ConfServiceExtensionsKt").use {
-            every { service.getObjectDbid(ofType(FolderReference::class)) } answers { FOLDER_OBJECT_DBID }
+        objectMockk(ConfigurationObjectRepository).use {
+            mockConfigurationObjectRepository()
+            val cfgAppPrototype = appPrototype.createCfgObject(service)
 
-            objectMockk(ConfigurationObjectRepository).use {
-                mockConfigurationObjectRepository()
-                val cfgAppPrototype = appPrototype.createCfgObject(service)
-
-                with(cfgAppPrototype) {
-                    assertThat(name, equalTo(appPrototype.name))
-                    assertThat(type, equalTo(toCfgAppType(appPrototype.type)))
-                    assertThat(version, equalTo(appPrototype.version))
-                    assertThat(options.asCategorizedProperties(), equalTo(appPrototype.options))
-                    assertThat(state, equalTo(toCfgObjectState(appPrototype.state)))
-                    assertThat(userProperties.asCategorizedProperties(), equalTo(appPrototype.userProperties))
-                    assertThat(folderId, equalTo(FOLDER_OBJECT_DBID))
-                }
+            with(cfgAppPrototype) {
+                assertThat(name, equalTo(appPrototype.name))
+                assertThat(type, equalTo(toCfgAppType(appPrototype.type)))
+                assertThat(version, equalTo(appPrototype.version))
+                assertThat(options.asCategorizedProperties(), equalTo(appPrototype.options))
+                assertThat(state, equalTo(toCfgObjectState(appPrototype.state)))
+                assertThat(userProperties.asCategorizedProperties(), equalTo(appPrototype.userProperties))
+                assertThat(folderId, equalTo(DEFAULT_FOLDER_DBID))
             }
         }
     }

@@ -11,7 +11,7 @@ import com.genesyslab.platform.configuration.protocol.types.CfgOptimizationMetho
 import com.nuecho.genesys.cli.models.configuration.ConfigurationAsserts.checkSerialization
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_FOLDER_REFERENCE
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_OBJECT_DBID
-import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_NAME
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_DBID
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_REFERENCE
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgAgentGroup
@@ -175,7 +175,7 @@ private fun mockCfgCampaignGroup(service: IConfService): CfgCampaignGroup {
             every { switch } returns cfgSwitch
         }
     val mockServer = mockCfgApplication(campaignGroup.servers!![0].primaryKey)
-    val mockTenant = mockCfgTenant(DEFAULT_TENANT)
+    val mockTenant = mockCfgTenant(DEFAULT_TENANT_NAME)
 
     return cfgCampaignGroup.apply {
         every { configurationService } returns service

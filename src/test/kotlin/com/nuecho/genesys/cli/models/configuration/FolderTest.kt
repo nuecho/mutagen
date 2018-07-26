@@ -3,6 +3,7 @@ package com.nuecho.genesys.cli.models.configuration
 import com.genesyslab.platform.applicationblocks.com.objects.CfgFolder
 import com.genesyslab.platform.configuration.protocol.types.CfgFolderClass.CFGFCDefault
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectState.CFGEnabled
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_FOLDER_DBID
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_FOLDER_REFERENCE
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_OBJECT_DBID
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockKeyValueCollection
@@ -59,7 +60,7 @@ class FolderTest : ConfigurationObjectTest(
                     assertThat(customType, equalTo(folder.customType))
                     assertThat(state, equalTo(toCfgObjectState(folder.state)))
                     assertThat(userProperties.asCategorizedProperties(), equalTo(folder.userProperties))
-                    assertThat(folderId, equalTo(DEFAULT_OBJECT_DBID))
+                    assertThat(folderId, equalTo(DEFAULT_FOLDER_DBID))
                 }
             }
         }

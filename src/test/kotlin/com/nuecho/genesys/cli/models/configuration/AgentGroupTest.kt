@@ -7,6 +7,7 @@ import com.genesyslab.platform.configuration.protocol.types.CfgDNType.CFGCP
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectState
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectType.CFGFolder
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_FOLDER
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_FOLDER_DBID
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_FOLDER_REFERENCE
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_OBJECT_DBID
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_REFERENCE
@@ -110,7 +111,7 @@ class AgentGroupTest : ConfigurationObjectTest(
                     assertThat(state, equalTo(toCfgObjectState(agentGroup.group.state)))
                     assertThat(userProperties.asCategorizedProperties(), equalTo(agentGroup.userProperties))
                     assertThat(capacityRuleDBID, equalTo(DEFAULT_OBJECT_DBID))
-                    assertThat(siteDBID, equalTo(DEFAULT_OBJECT_DBID))
+                    assertThat(siteDBID, equalTo(DEFAULT_FOLDER_DBID))
                     assertThat(contractDBID, equalTo(DEFAULT_OBJECT_DBID))
                 }
             }
