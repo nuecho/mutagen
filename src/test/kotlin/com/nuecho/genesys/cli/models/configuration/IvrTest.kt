@@ -4,9 +4,11 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgIVR
 import com.genesyslab.platform.configuration.protocol.types.CfgIVRType.CFGIVRTAgility
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectState
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectState.CFGEnabled
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_FOLDER_DBID
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_FOLDER_REFERENCE
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_OBJECT_DBID
-import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_DBID
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_NAME
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_REFERENCE
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgIvr
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgTenant
@@ -15,16 +17,15 @@ import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgIVR
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgObjectState
 import com.nuecho.genesys.cli.models.configuration.ConfigurationTestData.defaultProperties
 import com.nuecho.genesys.cli.models.configuration.reference.ApplicationReference
-import com.nuecho.genesys.cli.models.configuration.reference.TenantReference
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockConfigurationObjectRepository
+import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveApplication
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveFolderByDbid
+import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveTenant
 import com.nuecho.genesys.cli.services.ConfigurationObjectRepository
 import com.nuecho.genesys.cli.services.ServiceMocks.mockConfService
-import com.nuecho.genesys.cli.services.getObjectDbid
 import com.nuecho.genesys.cli.toShortName
 import io.mockk.every
 import io.mockk.objectMockk
-import io.mockk.staticMockk
 import io.mockk.use
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.equalTo
@@ -55,31 +56,27 @@ class IvrTest : ConfigurationObjectTest(
     @Test
     fun `updateCfgObject should properly create CfgIVR`() {
         val service = mockConfService()
+        val ivrServerDbid = 102
+
         every { service.retrieveObject(CfgIVR::class.java, any()) } returns null
+        mockRetrieveTenant(service)
+        mockRetrieveApplication(service, ivrServerDbid)
 
-        staticMockk("com.nuecho.genesys.cli.services.ConfServiceExtensionsKt").use {
-            val tenantDbid = 101
-            val ivrServerDbid = 102
+        objectMockk(ConfigurationObjectRepository).use {
+            mockConfigurationObjectRepository()
 
-            every { service.getObjectDbid(ofType(TenantReference::class)) } answers { tenantDbid }
-            every { service.getObjectDbid(ofType(ApplicationReference::class)) } answers { ivrServerDbid }
+            val cfgIvr = ivr.createCfgObject(service)
 
-            objectMockk(ConfigurationObjectRepository).use {
-                mockConfigurationObjectRepository()
-
-                val cfgIvr = ivr.createCfgObject(service)
-
-                with(cfgIvr) {
-                    assertThat(description, equalTo(ivr.description))
-                    assertThat(folderId, equalTo(DEFAULT_OBJECT_DBID))
-                    assertThat(ivrServerDBID, equalTo(ivrServerDbid))
-                    assertThat(name, equalTo(ivr.name))
-                    assertThat(state, equalTo(toCfgObjectState(ivr.state)))
-                    assertThat(tenantDBID, equalTo(tenantDbid))
-                    assertThat(type, equalTo(toCfgIVRType(ivr.type)))
-                    assertThat(userProperties.asCategorizedProperties(), equalTo(ivr.userProperties))
-                    assertThat(version, equalTo(ivr.version))
-                }
+            with(cfgIvr) {
+                assertThat(description, equalTo(ivr.description))
+                assertThat(folderId, equalTo(DEFAULT_FOLDER_DBID))
+                assertThat(ivrServerDBID, equalTo(ivrServerDbid))
+                assertThat(name, equalTo(ivr.name))
+                assertThat(state, equalTo(toCfgObjectState(ivr.state)))
+                assertThat(tenantDBID, equalTo(DEFAULT_TENANT_DBID))
+                assertThat(type, equalTo(toCfgIVRType(ivr.type)))
+                assertThat(userProperties.asCategorizedProperties(), equalTo(ivr.userProperties))
+                assertThat(version, equalTo(ivr.version))
             }
         }
     }
@@ -89,7 +86,7 @@ private fun mockCfgIvr(): CfgIVR {
     val service = mockConfService()
     mockRetrieveFolderByDbid(service)
 
-    val cfgTenant = mockCfgTenant(name = DEFAULT_TENANT)
+    val cfgTenant = mockCfgTenant(name = DEFAULT_TENANT_NAME)
     val cfgApplication = ConfigurationObjectMocks.mockCfgApplication(name = IVR_SERVER_NAME)
     val cfgIvr = mockCfgIvr(name = NAME)
     val userPropertiesMock = mockKeyValueCollection()

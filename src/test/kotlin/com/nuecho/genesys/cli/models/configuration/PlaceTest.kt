@@ -4,6 +4,7 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgDN
 import com.genesyslab.platform.applicationblocks.com.objects.CfgPlace
 import com.genesyslab.platform.configuration.protocol.types.CfgDNType.CFGCellular
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectState.CFGEnabled
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_FOLDER_DBID
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_FOLDER_REFERENCE
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_OBJECT_DBID
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_DBID
@@ -85,12 +86,12 @@ class PlaceTest : ConfigurationObjectTest(
                 assertThat(name, equalTo(place.name))
                 assertThat(tenantDBID, equalTo(DEFAULT_TENANT_DBID))
                 assertThat(dndbiDs, equalTo(listOf(DN_DBID_1, DN_DBID_2) as Collection<Int>))
-                assertThat(siteDBID, equalTo(DEFAULT_OBJECT_DBID))
+                assertThat(siteDBID, equalTo(DEFAULT_FOLDER_DBID))
                 assertThat(contractDBID, equalTo(contractDbid))
                 assertThat(capacityRuleDBID, equalTo(capacityRuleDbid))
                 assertThat(state, equalTo(toCfgObjectState(place.state)))
                 assertThat(userProperties.asCategorizedProperties(), equalTo(place.userProperties))
-                assertThat(folderId, equalTo(DEFAULT_OBJECT_DBID))
+                assertThat(folderId, equalTo(DEFAULT_FOLDER_DBID))
             }
         }
     }

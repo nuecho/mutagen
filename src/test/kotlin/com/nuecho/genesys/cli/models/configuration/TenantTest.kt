@@ -5,7 +5,7 @@ import com.genesyslab.platform.configuration.protocol.types.CfgFlag
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectState.CFGEnabled
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_FOLDER_REFERENCE
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_OBJECT_DBID
-import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_NAME
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_DBID
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_REFERENCE
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgObjectiveTable
@@ -46,7 +46,7 @@ private val tenant = Tenant(
 class TenantTest : ConfigurationObjectTest(tenant, Tenant("foo"), emptySet(), Tenant(mockCfgTenant())) {
     @Test
     fun `createCfgObject should properly create CfgTenant`() {
-        val defaultTenant = mockCfgTenant(DEFAULT_TENANT)
+        val defaultTenant = mockCfgTenant(DEFAULT_TENANT_NAME)
         val service = mockConfService()
         every { service.retrieveObject(CfgTenant::class.java, any()) } returns defaultTenant
 

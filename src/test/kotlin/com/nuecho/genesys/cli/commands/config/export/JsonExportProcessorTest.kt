@@ -14,7 +14,7 @@ import com.nuecho.genesys.cli.core.compactJsonObjectMapper
 import com.nuecho.genesys.cli.core.defaultJsonGenerator
 import com.nuecho.genesys.cli.core.defaultJsonObjectMapper
 import com.nuecho.genesys.cli.models.configuration.Configuration
-import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_NAME
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgTenant
 import com.nuecho.genesys.cli.services.ServiceMocks.mockConfService
 import io.mockk.every
@@ -34,7 +34,7 @@ class JsonExportProcessorTest {
 
     @Test
     fun `exporting using compact JSON format should yield a compacted file`() {
-        val tenant = mockCfgTenant(DEFAULT_TENANT)
+        val tenant = mockCfgTenant(DEFAULT_TENANT_NAME)
 
         val person = spyk(CfgPerson(service))
         every { person.tenant } returns tenant
@@ -48,7 +48,7 @@ class JsonExportProcessorTest {
 
     @Test
     fun `exporting multiple objects of the same type should generate an ordered result`() {
-        val tenant = mockCfgTenant(DEFAULT_TENANT)
+        val tenant = mockCfgTenant(DEFAULT_TENANT_NAME)
 
         val person1 = spyk(CfgPerson(service))
         every { person1.tenant } returns tenant

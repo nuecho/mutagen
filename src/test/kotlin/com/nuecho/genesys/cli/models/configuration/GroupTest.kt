@@ -9,7 +9,7 @@ import com.genesyslab.platform.configuration.protocol.types.CfgObjectType
 import com.nuecho.genesys.cli.TestResources
 import com.nuecho.genesys.cli.models.configuration.ConfigurationAsserts.checkSerialization
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_FOLDER
-import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_NAME
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_REFERENCE
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgFolder
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgObjectiveTable
@@ -135,7 +135,7 @@ class GroupTest {
 }
 
 private fun mockGroup(): CfgGroup {
-    val tenant = mockCfgTenant(DEFAULT_TENANT)
+    val tenant = mockCfgTenant(DEFAULT_TENANT_NAME)
 
     val cfgGroup = mockk<CfgGroup>().also {
         every { it.name } returns group.name

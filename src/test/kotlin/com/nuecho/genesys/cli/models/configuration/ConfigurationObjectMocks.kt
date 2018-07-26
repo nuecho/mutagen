@@ -71,18 +71,19 @@ import io.mockk.mockk
 
 @Suppress("LargeClass")
 object ConfigurationObjectMocks {
-    const val DEFAULT_TENANT = "tenant"
+    const val DEFAULT_TENANT_NAME = "tenant"
     const val DEFAULT_FOLDER = "folder"
     const val DEFAULT_OBJECT_DBID = 101
     const val DEFAULT_TENANT_DBID = 1
+    const val DEFAULT_FOLDER_DBID = 2
     const val SUBNAME = "subname"
     const val SUBCODE = "subcode"
     val DEFAULT_FOLDER_TYPE = CFGFolder
     val DEFAULT_IVR_PROFILE_TYPE = CfgIVRProfileType.CFGIPTOutbound
-    val DEFAULT_TENANT_REFERENCE = TenantReference(DEFAULT_TENANT)
+    val DEFAULT_TENANT_REFERENCE = TenantReference(DEFAULT_TENANT_NAME)
     val DEFAULT_FOLDER_REFERENCE = FolderReference(
         DEFAULT_FOLDER_TYPE.toShortName(),
-        OwnerReference(CFGTenant.toShortName(), DEFAULT_TENANT),
+        OwnerReference(CFGTenant.toShortName(), DEFAULT_TENANT_NAME),
         listOf(DEFAULT_FOLDER)
     )
 
@@ -118,14 +119,14 @@ object ConfigurationObjectMocks {
         return keyValueCollection
     }
 
-    fun mockCfgAccessGroup(name: String = "name", tenant: CfgTenant = mockCfgTenant(DEFAULT_TENANT)) =
+    fun mockCfgAccessGroup(name: String = "name", tenant: CfgTenant = mockCfgTenant(DEFAULT_TENANT_NAME)) =
         mockk<CfgAccessGroup>().also {
             every { it.groupInfo.name } returns name
             every { it.groupInfo.tenant } returns tenant
             every { it.objectDbid } returns DEFAULT_OBJECT_DBID
         }
 
-    fun mockCfgActionCode(name: String?, tenant: CfgTenant = mockCfgTenant(DEFAULT_TENANT)) =
+    fun mockCfgActionCode(name: String?, tenant: CfgTenant = mockCfgTenant(DEFAULT_TENANT_NAME)) =
         mockk<CfgActionCode>().also {
             every { it.name } returns name
             every { it.tenant } returns tenant
@@ -138,21 +139,31 @@ object ConfigurationObjectMocks {
             every { it.code } returns code
         }
 
-    fun mockCfgAgentGroup(name: String?, tenant: CfgTenant = mockCfgTenant(DEFAULT_TENANT)) =
+    fun mockCfgAgentGroup(
+        name: String,
+        tenant: CfgTenant = mockCfgTenant(DEFAULT_TENANT_NAME),
+        dbid: Int = DEFAULT_OBJECT_DBID
+    ) =
         mockk<CfgAgentGroup>().also {
             every { it.groupInfo.name } returns name
             every { it.groupInfo.tenant } returns tenant
-            every { it.objectDbid } returns DEFAULT_OBJECT_DBID
+            every { it.objectDbid } returns dbid
+            every { it.dbid } returns dbid
         }
 
-    fun mockCfgAgentLogin(loginCode: String, tenant: CfgTenant = mockCfgTenant(DEFAULT_TENANT)): CfgAgentLogin {
+    fun mockCfgAgentLogin(
+        loginCode: String,
+        tenant: CfgTenant = mockCfgTenant(DEFAULT_TENANT_NAME),
+        dbid: Int = DEFAULT_OBJECT_DBID
+    ): CfgAgentLogin {
         val switch = mockCfgSwitch("switch")
 
         return mockk<CfgAgentLogin>().also {
             every { it.loginCode } returns loginCode
             every { it.switch } returns switch
             every { it.tenant } returns tenant
-            every { it.objectDbid } returns DEFAULT_OBJECT_DBID
+            every { it.objectDbid } returns dbid
+            every { it.dbid } returns dbid
         }
     }
 
@@ -179,23 +190,30 @@ object ConfigurationObjectMocks {
             every { it.selectionMode } returns selectionMode
         }
 
-    fun mockCfgApplication(name: String) =
+    fun mockCfgApplication(name: String, dbid: Int = DEFAULT_OBJECT_DBID) =
         mockk<CfgApplication>().also {
             every { it.name } returns name
-            every { it.objectDbid } returns DEFAULT_OBJECT_DBID
+            every { it.objectDbid } returns dbid
+            every { it.dbid } returns dbid
         }
 
-    fun mockCfgAppPrototype(name: String?) =
+    fun mockCfgAppPrototype(name: String, dbid: Int = DEFAULT_OBJECT_DBID) =
         mockk<CfgAppPrototype>().also {
             every { it.name } returns name
-            every { it.objectDbid } returns DEFAULT_OBJECT_DBID
+            every { it.objectDbid } returns dbid
+            every { it.dbid } returns dbid
         }
 
-    fun mockCfgCampaign(name: String, tenant: CfgTenant = mockCfgTenant(DEFAULT_TENANT)) =
+    fun mockCfgCampaign(
+        name: String,
+        tenant: CfgTenant = mockCfgTenant(DEFAULT_TENANT_NAME),
+        dbid: Int = DEFAULT_OBJECT_DBID
+    ) =
         mockk<CfgCampaign>().also {
             every { it.name } returns name
             every { it.tenant } returns tenant
-            every { it.objectDbid } returns DEFAULT_OBJECT_DBID
+            every { it.objectDbid } returns dbid
+            every { it.dbid } returns dbid
         }
 
     fun mockCfgCampaignGroup(name: String, campaign: CfgCampaign = mockCfgCampaign("campaign")) =
@@ -205,10 +223,11 @@ object ConfigurationObjectMocks {
             every { it.objectDbid } returns DEFAULT_OBJECT_DBID
         }
 
-    fun mockCfgCallingList(name: String) =
+    fun mockCfgCallingList(name: String, dbid: Int = DEFAULT_OBJECT_DBID) =
         mockk<CfgCallingList>().also {
             every { it.name } returns name
-            every { it.objectDbid } returns DEFAULT_OBJECT_DBID
+            every { it.objectDbid } returns dbid
+            every { it.dbid } returns dbid
         }
 
     fun mockCfgCallingListInfo(callingList: CfgCallingList?, isActive: CfgFlag? = CFGNoFlag, share: Int? = null) =
@@ -221,20 +240,27 @@ object ConfigurationObjectMocks {
     fun mockCfgDN(
         number: String,
         type: CfgDNType = CfgDNType.CFGNoDN,
-        tenant: CfgTenant = mockCfgTenant(DEFAULT_TENANT),
+        tenant: CfgTenant = mockCfgTenant(DEFAULT_TENANT_NAME),
+        switch: CfgSwitch? = null,
         dbid: Int = DEFAULT_OBJECT_DBID
     ) = mockk<CfgDN>().also {
         every { it.number } returns number
         every { it.type } returns type
         every { it.tenant } returns tenant
         every { it.objectDbid } returns dbid
+        every { it.switch } returns switch
     }
 
-    fun mockCfgDNGroup(name: String, tenant: CfgTenant = mockCfgTenant(DEFAULT_TENANT)) =
+    fun mockCfgDNGroup(
+        name: String,
+        tenant: CfgTenant = mockCfgTenant(DEFAULT_TENANT_NAME),
+        dbid: Int = DEFAULT_OBJECT_DBID
+    ) =
         mockk<CfgDNGroup>().also {
             every { it.groupInfo.name } returns name
             every { it.groupInfo.tenant } returns tenant
-            every { it.objectDbid } returns DEFAULT_OBJECT_DBID
+            every { it.objectDbid } returns dbid
+            every { it.dbid } returns dbid
         }
 
     fun mockCfgDNInfo(trunks: Int = 0) =
@@ -243,30 +269,39 @@ object ConfigurationObjectMocks {
             every { it.trunks } returns trunks
         }
 
-    fun mockCfgEnumerator(name: String?, tenant: CfgTenant = mockCfgTenant(DEFAULT_TENANT)) =
+    fun mockCfgEnumerator(
+        name: String?,
+        tenant: CfgTenant = mockCfgTenant(DEFAULT_TENANT_NAME),
+        dbid: Int = DEFAULT_OBJECT_DBID
+    ) =
         mockk<CfgEnumerator>().also {
             every { it.tenant } returns tenant
             every { it.name } returns name
-            every { it.objectDbid } returns DEFAULT_OBJECT_DBID
+            every { it.objectDbid } returns dbid
+            every { it.dbid } returns dbid
         }
 
     fun mockCfgEnumeratorValue(
         name: String?,
-        enumerator: CfgEnumerator = mockCfgEnumerator("enumerator", mockCfgTenant(DEFAULT_TENANT))
+        enumerator: CfgEnumerator = mockCfgEnumerator("enumerator", mockCfgTenant(DEFAULT_TENANT_NAME))
     ) =
         mockk<CfgEnumeratorValue>().also {
             every { it.name } returns name
             every { it.enumerator } returns enumerator
         }
 
-    fun mockCfgField(name: String?, tenant: CfgTenant = mockCfgTenant(DEFAULT_TENANT)) =
+    fun mockCfgField(name: String?, tenant: CfgTenant = mockCfgTenant(DEFAULT_TENANT_NAME)) =
         mockk<CfgField>().also {
             every { it.tenant } returns tenant
             every { it.name } returns name
             every { it.objectDbid } returns DEFAULT_OBJECT_DBID
         }
 
-    fun mockCfgFolder(name: String = DEFAULT_FOLDER, type: CfgObjectType = DEFAULT_FOLDER_TYPE) =
+    fun mockCfgFolder(
+        name: String = DEFAULT_FOLDER,
+        type: CfgObjectType = DEFAULT_FOLDER_TYPE,
+        dbid: Int = DEFAULT_FOLDER_DBID
+    ) =
         mockk<CfgFolder>().also {
             val owner = mockCfgOwnerID()
             val parent = mockCfgParentID()
@@ -275,12 +310,13 @@ object ConfigurationObjectMocks {
             every { it.type } returns type
             every { it.ownerID } returns owner
             every { it.parentID } returns parent
-            every { it.objectDbid } returns DEFAULT_OBJECT_DBID
+            every { it.objectDbid } returns dbid
+            every { it.dbid } returns dbid
         }
 
     fun mockCfgOwnerID() =
         mockk<CfgOwnerID>().also {
-            val tenant = ConfigurationObjectMocks.mockCfgTenant(DEFAULT_TENANT)
+            val tenant = ConfigurationObjectMocks.mockCfgTenant(DEFAULT_TENANT_NAME)
 
             val confService = mockConfService()
             every { confService.retrieveObject(CFGTenant, DEFAULT_TENANT_DBID) } returns tenant
@@ -296,7 +332,7 @@ object ConfigurationObjectMocks {
             every { it.getProperty("type") } returns CFGTenant.ordinal()
         }
 
-    fun mockCfgPlaceGroup(name: String?, tenant: CfgTenant = mockCfgTenant(DEFAULT_TENANT)) =
+    fun mockCfgPlaceGroup(name: String?, tenant: CfgTenant = mockCfgTenant(DEFAULT_TENANT_NAME)) =
         mockk<CfgPlaceGroup>().also {
             every { it.groupInfo.name } returns name
             every { it.groupInfo.tenant } returns tenant
@@ -316,18 +352,23 @@ object ConfigurationObjectMocks {
             every { it.objectDbid } returns DEFAULT_OBJECT_DBID
         }
 
-    fun mockCfgHost(name: String?) =
+    fun mockCfgHost(name: String, dbid: Int = DEFAULT_OBJECT_DBID) =
         mockk<CfgHost>().also {
             every { it.name } returns name
-            every { it.dbid } returns DEFAULT_OBJECT_DBID
-            every { it.objectDbid } returns DEFAULT_OBJECT_DBID
+            every { it.dbid } returns dbid
+            every { it.objectDbid } returns dbid
         }
 
-    fun mockCfgObjectiveTable(name: String?, tenant: CfgTenant = mockCfgTenant(DEFAULT_TENANT)) =
+    fun mockCfgObjectiveTable(
+        name: String,
+        tenant: CfgTenant = mockCfgTenant(DEFAULT_TENANT_NAME),
+        dbid: Int = DEFAULT_OBJECT_DBID
+    ) =
         mockk<CfgObjectiveTable>().also {
             every { it.name } returns name
             every { it.tenant } returns tenant
-            every { it.objectDbid } returns DEFAULT_OBJECT_DBID
+            every { it.objectDbid } returns dbid
+            every { it.dbid } returns dbid
         }
 
     fun mockCfgOS(osType: CfgOSType?, osVersion: String?) =
@@ -336,27 +377,37 @@ object ConfigurationObjectMocks {
             every { it.oSversion } returns osVersion
         }
 
-    fun mockCfgPerson(employeeID: String?, tenant: CfgTenant = mockCfgTenant(DEFAULT_TENANT)) =
-        mockk<CfgPerson>().also {
-            every { it.employeeID } returns employeeID
-            every { it.tenant } returns tenant
-            every { it.objectDbid } returns DEFAULT_OBJECT_DBID
-        }
+    fun mockCfgPerson(
+        employeeID: String,
+        tenant: CfgTenant = mockCfgTenant(DEFAULT_TENANT_NAME),
+        dbid: Int = DEFAULT_OBJECT_DBID
+    ) = mockk<CfgPerson>().also {
+        every { it.employeeID } returns employeeID
+        every { it.tenant } returns tenant
+        every { it.objectDbid } returns dbid
+        every { it.dbid } returns dbid
+    }
 
-    fun mockCfgPhysicalSwitch(name: String?) =
+    fun mockCfgPhysicalSwitch(name: String, dbid: Int = DEFAULT_OBJECT_DBID) =
         mockk<CfgPhysicalSwitch>().also {
             every { it.name } returns name
-            every { it.objectDbid } returns DEFAULT_OBJECT_DBID
+            every { it.objectDbid } returns dbid
+            every { it.dbid } returns dbid
         }
 
-    fun mockCfgPlace(name: String?, tenant: CfgTenant = mockCfgTenant(DEFAULT_TENANT)) =
+    fun mockCfgPlace(
+        name: String,
+        tenant: CfgTenant = mockCfgTenant(DEFAULT_TENANT_NAME),
+        dbid: Int = DEFAULT_OBJECT_DBID
+    ) =
         mockk<CfgPlace>().also {
             every { it.name } returns name
             every { it.tenant } returns tenant
-            every { it.objectDbid } returns DEFAULT_OBJECT_DBID
+            every { it.objectDbid } returns dbid
+            every { it.dbid } returns dbid
         }
 
-    fun mockCfgRole(name: String?, tenant: CfgTenant = mockCfgTenant(DEFAULT_TENANT)) =
+    fun mockCfgRole(name: String?, tenant: CfgTenant = mockCfgTenant(DEFAULT_TENANT_NAME)) =
         mockk<CfgRole>().also {
             every { it.name } returns name
             every { it.tenant } returns tenant
@@ -374,73 +425,109 @@ object ConfigurationObjectMocks {
             every { it.name } returns name
         }
 
-    fun mockCfgScript(name: String?, tenant: CfgTenant = mockCfgTenant(DEFAULT_TENANT)) =
+    fun mockCfgScript(
+        name: String,
+        tenant: CfgTenant = mockCfgTenant(DEFAULT_TENANT_NAME),
+        dbid: Int = DEFAULT_OBJECT_DBID
+    ) =
         mockk<CfgScript>().also {
             every { it.name } returns name
             every { it.tenant } returns tenant
-            every { it.objectDbid } returns DEFAULT_OBJECT_DBID
+            every { it.objectDbid } returns dbid
+            every { it.dbid } returns dbid
         }
 
-    fun mockCfgSkill(name: String?, tenant: CfgTenant = mockCfgTenant(DEFAULT_TENANT)) =
+    fun mockCfgSkill(
+        name: String,
+        tenant: CfgTenant = mockCfgTenant(DEFAULT_TENANT_NAME),
+        dbid: Int = DEFAULT_OBJECT_DBID
+    ) =
         mockk<CfgSkill>().also {
             every { it.name } returns name
             every { it.tenant } returns tenant
-            every { it.objectDbid } returns DEFAULT_OBJECT_DBID
+            every { it.objectDbid } returns dbid
+            every { it.dbid } returns dbid
         }
 
-    fun mockCfgGVPCustomer(name: String?, tenant: CfgTenant = mockCfgTenant(DEFAULT_TENANT)) =
+    fun mockCfgGVPCustomer(
+        name: String,
+        tenant: CfgTenant = mockCfgTenant(DEFAULT_TENANT_NAME),
+        dbid: Int = DEFAULT_OBJECT_DBID
+    ) =
         mockk<CfgGVPCustomer>().also {
             every { it.name } returns name
             every { it.tenant } returns tenant
-            every { it.objectDbid } returns DEFAULT_OBJECT_DBID
+            every { it.objectDbid } returns dbid
+            every { it.dbid } returns dbid
         }
 
-    fun mockCfgSwitch(name: String?, tenant: CfgTenant = mockCfgTenant(DEFAULT_TENANT)) =
+    fun mockCfgSwitch(
+        name: String,
+        tenant: CfgTenant = mockCfgTenant(DEFAULT_TENANT_NAME),
+        dbid: Int = DEFAULT_OBJECT_DBID
+    ) =
         mockk<CfgSwitch>().also {
             every { it.name } returns name
             every { it.tenant } returns tenant
-            every { it.objectDbid } returns DEFAULT_OBJECT_DBID
+            every { it.objectDbid } returns dbid
+            every { it.dbid } returns dbid
         }
 
-    fun mockCfgStatTable(name: String?, tenant: CfgTenant = mockCfgTenant(DEFAULT_TENANT)) =
+    fun mockCfgStatTable(
+        name: String,
+        tenant: CfgTenant = mockCfgTenant(DEFAULT_TENANT_NAME),
+        dbid: Int = DEFAULT_OBJECT_DBID
+    ) =
         mockk<CfgStatTable>().also {
             every { it.name } returns name
             every { it.tenant } returns tenant
-            every { it.objectDbid } returns DEFAULT_OBJECT_DBID
+            every { it.objectDbid } returns dbid
+            every { it.dbid } returns dbid
         }
 
-    fun mockCfgTenant(name: String?) =
+    fun mockCfgTenant(name: String, dbid: Int = DEFAULT_TENANT_DBID) =
         mockk<CfgTenant>().also {
             every { it.name } returns name
-            every { it.dbid } returns DEFAULT_TENANT_DBID
-            every { it.objectDbid } returns DEFAULT_TENANT_DBID
+            every { it.dbid } returns dbid
+            every { it.objectDbid } returns dbid
+            every { it.dbid } returns dbid
         }
 
-    fun mockCfgTransaction(name: String?, tenant: CfgTenant = mockCfgTenant(DEFAULT_TENANT)) =
+    fun mockCfgTransaction(name: String?, tenant: CfgTenant = mockCfgTenant(DEFAULT_TENANT_NAME)) =
         mockk<CfgTransaction>().also {
             every { it.name } returns name
             every { it.tenant } returns tenant
             every { it.objectDbid } returns DEFAULT_OBJECT_DBID
         }
 
-    fun mockCfgGVPReseller(name: String?, tenant: CfgTenant = mockCfgTenant(DEFAULT_TENANT)) =
+    fun mockCfgGVPReseller(
+        name: String,
+        tenant: CfgTenant = mockCfgTenant(DEFAULT_TENANT_NAME),
+        dbid: Int = DEFAULT_OBJECT_DBID
+    ) =
         mockk<CfgGVPReseller>().also {
             every { it.name } returns name
             every { it.tenant } returns tenant
-            every { it.objectDbid } returns DEFAULT_OBJECT_DBID
+            every { it.objectDbid } returns dbid
+            every { it.dbid } returns dbid
         }
 
-    fun mockCfgGVPIVRProfile(name: String?, tenant: CfgTenant = mockCfgTenant(DEFAULT_TENANT)) =
+    fun mockCfgGVPIVRProfile(name: String?, tenant: CfgTenant = mockCfgTenant(DEFAULT_TENANT_NAME)) =
         mockk<CfgGVPIVRProfile>().also {
             every { it.name } returns name
             every { it.tenant } returns tenant
             every { it.objectDbid } returns DEFAULT_OBJECT_DBID
         }
 
-    fun mockCfgTimeZone(name: String?, tenant: CfgTenant = mockCfgTenant(DEFAULT_TENANT)) =
+    fun mockCfgTimeZone(
+        name: String,
+        tenant: CfgTenant = mockCfgTenant(DEFAULT_TENANT_NAME),
+        dbid: Int = DEFAULT_OBJECT_DBID
+    ) =
         mockk<CfgTimeZone>().also {
             every { it.name } returns name
             every { it.tenant } returns tenant
-            every { it.objectDbid } returns DEFAULT_TENANT_DBID
+            every { it.objectDbid } returns dbid
+            every { it.dbid } returns dbid
         }
 }

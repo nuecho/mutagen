@@ -11,6 +11,7 @@ import com.genesyslab.platform.configuration.protocol.types.CfgHAType.CFGHTColdS
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectState.CFGEnabled
 import com.genesyslab.platform.configuration.protocol.types.CfgTraceMode.CFGTMNone
 import com.nuecho.genesys.cli.asBoolean
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_FOLDER_DBID
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_OBJECT_DBID
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_REFERENCE
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgAppPrototype
@@ -22,19 +23,16 @@ import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgObj
 import com.nuecho.genesys.cli.models.configuration.ConfigurationTestData.defaultProperties
 import com.nuecho.genesys.cli.models.configuration.reference.AppPrototypeReference
 import com.nuecho.genesys.cli.models.configuration.reference.ApplicationReference
-import com.nuecho.genesys.cli.models.configuration.reference.FolderReference
 import com.nuecho.genesys.cli.models.configuration.reference.HostReference
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockConfigurationObjectRepository
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveFolderByDbid
 import com.nuecho.genesys.cli.services.ConfigurationObjectRepository
 import com.nuecho.genesys.cli.services.ServiceMocks.mockConfService
-import com.nuecho.genesys.cli.services.getObjectDbid
 import com.nuecho.genesys.cli.toShortName
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.objectMockk
-import io.mockk.staticMockk
 import io.mockk.use
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat
@@ -119,36 +117,32 @@ class ApplicationTest : ConfigurationObjectTest(
         ConfServiceExtensionMocks.mockRetrieveTenant(service)
         ConfServiceExtensionMocks.mockRetrieveAppPrototype(service)
 
-        staticMockk("com.nuecho.genesys.cli.services.ConfServiceExtensionsKt").use {
-            every { service.getObjectDbid(ofType(FolderReference::class)) } answers { FOLDER_OBJECT_DBID }
+        objectMockk(ConfigurationObjectRepository).use {
+            mockConfigurationObjectRepository()
+            val cfgApplication = application.createCfgObject(service)
 
-            objectMockk(ConfigurationObjectRepository).use {
-                mockConfigurationObjectRepository()
-                val cfgApplication = application.createCfgObject(service)
-
-                with(cfgApplication) {
-                    assertThat(appPrototypeDBID, equalTo(DEFAULT_OBJECT_DBID))
-                    assertThat(appServers.toList(), equalTo(
-                        application.appServers?.map { it.toCfgConnInfo(this) } as Collection<CfgConnInfo>
-                    ))
-                    assertThat(autoRestart.asBoolean(), equalTo(application.autoRestart))
-                    assertThat(commandLine, equalTo(application.commandLine))
-                    assertThat(componentType.toShortName(), equalTo(application.componentType))
-                    assertThat(folderId, equalTo(FOLDER_OBJECT_DBID))
-                    assertThat(isPrimary.asBoolean(), equalTo(application.isPrimary))
-                    assertThat(name, equalTo(application.name))
-                    assertThat(options.asCategorizedProperties(), equalTo(application.options))
-                    assertThat(portInfos.toList(), equalTo(
-                        application.portInfos?.map { it.toCfgPortInfo(this) } as Collection<CfgPortInfo>
-                    ))
-                    assertThat(redundancyType.toShortName(), equalTo(application.redundancyType))
-                    assertThat(serverInfo, equalTo(application.serverInfo?.toCfgServer(this)))
-                    assertThat(state, equalTo(toCfgObjectState(application.state)))
-                    assertThat(type, equalTo(toCfgAppType(application.type)))
-                    assertThat(userProperties.asCategorizedProperties(), equalTo(application.userProperties))
-                    assertThat(version, equalTo(application.version))
-                    assertThat(workDirectory, equalTo(application.workDirectory))
-                }
+            with(cfgApplication) {
+                assertThat(appPrototypeDBID, equalTo(DEFAULT_OBJECT_DBID))
+                assertThat(appServers.toList(), equalTo(
+                    application.appServers?.map { it.toCfgConnInfo(this) } as Collection<CfgConnInfo>
+                ))
+                assertThat(autoRestart.asBoolean(), equalTo(application.autoRestart))
+                assertThat(commandLine, equalTo(application.commandLine))
+                assertThat(componentType.toShortName(), equalTo(application.componentType))
+                assertThat(folderId, equalTo(DEFAULT_FOLDER_DBID))
+                assertThat(isPrimary.asBoolean(), equalTo(application.isPrimary))
+                assertThat(name, equalTo(application.name))
+                assertThat(options.asCategorizedProperties(), equalTo(application.options))
+                assertThat(portInfos.toList(), equalTo(
+                    application.portInfos?.map { it.toCfgPortInfo(this) } as Collection<CfgPortInfo>
+                ))
+                assertThat(redundancyType.toShortName(), equalTo(application.redundancyType))
+                assertThat(serverInfo, equalTo(application.serverInfo?.toCfgServer(this)))
+                assertThat(state, equalTo(toCfgObjectState(application.state)))
+                assertThat(type, equalTo(toCfgAppType(application.type)))
+                assertThat(userProperties.asCategorizedProperties(), equalTo(application.userProperties))
+                assertThat(version, equalTo(application.version))
+                assertThat(workDirectory, equalTo(application.workDirectory))
             }
         }
     }

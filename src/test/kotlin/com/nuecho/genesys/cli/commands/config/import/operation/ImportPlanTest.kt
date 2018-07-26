@@ -21,7 +21,7 @@ import com.nuecho.genesys.cli.commands.config.import.operation.ImportPlan.Compan
 import com.nuecho.genesys.cli.models.configuration.AccessGroup
 import com.nuecho.genesys.cli.models.configuration.Configuration
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks
-import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_NAME
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_DBID
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_REFERENCE
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgTenant
@@ -301,7 +301,7 @@ class ImportPlanTest {
     fun `operation type should be UPDATE when remote object exists and is modified`() {
         val service = mockConfService()
 
-        val mockCfgTenant = mockCfgTenant(DEFAULT_TENANT)
+        val mockCfgTenant = mockCfgTenant(DEFAULT_TENANT_NAME)
 
         val remoteCfgObject = CfgRole(service).also {
             it.tenantDBID = ConfigurationObjectMocks.DEFAULT_TENANT_DBID
@@ -330,7 +330,7 @@ class ImportPlanTest {
     fun `operation type should be SKIP when remote object exists and is not modified`() {
         val service = mockConfService()
 
-        val mockCfgTenant = mockCfgTenant(DEFAULT_TENANT)
+        val mockCfgTenant = mockCfgTenant(DEFAULT_TENANT_NAME)
 
         val remoteCfgObject = CfgRole(service).also {
             it.tenantDBID = DEFAULT_TENANT_DBID
