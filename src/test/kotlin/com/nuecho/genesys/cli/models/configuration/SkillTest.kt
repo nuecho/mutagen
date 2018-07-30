@@ -32,10 +32,10 @@ private val skill = Skill(
 )
 
 class SkillTest : ConfigurationObjectTest(
-    skill,
-    Skill(tenant = DEFAULT_TENANT_REFERENCE, name = NAME),
-    emptySet(),
-    Skill(mockCfgSkill())
+    configurationObject = skill,
+    emptyConfigurationObject = Skill(tenant = DEFAULT_TENANT_REFERENCE, name = NAME),
+    mandatoryProperties = emptySet(),
+    importedConfigurationObject = Skill(mockCfgSkill())
 ) {
     @Test
     fun `createCfgObject should properly create CfgSkill`() {

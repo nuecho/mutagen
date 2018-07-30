@@ -1,23 +1,17 @@
 package com.nuecho.genesys.cli.commands.config.import.operation
 
 import com.genesyslab.platform.applicationblocks.com.objects.CfgAccessGroup
-import com.genesyslab.platform.applicationblocks.com.objects.CfgEnumerator
 import com.genesyslab.platform.applicationblocks.com.objects.CfgPhysicalSwitch
 import com.genesyslab.platform.applicationblocks.com.objects.CfgRole
 import com.genesyslab.platform.applicationblocks.com.objects.CfgScript
 import com.genesyslab.platform.applicationblocks.com.objects.CfgSwitch
 import com.genesyslab.platform.applicationblocks.com.objects.CfgTenant
 import com.genesyslab.platform.configuration.protocol.types.CfgDNType
-import com.genesyslab.platform.configuration.protocol.types.CfgRouteType.CFGIDDD
 import com.genesyslab.platform.configuration.protocol.types.CfgSwitchType.CFGFujitsu
-import com.genesyslab.platform.configuration.protocol.types.CfgTargetType.CFGNoTarget
 import com.nuecho.genesys.cli.CliOutputCaptureWrapper.captureOutput
 import com.nuecho.genesys.cli.TestResources
 import com.nuecho.genesys.cli.commands.config.ConfigMocks
 import com.nuecho.genesys.cli.commands.config.export.ExportFormat
-import com.nuecho.genesys.cli.commands.config.import.operation.ImportPlan.Companion.findMissingDependencies
-import com.nuecho.genesys.cli.commands.config.import.operation.ImportPlan.Companion.findMissingProperties
-import com.nuecho.genesys.cli.commands.config.import.operation.ImportPlan.Companion.toOperations
 import com.nuecho.genesys.cli.models.configuration.AccessGroup
 import com.nuecho.genesys.cli.models.configuration.Configuration
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks
@@ -25,33 +19,25 @@ import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFA
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_DBID
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_REFERENCE
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgTenant
-import com.nuecho.genesys.cli.models.configuration.DISPLAY_NAME
 import com.nuecho.genesys.cli.models.configuration.DN
-import com.nuecho.genesys.cli.models.configuration.Enumerator
 import com.nuecho.genesys.cli.models.configuration.PhysicalSwitch
 import com.nuecho.genesys.cli.models.configuration.Role
 import com.nuecho.genesys.cli.models.configuration.Script
 import com.nuecho.genesys.cli.models.configuration.Switch
-import com.nuecho.genesys.cli.models.configuration.SwitchAccessCode
-import com.nuecho.genesys.cli.models.configuration.TYPE
 import com.nuecho.genesys.cli.models.configuration.Tenant
-import com.nuecho.genesys.cli.models.configuration.reference.ApplicationReference
 import com.nuecho.genesys.cli.models.configuration.reference.PhysicalSwitchReference
 import com.nuecho.genesys.cli.models.configuration.reference.ScriptReference
 import com.nuecho.genesys.cli.models.configuration.reference.SwitchReference
 import com.nuecho.genesys.cli.models.configuration.reference.TenantReference
 import com.nuecho.genesys.cli.services.ServiceMocks.mockConfService
-import com.nuecho.genesys.cli.services.retrieveObject
 import com.nuecho.genesys.cli.toShortName
 import io.mockk.every
 import io.mockk.just
 import io.mockk.objectMockk
 import io.mockk.runs
-import io.mockk.staticMockk
 import io.mockk.use
 import org.hamcrest.CoreMatchers
 import org.hamcrest.MatcherAssert.assertThat
-import org.hamcrest.Matchers.containsInAnyOrder
 import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.hasSize
 import org.junit.jupiter.api.Disabled
@@ -59,95 +45,6 @@ import org.junit.jupiter.api.Test
 
 @SuppressWarnings("LargeClass")
 class ImportPlanTest {
-
-    @Test
-    fun `findMissingDependencies should detect missing mandatory properties`() {
-        val existingPhysicalSwitch = PhysicalSwitchReference("existingPhysicalSwitch")
-        val existingTenant = TenantReference("existingTenant")
-
-        val missingTenant = TenantReference("missingTenant")
-        val missingApplication = ApplicationReference("missingTServer")
-        val missingSwitch1 = SwitchReference("missingSwitch1", existingTenant)
-        val missingSwitch2 = SwitchReference("missingSwitch2", existingTenant)
-
-        val script = Script(tenant = missingTenant, name = "script", type = "voiceFile")
-        val physicalSwitch = PhysicalSwitch(existingPhysicalSwitch.primaryKey)
-        val switch = Switch(
-            tenant = existingTenant,
-            name = "skill",
-            physicalSwitch = existingPhysicalSwitch,
-            tServer = missingApplication,
-            switchAccessCodes = listOf(
-                SwitchAccessCode(
-                    switch = missingSwitch1,
-                    routeType = CFGIDDD.toShortName(),
-                    targetType = CFGNoTarget.toShortName()
-                ),
-                SwitchAccessCode(
-                    switch = missingSwitch2,
-                    routeType = CFGIDDD.toShortName(),
-                    targetType = CFGNoTarget.toShortName()
-                )
-            )
-        )
-
-        val configuration = Configuration(
-            __metadata__ = ConfigMocks.mockMetadata(ExportFormat.JSON),
-            scripts = listOf(script),
-            physicalSwitches = listOf(physicalSwitch),
-            switches = listOf(switch)
-        )
-
-        val service = mockConfService()
-        staticMockk("com.nuecho.genesys.cli.services.ConfServiceExtensionsKt").use {
-            val cfgPhysicalSwitch = CfgPhysicalSwitch(service)
-            val cfgTenant = CfgTenant(service)
-            every { service.retrieveObject(existingPhysicalSwitch) } returns cfgPhysicalSwitch
-            every { service.retrieveObject(existingTenant) } returns cfgTenant
-            every { service.retrieveObject(missingTenant) } returns null
-            every { service.retrieveObject(missingApplication) } returns null
-            every { service.retrieveObject(missingSwitch1) } returns null
-            every { service.retrieveObject(missingSwitch2) } returns null
-
-            val missingDependencies = findMissingDependencies(service, configuration)
-
-            assertThat(
-                missingDependencies,
-                containsInAnyOrder(
-                    MissingDependencies(script, setOf(missingTenant)),
-                    MissingDependencies(switch, setOf(missingApplication, missingSwitch1, missingSwitch2))
-                )
-            )
-        }
-    }
-
-    @Test
-    fun `findMissingProperties should detect missing mandatory properties in new configuration objects`() {
-        val physicalSwitch = PhysicalSwitch("physSwitch")
-        val enumerator = Enumerator(name = "enumerator", tenant = TenantReference("tenant"))
-
-        val configuration = Configuration(
-            __metadata__ = ConfigMocks.mockMetadata(ExportFormat.JSON),
-            physicalSwitches = listOf(physicalSwitch),
-            enumerators = listOf(enumerator)
-        )
-
-        val service = mockConfService()
-        val cfgTenant = CfgTenant(service)
-        every { service.retrieveObject(CfgPhysicalSwitch::class.java, any()) } returns null
-        every { service.retrieveObject(CfgEnumerator::class.java, any()) } returns null
-        every { service.retrieveObject(CfgTenant::class.java, any()) } returns cfgTenant
-
-        val missingProperties = findMissingProperties(service, toOperations(service, configuration))
-
-        assertThat(
-            missingProperties,
-            containsInAnyOrder(
-                MissingProperties(physicalSwitch, setOf(TYPE)),
-                MissingProperties(enumerator, setOf(DISPLAY_NAME, TYPE))
-            )
-        )
-    }
 
     @Test
     fun `applyOperationOrder should return operation in the correct order according to the dependencies between objects`() {

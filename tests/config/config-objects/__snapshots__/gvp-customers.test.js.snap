@@ -3,7 +3,7 @@
 exports[`[mutagen gvpCustomers config import-export] should create the gvpCustomers: the gvpCustomers have been created 1`] = `
 Object {
   "stderr": "",
-  "stdout": "+ gvpcustomer => cfgObjectTest
+  "stdout": "+ gvpcustomer [cfgObjectTest]
 Completed. 1 object(s) imported.
 ",
 }
@@ -11,8 +11,12 @@ Completed. 1 object(s) imported.
 
 exports[`[mutagen gvpCustomers config import-export] should throw exception when new gvpCustomers to import miss mandatory properties gvpCustomers: exception has been thrown 1`] = `
 Object {
-  "stderr": "Cannot import configuration: some configuration objects' mandatory properties for creation are not set.
-  Properties [channel, reseller, tenant] not set in gvpcustomer [emptyCfgObjectTest].
+  "stderr": "Validation failed.
+Missing properties:
+  - gvpcustomer [emptyCfgObjectTest]:
+    - channel
+    - reseller
+    - tenant
 ",
   "stdout": "",
 }
@@ -21,7 +25,7 @@ Object {
 exports[`[mutagen gvpCustomers config import-export] should update the modified gvpCustomers: the modified gvpCustomers have been updated 1`] = `
 Object {
   "stderr": "",
-  "stdout": "~ gvpcustomer => cfgObjectTest
+  "stdout": "~ gvpcustomer [cfgObjectTest]
 Completed. 1 object(s) imported.
 ",
 }
@@ -30,7 +34,7 @@ Completed. 1 object(s) imported.
 exports[`[mutagen gvpCustomers config import-export] should update the same gvpCustomers: the gvpCustomers have been updated 1`] = `
 Object {
   "stderr": "",
-  "stdout": "~ gvpcustomer => cfgObjectTest
+  "stdout": "~ gvpcustomer [cfgObjectTest]
 Completed. 1 object(s) imported.
 ",
 }

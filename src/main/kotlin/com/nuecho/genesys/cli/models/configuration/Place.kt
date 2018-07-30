@@ -19,6 +19,7 @@ import com.nuecho.genesys.cli.models.configuration.reference.PlaceReference
 import com.nuecho.genesys.cli.models.configuration.reference.ScriptReference
 import com.nuecho.genesys.cli.models.configuration.reference.TenantReference
 import com.nuecho.genesys.cli.models.configuration.reference.referenceSetBuilder
+import com.nuecho.genesys.cli.services.ConfService
 import com.nuecho.genesys.cli.services.getObjectDbid
 import com.nuecho.genesys.cli.toShortName
 
@@ -67,6 +68,8 @@ class Place(
         }
 
     override fun cloneBare() = Place(tenant, name)
+
+    override fun checkMandatoryProperties(configuration: Configuration, service: ConfService): Set<String> = emptySet()
 
     override fun afterPropertiesSet() {
         dns?.forEach { it.updateTenantReferences(tenant) }

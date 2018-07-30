@@ -23,6 +23,7 @@ import com.nuecho.genesys.cli.models.configuration.reference.FolderReference
 import com.nuecho.genesys.cli.models.configuration.reference.ScriptReference
 import com.nuecho.genesys.cli.models.configuration.reference.TenantReference
 import com.nuecho.genesys.cli.models.configuration.reference.referenceSetBuilder
+import com.nuecho.genesys.cli.services.ConfService
 import com.nuecho.genesys.cli.services.getObjectDbid
 import com.nuecho.genesys.cli.toShortName
 
@@ -74,6 +75,8 @@ data class Campaign(
         }
 
     override fun cloneBare() = Campaign(tenant, name)
+
+    override fun checkMandatoryProperties(configuration: Configuration, service: ConfService): Set<String> = emptySet()
 
     override fun afterPropertiesSet() {
         script?.tenant = tenant

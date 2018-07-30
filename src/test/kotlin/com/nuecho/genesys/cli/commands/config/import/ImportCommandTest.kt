@@ -40,7 +40,7 @@ class ImportCommandTest {
         every { service.retrieveObject(CfgScript::class.java, any()) } returns null
         every { service.retrieveObject(CfgPhysicalSwitch::class.java, any()) } returns null
 
-        assertThrows(UnresolvedConfigurationObjectReferenceException::class.java) {
+        assertThrows(ValidationException::class.java) {
             Import.importConfiguration(configuration, service, true)
         }
     }
@@ -55,13 +55,13 @@ class ImportCommandTest {
         val service = ServiceMocks.mockConfService()
         every { service.retrieveObject(CfgPhysicalSwitch::class.java, any()) } returns null
 
-        assertThrows(MandatoryPropertiesNotSetException::class.java) {
+        assertThrows(ValidationException::class.java) {
             Import.importConfiguration(configuration, service, true)
         }
     }
 
     @Test
-    fun `importConfiguration should print plan and asks for confirmation before applying`() {
+    fun `importConfiguration should print plan and ask for confirmation before applying`() {
         testImportConfirmation(false, true)
     }
 

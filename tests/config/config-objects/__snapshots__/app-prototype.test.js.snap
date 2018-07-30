@@ -3,7 +3,7 @@
 exports[`[mutagen appPrototypes config import-export] should create the appPrototypes: the appPrototypes have been created 1`] = `
 Object {
   "stderr": "",
-  "stdout": "+ appprototype => cfgObjectTest
+  "stdout": "+ appprototype [cfgObjectTest]
 Completed. 1 object(s) imported.
 ",
 }
@@ -11,8 +11,11 @@ Completed. 1 object(s) imported.
 
 exports[`[mutagen appPrototypes config import-export] should throw exception when new appPrototypes to import miss mandatory properties appPrototypes: exception has been thrown 1`] = `
 Object {
-  "stderr": "Cannot import configuration: some configuration objects' mandatory properties for creation are not set.
-  Properties [type, version] not set in appprototype [cfgObjectTest].
+  "stderr": "Validation failed.
+Missing properties:
+  - appprototype [cfgObjectTest]:
+    - type
+    - version
 ",
   "stdout": "",
 }
@@ -21,7 +24,7 @@ Object {
 exports[`[mutagen appPrototypes config import-export] should update the modified appPrototypes: the modified appPrototypes have been updated 1`] = `
 Object {
   "stderr": "",
-  "stdout": "~ appprototype => cfgObjectTest
+  "stdout": "~ appprototype [cfgObjectTest]
 Completed. 1 object(s) imported.
 ",
 }
@@ -30,7 +33,7 @@ Completed. 1 object(s) imported.
 exports[`[mutagen appPrototypes config import-export] should update the same appPrototypes: the appPrototypes have been updated 1`] = `
 Object {
   "stderr": "",
-  "stdout": "~ appprototype => cfgObjectTest
+  "stdout": "~ appprototype [cfgObjectTest]
 Completed. 1 object(s) imported.
 ",
 }

@@ -3,7 +3,7 @@
 exports[`[mutagen folders config import-export] should create the folders: the folders have been created 1`] = `
 Object {
   "stderr": "",
-  "stdout": "+ folder => type: 'person', owner: 'tenant/Environment', path: 'Persons/cfgObjectTest'
+  "stdout": "+ folder [type: 'person', owner: 'tenant/Environment', path: 'Persons/cfgObjectTest']
 Completed. 1 object(s) imported.
 ",
 }
@@ -12,7 +12,7 @@ Completed. 1 object(s) imported.
 exports[`[mutagen folders config import-export] should update the modified folders: the modified folders have been updated 1`] = `
 Object {
   "stderr": "",
-  "stdout": "~ folder => type: 'person', owner: 'tenant/Environment', path: 'Persons/cfgObjectTest'
+  "stdout": "~ folder [type: 'person', owner: 'tenant/Environment', path: 'Persons/cfgObjectTest']
 Completed. 1 object(s) imported.
 ",
 }
@@ -21,7 +21,7 @@ Completed. 1 object(s) imported.
 exports[`[mutagen folders config import-export] should update the same folders: the folders have been updated 1`] = `
 Object {
   "stderr": "",
-  "stdout": "~ folder => type: 'person', owner: 'tenant/Environment', path: 'Persons/cfgObjectTest'
+  "stdout": "~ folder [type: 'person', owner: 'tenant/Environment', path: 'Persons/cfgObjectTest']
 Completed. 1 object(s) imported.
 ",
 }

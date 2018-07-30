@@ -18,6 +18,7 @@ import com.nuecho.genesys.cli.models.configuration.reference.FolderReference
 import com.nuecho.genesys.cli.models.configuration.reference.PersonReference
 import com.nuecho.genesys.cli.models.configuration.reference.TenantReference
 import com.nuecho.genesys.cli.models.configuration.reference.referenceSetBuilder
+import com.nuecho.genesys.cli.services.ConfService
 import com.nuecho.genesys.cli.toShortName
 
 data class AccessGroup(
@@ -64,6 +65,8 @@ data class AccessGroup(
         }
 
     override fun cloneBare() = AccessGroup(Group(group.tenant, group.name))
+
+    override fun checkMandatoryProperties(configuration: Configuration, service: ConfService): Set<String> = emptySet()
 
     override fun afterPropertiesSet() {
         group.updateTenantReferences()

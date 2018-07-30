@@ -3,7 +3,7 @@
 exports[`[mutagen actionCodes config import-export] should create the actionCodes: the actionCodes have been created 1`] = `
 Object {
   "stderr": "",
-  "stdout": "+ actioncode => name: 'cfgObjectTest', type: 'transfer', tenant: 'Environment'
+  "stdout": "+ actioncode [name: 'cfgObjectTest', type: 'transfer', tenant: 'Environment']
 Completed. 1 object(s) imported.
 ",
 }
@@ -11,8 +11,10 @@ Completed. 1 object(s) imported.
 
 exports[`[mutagen actionCodes config import-export] should throw exception when new actionCodes to import miss mandatory properties actionCodes: exception has been thrown 1`] = `
 Object {
-  "stderr": "Cannot import configuration: some configuration objects' mandatory properties for creation are not set.
-  Properties [code] not set in actioncode [name: 'emptyCfgObjectTest', type: 'transfer', tenant: 'Environment'].
+  "stderr": "Validation failed.
+Missing properties:
+  - actioncode [name: 'emptyCfgObjectTest', type: 'transfer', tenant: 'Environment']:
+    - code
 ",
   "stdout": "",
 }
@@ -21,7 +23,7 @@ Object {
 exports[`[mutagen actionCodes config import-export] should update the modified actionCodes: the modified actionCodes have been updated 1`] = `
 Object {
   "stderr": "",
-  "stdout": "~ actioncode => name: 'cfgObjectTest', type: 'transfer', tenant: 'Environment'
+  "stdout": "~ actioncode [name: 'cfgObjectTest', type: 'transfer', tenant: 'Environment']
 Completed. 1 object(s) imported.
 ",
 }
@@ -30,7 +32,7 @@ Completed. 1 object(s) imported.
 exports[`[mutagen actionCodes config import-export] should update the same actionCodes: the actionCodes have been updated 1`] = `
 Object {
   "stderr": "",
-  "stdout": "~ actioncode => name: 'cfgObjectTest', type: 'transfer', tenant: 'Environment'
+  "stdout": "~ actioncode [name: 'cfgObjectTest', type: 'transfer', tenant: 'Environment']
 Completed. 1 object(s) imported.
 ",
 }

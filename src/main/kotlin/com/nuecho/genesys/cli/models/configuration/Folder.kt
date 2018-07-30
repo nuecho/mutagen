@@ -14,6 +14,7 @@ import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgFol
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgObjectType
 import com.nuecho.genesys.cli.models.configuration.reference.ConfigurationObjectReference
 import com.nuecho.genesys.cli.models.configuration.reference.FolderReference
+import com.nuecho.genesys.cli.services.ConfService
 import com.nuecho.genesys.cli.toShortName
 
 data class Folder(
@@ -61,6 +62,8 @@ data class Folder(
         }
 
     override fun cloneBare() = Folder(name = name, folder = folder)
+
+    override fun checkMandatoryProperties(configuration: Configuration, service: ConfService): Set<String> = emptySet()
 
     override fun getReferences(): Set<ConfigurationObjectReference<*>> =
         if (folder.isRoot()) emptySet() else setOf(folder)

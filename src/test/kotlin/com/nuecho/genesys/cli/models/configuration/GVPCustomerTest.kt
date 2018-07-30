@@ -39,10 +39,10 @@ private val gvpCustomer = GVPCustomer(
 )
 
 class GVPCustomerTest : ConfigurationObjectTest(
-    gvpCustomer,
-    GVPCustomer(name = NAME),
-    setOf(CHANNEL, RESELLER, TENANT),
-    GVPCustomer(mockCfgGVPCustomer())
+    configurationObject = gvpCustomer,
+    emptyConfigurationObject = GVPCustomer(name = NAME),
+    mandatoryProperties = setOf(CHANNEL, RESELLER, TENANT),
+    importedConfigurationObject = GVPCustomer(mockCfgGVPCustomer())
 ) {
     @Test
     fun `createCfgObject should properly create CfgGVPCustomer`() {

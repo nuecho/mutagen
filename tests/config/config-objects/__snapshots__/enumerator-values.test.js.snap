@@ -3,7 +3,7 @@
 exports[`[mutagen enumeratorValues config import-export] should create the enumeratorValues: the enumeratorValues have been created 1`] = `
 Object {
   "stderr": "",
-  "stdout": "+ enumeratorvalue => name: 'cfgObjectTest', enumerator: 'Environment/MediaType'
+  "stdout": "+ enumeratorvalue [name: 'cfgObjectTest', enumerator: 'Environment/MediaType']
 Completed. 1 object(s) imported.
 ",
 }
@@ -11,8 +11,14 @@ Completed. 1 object(s) imported.
 
 exports[`[mutagen enumeratorValues config import-export] should throw exception when new enumeratorValues to import miss mandatory properties enumeratorValues: exception has been thrown 1`] = `
 Object {
-  "stderr": "Cannot import configuration: some configuration objects' mandatory properties for creation are not set.
-  Properties [displayName, tenant] not set in enumeratorvalue [name: 'emptyCfgObjectTest', enumerator: 'null/MediaType'].
+  "stderr": "Validation failed.
+Missing properties:
+  - enumeratorvalue [name: 'emptyCfgObjectTest', enumerator: 'null/MediaType']:
+    - displayName
+    - tenant
+Missing dependencies:
+  - enumeratorvalue [name: 'emptyCfgObjectTest', enumerator: 'null/MediaType']:
+    - enumerator [null/MediaType]
 ",
   "stdout": "",
 }
@@ -21,7 +27,7 @@ Object {
 exports[`[mutagen enumeratorValues config import-export] should update the modified enumeratorValues: the modified enumeratorValues have been updated 1`] = `
 Object {
   "stderr": "",
-  "stdout": "~ enumeratorvalue => name: 'cfgObjectTest', enumerator: 'Environment/MediaType'
+  "stdout": "~ enumeratorvalue [name: 'cfgObjectTest', enumerator: 'Environment/MediaType']
 Completed. 1 object(s) imported.
 ",
 }
@@ -30,7 +36,7 @@ Completed. 1 object(s) imported.
 exports[`[mutagen enumeratorValues config import-export] should update the same enumeratorValues: the enumeratorValues have been updated 1`] = `
 Object {
   "stderr": "",
-  "stdout": "~ enumeratorvalue => name: 'cfgObjectTest', enumerator: 'Environment/MediaType'
+  "stdout": "~ enumeratorvalue [name: 'cfgObjectTest', enumerator: 'Environment/MediaType']
 Completed. 1 object(s) imported.
 ",
 }

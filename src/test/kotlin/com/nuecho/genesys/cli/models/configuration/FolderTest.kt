@@ -36,10 +36,10 @@ private val folder = Folder(
 )
 
 class FolderTest : ConfigurationObjectTest(
-    folder,
-    Folder(name = FOLDER_NAME, folder = DEFAULT_FOLDER_REFERENCE),
-    emptySet(),
-    Folder(mockCfgFolder())
+    configurationObject = folder,
+    emptyConfigurationObject = Folder(name = FOLDER_NAME, folder = DEFAULT_FOLDER_REFERENCE),
+    mandatoryProperties = emptySet(),
+    importedConfigurationObject = Folder(mockCfgFolder())
 ) {
     @Test
     fun `createCfgObject should properly create CfgFolder`() {

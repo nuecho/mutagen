@@ -3,7 +3,7 @@
 exports[`[mutagen transactions config import-export] should create the transactions: the transactions have been created 1`] = `
 Object {
   "stderr": "",
-  "stdout": "+ transaction => name: 'cfgObjectTest', type: 'callData', tenant: 'Environment'
+  "stdout": "+ transaction [name: 'cfgObjectTest', type: 'callData', tenant: 'Environment']
 Completed. 1 object(s) imported.
 ",
 }
@@ -11,8 +11,10 @@ Completed. 1 object(s) imported.
 
 exports[`[mutagen transactions config import-export] should throw exception when new transactions to import miss mandatory properties transactions: exception has been thrown 1`] = `
 Object {
-  "stderr": "Cannot import configuration: some configuration objects' mandatory properties for creation are not set.
-  Properties [alias] not set in transaction [name: 'emptyCfgObjectTest', type: 'callData', tenant: 'Environment'].
+  "stderr": "Validation failed.
+Missing properties:
+  - transaction [name: 'emptyCfgObjectTest', type: 'callData', tenant: 'Environment']:
+    - alias
 ",
   "stdout": "",
 }
@@ -21,7 +23,7 @@ Object {
 exports[`[mutagen transactions config import-export] should update the modified transactions: the modified transactions have been updated 1`] = `
 Object {
   "stderr": "",
-  "stdout": "~ transaction => name: 'cfgObjectTest', type: 'callData', tenant: 'Environment'
+  "stdout": "~ transaction [name: 'cfgObjectTest', type: 'callData', tenant: 'Environment']
 Completed. 1 object(s) imported.
 ",
 }
@@ -30,7 +32,7 @@ Completed. 1 object(s) imported.
 exports[`[mutagen transactions config import-export] should update the same transactions: the transactions have been updated 1`] = `
 Object {
   "stderr": "",
-  "stdout": "~ transaction => name: 'cfgObjectTest', type: 'callData', tenant: 'Environment'
+  "stdout": "~ transaction [name: 'cfgObjectTest', type: 'callData', tenant: 'Environment']
 Completed. 1 object(s) imported.
 ",
 }

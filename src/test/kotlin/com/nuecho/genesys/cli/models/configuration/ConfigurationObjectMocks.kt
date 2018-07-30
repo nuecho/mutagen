@@ -197,11 +197,18 @@ object ConfigurationObjectMocks {
             every { it.dbid } returns dbid
         }
 
-    fun mockCfgAppPrototype(name: String, dbid: Int = DEFAULT_OBJECT_DBID) =
+    fun mockCfgAppPrototype(
+        name: String?,
+        dbid: Int = DEFAULT_OBJECT_DBID,
+        type: CfgAppType? = null,
+        version: String? = null
+    ) =
         mockk<CfgAppPrototype>().also {
             every { it.name } returns name
-            every { it.objectDbid } returns dbid
+            every { it.type } returns type
+            every { it.version } returns version
             every { it.dbid } returns dbid
+            every { it.objectDbid } returns dbid
         }
 
     fun mockCfgCampaign(

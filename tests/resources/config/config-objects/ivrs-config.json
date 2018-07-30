@@ -20,8 +20,16 @@
       "version": "1.2.3"
     }
   ],
+  "appPrototypes": [
+    {
+      "name": "IVRServer-AppPrototype",
+      "type": "ivrinterfaceserver",
+      "version": "8.0"
+    }
+  ],
   "applications": [
     {
+      "appPrototype": "IVRServer-AppPrototype",
       "autoRestart": false,
       "commandLine": "start.exe",
       "componentType": "appcomponent",

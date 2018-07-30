@@ -60,10 +60,11 @@ data class AppPrototype(
 
     override fun cloneBare() = null
 
-    override fun checkMandatoryProperties(service: ConfService): Set<String> {
+    override fun checkMandatoryProperties(configuration: Configuration, service: ConfService): Set<String> {
         val missingMandatoryProperties = mutableSetOf<String>()
         type ?: missingMandatoryProperties.add(TYPE)
         version ?: missingMandatoryProperties.add(VERSION)
+
         return missingMandatoryProperties
     }
 

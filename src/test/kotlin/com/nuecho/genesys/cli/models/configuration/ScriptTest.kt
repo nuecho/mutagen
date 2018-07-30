@@ -35,10 +35,10 @@ private val script = Script(
 )
 
 class ScriptTest : ConfigurationObjectTest(
-    script,
-    Script(tenant = DEFAULT_TENANT_REFERENCE, name = NAME),
-    setOf(TYPE),
-    Script(mockCfgScript())
+    configurationObject = script,
+    emptyConfigurationObject = Script(tenant = DEFAULT_TENANT_REFERENCE, name = NAME),
+    mandatoryProperties = setOf(TYPE),
+    importedConfigurationObject = Script(mockCfgScript())
 ) {
     @Test
     fun `createCfgObject should properly create CfgScript`() {

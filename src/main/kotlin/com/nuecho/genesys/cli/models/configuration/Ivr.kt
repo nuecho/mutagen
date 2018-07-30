@@ -66,7 +66,7 @@ data class Ivr(
 
     override fun cloneBare() = Ivr(name = name, tenant = tenant, type = type, version = version)
 
-    override fun checkMandatoryProperties(service: ConfService): Set<String> {
+    override fun checkMandatoryProperties(configuration: Configuration, service: ConfService): Set<String> {
         val missingMandatoryProperties = mutableSetOf<String>()
         tenant ?: missingMandatoryProperties.add(TENANT)
         type ?: missingMandatoryProperties.add(TYPE)

@@ -19,44 +19,49 @@
       "defaultCapacityRule": "MultipleCycle-Cycle1-Script"
     }
   ],
+  "appPrototypes": [
+    {
+      "name": "MultipleCycle-appPrototype",
+      "type": "scs",
+      "version": "8.0"
+    }
+  ],
   "applications": [
     {
-      "appServers" : [ ],
-      "autoRestart" : false,
-      "commandLine" : "agentsetup_nssm64.exe",
-      "componentType" : "appcomponent",
-      "isPrimary" : true,
-      "name" : "MultipleCycle-Cycle2-Application1",
-      "redundancyType" : "htcoldstanby",
-      "serverInfo" : {
-        "attempts" : 1,
-        "host" : "MultipleCycle-Cycle2-Host1",
-        "port" : "8094",
-        "timeout" : 10
+      "appServers": [],
+      "appPrototype": "MultipleCycle-appPrototype",
+      "autoRestart": false,
+      "commandLine": "agentsetup_nssm64.exe",
+      "componentType": "appcomponent",
+      "isPrimary": true,
+      "name": "MultipleCycle-Cycle2-Application1",
+      "redundancyType": "htcoldstanby",
+      "serverInfo": {
+        "attempts": 1,
+        "host": "MultipleCycle-Cycle2-Host1",
+        "port": "8094",
+        "timeout": 10
       },
-      "state" : "enabled",
-      "type" : "scs",
-      "version" : "8.0",
-      "workDirectory" : "c:\\Program Files\\GCTI\\AgentSetup\\"
+      "state": "enabled",
+      "workDirectory": "c:\\Program Files\\GCTI\\AgentSetup\\"
     },
     {
-      "appServers" : [ ],
-      "autoRestart" : false,
-      "commandLine" : "agentsetup_nssm64.exe",
-      "componentType" : "appcomponent",
-      "isPrimary" : true,
-      "name" : "MultipleCycle-Cycle2-Application2",
-      "redundancyType" : "htcoldstanby",
-      "serverInfo" : {
-        "attempts" : 1,
-        "host" : "MultipleCycle-Cycle2-Host2",
-        "port" : "8094",
-        "timeout" : 10
+      "appServers": [],
+      "appPrototype": "MultipleCycle-appPrototype",
+      "autoRestart": false,
+      "commandLine": "agentsetup_nssm64.exe",
+      "componentType": "appcomponent",
+      "isPrimary": true,
+      "name": "MultipleCycle-Cycle2-Application2",
+      "redundancyType": "htcoldstanby",
+      "serverInfo": {
+        "attempts": 1,
+        "host": "MultipleCycle-Cycle2-Host2",
+        "port": "8094",
+        "timeout": 10
       },
-      "state" : "enabled",
-      "type" : "scs",
-      "version" : "8.0",
-      "workDirectory" : "c:\\Program Files\\GCTI\\AgentSetup\\"
+      "state": "enabled",
+      "workDirectory": "c:\\Program Files\\GCTI\\AgentSetup\\"
     }
   ],
   "hosts": [

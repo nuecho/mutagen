@@ -77,7 +77,6 @@
       "tenants": [
         "Environment"
       ],
-      "type": "genesysadministratorserver",
       "userProperties": {
         "section": {
           "number": 456,
@@ -85,7 +84,6 @@
         }
       },
       "isPrimary": true,
-      "version": "1.2.3",
       "workDirectory": "/tmp"
     }
   ]

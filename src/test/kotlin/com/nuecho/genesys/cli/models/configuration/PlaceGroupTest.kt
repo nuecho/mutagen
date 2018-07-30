@@ -49,9 +49,9 @@ private val placeGroup = PlaceGroup(
 )
 
 class PlaceGroupTest : ConfigurationObjectTest(
-    placeGroup,
-    PlaceGroup(tenant = DEFAULT_TENANT_REFERENCE, name = NAME),
-    emptySet()
+    configurationObject = placeGroup,
+    emptyConfigurationObject = PlaceGroup(tenant = DEFAULT_TENANT_REFERENCE, name = NAME),
+    mandatoryProperties = emptySet()
 ) {
     @Test
     override fun `initialized object should properly serialize`() {

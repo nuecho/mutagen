@@ -146,7 +146,7 @@ data class CampaignGroup(
 
     override fun cloneBare() = CampaignGroup(campaign = campaign, name = name, group = group)
 
-    override fun checkMandatoryProperties(service: ConfService): Set<String> =
+    override fun checkMandatoryProperties(configuration: Configuration, service: ConfService): Set<String> =
         if (group == null) setOf(GROUP) else emptySet()
 
     override fun afterPropertiesSet() {

@@ -39,10 +39,14 @@ private val transaction = Transaction(
 )
 
 class TransactionTest : ConfigurationObjectTest(
-    transaction,
-    Transaction(tenant = DEFAULT_TENANT_REFERENCE, name = NAME, type = CFGTRTLIST_TYPE.toShortName()),
-    setOf(ALIAS),
-    Transaction(mockCfgTransaction())
+    configurationObject = transaction,
+    emptyConfigurationObject = Transaction(
+        tenant = DEFAULT_TENANT_REFERENCE,
+        name = NAME,
+        type = CFGTRTLIST_TYPE.toShortName()
+    ),
+    mandatoryProperties = setOf(ALIAS),
+    importedConfigurationObject = Transaction(mockCfgTransaction())
 ) {
     @Test
     fun `createCfgObject should properly create CfgTransaction`() {

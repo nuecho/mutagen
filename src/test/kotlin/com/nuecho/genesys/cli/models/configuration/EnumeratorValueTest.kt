@@ -48,12 +48,12 @@ private val enumeratorValue = EnumeratorValue(
 )
 
 class EnumeratorValueTest : ConfigurationObjectTest(
-    enumeratorValue,
-    EnumeratorValue(
+    configurationObject = enumeratorValue,
+    emptyConfigurationObject = EnumeratorValue(
         enumerator = ENUMERATOR_REFERENCE,
         name = NAME
     ),
-    setOf(DISPLAY_NAME, TENANT)
+    mandatoryProperties = setOf(DISPLAY_NAME, TENANT)
 ) {
     @Test
     override fun `initialized object should properly serialize`() {

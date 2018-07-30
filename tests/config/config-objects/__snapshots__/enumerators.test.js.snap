@@ -3,7 +3,7 @@
 exports[`[mutagen enumerators config import-export] should create the enumerators: the enumerators have been created 1`] = `
 Object {
   "stderr": "",
-  "stdout": "+ enumerator => Environment/cfgObjectTest
+  "stdout": "+ enumerator [Environment/cfgObjectTest]
 Completed. 1 object(s) imported.
 ",
 }
@@ -11,8 +11,11 @@ Completed. 1 object(s) imported.
 
 exports[`[mutagen enumerators config import-export] should throw exception when new enumerators to import miss mandatory properties enumerators: exception has been thrown 1`] = `
 Object {
-  "stderr": "Cannot import configuration: some configuration objects' mandatory properties for creation are not set.
-  Properties [displayName, type] not set in enumerator [Environment/emptyCfgObjectTest].
+  "stderr": "Validation failed.
+Missing properties:
+  - enumerator [Environment/emptyCfgObjectTest]:
+    - displayName
+    - type
 ",
   "stdout": "",
 }
@@ -21,7 +24,7 @@ Object {
 exports[`[mutagen enumerators config import-export] should update the modified enumerators: the modified enumerators have been updated 1`] = `
 Object {
   "stderr": "",
-  "stdout": "~ enumerator => Environment/cfgObjectTest
+  "stdout": "~ enumerator [Environment/cfgObjectTest]
 Completed. 1 object(s) imported.
 ",
 }
@@ -30,7 +33,7 @@ Completed. 1 object(s) imported.
 exports[`[mutagen enumerators config import-export] should update the same enumerators: the enumerators have been updated 1`] = `
 Object {
   "stderr": "",
-  "stdout": "~ enumerator => Environment/cfgObjectTest
+  "stdout": "~ enumerator [Environment/cfgObjectTest]
 Completed. 1 object(s) imported.
 ",
 }

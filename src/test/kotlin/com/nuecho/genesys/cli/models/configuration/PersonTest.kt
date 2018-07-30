@@ -96,10 +96,10 @@ private val person = Person(
 )
 
 class PersonTest : ConfigurationObjectTest(
-    person,
-    Person(tenant = DEFAULT_TENANT_REFERENCE, employeeId = EMPLOYEE_ID),
-    setOf(USER_NAME),
-    Person(mockCfgPerson())
+    configurationObject = person,
+    emptyConfigurationObject = Person(tenant = DEFAULT_TENANT_REFERENCE, employeeId = EMPLOYEE_ID),
+    mandatoryProperties = setOf(USER_NAME),
+    importedConfigurationObject = Person(mockCfgPerson())
 ) {
     @Test
     fun `createCfgObject should properly create CfgPerson`() {

@@ -56,10 +56,10 @@ private val place = Place(
 )
 
 class PlaceTest : ConfigurationObjectTest(
-    place,
-    Place(tenant = DEFAULT_TENANT_REFERENCE, name = NAME),
-    emptySet(),
-    Place(mockCfgPlace())
+    configurationObject = place,
+    emptyConfigurationObject = Place(tenant = DEFAULT_TENANT_REFERENCE, name = NAME),
+    mandatoryProperties = emptySet(),
+    importedConfigurationObject = Place(mockCfgPlace())
 ) {
     @Test
     fun `updateCfgObject should properly create CfgPlace`() {

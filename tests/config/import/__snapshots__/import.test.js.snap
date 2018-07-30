@@ -17,24 +17,24 @@ Object {
 exports[`[mutagen config import file] should create multiple objects of different types: every object has been created 1`] = `
 Object {
   "stderr": "",
-  "stdout": "+ physicalswitch => MultiObjectImportPhysicalSwitch1
-+ physicalswitch => MultiObjectImportPhysicalSwitch2
-+ switch => Environment/MultiObjectImportSwitch1
-+ switch => Environment/MultiObjectImportSwitch2
-+ switch => Environment/MultiObjectImportSwitch3
-+ dn => number: '123', switch: 'MultiObjectImportSwitch1', type: 'Extension', name: 'MultiObjectImportDN', tenant: 'Environment'
+  "stdout": "+ physicalswitch [MultiObjectImportPhysicalSwitch1]
++ physicalswitch [MultiObjectImportPhysicalSwitch2]
++ switch [Environment/MultiObjectImportSwitch1]
++ switch [Environment/MultiObjectImportSwitch2]
++ switch [Environment/MultiObjectImportSwitch3]
++ dn [number: '123', switch: 'MultiObjectImportSwitch1', type: 'Extension', name: 'MultiObjectImportDN', tenant: 'Environment']
 Completed. 6 object(s) imported.
 ",
 }
 `;
 
-exports[`[mutagen config import file] should import objects even if there's dependency cycles between object: all objects have been created 1`] = `
+exports[`[mutagen config import file] should import objects even if there are dependency cycles between objects: all objects have been created 1`] = `
 Object {
   "stderr": "",
-  "stdout": "+ physicalswitch => CycleConfigPhysicalSwitch
-+ tenant => CycleConfigTenant
-+ script => CycleConfigTenant/CycleConfigScript
-~ tenant => CycleConfigTenant
+  "stdout": "+ physicalswitch [CycleConfigPhysicalSwitch]
++ tenant [CycleConfigTenant]
++ script [CycleConfigTenant/CycleConfigScript]
+~ tenant [CycleConfigTenant]
 Completed. 3 object(s) imported.
 ",
 }
@@ -44,13 +44,13 @@ exports[`[mutagen config import file] should import the objects if the user conf
 Object {
   "stderr": "",
   "stdout": "The following changes are going to be applied:
-+ physicalswitch => AcceptChangesPhysicalSwitch
++ physicalswitch [AcceptChangesPhysicalSwitch]
   {
     \\"name\\" : \\"AcceptChangesPhysicalSwitch\\",
     \\"state\\" : \\"enabled\\",
     \\"type\\" : \\"fujitsu\\"
   }
-+ switch => Environment/AcceptChangesSwitch
++ switch [Environment/AcceptChangesSwitch]
   {
     \\"dnRange\\" : \\"74233-74244, 74290\\",
     \\"linkType\\" : \\"madgelink\\",
@@ -60,7 +60,7 @@ Object {
     \\"switchAccessCodes\\" : [ ],
     \\"tenant\\" : \\"Environment\\"
   }
-+ dn => number: '123', switch: 'AcceptChangesSwitch', type: 'Extension', name: 'AcceptChangesDN', tenant: 'Environment'
++ dn [number: '123', switch: 'AcceptChangesSwitch', type: 'Extension', name: 'AcceptChangesDN', tenant: 'Environment']
   {
     \\"name\\" : \\"AcceptChangesDN\\",
     \\"number\\" : \\"123\\",
@@ -74,19 +74,39 @@ Object {
     \\"useOverride\\" : true
   }
 
-Please confirm [y|n]: + physicalswitch => AcceptChangesPhysicalSwitch
-+ switch => Environment/AcceptChangesSwitch
-+ dn => number: '123', switch: 'AcceptChangesSwitch', type: 'Extension', name: 'AcceptChangesDN', tenant: 'Environment'
+Please confirm [y|n]: + physicalswitch [AcceptChangesPhysicalSwitch]
++ switch [Environment/AcceptChangesSwitch]
++ dn [number: '123', switch: 'AcceptChangesSwitch', type: 'Extension', name: 'AcceptChangesDN', tenant: 'Environment']
 Completed. 3 object(s) imported.
 ",
 }
 `;
 
-exports[`[mutagen config import file] should not import any object if some dependencies cannot be resolved: found missing dependency 1`] = `
+exports[`[mutagen config import file] should not import any objects if some dependencies cannot be resolved and some mandatory properties for creation are missing: found missing dependencies and properties 1`] = `
 Object {
-  "stderr": "Cannot import configuration: some configuration objects' dependencies could not be found.
-  Cannot find script [MissingDependencyTenant1/NonExistingScript1] (referenced by tenant [MissingDependencyTenant1]).
-  Cannot find script [MissingDependencyTenant2/NonExistingScript2] (referenced by tenant [MissingDependencyTenant2]).
+  "stderr": "Validation failed.
+Missing properties:
+  - enumerator [Environment/emptyCfgObjectTest]:
+    - displayName
+    - type
+Missing dependencies:
+  - tenant [MissingDependencyTenant1]:
+    - script [MissingDependencyTenant1/NonExistingScript1]
+  - tenant [MissingDependencyTenant2]:
+    - script [MissingDependencyTenant2/NonExistingScript2]
+",
+  "stdout": "",
+}
+`;
+
+exports[`[mutagen config import file] should not import any objects if some dependencies cannot be resolved: found missing dependency 1`] = `
+Object {
+  "stderr": "Validation failed.
+Missing dependencies:
+  - tenant [MissingDependencyTenant1]:
+    - script [MissingDependencyTenant1/NonExistingScript1]
+  - tenant [MissingDependencyTenant2]:
+    - script [MissingDependencyTenant2/NonExistingScript2]
 ",
   "stdout": "",
 }
@@ -94,8 +114,10 @@ Object {
 
 exports[`[mutagen config import file] should not import the object if it has an invalid tenant: no object has been imported 1`] = `
 Object {
-  "stderr": "Cannot import configuration: some configuration objects' dependencies could not be found.
-  Cannot find tenant [Invalid tenant] (referenced by switch [Invalid tenant/switchWithInvalidTenant]).
+  "stderr": "Validation failed.
+Missing dependencies:
+  - switch [Invalid tenant/switchWithInvalidTenant]:
+    - tenant [Invalid tenant]
 ",
   "stdout": "",
 }
@@ -105,13 +127,13 @@ exports[`[mutagen config import file] should not import the objects if the user 
 Object {
   "stderr": "",
   "stdout": "The following changes are going to be applied:
-+ physicalswitch => RejectChangesPhysicalSwitch
++ physicalswitch [RejectChangesPhysicalSwitch]
   {
     \\"name\\" : \\"RejectChangesPhysicalSwitch\\",
     \\"state\\" : \\"enabled\\",
     \\"type\\" : \\"fujitsu\\"
   }
-+ switch => Environment/RejectChangesSwitch
++ switch [Environment/RejectChangesSwitch]
   {
     \\"dnRange\\" : \\"74233-74244, 74290\\",
     \\"linkType\\" : \\"madgelink\\",
@@ -121,7 +143,7 @@ Object {
     \\"switchAccessCodes\\" : [ ],
     \\"tenant\\" : \\"Environment\\"
   }
-+ dn => number: '123', switch: 'RejectChangesSwitch', type: 'Extension', name: 'RejectChangesDN', tenant: 'Environment'
++ dn [number: '123', switch: 'RejectChangesSwitch', type: 'Extension', name: 'RejectChangesDN', tenant: 'Environment']
   {
     \\"name\\" : \\"RejectChangesDN\\",
     \\"number\\" : \\"123\\",
@@ -143,7 +165,7 @@ Please confirm [y|n]: Import cancelled.
 exports[`[mutagen config import file] should only import objects with a unique key: only one object with the key has been imported 1`] = `
 Object {
   "stderr": "",
-  "stdout": "+ switch => Environment/sameSwitch
+  "stdout": "+ switch [Environment/sameSwitch]
 Completed. 1 object(s) imported.
 ",
 }
@@ -152,12 +174,12 @@ Completed. 1 object(s) imported.
 exports[`[mutagen config import file] should update multiple objects of different types: every object has been updated 1`] = `
 Object {
   "stderr": "",
-  "stdout": "~ dn => number: '123', switch: 'MultiObjectImportSwitch1', type: 'Extension', name: 'MultiObjectImportDN', tenant: 'Environment'
-~ physicalswitch => MultiObjectImportPhysicalSwitch1
-~ physicalswitch => MultiObjectImportPhysicalSwitch2
-~ switch => Environment/MultiObjectImportSwitch1
-~ switch => Environment/MultiObjectImportSwitch2
-~ switch => Environment/MultiObjectImportSwitch3
+  "stdout": "~ dn [number: '123', switch: 'MultiObjectImportSwitch1', type: 'Extension', name: 'MultiObjectImportDN', tenant: 'Environment']
+~ physicalswitch [MultiObjectImportPhysicalSwitch1]
+~ physicalswitch [MultiObjectImportPhysicalSwitch2]
+~ switch [Environment/MultiObjectImportSwitch1]
+~ switch [Environment/MultiObjectImportSwitch2]
+~ switch [Environment/MultiObjectImportSwitch3]
 Completed. 6 object(s) imported.
 ",
 }

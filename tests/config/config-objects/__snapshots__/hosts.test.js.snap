@@ -3,7 +3,7 @@
 exports[`[mutagen hosts config import-export] should create the hosts: the hosts have been created 1`] = `
 Object {
   "stderr": "",
-  "stdout": "+ host => cfgObjectTest
+  "stdout": "+ host [cfgObjectTest]
 Completed. 1 object(s) imported.
 ",
 }
@@ -11,8 +11,12 @@ Completed. 1 object(s) imported.
 
 exports[`[mutagen hosts config import-export] should throw exception when new hosts to import miss mandatory properties hosts: exception has been thrown 1`] = `
 Object {
-  "stderr": "Cannot import configuration: some configuration objects' mandatory properties for creation are not set.
-  Properties [lcaPort, osInfo, type] not set in host [cfgObjectTest].
+  "stderr": "Validation failed.
+Missing properties:
+  - host [cfgObjectTest]:
+    - lcaPort
+    - osInfo
+    - type
 ",
   "stdout": "",
 }
@@ -21,7 +25,7 @@ Object {
 exports[`[mutagen hosts config import-export] should update the modified hosts: the modified hosts have been updated 1`] = `
 Object {
   "stderr": "",
-  "stdout": "~ host => cfgObjectTest
+  "stdout": "~ host [cfgObjectTest]
 Completed. 1 object(s) imported.
 ",
 }
@@ -30,7 +34,7 @@ Completed. 1 object(s) imported.
 exports[`[mutagen hosts config import-export] should update the same hosts: the hosts have been updated 1`] = `
 Object {
   "stderr": "",
-  "stdout": "~ host => cfgObjectTest
+  "stdout": "~ host [cfgObjectTest]
 Completed. 1 object(s) imported.
 ",
 }

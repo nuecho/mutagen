@@ -80,7 +80,7 @@ data class DNGroup(
         type = type
     )
 
-    override fun checkMandatoryProperties(service: ConfService): Set<String> =
+    override fun checkMandatoryProperties(configuration: Configuration, service: ConfService): Set<String> =
         if (type == null) setOf(TYPE) else emptySet()
 
     override fun afterPropertiesSet() {

@@ -3,7 +3,7 @@
 exports[`[mutagen dnGroups config import-export] should create the dnGroups: the dnGroups have been created 1`] = `
 Object {
   "stderr": "",
-  "stdout": "+ dngroup => Environment/cfgObjectTest
+  "stdout": "+ dngroup [Environment/cfgObjectTest]
 Completed. 1 object(s) imported.
 ",
 }
@@ -11,8 +11,10 @@ Completed. 1 object(s) imported.
 
 exports[`[mutagen dnGroups config import-export] should throw exception when new dnGroups to import miss mandatory properties dnGroups: exception has been thrown 1`] = `
 Object {
-  "stderr": "Cannot import configuration: some configuration objects' mandatory properties for creation are not set.
-  Properties [type] not set in dngroup [Environment/emptyCfgObjectTest].
+  "stderr": "Validation failed.
+Missing properties:
+  - dngroup [Environment/emptyCfgObjectTest]:
+    - type
 ",
   "stdout": "",
 }
@@ -21,7 +23,7 @@ Object {
 exports[`[mutagen dnGroups config import-export] should update the modified dnGroups: the modified dnGroups have been updated 1`] = `
 Object {
   "stderr": "",
-  "stdout": "~ dngroup => Environment/cfgObjectTest
+  "stdout": "~ dngroup [Environment/cfgObjectTest]
 Completed. 1 object(s) imported.
 ",
 }
@@ -30,7 +32,7 @@ Completed. 1 object(s) imported.
 exports[`[mutagen dnGroups config import-export] should update the same dnGroups: the dnGroups have been updated 1`] = `
 Object {
   "stderr": "",
-  "stdout": "~ dngroup => Environment/cfgObjectTest
+  "stdout": "~ dngroup [Environment/cfgObjectTest]
 Completed. 1 object(s) imported.
 ",
 }

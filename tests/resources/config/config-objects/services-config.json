@@ -3,8 +3,16 @@
     "formatName": "JSON",
     "formatVersion": "1.0.0"
   },
+  "appPrototypes": [
+    {
+      "name": "serviceAppPrototype",
+      "type": "scs",
+      "version": "8.0"
+    }
+  ],
   "applications": [
     {
+      "appPrototype": "serviceAppPrototype",
       "appServers": [],
       "autoRestart": false,
       "commandLine": "agentsetup_nssm64.exe",
@@ -19,8 +27,6 @@
         "timeout": 10
       },
       "state": "enabled",
-      "type": "scs",
-      "version": "8.0",
       "workDirectory": "c:\\Program Files\\GCTI\\AgentSetup\\"
     }
   ],

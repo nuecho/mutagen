@@ -84,10 +84,11 @@ data class EnumeratorValue(
 
     override fun cloneBare() = null
 
-    override fun checkMandatoryProperties(service: ConfService): Set<String> {
+    override fun checkMandatoryProperties(configuration: Configuration, service: ConfService): Set<String> {
         val missingMandatoryProperties = mutableSetOf<String>()
         displayName ?: missingMandatoryProperties.add(DISPLAY_NAME)
         tenant ?: missingMandatoryProperties.add(TENANT)
+
         return missingMandatoryProperties
     }
 

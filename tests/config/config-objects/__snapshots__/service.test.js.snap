@@ -3,18 +3,22 @@
 exports[`[mutagen services config import-export] should create the services: the services have been created 1`] = `
 Object {
   "stderr": "",
-  "stdout": "+ host => Host1
-+ application => Application1
-+ service => cfgObjectTest
-Completed. 3 object(s) imported.
+  "stdout": "+ appprototype [serviceAppPrototype]
++ host [Host1]
++ application [Application1]
++ service [cfgObjectTest]
+Completed. 4 object(s) imported.
 ",
 }
 `;
 
 exports[`[mutagen services config import-export] should throw exception when new services to import miss mandatory properties services: exception has been thrown 1`] = `
 Object {
-  "stderr": "Cannot import configuration: some configuration objects' mandatory properties for creation are not set.
-  Properties [solutionType, version] not set in service [cfgObjectTest].
+  "stderr": "Validation failed.
+Missing properties:
+  - service [cfgObjectTest]:
+    - solutionType
+    - version
 ",
   "stdout": "",
 }
@@ -23,7 +27,7 @@ Object {
 exports[`[mutagen services config import-export] should update the modified services: the modified services have been updated 1`] = `
 Object {
   "stderr": "",
-  "stdout": "~ service => cfgObjectTest
+  "stdout": "~ service [cfgObjectTest]
 Completed. 1 object(s) imported.
 ",
 }
@@ -32,10 +36,11 @@ Completed. 1 object(s) imported.
 exports[`[mutagen services config import-export] should update the same services: the services have been updated 1`] = `
 Object {
   "stderr": "",
-  "stdout": "~ application => Application1
-~ host => Host1
-~ service => cfgObjectTest
-Completed. 3 object(s) imported.
+  "stdout": "~ application [Application1]
+~ appprototype [serviceAppPrototype]
+~ host [Host1]
+~ service [cfgObjectTest]
+Completed. 4 object(s) imported.
 ",
 }
 `;

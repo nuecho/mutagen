@@ -6,6 +6,7 @@ import com.genesyslab.platform.applicationblocks.com.ICfgQuery
 import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.nuecho.genesys.cli.core.setBuilder
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.getCfgObjectType
+import com.nuecho.genesys.cli.toShortName
 
 abstract class ConfigurationObjectReference<T : ICfgObject>(
     @get:JsonIgnore
@@ -19,6 +20,8 @@ abstract class ConfigurationObjectReference<T : ICfgObject>(
 
     override fun compareTo(other: ConfigurationObjectReference<*>) =
         getCfgObjectType().name().compareTo(other.getCfgObjectType().name())
+
+    fun toConsoleString(): String = "${getCfgObjectType().toShortName()} [$this]"
 }
 
 fun referenceSetBuilder() = setBuilder<ConfigurationObjectReference<*>>()

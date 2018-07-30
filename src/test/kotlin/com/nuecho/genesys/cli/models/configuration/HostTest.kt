@@ -50,9 +50,9 @@ private val host = Host(
 )
 
 class HostTest : ConfigurationObjectTest(
-    host,
-    Host(name = NAME),
-    setOf("lcaPort", "osInfo", TYPE)
+    configurationObject = host,
+    emptyConfigurationObject = Host(name = NAME),
+    mandatoryProperties = setOf("lcaPort", "osInfo", TYPE)
 ) {
     @Test
     override fun `initialized object should properly serialize`() {

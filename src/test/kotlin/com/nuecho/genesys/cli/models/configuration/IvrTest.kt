@@ -48,10 +48,10 @@ private val ivr = Ivr(
 )
 
 class IvrTest : ConfigurationObjectTest(
-    ivr,
-    Ivr(name = NAME),
-    setOf(TENANT, TYPE, VERSION),
-    Ivr(mockCfgIvr())
+    configurationObject = ivr,
+    emptyConfigurationObject = Ivr(name = NAME),
+    mandatoryProperties = setOf(TENANT, TYPE, VERSION),
+    importedConfigurationObject = Ivr(mockCfgIvr())
 ) {
     @Test
     fun `updateCfgObject should properly create CfgIVR`() {

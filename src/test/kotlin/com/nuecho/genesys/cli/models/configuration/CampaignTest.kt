@@ -49,9 +49,9 @@ private val campaign = Campaign(
 )
 
 class CampaignTest : ConfigurationObjectTest(
-    campaign,
-    Campaign(tenant = DEFAULT_TENANT_REFERENCE, name = campaign.name),
-    emptySet()
+    configurationObject = campaign,
+    emptyConfigurationObject = Campaign(tenant = DEFAULT_TENANT_REFERENCE, name = campaign.name),
+    mandatoryProperties = emptySet()
 ) {
     @Test
     override fun `initialized object should properly serialize`() {

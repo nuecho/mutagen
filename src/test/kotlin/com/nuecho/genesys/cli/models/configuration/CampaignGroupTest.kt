@@ -94,9 +94,9 @@ private val campaignGroup = CampaignGroup(
 )
 
 class CampaignGroupTest : ConfigurationObjectTest(
-    campaignGroup,
-    CampaignGroup(campaign = CAMPAIGN_REFERENCE, name = campaignGroup.name),
-    setOf(GROUP)
+    configurationObject = campaignGroup,
+    emptyConfigurationObject = CampaignGroup(campaign = CAMPAIGN_REFERENCE, name = campaignGroup.name),
+    mandatoryProperties = setOf(GROUP)
 ) {
     @Test
     override fun `initialized object should properly serialize`() {

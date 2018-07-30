@@ -37,10 +37,10 @@ private val enumerator = Enumerator(
 )
 
 class EnumeratorTest : ConfigurationObjectTest(
-    enumerator,
-    Enumerator(tenant = DEFAULT_TENANT_REFERENCE, name = NAME),
-    setOf(DISPLAY_NAME, TYPE),
-    Enumerator(mockCfgEnumerator())
+    configurationObject = enumerator,
+    emptyConfigurationObject = Enumerator(tenant = DEFAULT_TENANT_REFERENCE, name = NAME),
+    mandatoryProperties = setOf(DISPLAY_NAME, TYPE),
+    importedConfigurationObject = Enumerator(mockCfgEnumerator())
 ) {
     @Test
     fun `createCfgObject should properly create CfgEnumerator`() {

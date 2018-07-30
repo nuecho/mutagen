@@ -3,7 +3,7 @@
 exports[`[mutagen fields config import-export] should create the fields: the fields have been created 1`] = `
 Object {
   "stderr": "",
-  "stdout": "+ field => Environment/cfgObjectTest
+  "stdout": "+ field [Environment/cfgObjectTest]
 Completed. 1 object(s) imported.
 ",
 }
@@ -11,8 +11,10 @@ Completed. 1 object(s) imported.
 
 exports[`[mutagen fields config import-export] should throw exception when new fields to import miss mandatory properties fields: exception has been thrown 1`] = `
 Object {
-  "stderr": "Cannot import configuration: some configuration objects' mandatory properties for creation are not set.
-  Properties [fieldType] not set in field [Environment/cfgObjectTest].
+  "stderr": "Validation failed.
+Missing properties:
+  - field [Environment/cfgObjectTest]:
+    - fieldType
 ",
   "stdout": "",
 }
@@ -21,7 +23,7 @@ Object {
 exports[`[mutagen fields config import-export] should update the modified fields: the modified fields have been updated 1`] = `
 Object {
   "stderr": "",
-  "stdout": "~ field => Environment/cfgObjectTest
+  "stdout": "~ field [Environment/cfgObjectTest]
 Completed. 1 object(s) imported.
 ",
 }
@@ -30,7 +32,7 @@ Completed. 1 object(s) imported.
 exports[`[mutagen fields config import-export] should update the same fields: the fields have been updated 1`] = `
 Object {
   "stderr": "",
-  "stdout": "~ field => Environment/cfgObjectTest
+  "stdout": "~ field [Environment/cfgObjectTest]
 Completed. 1 object(s) imported.
 ",
 }

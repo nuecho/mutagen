@@ -84,10 +84,11 @@ data class Service(
 
     override fun cloneBare() = Service(name = name, solutionType = solutionType, version = version)
 
-    override fun checkMandatoryProperties(service: ConfService): Set<String> {
+    override fun checkMandatoryProperties(configuration: Configuration, service: ConfService): Set<String> {
         val missingMandatoryProperties = mutableSetOf<String>()
         solutionType ?: missingMandatoryProperties.add(SOLUTION_TYPE)
         version ?: missingMandatoryProperties.add(VERSION)
+
         return missingMandatoryProperties
     }
 

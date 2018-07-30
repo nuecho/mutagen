@@ -17,7 +17,6 @@ import com.nuecho.genesys.cli.getFolderReference
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setFolder
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setProperty
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgAppComponentType
-import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgAppType
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgFlag
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgHAType
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgObjectState
@@ -34,6 +33,7 @@ import com.nuecho.genesys.cli.services.getObjectDbid
 import com.nuecho.genesys.cli.services.retrieveObject
 import com.nuecho.genesys.cli.toShortName
 
+@Suppress("DataClassContainsFunctions")
 data class Application(
     val name: String,
     val appPrototype: AppPrototypeReference? = null,
@@ -57,8 +57,6 @@ data class Application(
     val shutdownTimeout: Int? = null,
     val startupTimeout: Int? = null,
     val tenants: List<TenantReference>? = null,
-    val type: String? = null,
-    val version: String? = null,
     val workDirectory: String? = null,
     val state: String? = null,
     @JsonSerialize(using = CategorizedPropertiesSerializer::class)
@@ -89,8 +87,6 @@ data class Application(
         shutdownTimeout = cfgApplication.shutdownTimeout,
         startupTimeout = cfgApplication.startupTimeout,
         tenants = cfgApplication.tenants.map { TenantReference(it.name) },
-        type = cfgApplication.type.toShortName(),
-        version = cfgApplication.version,
         workDirectory = cfgApplication.workDirectory,
         state = cfgApplication.state?.toShortName(),
         userProperties = cfgApplication.userProperties?.asCategorizedProperties(),
@@ -99,14 +95,20 @@ data class Application(
         cfgApplication.resources?.let { Logging.warn { "Unsupported ResourceObject collection. Ignoring." } }
     }
 
-    override fun createCfgObject(service: IConfService) =
-        updateCfgObject(service, CfgApplication(service))
+    override fun createCfgObject(service: IConfService): CfgApplication {
+        val cfgAppPrototype = service.retrieveObject(appPrototype!!) as CfgAppPrototype
 
-    override fun updateCfgObject(service: IConfService, cfgObject: ICfgObject): CfgApplication =
+        // Type and version properties are unchangeable, but the values specified are never null (as they come from
+        // the appPrototype). On update, setProperty would try to change the fields, causing the import to crash
+        return updateCfgObject(service, CfgApplication(service)).also {
+            setProperty("type", cfgAppPrototype.type, it)
+            setProperty("version", cfgAppPrototype.version, it)
+        }
+    }
+
+    override fun updateCfgObject(service: IConfService, cfgObject: ICfgObject) =
         (cfgObject as CfgApplication).also {
-            setProperty(
-                "appPrototypeDBID", if (appPrototype != null) service.getObjectDbid(appPrototype) else null, it
-            )
+            setProperty("appPrototypeDBID", service.getObjectDbid(appPrototype), it)
             setProperty("appServerDBIDs", appServers?.map { appServer -> appServer.toCfgConnInfo(it) }, it)
             setProperty("autoRestart", toCfgFlag(autoRestart), it)
             setProperty("commandLine", commandLine, it)
@@ -124,17 +126,14 @@ data class Application(
             setProperty("startupTimeout", startupTimeout, it)
             setProperty("state", toCfgObjectState(state), it)
             setProperty("tenantDBIDs", tenants?.map { service.getObjectDbid(it) }, it)
-            setProperty("type", toCfgAppType(type), it)
             setProperty("userProperties", ConfigurationObjects.toKeyValueCollection(userProperties), it)
-            setProperty("version", version, it)
             setProperty("workDirectory", workDirectory, it)
             setFolder(folder, it)
         }
 
     override fun cloneBare() = Application(
         name = name,
-        type = type,
-        version = version,
+        appPrototype = appPrototype,
         autoRestart = autoRestart,
         redundancyType = redundancyType,
         workDirectory = workDirectory,
@@ -143,16 +142,30 @@ data class Application(
         shutdownTimeout = shutdownTimeout
     )
 
-    override fun checkMandatoryProperties(service: ConfService): Set<String> {
-        val prototype: CfgAppPrototype? = if (appPrototype != null) service.retrieveObject(appPrototype) else null
-
+    override fun checkMandatoryProperties(configuration: Configuration, service: ConfService): Set<String> {
         val missingMandatoryProperties = mutableSetOf<String>()
-        type ?: prototype?.type ?: missingMandatoryProperties.add(TYPE)
-        version ?: prototype?.version ?: missingMandatoryProperties.add(VERSION)
+        val prototype = getAppPrototype(configuration, service)
+
+        appPrototype ?: missingMandatoryProperties.add(APP_PROTOTYPE)
         autoRestart ?: missingMandatoryProperties.add(AUTO_RESTART)
         redundancyType ?: missingMandatoryProperties.add(REDUNDANCY_TYPE)
+
+        if (prototype?.type != null && isServer(prototype.type)) {
+            commandLine ?: missingMandatoryProperties.add(COMMAND_LINE)
+            workDirectory ?: missingMandatoryProperties.add(WORK_DIRECTORY)
+        }
+
         return missingMandatoryProperties
     }
+
+    private fun getAppPrototype(configuration: Configuration, service: ConfService): AppPrototype? {
+        val cfgAppPrototype = appPrototype?.let { service.retrieveObject(it) }
+
+        return if (cfgAppPrototype != null) AppPrototype(cfgAppPrototype)
+        else appPrototype?.let { configuration.asMapByReference.get(appPrototype) } as AppPrototype?
+    }
+
+    private fun isServer(type: String) = !notServerAppTypes.contains(type)
 
     override fun getReferences(): Set<ConfigurationObjectReference<*>> =
         referenceSetBuilder()
@@ -316,3 +329,41 @@ data class PortInfo(
         return portInfo
     }
 }
+
+private val notServerAppTypes = setOf(
+    "advisors",
+    "agentdesktop",
+    "agentview",
+    "automatedworkflowengine",
+    "billingclient",
+    "ccview",
+    "lme",
+    "sce",
+    "contactservermanager",
+    "contentanalyzer",
+    "infomartstatconfigurator",
+    "gcnclient",
+    "genesysadministrator",
+    "genericclient",
+    "itcutility",
+    "interactionroutingdesigner",
+    "interactionworkspace",
+    "iwdmanager",
+    "knowledgemanager",
+    "cmclient",
+    "reservedguiapplication1",
+    "reservedguiapplication2",
+    "responsemanager",
+    "sci",
+    "strategybuilder",
+    "strategyscheduler",
+    "strategysimulator",
+    "thirdpartyapp",
+    "virtualinteractivet",
+    "voipdevice",
+    "eaclient",
+    "vssconsole",
+    "webclient",
+    "wfmclient",
+    "wfmwebservices"
+)

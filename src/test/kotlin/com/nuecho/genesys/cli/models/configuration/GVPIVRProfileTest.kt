@@ -48,10 +48,10 @@ private val gvpIVRProfile = GVPIVRProfile(
 )
 
 class GVPIVRProfileTest : ConfigurationObjectTest(
-    gvpIVRProfile,
-    GVPIVRProfile(name = NAME),
-    setOf(DISPLAY_NAME, TENANT),
-    GVPIVRProfile(mockCfgGVPIVRProfile())
+    configurationObject = gvpIVRProfile,
+    emptyConfigurationObject = GVPIVRProfile(name = NAME),
+    mandatoryProperties = setOf(DISPLAY_NAME, TENANT),
+    importedConfigurationObject = GVPIVRProfile(mockCfgGVPIVRProfile())
 ) {
     @Test
     fun `createCfgObject should properly create CfgGVPIVRProfile`() {

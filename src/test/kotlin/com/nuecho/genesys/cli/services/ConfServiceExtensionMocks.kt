@@ -22,6 +22,7 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgStatTable
 import com.genesyslab.platform.applicationblocks.com.objects.CfgSwitch
 import com.genesyslab.platform.applicationblocks.com.objects.CfgTenant
 import com.genesyslab.platform.applicationblocks.com.objects.CfgTimeZone
+import com.genesyslab.platform.configuration.protocol.types.CfgAppType
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectType
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectType.CFGEnumerator
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_FOLDER
@@ -178,10 +179,16 @@ object ConfServiceExtensionMocks {
             mockCfgHost(name = DEFAULT_NAME, dbid = dbid)
         }
 
-    fun mockRetrieveAppPrototype(service: IConfService, dbid: Int = DEFAULT_OBJECT_DBID) =
+    fun mockRetrieveAppPrototype(
+        service: IConfService,
+        dbid: Int = DEFAULT_OBJECT_DBID,
+        type: CfgAppType? = null,
+        version: String? = null
+    ) {
         every { service.retrieveObject(CfgAppPrototype::class.java, any()) } answers {
-            mockCfgAppPrototype(name = DEFAULT_NAME, dbid = dbid)
+            mockCfgAppPrototype(name = DEFAULT_NAME, dbid = dbid, type = type, version = version)
         }
+    }
 
     fun mockRetrieveFolderByDbid(service: IConfService, dbid: Int = DEFAULT_OBJECT_DBID) {
         val folder = mockCfgFolder(name = DEFAULT_FOLDER, dbid = dbid)
