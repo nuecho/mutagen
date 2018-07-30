@@ -9,6 +9,15 @@ Completed. 1 object(s) imported.
 }
 `;
 
+exports[`[mutagen fields config import-export] should skip the same fields: the fields have been updated 1`] = `
+Object {
+  "stderr": "",
+  "stdout": "= field [Environment/cfgObjectTest]
+Completed. 1 object(s) imported.
+",
+}
+`;
+
 exports[`[mutagen fields config import-export] should throw exception when new fields to import miss mandatory properties fields: exception has been thrown 1`] = `
 Object {
   "stderr": "Validation failed.
@@ -21,15 +30,6 @@ Missing properties:
 `;
 
 exports[`[mutagen fields config import-export] should update the modified fields: the modified fields have been updated 1`] = `
-Object {
-  "stderr": "",
-  "stdout": "~ field [Environment/cfgObjectTest]
-Completed. 1 object(s) imported.
-",
-}
-`;
-
-exports[`[mutagen fields config import-export] should update the same fields: the fields have been updated 1`] = `
 Object {
   "stderr": "",
   "stdout": "~ field [Environment/cfgObjectTest]

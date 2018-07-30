@@ -11,6 +11,17 @@ Completed. 3 object(s) imported.
 }
 `;
 
+exports[`[mutagen ivrs config import-export] should skip the same ivrs: the ivrs have been updated 1`] = `
+Object {
+  "stderr": "",
+  "stdout": "= application [IVRServer-Application]
+= appprototype [IVRServer-AppPrototype]
+= ivr [cfgObjectTest]
+Completed. 3 object(s) imported.
+",
+}
+`;
+
 exports[`[mutagen ivrs config import-export] should throw exception when new ivrs to import miss mandatory properties ivrs: exception has been thrown 1`] = `
 Object {
   "stderr": "Validation failed.
@@ -29,17 +40,6 @@ Object {
   "stderr": "",
   "stdout": "~ ivr [cfgObjectTest]
 Completed. 1 object(s) imported.
-",
-}
-`;
-
-exports[`[mutagen ivrs config import-export] should update the same ivrs: the ivrs have been updated 1`] = `
-Object {
-  "stderr": "",
-  "stdout": "~ application [IVRServer-Application]
-~ appprototype [IVRServer-AppPrototype]
-~ ivr [cfgObjectTest]
-Completed. 3 object(s) imported.
 ",
 }
 `;

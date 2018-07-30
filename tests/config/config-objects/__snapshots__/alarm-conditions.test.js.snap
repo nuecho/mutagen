@@ -12,6 +12,18 @@ Completed. 4 object(s) imported.
 }
 `;
 
+exports[`[mutagen alarmConditions config import-export] should skip the same alarmConditions: the alarmConditions have been updated 1`] = `
+Object {
+  "stderr": "",
+  "stdout": "= alarmcondition [cfgObjectTest]
+= script [Environment/detectionScript]
+= script [Environment/reactionScript1]
+= script [Environment/reactionScript2]
+Completed. 4 object(s) imported.
+",
+}
+`;
+
 exports[`[mutagen alarmConditions config import-export] should throw exception when new alarmConditions to import miss mandatory properties alarmConditions: exception has been thrown 1`] = `
 Object {
   "stderr": "Validation failed.
@@ -30,18 +42,6 @@ Object {
   "stderr": "",
   "stdout": "~ alarmcondition [cfgObjectTest]
 Completed. 1 object(s) imported.
-",
-}
-`;
-
-exports[`[mutagen alarmConditions config import-export] should update the same alarmConditions: the alarmConditions have been updated 1`] = `
-Object {
-  "stderr": "",
-  "stdout": "~ alarmcondition [cfgObjectTest]
-~ script [Environment/detectionScript]
-~ script [Environment/reactionScript1]
-~ script [Environment/reactionScript2]
-Completed. 4 object(s) imported.
 ",
 }
 `;

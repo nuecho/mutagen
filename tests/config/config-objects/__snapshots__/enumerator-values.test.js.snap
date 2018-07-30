@@ -9,6 +9,15 @@ Completed. 1 object(s) imported.
 }
 `;
 
+exports[`[mutagen enumeratorValues config import-export] should skip the same enumeratorValues: the enumeratorValues have been updated 1`] = `
+Object {
+  "stderr": "",
+  "stdout": "= enumeratorvalue [name: 'cfgObjectTest', enumerator: 'Environment/MediaType']
+Completed. 1 object(s) imported.
+",
+}
+`;
+
 exports[`[mutagen enumeratorValues config import-export] should throw exception when new enumeratorValues to import miss mandatory properties enumeratorValues: exception has been thrown 1`] = `
 Object {
   "stderr": "Validation failed.
@@ -25,15 +34,6 @@ Missing dependencies:
 `;
 
 exports[`[mutagen enumeratorValues config import-export] should update the modified enumeratorValues: the modified enumeratorValues have been updated 1`] = `
-Object {
-  "stderr": "",
-  "stdout": "~ enumeratorvalue [name: 'cfgObjectTest', enumerator: 'Environment/MediaType']
-Completed. 1 object(s) imported.
-",
-}
-`;
-
-exports[`[mutagen enumeratorValues config import-export] should update the same enumeratorValues: the enumeratorValues have been updated 1`] = `
 Object {
   "stderr": "",
   "stdout": "~ enumeratorvalue [name: 'cfgObjectTest', enumerator: 'Environment/MediaType']

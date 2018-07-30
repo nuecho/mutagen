@@ -10,6 +10,8 @@
     ],
     "type": "folder"
   },
+  "isAdminCustomer": false,
+  "isProvisioned": false,
   "name": "name",
   "notes": "some notes",
   "reseller": "areseller",

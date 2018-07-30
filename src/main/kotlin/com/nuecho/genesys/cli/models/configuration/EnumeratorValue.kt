@@ -44,7 +44,7 @@ data class EnumeratorValue(
 
     constructor(enumeratorValue: CfgEnumeratorValue) : this(
         tenant = enumeratorValue.tenant.getReference(),
-        isDefault = enumeratorValue.isDefault.asBoolean()!!,
+        isDefault = enumeratorValue.isDefault?.asBoolean()!!,
         description = enumeratorValue.description,
         displayName = enumeratorValue.displayName,
         enumerator = enumeratorValue.enumerator.let { enumerator ->

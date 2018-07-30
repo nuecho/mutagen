@@ -6,13 +6,11 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.genesyslab.platform.applicationblocks.com.ICfgObject
 import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgTenant
-import com.nuecho.genesys.cli.asBoolean
 import com.nuecho.genesys.cli.core.InitializingBean
 import com.nuecho.genesys.cli.getFolderReference
 import com.nuecho.genesys.cli.getReference
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setFolder
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setProperty
-import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgFlag
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgObjectState
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toKeyValueCollection
 import com.nuecho.genesys.cli.models.configuration.reference.ConfigurationObjectReference
@@ -30,7 +28,6 @@ data class Tenant(
     val chargeableNumber: String? = null,
     val defaultContract: ObjectiveTableReference? = null,
     val defaultCapacityRule: ScriptReference? = null,
-    val serviceProvider: Boolean? = null,
     val parentTenant: TenantReference? = null,
     val password: String? = null,
     val state: String? = null,
@@ -42,11 +39,12 @@ data class Tenant(
     @get:JsonIgnore
     override val reference = TenantReference(name)
 
+    // field `isServiceProvider` is ignored since it's never returned by config server
+
     constructor(tenant: CfgTenant) : this(
         chargeableNumber = tenant.chargeableNumber,
         defaultCapacityRule = tenant.defaultCapacityRule?.getReference(),
         defaultContract = tenant.defaultContract?.getReference(),
-        serviceProvider = tenant.isServiceProvider.asBoolean(),
         name = tenant.name,
         parentTenant = tenant.parentTenant?.getReference(),
         password = tenant.password,
@@ -66,9 +64,9 @@ data class Tenant(
             setProperty("chargeableNumber", chargeableNumber, it)
             setProperty("defaultCapacityRuleDBID", service.getObjectDbid(defaultCapacityRule), it)
             setProperty("defaultContractDBID", service.getObjectDbid(defaultContract), it)
-            setProperty("isServiceProvider", toCfgFlag(serviceProvider), it)
             setProperty("parentTenantDBID", service.getObjectDbid(parentTenant), it)
             setProperty("password", password, it)
+
             setProperty("state", toCfgObjectState(state), it)
             setProperty("userProperties", toKeyValueCollection(userProperties), it)
             setFolder(folder, it)
@@ -77,10 +75,6 @@ data class Tenant(
     override fun cloneBare() = Tenant(name)
 
     override fun checkMandatoryProperties(configuration: Configuration, service: ConfService): Set<String> = emptySet()
-
-    override fun applyDefaultValues() {
-        // serviceProvider = false
-    }
 
     override fun afterPropertiesSet() {
         defaultContract?.tenant = reference

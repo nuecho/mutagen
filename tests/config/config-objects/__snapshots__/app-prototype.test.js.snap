@@ -9,6 +9,15 @@ Completed. 1 object(s) imported.
 }
 `;
 
+exports[`[mutagen appPrototypes config import-export] should skip the same appPrototypes: the appPrototypes have been updated 1`] = `
+Object {
+  "stderr": "",
+  "stdout": "= appprototype [cfgObjectTest]
+Completed. 1 object(s) imported.
+",
+}
+`;
+
 exports[`[mutagen appPrototypes config import-export] should throw exception when new appPrototypes to import miss mandatory properties appPrototypes: exception has been thrown 1`] = `
 Object {
   "stderr": "Validation failed.
@@ -22,15 +31,6 @@ Missing properties:
 `;
 
 exports[`[mutagen appPrototypes config import-export] should update the modified appPrototypes: the modified appPrototypes have been updated 1`] = `
-Object {
-  "stderr": "",
-  "stdout": "~ appprototype [cfgObjectTest]
-Completed. 1 object(s) imported.
-",
-}
-`;
-
-exports[`[mutagen appPrototypes config import-export] should update the same appPrototypes: the appPrototypes have been updated 1`] = `
 Object {
   "stderr": "",
   "stdout": "~ appprototype [cfgObjectTest]

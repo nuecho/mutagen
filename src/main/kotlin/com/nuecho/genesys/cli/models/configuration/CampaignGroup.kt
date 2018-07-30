@@ -15,6 +15,7 @@ import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setFolde
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setProperty
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgDialMode
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgObjectState
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgObjectType
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgOperationMode
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgOptimizationMethod
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toKeyValueCollection
@@ -113,10 +114,14 @@ data class CampaignGroup(
             setProperty("dialMode", toCfgDialMode(dialMode), cfgCampaignGroup)
             setProperty(
                 "groupDBID",
-                service.getObjectDbid(
-                    if (group is AgentGroupReference) group
-                    else group as PlaceGroupReference?
-                ),
+                service.getObjectDbid(group as? AgentGroupReference ?: group as PlaceGroupReference?),
+                cfgCampaignGroup
+            )
+            setProperty(
+                "groupType",
+                if (group is AgentGroupReference)
+                    toCfgObjectType("AgentGroup")
+                else toCfgObjectType("PlaceGroup"),
                 cfgCampaignGroup
             )
             setProperty("origDNDBID", service.getObjectDbid(origDN), cfgCampaignGroup)
@@ -139,6 +144,8 @@ data class CampaignGroup(
                 servers?.map { service.getObjectDbid(it) },
                 cfgCampaignGroup
             )
+            setProperty("tenantDBID", service.getObjectDbid(tenant), cfgCampaignGroup)
+
             setProperty("state", toCfgObjectState(state), cfgCampaignGroup)
             setProperty("userProperties", toKeyValueCollection(userProperties), cfgCampaignGroup)
             setFolder(folder, cfgCampaignGroup)

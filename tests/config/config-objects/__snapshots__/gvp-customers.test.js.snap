@@ -9,12 +9,23 @@ Completed. 1 object(s) imported.
 }
 `;
 
+exports[`[mutagen gvpCustomers config import-export] should skip the same gvpCustomers: the gvpCustomers have been updated 1`] = `
+Object {
+  "stderr": "",
+  "stdout": "= gvpcustomer [cfgObjectTest]
+Completed. 1 object(s) imported.
+",
+}
+`;
+
 exports[`[mutagen gvpCustomers config import-export] should throw exception when new gvpCustomers to import miss mandatory properties gvpCustomers: exception has been thrown 1`] = `
 Object {
   "stderr": "Validation failed.
 Missing properties:
   - gvpcustomer [emptyCfgObjectTest]:
     - channel
+    - isAdminCustomer
+    - isProvisioned
     - reseller
     - tenant
 ",
@@ -23,15 +34,6 @@ Missing properties:
 `;
 
 exports[`[mutagen gvpCustomers config import-export] should update the modified gvpCustomers: the modified gvpCustomers have been updated 1`] = `
-Object {
-  "stderr": "",
-  "stdout": "~ gvpcustomer [cfgObjectTest]
-Completed. 1 object(s) imported.
-",
-}
-`;
-
-exports[`[mutagen gvpCustomers config import-export] should update the same gvpCustomers: the gvpCustomers have been updated 1`] = `
 Object {
   "stderr": "",
   "stdout": "~ gvpcustomer [cfgObjectTest]

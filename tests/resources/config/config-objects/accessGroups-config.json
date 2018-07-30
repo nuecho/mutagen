@@ -7,9 +7,12 @@
     {
       "group": {
         "name": "cfgObjectTest",
-        "tenant": "Environment"
+        "tenant": "Environment",
+        "state": "enabled"
       },
-      "members": [ "0" ]
+      "members": [
+        "0"
+      ]
     }
   ]
 }

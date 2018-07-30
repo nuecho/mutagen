@@ -61,8 +61,8 @@ data class GVPCustomer(
         channel = gvpCustomer.channel,
         displayName = gvpCustomer.displayName,
         notes = gvpCustomer.notes,
-        isProvisioned = gvpCustomer.isProvisioned.asBoolean(),
-        isAdminCustomer = gvpCustomer.isAdminCustomer.asBoolean(),
+        isProvisioned = gvpCustomer.isProvisioned?.asBoolean(),
+        isAdminCustomer = gvpCustomer.isAdminCustomer?.asBoolean(),
 
         timeZone = gvpCustomer.timeZone?.getReference(),
 
@@ -75,6 +75,7 @@ data class GVPCustomer(
         updateCfgObject(service, CfgGVPCustomer(service)).also {
             setProperty("name", name, it)
             setProperty("resellerDBID", service.getObjectDbid(reseller), it)
+            setProperty("tenantDBID", service.getObjectDbid(tenant), it)
         }
 
     override fun updateCfgObject(service: IConfService, cfgObject: ICfgObject) =
@@ -82,8 +83,8 @@ data class GVPCustomer(
             setProperty(CHANNEL, channel, it)
             setProperty("displayName", displayName ?: name, it)
             setProperty("notes", notes, it)
-            setProperty("isProvisioned", toCfgFlag(isProvisioned ?: false), it)
-            setProperty("isAdminCustomer", toCfgFlag(isAdminCustomer ?: false), it)
+            setProperty("isProvisioned", toCfgFlag(isProvisioned), it)
+            setProperty("isAdminCustomer", toCfgFlag(isAdminCustomer), it)
             setProperty("timeZoneDBID", service.getObjectDbid(timeZone), it)
             setProperty("userProperties", toKeyValueCollection(userProperties), it)
             setProperty("state", toCfgObjectState(state), it)
@@ -91,8 +92,10 @@ data class GVPCustomer(
         }
 
     override fun cloneBare() = GVPCustomer(
-        name = name,
         channel = channel,
+        isAdminCustomer = isAdminCustomer,
+        isProvisioned = isProvisioned,
+        name = name,
         reseller = reseller,
         tenant = tenant
     )
@@ -100,6 +103,8 @@ data class GVPCustomer(
     override fun checkMandatoryProperties(configuration: Configuration, service: ConfService): Set<String> {
         val missingMandatoryProperties = mutableSetOf<String>()
         channel ?: missingMandatoryProperties.add(CHANNEL)
+        isAdminCustomer ?: missingMandatoryProperties.add(IS_ADMIN_CUSTOMER)
+        isProvisioned ?: missingMandatoryProperties.add(IS_PROVISIONED)
         reseller ?: missingMandatoryProperties.add(RESELLER)
         tenant ?: missingMandatoryProperties.add(TENANT)
 

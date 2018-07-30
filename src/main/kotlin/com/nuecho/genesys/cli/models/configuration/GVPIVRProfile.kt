@@ -102,7 +102,7 @@ data class GVPIVRProfile(
             setProperty("isProvisioned", toCfgFlag(isProvisioned), it)
             setProperty("tfn", tfn?.joinToString(), it)
             setProperty("status", status, it)
-            setProperty("dids", dids?.map { service.getObjectDbid(it) }?.joinToString(), it)
+            setProperty("DIDDBIDs", dids?.map { service.getObjectDbid(it) }, it)
             setProperty("userProperties", toKeyValueCollection(userProperties), it)
             setProperty("state", toCfgObjectState(state), it)
             setFolder(folder, it)

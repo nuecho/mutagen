@@ -12,6 +12,18 @@ Completed. 4 object(s) imported.
 }
 `;
 
+exports[`[mutagen services config import-export] should skip the same services: the services have been updated 1`] = `
+Object {
+  "stderr": "",
+  "stdout": "= application [Application1]
+= appprototype [serviceAppPrototype]
+= host [Host1]
+= service [cfgObjectTest]
+Completed. 4 object(s) imported.
+",
+}
+`;
+
 exports[`[mutagen services config import-export] should throw exception when new services to import miss mandatory properties services: exception has been thrown 1`] = `
 Object {
   "stderr": "Validation failed.
@@ -29,18 +41,6 @@ Object {
   "stderr": "",
   "stdout": "~ service [cfgObjectTest]
 Completed. 1 object(s) imported.
-",
-}
-`;
-
-exports[`[mutagen services config import-export] should update the same services: the services have been updated 1`] = `
-Object {
-  "stderr": "",
-  "stdout": "~ application [Application1]
-~ appprototype [serviceAppPrototype]
-~ host [Host1]
-~ service [cfgObjectTest]
-Completed. 4 object(s) imported.
 ",
 }
 `;

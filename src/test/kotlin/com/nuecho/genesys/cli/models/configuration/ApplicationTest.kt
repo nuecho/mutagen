@@ -93,7 +93,6 @@ private val application = Application(
     serverInfo = Server(
         attempts = 2,
         host = HostReference("host"),
-        port = "8888",
         timeout = 2
     ),
     tenants = listOf(DEFAULT_TENANT_REFERENCE),

@@ -1,10 +1,12 @@
 package com.nuecho.genesys.cli.commands.config.import.operation
 
+import com.genesyslab.platform.applicationblocks.com.ICfgObject
 import com.nuecho.genesys.cli.Logging
 import com.nuecho.genesys.cli.commands.config.import.operation.ImportOperationType.CREATE
 import com.nuecho.genesys.cli.commands.config.import.operation.ImportOperationType.SKIP
 import com.nuecho.genesys.cli.commands.config.import.operation.ImportOperationType.UPDATE
 import com.nuecho.genesys.cli.models.configuration.Configuration
+import com.nuecho.genesys.cli.models.configuration.ConfigurationBuilder
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObject
 import com.nuecho.genesys.cli.services.ConfService
 import com.nuecho.genesys.cli.services.retrieveObject
@@ -73,19 +75,36 @@ class ImportPlan(val configuration: Configuration, val service: ConfService) {
             println()
         }
 
-        internal fun toOperations(service: ConfService, configuration: Configuration) =
+        private fun toOperations(service: ConfService, configuration: Configuration) =
             configuration.asMapByReference.values.map { toOperation(service, it) }
 
-        internal fun toOperation(service: ConfService, configurationObject: ConfigurationObject):
-                ImportOperation {
+        internal fun toOperation(service: ConfService, configurationObject: ConfigurationObject): ImportOperation {
             val remoteCfgObject = service.retrieveObject(configurationObject.reference)
 
-            return if (remoteCfgObject == null) CreateOperation(configurationObject, service)
-            else UpdateOperation(configurationObject, remoteCfgObject, service)
+            return when {
+                remoteCfgObject == null -> CreateOperation(configurationObject, service)
+                isIdenticalAfterUpdate(service, configurationObject, remoteCfgObject) ->
+                    SkipOperation(configurationObject, service)
+                else -> UpdateOperation(configurationObject, remoteCfgObject, service)
+            }
         }
 
-        private fun createOperationGraph(operations: List<ImportOperation>):
-                Graph<ImportOperation, DefaultEdge> {
+        private fun isIdenticalAfterUpdate(
+            service: ConfService,
+            configurationObject: ConfigurationObject,
+            remoteCfgObject: ICfgObject
+        ): Boolean {
+            val remoteObject = ConfigurationBuilder.toConfigurationObject(remoteCfgObject)!!
+            // Makes a copy of the remoteCfgObject because updateCfgObject mutates it (which sucks BTW)
+            val remoteCfgObjectCopy = remoteObject.createCfgObject(service)
+
+            val updatedCfgObject = configurationObject.updateCfgObject(service, remoteCfgObjectCopy)
+            val updatedObject = ConfigurationBuilder.toConfigurationObject(updatedCfgObject)!!
+
+            return remoteObject.toJson() == updatedObject.toJson()
+        }
+
+        private fun createOperationGraph(operations: List<ImportOperation>): Graph<ImportOperation, DefaultEdge> {
             val graph: Graph<ImportOperation, DefaultEdge> = DefaultDirectedGraph(DefaultEdge::class.java)
 
             // We need to add graph vertex before we connect them together

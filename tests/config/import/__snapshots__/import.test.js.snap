@@ -171,6 +171,20 @@ Completed. 1 object(s) imported.
 }
 `;
 
+exports[`[mutagen config import file] should skip update of multiple identical objects of different types: every object has been created 1`] = `
+Object {
+  "stderr": "",
+  "stdout": "= dn [number: '123', switch: 'MultiObjectImportSwitch1', type: 'Extension', name: 'MultiObjectImportDN', tenant: 'Environment']
+= physicalswitch [MultiObjectImportPhysicalSwitch1]
+= physicalswitch [MultiObjectImportPhysicalSwitch2]
+= switch [Environment/MultiObjectImportSwitch1]
+= switch [Environment/MultiObjectImportSwitch2]
+= switch [Environment/MultiObjectImportSwitch3]
+Completed. 6 object(s) imported.
+",
+}
+`;
+
 exports[`[mutagen config import file] should update multiple objects of different types: every object has been updated 1`] = `
 Object {
   "stderr": "",

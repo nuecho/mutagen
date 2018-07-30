@@ -15,7 +15,6 @@
   "name": "foo",
   "parentTenant": "parent",
   "password": "password",
-  "serviceProvider": false,
   "state": "enabled",
   "userProperties": {
     "section": {

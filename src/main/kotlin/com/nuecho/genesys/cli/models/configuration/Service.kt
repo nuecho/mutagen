@@ -111,7 +111,7 @@ data class SolutionComponent(
     constructor(cfgSolutionComponent: CfgSolutionComponent) : this(
         app = cfgSolutionComponent.app.getReference(),
         startupPriority = cfgSolutionComponent.startupPriority,
-        isOptional = cfgSolutionComponent.isOptional.asBoolean()
+        isOptional = cfgSolutionComponent.isOptional?.asBoolean()
     )
 
     fun toCfgSolutionComponent(cfgService: CfgService): CfgSolutionComponent {
@@ -136,7 +136,7 @@ data class SolutionComponentDefinition(
     constructor(cfgSolutionComponentDefinition: CfgSolutionComponentDefinition) : this(
         startupPriority = cfgSolutionComponentDefinition.startupPriority,
         type = cfgSolutionComponentDefinition.type.toShortName(),
-        isOptional = cfgSolutionComponentDefinition.isOptional.asBoolean(),
+        isOptional = cfgSolutionComponentDefinition.isOptional?.asBoolean(),
         version = cfgSolutionComponentDefinition.version
     )
 

@@ -9,6 +9,15 @@ Completed. 1 object(s) imported.
 }
 `;
 
+exports[`[mutagen dnGroups config import-export] should skip the same dnGroups: the dnGroups have been updated 1`] = `
+Object {
+  "stderr": "",
+  "stdout": "= dngroup [Environment/cfgObjectTest]
+Completed. 1 object(s) imported.
+",
+}
+`;
+
 exports[`[mutagen dnGroups config import-export] should throw exception when new dnGroups to import miss mandatory properties dnGroups: exception has been thrown 1`] = `
 Object {
   "stderr": "Validation failed.
@@ -21,15 +30,6 @@ Missing properties:
 `;
 
 exports[`[mutagen dnGroups config import-export] should update the modified dnGroups: the modified dnGroups have been updated 1`] = `
-Object {
-  "stderr": "",
-  "stdout": "~ dngroup [Environment/cfgObjectTest]
-Completed. 1 object(s) imported.
-",
-}
-`;
-
-exports[`[mutagen dnGroups config import-export] should update the same dnGroups: the dnGroups have been updated 1`] = `
 Object {
   "stderr": "",
   "stdout": "~ dngroup [Environment/cfgObjectTest]

@@ -13,10 +13,9 @@
       "userName": "cfgObjectTest",
       "password": "password",
       "passwordHashAlgorithm": 1,
-      "passwordUpdatingDate": 20180314,
       "changePasswordOnNextLogin": false,
       "emailAddress": "emailAddress",
-      "state": "disabled",
+      "state": "enabled",
       "agent": false,
       "externalAuth": false,
       "appRanks": {

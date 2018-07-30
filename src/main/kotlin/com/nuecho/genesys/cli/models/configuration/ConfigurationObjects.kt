@@ -20,7 +20,6 @@ import com.genesyslab.platform.configuration.protocol.types.CfgEnumeratorType
 import com.genesyslab.platform.configuration.protocol.types.CfgFieldType
 import com.genesyslab.platform.configuration.protocol.types.CfgFlag
 import com.genesyslab.platform.configuration.protocol.types.CfgFlag.CFGFalse
-import com.genesyslab.platform.configuration.protocol.types.CfgFlag.CFGNoFlag
 import com.genesyslab.platform.configuration.protocol.types.CfgFlag.CFGTrue
 import com.genesyslab.platform.configuration.protocol.types.CfgFolderClass
 import com.genesyslab.platform.configuration.protocol.types.CfgHAType
@@ -90,10 +89,10 @@ object ConfigurationObjects {
             keyValueCollection
         }
 
-    fun toCfgFlag(flag: Boolean?): CfgFlag = when (flag) {
+    fun toCfgFlag(flag: Boolean?): CfgFlag? = when (flag) {
         true -> CFGTrue
         false -> CFGFalse
-        else -> CFGNoFlag
+        else -> null
     }
 
     fun toCfgDNRegisterFlag(flag: String?) =

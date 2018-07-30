@@ -29,6 +29,7 @@ import com.nuecho.genesys.cli.toShortName
 
 /**
  * Unused address and phones properties are not defined.
+ * Ignored field passwordUpdatingDate.
  */
 data class Person(
     val tenant: TenantReference,
@@ -39,7 +40,6 @@ data class Person(
     val lastName: String? = null,
     val password: String? = null,
     val passwordHashAlgorithm: Int? = null,
-    val passwordUpdatingDate: Int? = null,
     val changePasswordOnNextLogin: Boolean? = null,
     val emailAddress: String? = null,
     val state: String? = null,
@@ -64,7 +64,6 @@ data class Person(
         userName = person.userName,
         password = person.password,
         passwordHashAlgorithm = person.passwordHashAlgorithm,
-        passwordUpdatingDate = person.passwordUpdatingDate,
         changePasswordOnNextLogin = person.changePasswordOnNextLogin?.asBoolean(),
         emailAddress = person.emailAddress,
         state = person.state?.toShortName(),
@@ -90,7 +89,6 @@ data class Person(
             setProperty("lastName", lastName, it)
             setProperty("password", password, it)
             setProperty("passwordHashAlgorithm", passwordHashAlgorithm, it)
-            setProperty("PasswordUpdatingDate", passwordUpdatingDate, it)
             setProperty("changePasswordOnNextLogin", toCfgFlag(changePasswordOnNextLogin), it)
             setProperty("emailAddress", emailAddress, it)
             setProperty("state", toCfgObjectState(state), it)

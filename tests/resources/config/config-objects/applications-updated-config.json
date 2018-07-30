@@ -35,7 +35,6 @@
       "serverInfo": {
         "attempts": 2,
         "host": "configserver",
-        "port": "8888",
         "timeout": 2
       },
       "state": "enabled",

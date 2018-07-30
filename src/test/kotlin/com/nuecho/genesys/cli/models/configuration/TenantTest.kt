@@ -1,12 +1,11 @@
 package com.nuecho.genesys.cli.models.configuration
 
 import com.genesyslab.platform.applicationblocks.com.objects.CfgTenant
-import com.genesyslab.platform.configuration.protocol.types.CfgFlag
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectState.CFGEnabled
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_FOLDER_REFERENCE
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_OBJECT_DBID
-import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_NAME
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_DBID
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_NAME
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_REFERENCE
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgObjectiveTable
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgScript
@@ -38,7 +37,6 @@ private val tenant = Tenant(
     password = "password",
     parentTenant = TenantReference("parent"),
     state = CFGEnabled.toShortName(),
-    serviceProvider = false,
     userProperties = defaultProperties(),
     folder = DEFAULT_FOLDER_REFERENCE
 )
@@ -90,7 +88,6 @@ private fun mockCfgTenant(): CfgTenant {
         every { it.state } returns CFGEnabled
         every { it.userProperties } returns mockKeyValueCollection()
         every { it.chargeableNumber } returns tenant.chargeableNumber
-        every { it.isServiceProvider } returns CfgFlag.CFGFalse
         every { it.defaultCapacityRule } returns capacityRule
         every { it.defaultContract } returns contract
         every { it.parentTenant } returns parentTenant

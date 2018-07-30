@@ -9,6 +9,15 @@ Completed. 1 object(s) imported.
 }
 `;
 
+exports[`[mutagen dns config import-export] should skip the same dns: the dns have been updated 1`] = `
+Object {
+  "stderr": "",
+  "stdout": "= dn [number: '123', switch: 'switchForDn', type: 'Extension', name: 'cfgObjectTest', tenant: 'Environment']
+Completed. 1 object(s) imported.
+",
+}
+`;
+
 exports[`[mutagen dns config import-export] should throw exception when new dns to import miss mandatory properties dns: exception has been thrown 1`] = `
 Object {
   "stderr": "Validation failed.
@@ -21,15 +30,6 @@ Missing properties:
 `;
 
 exports[`[mutagen dns config import-export] should update the modified dns: the modified dns have been updated 1`] = `
-Object {
-  "stderr": "",
-  "stdout": "~ dn [number: '123', switch: 'switchForDn', type: 'Extension', name: 'cfgObjectTest', tenant: 'Environment']
-Completed. 1 object(s) imported.
-",
-}
-`;
-
-exports[`[mutagen dns config import-export] should update the same dns: the dns have been updated 1`] = `
 Object {
   "stderr": "",
   "stdout": "~ dn [number: '123', switch: 'switchForDn', type: 'Extension', name: 'cfgObjectTest', tenant: 'Environment']

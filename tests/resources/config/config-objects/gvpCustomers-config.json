@@ -5,12 +5,14 @@
   },
   "gvpCustomers": [
     {
-      "notes": "some notes",
       "channel": "achannel",
-      "tenant": "Environment",
-      "reseller": "areseller",
+      "isAdminCustomer": false,
+      "isProvisioned": false,
       "name": "cfgObjectTest",
+      "notes": "some notes",
+      "reseller": "areseller",
       "state": "enabled",
+      "tenant": "Environment",
       "timeZone": "GMT"
     }
   ]

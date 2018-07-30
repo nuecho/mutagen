@@ -30,9 +30,11 @@ private const val NAME = "name"
 private val gvpCustomer = GVPCustomer(
     tenant = DEFAULT_TENANT_REFERENCE,
     name = NAME,
-    reseller = GVPResellerReference("areseller", DEFAULT_TENANT_REFERENCE),
     channel = "achannel",
+    isProvisioned = false,
+    isAdminCustomer = false,
     notes = "some notes",
+    reseller = GVPResellerReference("areseller", DEFAULT_TENANT_REFERENCE),
     state = CfgObjectState.CFGEnabled.toShortName(),
     userProperties = defaultProperties(),
     folder = DEFAULT_FOLDER_REFERENCE
@@ -41,7 +43,7 @@ private val gvpCustomer = GVPCustomer(
 class GVPCustomerTest : ConfigurationObjectTest(
     configurationObject = gvpCustomer,
     emptyConfigurationObject = GVPCustomer(name = NAME),
-    mandatoryProperties = setOf(CHANNEL, RESELLER, TENANT),
+    mandatoryProperties = setOf(CHANNEL, IS_ADMIN_CUSTOMER, IS_PROVISIONED, RESELLER, TENANT),
     importedConfigurationObject = GVPCustomer(mockCfgGVPCustomer())
 ) {
     @Test

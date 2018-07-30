@@ -127,10 +127,9 @@ fun CfgTransactionType.toShortName(): String = name().replace(CFG_TRANSACTION_PR
 
 fun CfgFlag.asBoolean() =
     when (this) {
-        CfgFlag.CFGNoFlag -> null
         CfgFlag.CFGTrue -> true
         CfgFlag.CFGFalse -> false
-        else -> throw IllegalArgumentException("Illegal CfgFlag value: '$this'")
+        else -> null
     }
 
 fun CfgObject.getFolderReference() =

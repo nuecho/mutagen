@@ -5,10 +5,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.genesyslab.platform.applicationblocks.com.ICfgObject
 import com.genesyslab.platform.applicationblocks.com.IConfService
-import com.genesyslab.platform.applicationblocks.com.objects.CfgApplication
 import com.genesyslab.platform.applicationblocks.com.objects.CfgHost
-import com.genesyslab.platform.configuration.protocol.types.CfgObjectType.CFGApplication
-import com.nuecho.genesys.cli.Logging
 import com.nuecho.genesys.cli.getFolderReference
 import com.nuecho.genesys.cli.getReference
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setFolder
@@ -44,22 +41,19 @@ data class Host(
     @get:JsonIgnore
     override val reference = HostReference(name)
 
+    // FIXME ignoring resources property
+
     constructor(host: CfgHost) : this(
         name = host.name,
         ipAddress = host.iPaddress,
         lcaPort = host.lcaPort,
         osInfo = OS(host.oSinfo),
-        scs = host.configurationService.retrieveObject(CFGApplication, host.scsdbid)?.let {
-            it as CfgApplication
-            it.getReference()
-        },
+        scs = host.scs?.getReference(),
         type = host.type.toShortName(),
         state = host.state.toShortName(),
         userProperties = host.userProperties?.asCategorizedProperties(),
         folder = host.getFolderReference()
-    ) {
-        host.resources?.let { Logging.warn { "Unsupported ResourceObject collection in host object. Ignoring." } }
-    }
+    )
 
     override fun createCfgObject(service: IConfService) =
         updateCfgObject(service, CfgHost(service)).also {
@@ -71,16 +65,9 @@ data class Host(
         (cfgObject as CfgHost).also { cfgHost ->
             setProperty("IPaddress", ipAddress, cfgHost)
             setProperty("LCAPort", lcaPort, cfgHost)
-            setProperty(
-                "OSinfo",
-                osInfo?.toCfgOs(service, cfgHost),
-                cfgHost
-            )
-            setProperty(
-                "SCSDBID",
-                service.getObjectDbid(scs),
-                cfgHost
-            )
+            setProperty("OSinfo", osInfo?.toCfgOs(service, cfgHost), cfgHost)
+            setProperty("SCSDBID", service.getObjectDbid(scs), cfgHost)
+
             setProperty("userProperties", toKeyValueCollection(userProperties), cfgHost)
             setProperty("state", toCfgObjectState(state), cfgHost)
             setFolder(folder, cfgHost)

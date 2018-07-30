@@ -9,6 +9,15 @@ Completed. 1 object(s) imported.
 }
 `;
 
+exports[`[mutagen persons config import-export] should skip the same persons: the persons have been updated 1`] = `
+Object {
+  "stderr": "",
+  "stdout": "~ person [Environment/cfgObjectTest]
+Completed. 1 object(s) imported.
+",
+}
+`;
+
 exports[`[mutagen persons config import-export] should throw exception when new persons to import miss mandatory properties persons: exception has been thrown 1`] = `
 Object {
   "stderr": "Validation failed.
@@ -21,15 +30,6 @@ Missing properties:
 `;
 
 exports[`[mutagen persons config import-export] should update the modified persons: the modified persons have been updated 1`] = `
-Object {
-  "stderr": "",
-  "stdout": "~ person [Environment/cfgObjectTest]
-Completed. 1 object(s) imported.
-",
-}
-`;
-
-exports[`[mutagen persons config import-export] should update the same persons: the persons have been updated 1`] = `
 Object {
   "stderr": "",
   "stdout": "~ person [Environment/cfgObjectTest]
