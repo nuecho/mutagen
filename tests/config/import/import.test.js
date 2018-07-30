@@ -3,8 +3,8 @@ const MULTIPLE_OBJECTS_CONFIGURATION_PATH = getResourcePath("config/import/multi
 const REPEATED_KEYS_CONFIGURATION_PATH = getResourcePath("config/import/same-key-switches-config.json");
 const CYCLE_CONFIGURATION_PATH = getResourcePath("config/import/cycle-config.json");
 const MULTIPLE_CYCLE_CONFIGURATION_PATH = getResourcePath("config/import/multiple-cycle-config.json");
-const MISSING_DEPENDENCY_CONFIGURATION_PATH = getResourcePath("config/import/missing-dependency-config.json");
-const MULTIPLE_VALIDATION_ERRORS_PATH = getResourcePath("config/import/multiple-validation-errors-config.json");
+const MISSING_DEPENDENCY_CONFIGURATION_PATH = getResourcePath("config/validate/missing-dependency-config.json");
+const MULTIPLE_VALIDATION_ERRORS_CONFIGURATION_PATH = getResourcePath("config/validate/multiple-validation-errors-config.json");
 const ACCEPT_CHANGES_CONFIGURATION_PATH = getResourcePath("config/import/accept-changes-config.json");
 const REJECT_CHANGES_CONFIGURATION_PATH = getResourcePath("config/import/reject-changes-config.json");
 const SWITCH_DEPENDENCIES_CONFIGURATION_PATH = getResourcePath("config/config-objects/switch-dependencies-config.json");
@@ -50,7 +50,7 @@ test(`[mutagen config import file] should not import any objects if some depende
 });
 
 test(`[mutagen config import file] should not import any objects if some dependencies cannot be resolved and some mandatory properties for creation are missing`, () => {
-  assertMutagenResult(`config import --auto-confirm ${MULTIPLE_VALIDATION_ERRORS_PATH}`, "found missing dependencies and properties", 1);
+  assertMutagenResult(`config import --auto-confirm ${MULTIPLE_VALIDATION_ERRORS_CONFIGURATION_PATH}`, "found missing dependencies and properties", 1);
 });
 
 test(`[mutagen config import file] should not import the objects if the user does not confirm the changes`, (done) => {

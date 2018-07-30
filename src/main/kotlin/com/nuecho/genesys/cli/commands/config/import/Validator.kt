@@ -15,7 +15,7 @@ const val LIST_ELEMENT_SEPARATOR: String = "\n$LIST_ELEMENT_PREFIX"
 
 class Validator(val configuration: Configuration, val service: ConfService) {
 
-    fun validateConfiguration(): Boolean {
+    fun validateConfiguration() {
 
         Logging.info { "Beginning validation." }
 
@@ -26,7 +26,6 @@ class Validator(val configuration: Configuration, val service: ConfService) {
         }
 
         Logging.info { "Validation complete." }
-        return true
     }
 
     internal fun findMissingProperties() =
@@ -70,13 +69,17 @@ fun List<ValidationError>.toConsoleString(classType: KClass<*>): String {
     else "\n${errors[0].describe()}\n${errors.map { it.toConsoleString() }.joinToString(separator = "\n")}"
 }
 
+interface ValidationError {
+    fun describe(): String
+    fun toConsoleString(): String
+}
+
 data class MissingDependencies(
     val configurationObject: ConfigurationObject,
     val dependencies: Set<ConfigurationObjectReference<*>>
 ) : ValidationError {
 
     override fun describe() = "Missing dependencies:"
-
     override fun toConsoleString() = "$OBJECT_REFERENCE_PREFIX${configurationObject.reference.toConsoleString()}:\n" +
             dependencies
                 .map { it.toConsoleString() }
@@ -89,12 +92,6 @@ data class MissingProperties(
 ) : ValidationError {
 
     override fun describe() = "Missing properties:"
-
     override fun toConsoleString() = "$OBJECT_REFERENCE_PREFIX${configurationObject.reference.toConsoleString()}:\n" +
             properties.joinToString(prefix = LIST_ELEMENT_PREFIX, separator = LIST_ELEMENT_SEPARATOR)
-}
-
-interface ValidationError {
-    fun describe(): String
-    fun toConsoleString(): String
 }

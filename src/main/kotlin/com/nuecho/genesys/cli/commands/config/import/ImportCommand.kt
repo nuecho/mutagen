@@ -8,7 +8,6 @@ import com.nuecho.genesys.cli.commands.config.import.Import.importConfiguration
 import com.nuecho.genesys.cli.commands.config.import.operation.ImportPlan
 import com.nuecho.genesys.cli.core.defaultJsonObjectMapper
 import com.nuecho.genesys.cli.models.configuration.Configuration
-import com.nuecho.genesys.cli.preferences.environment.Environment
 import com.nuecho.genesys.cli.services.ConfService
 import com.nuecho.genesys.cli.services.ConfigurationObjectRepository
 import picocli.CommandLine
@@ -39,7 +38,7 @@ class ImportCommand : ConfigServerCommand() {
     override fun getGenesysCli() = config!!.getGenesysCli()
 
     override fun execute(): Int {
-        val result = withEnvironmentConfService { service: ConfService, _: Environment ->
+        val result = withEnvironmentConfService { service: ConfService, _ ->
             ConfigurationObjectRepository.prefetchConfigurationObjects(service)
 
             val configurationString = inputFile!!.readText()
