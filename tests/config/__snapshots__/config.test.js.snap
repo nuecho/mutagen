@@ -7,8 +7,9 @@ Object {
 Genesys Config Server tool
   -?, -h, --help              Show this help message.
 Commands:
-  export  Export configuration objects.
-  import  [INCUBATION] Import configuration objects.
+  export    Export configuration objects.
+  import    [INCUBATION] Import configuration objects.
+  validate  Validate the configuration objects against the Configuration Server.
 ",
 }
 `;

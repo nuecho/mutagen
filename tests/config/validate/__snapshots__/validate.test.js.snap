@@ -1,0 +1,39 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`[mutagen config validate file] should indicate validation failure if there are missing dependencies, and print them: validation failed 1`] = `
+Object {
+  "stderr": "Validation failed.
+Missing dependencies:
+  - tenant [MissingDependencyTenant1]:
+    - script [MissingDependencyTenant1/NonExistingScript1]
+  - tenant [MissingDependencyTenant2]:
+    - script [MissingDependencyTenant2/NonExistingScript2]
+",
+  "stdout": "",
+}
+`;
+
+exports[`[mutagen config validate file] should indicate validation failure if there are multiple validation errors, and print them: validation failed 1`] = `
+Object {
+  "stderr": "Validation failed.
+Missing properties:
+  - enumerator [Environment/emptyCfgObjectTest]:
+    - displayName
+    - type
+Missing dependencies:
+  - tenant [MissingDependencyTenant1]:
+    - script [MissingDependencyTenant1/NonExistingScript1]
+  - tenant [MissingDependencyTenant2]:
+    - script [MissingDependencyTenant2/NonExistingScript2]
+",
+  "stdout": "",
+}
+`;
+
+exports[`[mutagen config validate file] should indicate validation success if there are no validation errors: validation succeeded 1`] = `
+Object {
+  "stderr": "",
+  "stdout": "Validation succeeded.
+",
+}
+`;
