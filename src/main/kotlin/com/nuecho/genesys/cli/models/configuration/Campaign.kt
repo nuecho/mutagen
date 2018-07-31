@@ -59,16 +59,16 @@ data class Campaign(
     )
 
     override fun createCfgObject(service: IConfService) =
-        updateCfgObject(service, CfgCampaign(service))
+        updateCfgObject(service, CfgCampaign(service)).also {
+            setProperty("name", name, it)
+            setProperty("tenantDBID", service.getObjectDbid(tenant), it)
+        }
 
     override fun updateCfgObject(service: IConfService, cfgObject: ICfgObject) =
         (cfgObject as CfgCampaign).also {
-            setProperty("tenantDBID", service.getObjectDbid(tenant), it)
-            setProperty("name", name, it)
             setProperty("callingLists", toCfgCallingListList(callingLists, it), it)
             setProperty("description", description, it)
             setProperty("scriptDBID", service.getObjectDbid(script), it)
-
             setProperty("state", toCfgObjectState(state), it)
             setProperty("userProperties", toKeyValueCollection(userProperties), it)
             setFolder(folder, it)

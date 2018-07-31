@@ -84,12 +84,14 @@ data class AlarmCondition(
     )
 
     override fun createCfgObject(service: IConfService) =
-        updateCfgObject(service, CfgAlarmCondition(service).also { applyDefaultValues() })
+        updateCfgObject(service, CfgAlarmCondition(service).also {
+            applyDefaultValues()
+            setProperty("name", name, it)
+        })
 
     override fun updateCfgObject(service: IConfService, cfgObject: ICfgObject) =
         (cfgObject as CfgAlarmCondition).also { cfgAlarmCondition ->
 
-            setProperty("name", name, cfgAlarmCondition)
             setProperty(
                 ALARM_DETECT_EVENT,
                 alarmDetectEvent?.toCfgDetectEvent(cfgAlarmCondition),

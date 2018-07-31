@@ -50,13 +50,14 @@ data class ActionCode(
     )
 
     override fun createCfgObject(service: IConfService) =
-        updateCfgObject(service, CfgActionCode(service))
+        updateCfgObject(service, CfgActionCode(service)).also {
+            setProperty("name", name, it)
+            setProperty("tenantDBID", service.getObjectDbid(tenant), it)
+            setProperty("type", toCfgActionCodeType(type), it)
+        }
 
     override fun updateCfgObject(service: IConfService, cfgObject: ICfgObject) =
         (cfgObject as CfgActionCode).also {
-            setProperty("tenantDBID", service.getObjectDbid(tenant), it)
-            setProperty("name", name, it)
-            setProperty("type", toCfgActionCodeType(type), it)
             setProperty(CODE, code, it)
             setProperty("subcodes", toCfgSubcodeList(subcodes, it), it)
             setProperty("state", toCfgObjectState(state), it)

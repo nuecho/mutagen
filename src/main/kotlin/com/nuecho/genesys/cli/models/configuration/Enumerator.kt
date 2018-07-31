@@ -48,14 +48,15 @@ data class Enumerator(
     )
 
     override fun createCfgObject(service: IConfService) =
-        updateCfgObject(service, CfgEnumerator(service))
+        updateCfgObject(service, CfgEnumerator(service)).also {
+            setProperty("name", name, it)
+            setProperty("tenantDBID", service.getObjectDbid(tenant), it)
+        }
 
     override fun updateCfgObject(service: IConfService, cfgObject: ICfgObject) =
         (cfgObject as CfgEnumerator).also {
-            setProperty("tenantDBID", service.getObjectDbid(tenant), it)
-            setProperty("name", name, it)
-            setProperty(DISPLAY_NAME, displayName ?: name, it)
             setProperty("description", description, it)
+            setProperty(DISPLAY_NAME, displayName ?: name, it)
             setProperty(TYPE, toCfgEnumeratorType(type), it)
             setProperty("state", toCfgObjectState(state), it)
             setProperty("userProperties", ConfigurationObjects.toKeyValueCollection(userProperties), it)

@@ -49,14 +49,15 @@ data class Ivr(
     )
 
     override fun createCfgObject(service: IConfService) =
-        updateCfgObject(service, CfgIVR(service))
+        updateCfgObject(service, CfgIVR(service)).also {
+            ConfigurationObjects.setProperty("name", name, it)
+            ConfigurationObjects.setProperty("tenantDBID", service.getObjectDbid(tenant), it)
+            ConfigurationObjects.setProperty(TYPE, toCfgIVRType(type), it)
+        }
 
     override fun updateCfgObject(service: IConfService, cfgObject: ICfgObject) =
         (cfgObject as CfgIVR).also { cfgIvr ->
-            ConfigurationObjects.setProperty("name", name, cfgIvr)
-            ConfigurationObjects.setProperty("tenantDBID", service.getObjectDbid(tenant), cfgIvr)
             ConfigurationObjects.setProperty("description", description, cfgIvr)
-            ConfigurationObjects.setProperty(TYPE, toCfgIVRType(type), cfgIvr)
             ConfigurationObjects.setProperty("version", version, cfgIvr)
             ConfigurationObjects.setProperty("IVRServerDBID", service.getObjectDbid(ivrServer), cfgIvr)
             ConfigurationObjects.setProperty("state", toCfgObjectState(state), cfgIvr)

@@ -63,13 +63,13 @@ data class Switch(
     )
 
     override fun createCfgObject(service: IConfService) =
-        updateCfgObject(service, CfgSwitch(service))
+        updateCfgObject(service, CfgSwitch(service)).also {
+            setProperty("tenantDBID", service.getObjectDbid(tenant), it)
+            setProperty("name", name, it)
+        }
 
     override fun updateCfgObject(service: IConfService, cfgObject: ICfgObject) =
         (cfgObject as CfgSwitch).also { switch ->
-
-            setProperty("tenantDBID", service.getObjectDbid(tenant), switch)
-            setProperty("name", name, switch)
             setProperty("physSwitchDBID", service.getObjectDbid(physicalSwitch), switch)
             setProperty("TServerDBID", service.getObjectDbid(tServer), switch)
             setProperty("linkType", toCfgLinkType(linkType), switch)

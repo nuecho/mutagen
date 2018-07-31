@@ -105,20 +105,19 @@ data class DN(
     )
 
     override fun createCfgObject(service: IConfService) =
-        updateCfgObject(service, CfgDN(service).also { applyDefaultValues() })
+        updateCfgObject(service, CfgDN(service)).also {
+            setProperty("number", number, it)
+            setProperty("switchDBID", service.getObjectDbid(switch), it)
+            setProperty("tenantDBID", service.getObjectDbid(tenant), it)
+            setProperty("type", toCfgDNType(type), it)
+        }
 
     override fun updateCfgObject(service: IConfService, cfgObject: ICfgObject) =
         (cfgObject as CfgDN).also {
-
-            setProperty("tenantDBID", service.getObjectDbid(tenant), it)
-            setProperty("number", number, it)
-
             // Switch
-            setProperty("switchDBID", service.getObjectDbid(switch), it)
             setProperty("registerAll", toCfgDNRegisterFlag(registerAll), it)
             setProperty("switchSpecificType", switchSpecificType, it)
 
-            setProperty("type", toCfgDNType(type), it)
             setProperty("association", association, it)
 
             // Routing

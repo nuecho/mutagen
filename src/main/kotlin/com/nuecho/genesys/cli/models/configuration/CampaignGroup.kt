@@ -102,12 +102,13 @@ data class CampaignGroup(
     )
 
     override fun createCfgObject(service: IConfService) =
-        updateCfgObject(service, CfgCampaignGroup(service))
+        updateCfgObject(service, CfgCampaignGroup(service)).also {
+            setProperty("campaignDBID", campaign.let { service.getObjectDbid(it) }, it)
+            setProperty("name", name, it)
+        }
 
     override fun updateCfgObject(service: IConfService, cfgObject: ICfgObject) =
         (cfgObject as CfgCampaignGroup).also { cfgCampaignGroup ->
-            setProperty("campaignDBID", campaign.let { service.getObjectDbid(it) }, cfgCampaignGroup)
-            setProperty("name", name, cfgCampaignGroup)
             setProperty("description", description, cfgCampaignGroup)
             setProperty("dialMode", toCfgDialMode(dialMode), cfgCampaignGroup)
             setProperty(
@@ -138,7 +139,6 @@ data class CampaignGroup(
                 servers?.map { service.getObjectDbid(it) },
                 cfgCampaignGroup
             )
-
             setProperty("state", toCfgObjectState(state), cfgCampaignGroup)
             setProperty("userProperties", toKeyValueCollection(userProperties), cfgCampaignGroup)
             setFolder(folder, cfgCampaignGroup)

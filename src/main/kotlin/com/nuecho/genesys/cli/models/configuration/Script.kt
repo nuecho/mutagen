@@ -50,14 +50,14 @@ data class Script(
     }
 
     override fun createCfgObject(service: IConfService) =
-        updateCfgObject(service, CfgScript(service).also { applyDefaultValues() })
-
-    override fun updateCfgObject(service: IConfService, cfgObject: ICfgObject) =
-        (cfgObject as CfgScript).also {
-
+        updateCfgObject(service, CfgScript(service).also { applyDefaultValues()
             setProperty("tenantDBID", service.getObjectDbid(tenant), it)
             setProperty("name", name, it)
             setProperty(TYPE, toCfgScriptType(type), it)
+        })
+
+    override fun updateCfgObject(service: IConfService, cfgObject: ICfgObject) =
+        (cfgObject as CfgScript).also {
             setProperty("index", index, it)
             setProperty("state", toCfgObjectState(state), it)
             setProperty("userProperties", toKeyValueCollection(userProperties), it)

@@ -52,26 +52,30 @@ data class DNGroup(
     )
 
     override fun createCfgObject(service: IConfService) =
-        updateCfgObject(service, CfgDNGroup(service))
+        updateCfgObject(service, CfgDNGroup(service)).also {
+            setProperty(TYPE, toCfgDNGroupType(type), it)
+        }
 
     override fun updateCfgObject(service: IConfService, cfgObject: ICfgObject) =
         (cfgObject as CfgDNGroup).also { cfgDNGroup ->
-
             val groupInfo = group.toCfgGroup(service, cfgDNGroup).also {
                 cfgDNGroup.dbid?.let { dbid ->
                     it.dbid = dbid
                 }
             }
 
-            setProperty("DNs", dns?.map { dnInfo ->
-                val dn = service.retrieveObject(dnInfo.dn)!!
-                CfgDNInfo(service, cfgDNGroup).also {
-                    setProperty("DNDBID", dn.dbid, it)
-                    setProperty("trunks", dnInfo.trunks, it)
-                }
-            }, cfgDNGroup)
             setProperty("groupInfo", groupInfo, cfgDNGroup)
-            setProperty(TYPE, toCfgDNGroupType(type), cfgDNGroup)
+            setProperty(
+                "DNs",
+                dns?.map { dnInfo ->
+                    val dn = service.retrieveObject(dnInfo.dn)!!
+                    CfgDNInfo(service, cfgDNGroup).also {
+                        setProperty("DNDBID", dn.dbid, it)
+                        setProperty("trunks", dnInfo.trunks, it)
+                    }
+                },
+                cfgDNGroup
+            )
             setFolder(folder, cfgDNGroup)
         }
 

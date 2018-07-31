@@ -45,13 +45,14 @@ data class AppPrototype(
     )
 
     override fun createCfgObject(service: IConfService) =
-        updateCfgObject(service, CfgAppPrototype(service))
-
-    override fun updateCfgObject(service: IConfService, cfgObject: ICfgObject) =
-        (cfgObject as CfgAppPrototype).also {
+        updateCfgObject(service, CfgAppPrototype(service)).also {
             setProperty("name", name, it)
             setProperty(TYPE, toCfgAppType(type), it)
             setProperty(VERSION, version, it)
+        }
+
+    override fun updateCfgObject(service: IConfService, cfgObject: ICfgObject) =
+        (cfgObject as CfgAppPrototype).also {
             setProperty("options", ConfigurationObjects.toKeyValueCollection(options), it)
             setProperty("state", toCfgObjectState(state), it)
             setProperty("userProperties", ConfigurationObjects.toKeyValueCollection(userProperties), it)

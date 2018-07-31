@@ -66,13 +66,13 @@ data class GVPReseller(
     )
 
     override fun createCfgObject(service: IConfService) =
-        updateCfgObject(service, CfgGVPReseller(service))
+        updateCfgObject(service, CfgGVPReseller(service)).also {
+            setProperty("tenantDBID", service.getObjectDbid(tenant), it)
+            setProperty("name", name, it)
+        }
 
     override fun updateCfgObject(service: IConfService, cfgObject: ICfgObject) =
         (cfgObject as CfgGVPReseller).also {
-
-            setProperty("tenantDBID", service.getObjectDbid(tenant), it)
-            setProperty("name", name, it)
             setProperty(DISPLAY_NAME, displayName ?: name, it)
             setProperty("notes", notes, it)
             setProperty("timeZoneDBID", service.getObjectDbid(timeZone ?: TimeZoneReference(tenant = tenant)), it)
