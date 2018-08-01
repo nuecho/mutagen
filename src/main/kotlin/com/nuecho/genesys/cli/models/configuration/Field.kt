@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
+import com.genesyslab.platform.applicationblocks.com.CfgObject
 import com.genesyslab.platform.applicationblocks.com.ICfgObject
 import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgField
@@ -30,11 +31,11 @@ data class Field(
     val defaultValue: String? = null,
     val description: String? = null,
     val fieldType: String? = null,
-    @get:JsonProperty("isNullable")
+    @get:JsonProperty(IS_NULLABLE)
     val isNullable: Boolean? = null,
-    @get:JsonProperty("isPrimaryKey")
+    @get:JsonProperty(IS_PRIMARY_KEY)
     val isPrimaryKey: Boolean? = null,
-    @get:JsonProperty("isUnique")
+    @get:JsonProperty(IS_UNIQUE)
     val isUnique: Boolean? = null,
     val length: Int? = null,
     val type: String? = null,
@@ -69,17 +70,17 @@ data class Field(
             setProperty("name", name, it)
             setProperty("tenantDBID", service.getObjectDbid(tenant), it)
             setProperty(FIELD_TYPE, toCfgFieldType(fieldType), it)
-            setProperty("isPrimaryKey", toCfgFlag(isPrimaryKey), it)
-            setProperty("isNullable", toCfgFlag(isNullable), it)
-            setProperty("isUnique", toCfgFlag(isUnique), it)
-            setProperty("length", length, it)
-            setProperty("type", toCfgDataType(type), it)
+            setProperty(IS_NULLABLE, toCfgFlag(isNullable), it)
+            setProperty(IS_PRIMARY_KEY, toCfgFlag(isPrimaryKey), it)
+            setProperty(IS_UNIQUE, toCfgFlag(isUnique), it)
+            setProperty(TYPE, toCfgDataType(type), it)
         }
 
     override fun updateCfgObject(service: IConfService, cfgObject: ICfgObject): CfgField =
         (cfgObject as CfgField).also {
             setProperty("description", description, it)
             setProperty("defaultValue", defaultValue, it)
+            if (!it.isSaved || it.length == 0) setProperty(LENGTH, length ?: 0, it)
             setProperty("state", ConfigurationObjects.toCfgObjectState(state), it)
             setProperty("userProperties", ConfigurationObjects.toKeyValueCollection(userProperties), it)
             setFolder(folder, it)
@@ -96,8 +97,36 @@ data class Field(
         type = type
     )
 
-    override fun checkMandatoryProperties(configuration: Configuration, service: ConfService): Set<String> =
-        if (fieldType == null) setOf(FIELD_TYPE) else emptySet()
+    override fun checkMandatoryProperties(configuration: Configuration, service: ConfService): Set<String> {
+        val missingMandatoryProperties = mutableSetOf<String>()
+        fieldType ?: missingMandatoryProperties.add(FIELD_TYPE)
+        isNullable ?: missingMandatoryProperties.add(IS_NULLABLE)
+        isPrimaryKey ?: missingMandatoryProperties.add(IS_PRIMARY_KEY)
+        isUnique ?: missingMandatoryProperties.add(IS_UNIQUE)
+        type ?: missingMandatoryProperties.add(TYPE)
+
+        return missingMandatoryProperties
+    }
+
+    @Suppress("ComplexMethod")
+    override fun checkUnchangeableProperties(cfgObject: CfgObject): Set<String> {
+        val unchangeableProperties = mutableSetOf<String>()
+        (cfgObject as CfgField).also {
+            if (isNullable != null && isNullable != it.isNullable?.asBoolean())
+                unchangeableProperties.add(IS_NULLABLE)
+            if (isPrimaryKey != null && isPrimaryKey != it.isPrimaryKey?.asBoolean())
+                unchangeableProperties.add(IS_PRIMARY_KEY)
+            if (isUnique != null && isUnique != it.isUnique?.asBoolean())
+                unchangeableProperties.add(IS_UNIQUE)
+            // as long as length is 0, it is not considered specified
+            if (it.length != 0 && length != null && length != it.length)
+                unchangeableProperties.add(LENGTH)
+            if (type != null && type.toLowerCase() != it.type?.toShortName())
+                unchangeableProperties.add(TYPE)
+        }
+
+        return unchangeableProperties
+    }
 
     override fun getReferences(): Set<ConfigurationObjectReference<*>> =
         referenceSetBuilder()

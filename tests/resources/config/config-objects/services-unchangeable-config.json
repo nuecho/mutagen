@@ -1,0 +1,13 @@
+{
+  "__metadata__": {
+    "formatName": "JSON",
+    "formatVersion": "1.0.0"
+  },
+  "services": [
+    {
+      "name": "cfgObjectTest",
+      "solutionType": "stnetworkrouting"
+    }
+  ]
+}
+

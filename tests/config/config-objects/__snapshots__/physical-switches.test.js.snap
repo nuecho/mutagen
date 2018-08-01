@@ -29,6 +29,17 @@ Missing properties:
 }
 `;
 
+exports[`[mutagen physicalSwitches config import-export] should throw exception when updating physicalSwitches with different values for unchangeable properties: exception has been thrown 1`] = `
+Object {
+  "stderr": "Validation failed.
+Unchangeable properties:
+  - physicalswitch [cfgObjectTest]:
+    - type
+",
+  "stdout": "",
+}
+`;
+
 exports[`[mutagen physicalSwitches config import-export] should update the modified physicalSwitches: the modified physicalSwitches have been updated 1`] = `
 Object {
   "stderr": "",

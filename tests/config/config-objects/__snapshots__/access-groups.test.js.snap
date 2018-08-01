@@ -18,6 +18,17 @@ Completed. 1 object(s) imported.
 }
 `;
 
+exports[`[mutagen accessGroups config import-export] should throw exception when updating accessGroups with different values for unchangeable properties: exception has been thrown 1`] = `
+Object {
+  "stderr": "Validation failed.
+Unchangeable properties:
+  - accessgroup [Environment/cfgObjectTest]:
+    - type
+",
+  "stdout": "",
+}
+`;
+
 exports[`[mutagen accessGroups config import-export] should update the modified accessGroups: the modified accessGroups have been updated 1`] = `
 Object {
   "stderr": "",

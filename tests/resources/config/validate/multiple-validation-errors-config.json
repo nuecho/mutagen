@@ -11,9 +11,9 @@
   ],
   "physicalSwitches": [
     {
-      "name": "CycleConfigPhysicalSwitch",
+      "name": "unchangeablePropertyPhysicalSwitch",
       "state": "enabled",
-      "type": "fujitsu"
+      "type": "madge"
     }
   ],
   "tenants" : [

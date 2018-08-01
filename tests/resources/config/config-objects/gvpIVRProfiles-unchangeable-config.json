@@ -1,0 +1,19 @@
+{
+  "__metadata__": {
+    "formatName": "JSON",
+    "formatVersion": "1.0.0"
+  },
+  "gvpIVRProfiles": [
+    {
+      "name": "cfgObjectTest",
+      "tenant": "gvpIVRProfile-different-tenant",
+      "displayName": "a display name"
+    }
+  ],
+  "tenants": [
+    {
+      "name": "gvpIVRProfile-different-tenant"
+    }
+  ]
+}
+

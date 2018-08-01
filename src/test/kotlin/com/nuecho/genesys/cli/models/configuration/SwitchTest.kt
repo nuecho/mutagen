@@ -88,6 +88,17 @@ class SwitchTest : ConfigurationObjectTest(
     mandatoryProperties = setOf(PHYSICAL_SWITCH),
     importedConfigurationObject = Switch(mockMainCfgSwitch())
 ) {
+
+    @Test
+    override fun `object with different unchangeable properties' values should return the right unchangeable properties`() {
+        val differentPhysicalSwitch = mockCfgPhysicalSwitch(name = "differentPhysicalSwitch")
+        val cfgSwitch = mockCfgSwitch(name = mainSwitch.name).also {
+            every { it.physSwitch } returns differentPhysicalSwitch
+        }
+
+        assertThat(configurationObject.checkUnchangeableProperties(cfgSwitch), equalTo(setOf(PHYSICAL_SWITCH)))
+    }
+
     @Test
     fun `createCfgObject should properly create CfgSwitch`() {
         val service = mockConfService()

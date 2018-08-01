@@ -47,6 +47,10 @@ class RoleTest : ConfigurationObjectTest(
     emptyConfigurationObject = Role(tenant = DEFAULT_TENANT_REFERENCE, name = NAME),
     mandatoryProperties = emptySet()
 ) {
+    override fun `object with different unchangeable properties' values should return the right unchangeable properties`() {
+        // not implemented, since object has no unchangeable properties
+    }
+
     @Test
     override fun `initialized object should properly serialize`() {
         val service = mockConfService()

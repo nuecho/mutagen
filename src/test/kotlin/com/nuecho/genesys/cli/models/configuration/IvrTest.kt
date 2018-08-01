@@ -2,6 +2,7 @@ package com.nuecho.genesys.cli.models.configuration
 
 import com.genesyslab.platform.applicationblocks.com.objects.CfgIVR
 import com.genesyslab.platform.configuration.protocol.types.CfgIVRType.CFGIVRTAgility
+import com.genesyslab.platform.configuration.protocol.types.CfgIVRType.CFGIVRTAmerex
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectState
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectState.CFGEnabled
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_FOLDER_DBID
@@ -53,6 +54,17 @@ class IvrTest : ConfigurationObjectTest(
     mandatoryProperties = setOf(TENANT, TYPE, VERSION),
     importedConfigurationObject = Ivr(mockCfgIvr())
 ) {
+    @Test
+    override fun `object with different unchangeable properties' values should return the right unchangeable properties`() {
+        val differentTenant = mockCfgTenant("differentTenant")
+        val cfgIvr = mockCfgIvr(name = ivr.name).also {
+            every { it.type } returns CFGIVRTAmerex
+            every { it.tenant } returns differentTenant
+        }
+
+        assertThat(configurationObject.checkUnchangeableProperties(cfgIvr), equalTo(setOf(TENANT, TYPE)))
+    }
+
     @Test
     fun `updateCfgObject should properly create CfgIVR`() {
         val service = mockConfService()

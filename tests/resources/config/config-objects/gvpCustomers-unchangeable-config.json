@@ -1,0 +1,27 @@
+{
+  "__metadata__": {
+    "formatName": "JSON",
+    "formatVersion": "1.0.0"
+  },
+  "gvpCustomers": [
+    {
+      "tenant": "anotherTenant",
+      "reseller": "aDifferentReseller",
+      "name": "cfgObjectTest"
+    }
+  ],
+  "tenants": [
+    {
+      "name": "anotherTenant"
+    }
+  ],
+  "gvpResellers": [
+    {
+      "tenant": "anotherTenant",
+      "state": "enabled",
+      "startDate": "2018-05-06T21:17:50.105+0000",
+      "name": "aDifferentReseller"
+    }
+  ]
+}
+

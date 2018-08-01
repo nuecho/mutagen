@@ -29,6 +29,17 @@ Missing properties:
 }
 `;
 
+exports[`[mutagen scripts config import-export] should throw exception when updating scripts with different values for unchangeable properties: exception has been thrown 1`] = `
+Object {
+  "stderr": "Validation failed.
+Unchangeable properties:
+  - script [Environment/cfgObjectTest]:
+    - type
+",
+  "stdout": "",
+}
+`;
+
 exports[`[mutagen scripts config import-export] should update the modified scripts: the modified scripts have been updated 1`] = `
 Object {
   "stderr": "",

@@ -1,6 +1,7 @@
 const defaultOptions = {
   checkKey: null,
-  checkMandatoryProperties: true
+  checkMandatoryProperties: true,
+  checkUnchangeableProperties: false
 };
 
 function cfgObjectTests (
@@ -12,24 +13,34 @@ function cfgObjectTests (
 
     cfgObjectInitialExportTest(cfgObjectType, mergedOptions.checkKey);
     if (mergedOptions.checkMandatoryProperties) {
-      cfgObjectMissingPropertiesTest(cfgObjectType, getResourcePath(`config/config-objects/${cfgObjectType}-invalid-config.json`));
+      cfgObjectMandatoryPropertiesTest(cfgObjectType, getResourcePath(`config/config-objects/${cfgObjectType}-invalid-config.json`));
     }
     cfgObjectImportNewTest(cfgObjectType, getResourcePath(`config/config-objects/${cfgObjectType}-config.json`));
     cfgObjectImportUnmodifiedTest(cfgObjectType, getResourcePath(`config/config-objects/${cfgObjectType}-config.json`));
+    if (mergedOptions.checkUnchangeableProperties) {
+       cfgObjectUnchangeablePropertiesTest(cfgObjectType, getResourcePath(`config/config-objects/${cfgObjectType}-unchangeable-config.json`));
+     }
     cfgObjectImportModifiedTest(cfgObjectType, getResourcePath(`config/config-objects/${cfgObjectType}-updated-config.json`));
     cfgObjectExportTest(cfgObjectType, mergedOptions.checkKey);
+
   });
 };
 
 function cfgObjectInitialExportTest(cfgObjectType, checkKey) {
-  test(`cfgObject ${cfgObjectType} should not initially exists on the configuration server`, () => {
+  test(`cfgObject ${cfgObjectType} should not initially exist on the configuration server`, () => {
     checkObjectCount(cfgObjectType, 0, checkKey);
   });
 };
 
-function cfgObjectMissingPropertiesTest(cfgObjectType, emptyConfigurationPath) {
+function cfgObjectMandatoryPropertiesTest(cfgObjectType, emptyConfigurationPath) {
   test(`should throw exception when new ${cfgObjectType} to import miss mandatory properties ${cfgObjectType}`, () => {
     assertMutagenResult(`config import --auto-confirm ${emptyConfigurationPath}`, "exception has been thrown", 1);
+  });
+};
+
+function cfgObjectUnchangeablePropertiesTest(cfgObjectType, unchangeableConfigurationPath) {
+  test(`should throw exception when updating ${cfgObjectType} with different values for unchangeable properties`, () => {
+    assertMutagenResult(`config import --auto-confirm ${unchangeableConfigurationPath}`, "exception has been thrown", 1);
   });
 };
 

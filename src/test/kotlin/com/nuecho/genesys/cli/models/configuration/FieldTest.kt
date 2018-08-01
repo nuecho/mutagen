@@ -1,8 +1,10 @@
 package com.nuecho.genesys.cli.models.configuration
 
-import com.genesyslab.platform.configuration.protocol.types.CfgDataType
+import com.genesyslab.platform.configuration.protocol.types.CfgDataType.CFGDTChar
+import com.genesyslab.platform.configuration.protocol.types.CfgDataType.CFGDTDateTime
 import com.genesyslab.platform.configuration.protocol.types.CfgFieldType
 import com.genesyslab.platform.configuration.protocol.types.CfgFlag
+import com.genesyslab.platform.configuration.protocol.types.CfgFlag.CFGTrue
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectState.CFGEnabled
 import com.nuecho.genesys.cli.asBoolean
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_FOLDER_DBID
@@ -39,7 +41,7 @@ private val field = Field(
     isPrimaryKey = CfgFlag.CFGFalse.asBoolean(),
     isUnique = CfgFlag.CFGFalse.asBoolean(),
     length = 3,
-    type = CfgDataType.CFGDTChar.toShortName(),
+    type = CFGDTChar.toShortName(),
     state = CFGEnabled.toShortName(),
     userProperties = defaultProperties(),
     folder = DEFAULT_FOLDER_REFERENCE
@@ -48,10 +50,26 @@ private val field = Field(
 class FieldTest : ConfigurationObjectTest(
     configurationObject = field,
     emptyConfigurationObject = Field(DEFAULT_TENANT_REFERENCE, "foo"),
-    mandatoryProperties = setOf(FIELD_TYPE),
+    mandatoryProperties = setOf(FIELD_TYPE, IS_NULLABLE, IS_PRIMARY_KEY, IS_UNIQUE, TYPE),
     importedConfigurationObject = Field(mockField())
 ) {
     val service = mockConfService()
+
+    @Test
+    override fun `object with different unchangeable properties' values should return the right unchangeable properties`() {
+        val cfgField = mockCfgField(name = field.name).also {
+            every { it.type } returns CFGDTDateTime
+            every { it.length } returns 4
+            every { it.isNullable } returns CFGTrue
+            every { it.isPrimaryKey } returns CFGTrue
+            every { it.isUnique } returns CFGTrue
+        }
+
+        assertThat(
+            configurationObject.checkUnchangeableProperties(cfgField),
+            equalTo(setOf(TYPE, LENGTH, IS_NULLABLE, IS_PRIMARY_KEY, IS_UNIQUE))
+        )
+    }
 
     @Test
     fun `updateCfgObject should properly create CfgField`() {

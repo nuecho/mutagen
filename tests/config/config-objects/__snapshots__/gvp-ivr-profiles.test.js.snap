@@ -30,6 +30,17 @@ Missing properties:
 }
 `;
 
+exports[`[mutagen gvpIVRProfiles config import-export] should throw exception when updating gvpIVRProfiles with different values for unchangeable properties: exception has been thrown 1`] = `
+Object {
+  "stderr": "Validation failed.
+Unchangeable properties:
+  - gvpivrprofile [cfgObjectTest]:
+    - tenant
+",
+  "stdout": "",
+}
+`;
+
 exports[`[mutagen gvpIVRProfiles config import-export] should update the modified gvpIVRProfiles: the modified gvpIVRProfiles have been updated 1`] = `
 Object {
   "stderr": "",

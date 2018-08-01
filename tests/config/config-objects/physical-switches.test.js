@@ -1,1 +1,1 @@
-cfgObjectTests("physicalSwitches");
+cfgObjectTests("physicalSwitches", {checkUnchangeableProperties: true});

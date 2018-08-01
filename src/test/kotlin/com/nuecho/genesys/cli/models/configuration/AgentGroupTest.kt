@@ -80,6 +80,10 @@ class AgentGroupTest : ConfigurationObjectTest(
     mandatoryProperties = emptySet(),
     importedConfigurationObject = AgentGroup(mockCfgAgentGroup())
 ) {
+    override fun `object with different unchangeable properties' values should return the right unchangeable properties`() {
+        // not implemented, since object has no unchangeable properties
+    }
+
     val service = ServiceMocks.mockConfService()
 
     @Test

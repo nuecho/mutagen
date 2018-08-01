@@ -5,7 +5,7 @@
   },
   "hosts": [
     {
-      "name" : "cfgObjectTest"
+      "name": "cfgObjectTest"
     }
   ]
 }

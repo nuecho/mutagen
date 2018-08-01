@@ -6,6 +6,7 @@ import com.genesyslab.platform.configuration.protocol.types.CfgAppType.CFGAgentD
 import com.genesyslab.platform.configuration.protocol.types.CfgFlag
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectState.CFGEnabled
 import com.genesyslab.platform.configuration.protocol.types.CfgSolutionType.CFGSTBranchOffice
+import com.genesyslab.platform.configuration.protocol.types.CfgSolutionType.CFGSTDesktopNETServerSolution
 import com.genesyslab.platform.configuration.protocol.types.CfgStartupType.CFGSUTAutomatic
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_FOLDER_DBID
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_FOLDER_REFERENCE
@@ -70,6 +71,15 @@ class ServiceTest : ConfigurationObjectTest(
     importedConfigurationObject = Service(mockService())
 ) {
     val confService = mockConfService()
+
+    @Test
+    override fun `object with different unchangeable properties' values should return the right unchangeable properties`() {
+        val cfgService = mockCfgService(name = service.name).also {
+            every { it.solutionType } returns CFGSTDesktopNETServerSolution
+        }
+
+        assertThat(configurationObject.checkUnchangeableProperties(cfgService), equalTo(setOf(SOLUTION_TYPE)))
+    }
 
     @Test
     fun `updateCfgObject should properly create CfgService`() {

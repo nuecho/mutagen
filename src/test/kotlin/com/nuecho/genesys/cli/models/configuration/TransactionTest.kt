@@ -48,6 +48,10 @@ class TransactionTest : ConfigurationObjectTest(
     mandatoryProperties = setOf(ALIAS),
     importedConfigurationObject = Transaction(mockCfgTransaction())
 ) {
+    override fun `object with different unchangeable properties' values should return the right unchangeable properties`() {
+        // not implemented, since object has no unchangeable properties
+    }
+
     @Test
     fun `createCfgObject should properly create CfgTransaction`() {
         val service = mockConfService()

@@ -5,7 +5,6 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgScript
 import com.genesyslab.platform.configuration.protocol.types.CfgAlarmCategory.CFGACMajor
 import com.genesyslab.platform.configuration.protocol.types.CfgFlag.CFGFalse
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectState.CFGEnabled
-import com.genesyslab.platform.configuration.protocol.types.CfgScriptType
 import com.genesyslab.platform.configuration.protocol.types.CfgScriptType.CFGAlarmDetection
 import com.genesyslab.platform.configuration.protocol.types.CfgScriptType.CFGAlarmReaction
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_FOLDER_REFERENCE
@@ -77,12 +76,16 @@ class AlarmConditionTest : ConfigurationObjectTest(
     mandatoryProperties = setOf(ALARM_DETECT_EVENT, ALARM_DETECT_EVENT_LOG_EVENT_ID, CATEGORY),
     importedConfigurationObject = AlarmCondition(mockAlarmCondition())
 ) {
+    override fun `object with different unchangeable properties' values should return the right unchangeable properties`() {
+        // not implemented, since object has no unchangeable properties
+    }
+
     val service = mockConfService()
     val application = mockCfgApplication(APPLICATION_NAME)
     val tenant = mockCfgTenant(DEFAULT_TENANT_NAME)
-    val script1 = mockScript(SCRIPT_NAME1, 101, CFGAlarmReaction)
-    val script2 = mockScript(SCRIPT_NAME2, 102, CFGAlarmDetection)
-    val script3 = mockScript(SCRIPT_NAME3, 103, CFGAlarmDetection)
+    val script1 = mockCfgScript(name = SCRIPT_NAME1, dbid = 102, type = CFGAlarmReaction)
+    val script2 = mockCfgScript(name = SCRIPT_NAME2, dbid = 103, type = CFGAlarmDetection)
+    val script3 = mockCfgScript(name = SCRIPT_NAME3, dbid = 104, type = CFGAlarmDetection)
 
     @Test
     fun `createCfgObject should properly create CfgAlarmCondition`() {
@@ -134,9 +137,9 @@ private fun mockAlarmCondition() = mockCfgAlarmCondition(alarmCondition.name).ap
     )
     val mockRemovalEvent = mockCfgRemovalEvent(3, toCfgSelectionMode(SELECTION_MODE))
 
-    val script1 = mockScript(SCRIPT_NAME1, 102, CFGAlarmReaction)
-    val script2 = mockScript(SCRIPT_NAME2, 103, CFGAlarmReaction)
-    val script3 = mockScript(SCRIPT_NAME3, 104, CFGAlarmDetection)
+    val script1 = mockCfgScript(name = SCRIPT_NAME1, dbid = 102, type = CFGAlarmReaction)
+    val script2 = mockCfgScript(name = SCRIPT_NAME2, dbid = 103, type = CFGAlarmReaction)
+    val script3 = mockCfgScript(name = SCRIPT_NAME3, dbid = 104, type = CFGAlarmDetection)
 
     every { configurationService } returns service
 
@@ -153,10 +156,4 @@ private fun mockAlarmCondition() = mockCfgAlarmCondition(alarmCondition.name).ap
     every { state } returns toCfgObjectState(alarmCondition.state)
     every { userProperties } returns mockKeyValueCollection()
     every { folderId } returns DEFAULT_OBJECT_DBID
-}
-
-private fun mockScript(name: String, dbid: Int, type: CfgScriptType?) = mockCfgScript(name).also {
-    every { it.type } returns type
-    every { it.dbid } returns dbid
-    every { it.objectDbid } returns dbid
 }

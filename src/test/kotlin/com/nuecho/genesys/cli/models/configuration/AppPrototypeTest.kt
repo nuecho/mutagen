@@ -2,6 +2,7 @@ package com.nuecho.genesys.cli.models.configuration
 
 import com.genesyslab.platform.applicationblocks.com.objects.CfgAppPrototype
 import com.genesyslab.platform.configuration.protocol.types.CfgAppType.CFGAgentDesktop
+import com.genesyslab.platform.configuration.protocol.types.CfgAppType.CFGMaxAppType
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectState.CFGEnabled
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_FOLDER_DBID
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_FOLDER_REFERENCE
@@ -48,6 +49,20 @@ class AppPrototypeTest : ConfigurationObjectTest(
     importedConfigurationObject = AppPrototype(mockAppPrototype())
 ) {
     val service = mockConfService()
+
+    @Test
+    override fun `object with different unchangeable properties' values should return the right unchangeable properties`() {
+        val cfgAppPrototype = mockCfgAppPrototype(
+            name = appPrototype.name,
+            type = CFGMaxAppType,
+            version = "different-${appPrototype.version}"
+        ).also {
+            every { it.options } returns null
+            every { it.userProperties } returns null
+        }
+
+        assertThat(configurationObject.checkUnchangeableProperties(cfgAppPrototype), equalTo(setOf(TYPE, VERSION)))
+    }
 
     @Test
     fun `updateCfgObject should properly create CfgAppPrototype`() {

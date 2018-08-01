@@ -1,1 +1,1 @@
-cfgObjectTests("scripts")
+cfgObjectTests("scripts", {checkUnchangeableProperties: true})

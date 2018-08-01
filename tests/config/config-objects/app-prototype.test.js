@@ -1,1 +1,1 @@
-cfgObjectTests("appPrototypes");
+cfgObjectTests("appPrototypes", {checkUnchangeableProperties: true});

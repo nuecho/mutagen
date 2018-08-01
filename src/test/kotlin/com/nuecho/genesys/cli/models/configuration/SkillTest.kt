@@ -37,6 +37,10 @@ class SkillTest : ConfigurationObjectTest(
     mandatoryProperties = emptySet(),
     importedConfigurationObject = Skill(mockCfgSkill())
 ) {
+    override fun `object with different unchangeable properties' values should return the right unchangeable properties`() {
+        // not implemented, since object has no unchangeable properties
+    }
+
     @Test
     fun `createCfgObject should properly create CfgSkill`() {
         val service = mockConfService()

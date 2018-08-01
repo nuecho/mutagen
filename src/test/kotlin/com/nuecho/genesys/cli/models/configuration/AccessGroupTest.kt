@@ -5,6 +5,7 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgAccessGroup
 import com.genesyslab.platform.applicationblocks.com.objects.CfgID
 import com.genesyslab.platform.applicationblocks.com.objects.CfgPerson
 import com.genesyslab.platform.configuration.protocol.types.CfgAccessGroupType
+import com.genesyslab.platform.configuration.protocol.types.CfgAccessGroupType.CFGAdministratorsGroup
 import com.genesyslab.platform.configuration.protocol.types.CfgAccessGroupType.CFGDefaultGroup
 import com.genesyslab.platform.configuration.protocol.types.CfgDNType
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectState
@@ -78,6 +79,16 @@ class AccessGroupTest : ConfigurationObjectTest(
     emptyConfigurationObject = AccessGroup(tenant = DEFAULT_TENANT_REFERENCE, name = NAME),
     mandatoryProperties = emptySet()
 ) {
+
+    @Test
+    override fun `object with different unchangeable properties' values should return the right unchangeable properties`() {
+        val cfgAccessGroup = mockCfgAccessGroup().also {
+            every { it.type } returns CFGAdministratorsGroup
+        }
+
+        assertThat(configurationObject.checkUnchangeableProperties(cfgAccessGroup), equalTo(setOf(TYPE)))
+    }
+
     @Test
     override fun `initialized object should properly serialize`() {
         val service = mockConfService()
@@ -91,7 +102,7 @@ class AccessGroupTest : ConfigurationObjectTest(
                 service.retrieveObject(CFGPerson, any())
             } returns member1 andThen member2
 
-            val accessGroup = AccessGroup(mockCfgAccessGroup(service))
+            val accessGroup = AccessGroup(mockAccessGroup(service))
             checkSerialization(accessGroup, "accessgroup")
         }
     }
@@ -140,7 +151,7 @@ class AccessGroupTest : ConfigurationObjectTest(
     }
 }
 
-private fun mockCfgAccessGroup(service: IConfService): CfgAccessGroup {
+private fun mockAccessGroup(service: IConfService): CfgAccessGroup {
     val cfgAccessGroup = mockCfgAccessGroup(accessGroup.group.name)
 
     val membersMock = accessGroup.members?.map { mockCfgID(CFGPerson) }

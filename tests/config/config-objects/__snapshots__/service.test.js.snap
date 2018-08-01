@@ -36,6 +36,17 @@ Missing properties:
 }
 `;
 
+exports[`[mutagen services config import-export] should throw exception when updating services with different values for unchangeable properties: exception has been thrown 1`] = `
+Object {
+  "stderr": "Validation failed.
+Unchangeable properties:
+  - service [cfgObjectTest]:
+    - solutionType
+",
+  "stdout": "",
+}
+`;
+
 exports[`[mutagen services config import-export] should update the modified services: the modified services have been updated 1`] = `
 Object {
   "stderr": "",

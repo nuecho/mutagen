@@ -3,6 +3,7 @@ package com.nuecho.genesys.cli.models.configuration
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
+import com.genesyslab.platform.applicationblocks.com.CfgObject
 import com.genesyslab.platform.applicationblocks.com.ICfgObject
 import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgScript
@@ -49,7 +50,8 @@ data class Script(
     )
 
     override fun createCfgObject(service: IConfService) =
-        updateCfgObject(service, CfgScript(service).also { applyDefaultValues()
+        updateCfgObject(service, CfgScript(service).also {
+            applyDefaultValues()
             setProperty("tenantDBID", service.getObjectDbid(tenant), it)
             setProperty("name", name, it)
             setProperty(TYPE, toCfgScriptType(type), it)
@@ -67,6 +69,14 @@ data class Script(
 
     override fun checkMandatoryProperties(configuration: Configuration, service: ConfService): Set<String> =
         if (type == null) setOf(TYPE) else emptySet()
+
+    override fun checkUnchangeableProperties(cfgObject: CfgObject): Set<String> {
+        (cfgObject as CfgScript).also {
+            type?.run { if (this.toLowerCase() != it.type?.toShortName()) return setOf(TYPE) }
+        }
+
+        return emptySet()
+    }
 
     override fun applyDefaultValues() {
         // type = CfgScriptType.CFGNoScript.toShortName()

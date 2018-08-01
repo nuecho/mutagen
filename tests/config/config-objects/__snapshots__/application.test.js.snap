@@ -3,8 +3,9 @@
 exports[`[mutagen applications config import-export] should create the applications: the applications have been created 1`] = `
 Object {
   "stderr": "",
-  "stdout": "+ application [cfgObjectTest]
-Completed. 1 object(s) imported.
+  "stdout": "+ application [backupServer]
++ application [cfgObjectTest]
+Completed. 2 object(s) imported.
 ",
 }
 `;
@@ -13,7 +14,8 @@ exports[`[mutagen applications config import-export] should skip the same applic
 Object {
   "stderr": "",
   "stdout": "= application [cfgObjectTest]
-Completed. 1 object(s) imported.
+= application [backupServer]
+Completed. 2 object(s) imported.
 ",
 }
 `;

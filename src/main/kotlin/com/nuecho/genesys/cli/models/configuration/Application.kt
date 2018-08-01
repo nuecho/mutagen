@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
+import com.genesyslab.platform.applicationblocks.com.CfgObject
 import com.genesyslab.platform.applicationblocks.com.ICfgObject
 import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgAppPrototype
@@ -100,8 +101,6 @@ data class Application(
     override fun createCfgObject(service: IConfService): CfgApplication {
         val cfgAppPrototype = service.retrieveObject(appPrototype!!) as CfgAppPrototype
 
-        // Type and version properties are unchangeable, but the values specified are never null (as they come from the
-        // appPrototype). On update, setProperty would try to change the fields, causing the import operation to crash
         return updateCfgObject(service, CfgApplication(service)).also {
             setProperty("name", name, it)
             setProperty("type", cfgAppPrototype.type, it)
@@ -166,6 +165,9 @@ data class Application(
         return if (cfgAppPrototype != null) AppPrototype(cfgAppPrototype)
         else appPrototype?.let { configuration.asMapByReference.get(appPrototype) } as AppPrototype?
     }
+
+    // FIXME ignoring unchangeable `flexibleProperties` when application is backupServer (`isPrimary` is CFGFalse)
+    override fun checkUnchangeableProperties(cfgObject: CfgObject) = emptySet<String>()
 
     private fun isServer(type: String) = !notServerAppTypes.contains(type)
 
@@ -339,23 +341,24 @@ private val notServerAppTypes = setOf(
     "automatedworkflowengine",
     "billingclient",
     "ccview",
-    "lme",
-    "sce",
+    "cmclient",
     "contactservermanager",
     "contentanalyzer",
-    "infomartstatconfigurator",
+    "eaclient",
     "gcnclient",
     "genesysadministrator",
     "genericclient",
-    "itcutility",
+    "infomartstatconfigurator",
     "interactionroutingdesigner",
     "interactionworkspace",
+    "itcutility",
     "iwdmanager",
     "knowledgemanager",
-    "cmclient",
+    "lme",
     "reservedguiapplication1",
     "reservedguiapplication2",
     "responsemanager",
+    "sce",
     "sci",
     "strategybuilder",
     "strategyscheduler",
@@ -363,7 +366,6 @@ private val notServerAppTypes = setOf(
     "thirdpartyapp",
     "virtualinteractivet",
     "voipdevice",
-    "eaclient",
     "vssconsole",
     "webclient",
     "wfmclient",

@@ -1,0 +1,15 @@
+{
+  "__metadata__": {
+    "formatName": "JSON",
+    "formatVersion": "1.0.0"
+  },
+  "accessGroups": [
+    {
+      "group": {
+        "name": "cfgObjectTest",
+        "tenant": "Environment"
+      },
+      "type": "administratorsgroup"
+    }
+  ]
+}

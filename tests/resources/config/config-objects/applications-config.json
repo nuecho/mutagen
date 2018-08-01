@@ -68,6 +68,89 @@
       ],
       "redundancyType": "htcoldstanby",
       "serverInfo": {
+        "backupServer": "backupServer",
+        "attempts": 2,
+        "host": "configserver",
+        "port": "8888",
+        "timeout": 2
+      },
+      "state": "enabled",
+      "tenants": [
+        "Environment"
+      ],
+      "userProperties": {
+        "section": {
+          "number": 456,
+          "string": "def"
+        }
+      },
+      "isPrimary": true,
+      "workDirectory": "/tmp"
+    },
+    {
+      "appPrototype": "Genesys_Administrator_Server_8",
+      "appServers": [
+        {
+          "appParams": "appParams",
+          "appServer": "confserv",
+          "charField1": "1",
+          "charField2": "2",
+          "charField3": "3",
+          "charField4": "4",
+          "connProtocol": "connProtocol",
+          "description": "description",
+          "id": "default",
+          "longField1": 1,
+          "longField2": 2,
+          "longField3": 3,
+          "longField4": 4,
+          "mode": "tmnone",
+          "proxyParams": "proxyParams",
+          "timeoutLocal": 2,
+          "timeoutRemote": 2,
+          "transportParams": "transportParams"
+        }
+      ],
+      "autoRestart": true,
+      "commandLine": "yes",
+      "componentType": "appcomponentunknown",
+      "name": "backupServer",
+      "portInfos": [
+        {
+          "appParams": "appParams",
+          "charField1": "1",
+          "charField2": "2",
+          "charField3": "3",
+          "charField4": "4",
+          "connProtocol": "connProtocol",
+          "description": "description",
+          "id": "default",
+          "longField1": 1,
+          "longField2": 2,
+          "longField3": 3,
+          "longField4": 4,
+          "port": "8889",
+          "transportParams": "transportParams"
+        },
+        {
+          "appParams": "appParams",
+          "charField1": "1",
+          "charField2": "2",
+          "charField3": "3",
+          "charField4": "4",
+          "connProtocol": "connProtocol",
+          "description": "description",
+          "id": "toto",
+          "longField1": 1,
+          "longField2": 2,
+          "longField3": 3,
+          "longField4": 4,
+          "port": "8889",
+          "transportParams": "transportParams"
+        }
+      ],
+      "redundancyType": "htcoldstanby",
+      "serverInfo": {
         "attempts": 2,
         "host": "configserver",
         "timeout": 2
@@ -82,7 +165,6 @@
           "string": "def"
         }
       },
-      "isPrimary": true,
       "workDirectory": "/tmp"
     }
   ]

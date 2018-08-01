@@ -4,6 +4,7 @@ import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgDN
 import com.genesyslab.platform.applicationblocks.com.objects.CfgDNGroup
 import com.genesyslab.platform.configuration.protocol.types.CfgDNGroupType.CFGACDQueues
+import com.genesyslab.platform.configuration.protocol.types.CfgDNGroupType.CFGMaxDNGroupType
 import com.genesyslab.platform.configuration.protocol.types.CfgDNType.CFGACDQueue
 import com.genesyslab.platform.configuration.protocol.types.CfgDNType.CFGCP
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectState
@@ -82,6 +83,15 @@ class DNGrouptTest : ConfigurationObjectTest(
     emptyConfigurationObject = DNGroup(tenant = DEFAULT_TENANT_REFERENCE, name = DN_GROUP),
     mandatoryProperties = setOf(TYPE)
 ) {
+    @Test
+    override fun `object with different unchangeable properties' values should return the right unchangeable properties`() {
+        val cfgDNGroup = mockCfgDNGroup(name = dnGroup.group.name).also {
+            every { it.type } returns CFGMaxDNGroupType
+        }
+
+        assertThat(configurationObject.checkUnchangeableProperties(cfgDNGroup), equalTo(setOf(TYPE)))
+    }
+
     @Test
     override fun `initialized object should properly serialize`() {
         val service = mockConfService()

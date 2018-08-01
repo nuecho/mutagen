@@ -3,6 +3,7 @@ package com.nuecho.genesys.cli.models.configuration
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
+import com.genesyslab.platform.applicationblocks.com.CfgObject
 import com.genesyslab.platform.applicationblocks.com.ICfgObject
 import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgIVR
@@ -73,6 +74,16 @@ data class Ivr(
         type ?: missingMandatoryProperties.add(TYPE)
         version ?: missingMandatoryProperties.add(VERSION)
         return missingMandatoryProperties
+    }
+
+    override fun checkUnchangeableProperties(cfgObject: CfgObject): Set<String> {
+        val unchangeableProperties = mutableSetOf<String>()
+        (cfgObject as CfgIVR).also {
+            tenant?.run { if (this != it.tenant?.getReference()) unchangeableProperties.add(TENANT) }
+            type?.run { if (this.toLowerCase() != it.type?.toShortName()) unchangeableProperties.add(TYPE) }
+        }
+
+        return unchangeableProperties
     }
 
     override fun getReferences() = referenceSetBuilder()

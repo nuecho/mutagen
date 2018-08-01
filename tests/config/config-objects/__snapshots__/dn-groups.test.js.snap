@@ -29,6 +29,17 @@ Missing properties:
 }
 `;
 
+exports[`[mutagen dnGroups config import-export] should throw exception when updating dnGroups with different values for unchangeable properties: exception has been thrown 1`] = `
+Object {
+  "stderr": "Validation failed.
+Unchangeable properties:
+  - dngroup [Environment/cfgObjectTest]:
+    - type
+",
+  "stdout": "",
+}
+`;
+
 exports[`[mutagen dnGroups config import-export] should update the modified dnGroups: the modified dnGroups have been updated 1`] = `
 Object {
   "stderr": "",

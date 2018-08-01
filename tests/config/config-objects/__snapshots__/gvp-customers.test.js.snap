@@ -33,6 +33,18 @@ Missing properties:
 }
 `;
 
+exports[`[mutagen gvpCustomers config import-export] should throw exception when updating gvpCustomers with different values for unchangeable properties: exception has been thrown 1`] = `
+Object {
+  "stderr": "Validation failed.
+Unchangeable properties:
+  - gvpcustomer [cfgObjectTest]:
+    - reseller
+    - tenant
+",
+  "stdout": "",
+}
+`;
+
 exports[`[mutagen gvpCustomers config import-export] should update the modified gvpCustomers: the modified gvpCustomers have been updated 1`] = `
 Object {
   "stderr": "",

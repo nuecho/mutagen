@@ -1,1 +1,1 @@
-cfgObjectTests("fields");
+cfgObjectTests("fields", {checkUnchangeableProperties: true});
