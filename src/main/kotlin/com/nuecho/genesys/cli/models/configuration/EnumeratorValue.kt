@@ -56,24 +56,16 @@ data class EnumeratorValue(
         folder = enumeratorValue.getFolderReference()
     )
 
-    constructor(tenant: TenantReference, default: Boolean, displayName: String, enumerator: String, name: String) :
-            this(
-                tenant = tenant,
-                isDefault = default,
-                displayName = displayName,
-                enumerator = EnumeratorReference(enumerator, tenant),
-                name = name
-            )
-
     override fun createCfgObject(service: IConfService) =
-        updateCfgObject(service, CfgEnumeratorValue(service).also { applyDefaultValues() })
+        updateCfgObject(service, CfgEnumeratorValue(service).also {
+            applyDefaultValues()
+            setProperty("enumeratorDBID", service.getObjectDbid(enumerator), it)
+            setProperty("name", name, it)
+            setProperty("tenantDBID", service.getObjectDbid(tenant), it)
+        })
 
     override fun updateCfgObject(service: IConfService, cfgObject: ICfgObject) =
         (cfgObject as CfgEnumeratorValue).also { cfgEnumeratorValue ->
-
-            setProperty("tenantDBID", service.getObjectDbid(tenant), cfgEnumeratorValue)
-            setProperty("enumeratorDBID", service.getObjectDbid(enumerator), cfgEnumeratorValue)
-            setProperty("name", name, cfgEnumeratorValue)
             setProperty("description", description, cfgEnumeratorValue)
             setProperty(DISPLAY_NAME, displayName, cfgEnumeratorValue)
             setProperty("isDefault", ConfigurationObjects.toCfgFlag(isDefault), cfgEnumeratorValue)

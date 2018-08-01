@@ -41,13 +41,13 @@ data class Skill(
     )
 
     override fun createCfgObject(service: IConfService) =
-        updateCfgObject(service, CfgSkill(service))
+        updateCfgObject(service, CfgSkill(service)).also {
+            setProperty("name", name, it)
+            setProperty("tenantDBID", service.getObjectDbid(tenant), it)
+        }
 
     override fun updateCfgObject(service: IConfService, cfgObject: ICfgObject) =
         (cfgObject as CfgSkill).also {
-
-            setProperty("tenantDBID", service.getObjectDbid(tenant), it)
-            setProperty("name", name, it)
             setProperty("userProperties", toKeyValueCollection(userProperties), it)
             setProperty("state", ConfigurationObjects.toCfgObjectState(state), it)
             setFolder(folder, it)

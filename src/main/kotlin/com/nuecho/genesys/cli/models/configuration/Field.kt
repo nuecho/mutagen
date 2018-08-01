@@ -49,8 +49,8 @@ data class Field(
     override val reference = FieldReference(name, tenant)
 
     constructor(cfgField: CfgField) : this(
-        tenant = cfgField.tenant.getReference(),
         name = cfgField.name,
+        tenant = cfgField.tenant.getReference(),
         defaultValue = cfgField.defaultValue,
         description = cfgField.description,
         fieldType = cfgField.fieldType.toShortName(),
@@ -65,26 +65,36 @@ data class Field(
     )
 
     override fun createCfgObject(service: IConfService) =
-        updateCfgObject(service, CfgField(service))
-
-    override fun updateCfgObject(service: IConfService, cfgObject: ICfgObject): CfgField =
-        (cfgObject as CfgField).also {
-            setProperty("tenantDBID", service.getObjectDbid(tenant), it)
+        updateCfgObject(service, CfgField(service)).also {
             setProperty("name", name, it)
-            setProperty("description", description, it)
-            setProperty("defaultValue", defaultValue, it)
+            setProperty("tenantDBID", service.getObjectDbid(tenant), it)
             setProperty(FIELD_TYPE, toCfgFieldType(fieldType), it)
-            setProperty("isNullable", toCfgFlag(isNullable), it)
             setProperty("isPrimaryKey", toCfgFlag(isPrimaryKey), it)
+            setProperty("isNullable", toCfgFlag(isNullable), it)
             setProperty("isUnique", toCfgFlag(isUnique), it)
             setProperty("length", length, it)
             setProperty("type", toCfgDataType(type), it)
+        }
+
+    override fun updateCfgObject(service: IConfService, cfgObject: ICfgObject): CfgField =
+        (cfgObject as CfgField).also {
+            setProperty("description", description, it)
+            setProperty("defaultValue", defaultValue, it)
             setProperty("state", ConfigurationObjects.toCfgObjectState(state), it)
             setProperty("userProperties", ConfigurationObjects.toKeyValueCollection(userProperties), it)
             setFolder(folder, it)
         }
 
-    override fun cloneBare() = null
+    override fun cloneBare() = Field(
+        tenant = tenant,
+        name = name,
+        fieldType = fieldType,
+        isPrimaryKey = isPrimaryKey,
+        isNullable = isNullable,
+        isUnique = isUnique,
+        length = length,
+        type = type
+    )
 
     override fun checkMandatoryProperties(configuration: Configuration, service: ConfService): Set<String> =
         if (fieldType == null) setOf(FIELD_TYPE) else emptySet()

@@ -67,14 +67,14 @@ data class Role(
     )
 
     override fun createCfgObject(service: IConfService) =
-        updateCfgObject(service, CfgRole(service))
+        updateCfgObject(service, CfgRole(service)).also {
+            setProperty("tenantDBID", service.getObjectDbid(tenant), it)
+            setProperty("name", name, it)
+        }
 
     override fun updateCfgObject(service: IConfService, cfgObject: ICfgObject) =
         (cfgObject as CfgRole).also {
-
             // members are not updated
-            setProperty("tenantDBID", service.getObjectDbid(tenant), it)
-            setProperty("name", name, it)
             setProperty("description", description, it)
             setProperty("state", toCfgObjectState(state), it)
             setProperty("userProperties", toKeyValueCollection(userProperties), it)

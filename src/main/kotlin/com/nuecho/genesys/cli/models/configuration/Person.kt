@@ -77,13 +77,13 @@ data class Person(
     )
 
     override fun createCfgObject(service: IConfService) =
-        updateCfgObject(service, CfgPerson(service))
+        updateCfgObject(service, CfgPerson(service)).also {
+            setProperty("tenantDBID", service.getObjectDbid(tenant), it)
+            setProperty("employeeID", employeeId, it)
+        }
 
     override fun updateCfgObject(service: IConfService, cfgObject: ICfgObject) =
         (cfgObject as CfgPerson).also {
-
-            setProperty("tenantDBID", service.getObjectDbid(tenant), it)
-            setProperty("employeeID", employeeId, it)
             setProperty(USER_NAME, userName, it)
             setProperty("externalID", externalId, it)
             setProperty("firstName", firstName, it)

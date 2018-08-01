@@ -51,8 +51,8 @@ data class AgentGroup(
                 }
             }
 
-            setProperty("agentDBIDs", agents?.mapNotNull { service.getObjectDbid(it) }, cfgAgentGroup)
             setProperty("groupInfo", groupInfo, cfgAgentGroup)
+            setProperty("agentDBIDs", agents?.mapNotNull { service.getObjectDbid(it) }, cfgAgentGroup)
             setFolder(folder, cfgAgentGroup)
         }
 

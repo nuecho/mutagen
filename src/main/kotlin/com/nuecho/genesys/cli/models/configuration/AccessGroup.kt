@@ -48,7 +48,9 @@ data class AccessGroup(
     )
 
     override fun createCfgObject(service: IConfService) =
-        updateCfgObject(service, CfgAccessGroup(service))
+        updateCfgObject(service, CfgAccessGroup(service)).also {
+            setProperty("type", toCfgAccessGroupType(type), it)
+        }
 
     override fun updateCfgObject(service: IConfService, cfgObject: ICfgObject) =
         (cfgObject as CfgAccessGroup).also { cfgAccessGroup ->
@@ -60,7 +62,6 @@ data class AccessGroup(
 
             setProperty("groupInfo", groupInfo, cfgAccessGroup)
             setProperty("memberIDs", members?.map { it.toCfgID(service, cfgAccessGroup) }, cfgAccessGroup)
-            setProperty("type", toCfgAccessGroupType(type), cfgAccessGroup)
             setFolder(folder, cfgAccessGroup)
         }
 

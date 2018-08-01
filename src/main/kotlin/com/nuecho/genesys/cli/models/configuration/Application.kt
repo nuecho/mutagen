@@ -98,9 +98,10 @@ data class Application(
     override fun createCfgObject(service: IConfService): CfgApplication {
         val cfgAppPrototype = service.retrieveObject(appPrototype!!) as CfgAppPrototype
 
-        // Type and version properties are unchangeable, but the values specified are never null (as they come from
-        // the appPrototype). On update, setProperty would try to change the fields, causing the import to crash
+        // Type and version properties are unchangeable, but the values specified are never null (as they come from the
+        // appPrototype). On update, setProperty would try to change the fields, causing the import operation to crash
         return updateCfgObject(service, CfgApplication(service)).also {
+            setProperty("name", name, it)
             setProperty("type", cfgAppPrototype.type, it)
             setProperty("version", cfgAppPrototype.version, it)
         }
@@ -116,7 +117,6 @@ data class Application(
             setProperty("componentType", toCfgAppComponentType(componentType), it)
             setProperty("flexibleProperties", ConfigurationObjects.toKeyValueCollection(flexibleProperties), it)
             setProperty("isPrimary", toCfgFlag(isPrimary), it)
-            setProperty("name", name, it)
             setProperty("options", ConfigurationObjects.toKeyValueCollection(options), it)
             setProperty("password", password, it)
             setProperty("portInfos", portInfos?.map { portInfo -> portInfo.toCfgPortInfo(it) }, it)

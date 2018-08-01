@@ -56,19 +56,19 @@ data class Tenant(
     )
 
     override fun createCfgObject(service: IConfService) =
-        updateCfgObject(service, CfgTenant(service).also { applyDefaultValues() })
+        updateCfgObject(service, CfgTenant(service).also {
+            applyDefaultValues()
+            setProperty("name", name, it)
+        })
 
     override fun updateCfgObject(service: IConfService, cfgObject: ICfgObject) =
         (cfgObject as CfgTenant).also {
-
             setProperty("chargeableNumber", chargeableNumber, it)
             setProperty("defaultCapacityRuleDBID", service.getObjectDbid(defaultCapacityRule), it)
             setProperty("defaultContractDBID", service.getObjectDbid(defaultContract), it)
             setProperty("isServiceProvider", toCfgFlag(serviceProvider), it)
-            setProperty("name", name, it)
             setProperty("parentTenantDBID", service.getObjectDbid(parentTenant), it)
             setProperty("password", password, it)
-
             setProperty("state", toCfgObjectState(state), it)
             setProperty("userProperties", toKeyValueCollection(userProperties), it)
             setFolder(folder, it)

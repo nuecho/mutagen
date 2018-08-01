@@ -26,12 +26,15 @@ interface ConfigurationObject : Comparable<ConfigurationObject> {
     fun applyDefaultValues() {}
 
     /**
+     * This method is used to break dependency cycles when importing configuration objects.
+     *
+     * Should be overridden by cloneBare() = null if the ConfigurationObject has no nullable references to other objects
+     * or only has non nullable tenant and folder (TenantReference and FolderReference)
+     *
      * Returns a bare clone of this configuration object containing only:
      * - mandatory properties
      * - properties that, once set, cannot be modified
-     * Don't forget to check properties inside mandatory sub-objects.
-     *
-     * This method is used to break dependency cycles when importing configuration objects.
+     * Don't forget to also check properties inside mandatory sub-objects.
      *
      * Note that you can safely optimize the cycle breaking process by following those rules:
      * - Ignore the `TenantReference` - cycles with tenants can always be broken at the tenant's level.

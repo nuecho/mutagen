@@ -72,21 +72,19 @@ data class GVPCustomer(
     )
 
     override fun createCfgObject(service: IConfService) =
-        updateCfgObject(service, CfgGVPCustomer(service))
+        updateCfgObject(service, CfgGVPCustomer(service)).also {
+            setProperty("name", name, it)
+            setProperty("resellerDBID", service.getObjectDbid(reseller), it)
+        }
 
     override fun updateCfgObject(service: IConfService, cfgObject: ICfgObject) =
         (cfgObject as CfgGVPCustomer).also {
-
-            setProperty("name", name, it)
             setProperty(CHANNEL, channel, it)
             setProperty("displayName", displayName ?: name, it)
             setProperty("notes", notes, it)
             setProperty("isProvisioned", toCfgFlag(isProvisioned ?: false), it)
             setProperty("isAdminCustomer", toCfgFlag(isAdminCustomer ?: false), it)
-
             setProperty("timeZoneDBID", service.getObjectDbid(timeZone), it)
-            setProperty("resellerDBID", service.getObjectDbid(reseller), it)
-
             setProperty("userProperties", toKeyValueCollection(userProperties), it)
             setProperty("state", toCfgObjectState(state), it)
             setFolder(folder, it)

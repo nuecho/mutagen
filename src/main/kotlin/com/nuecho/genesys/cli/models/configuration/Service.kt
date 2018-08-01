@@ -63,12 +63,13 @@ data class Service(
     )
 
     override fun createCfgObject(service: IConfService) =
-        updateCfgObject(service, CfgService(service))
+        updateCfgObject(service, CfgService(service)).also {
+            setProperty("name", name, it)
+            setProperty("solutionType", toCfgSolutionType(solutionType), it)
+        }
 
     override fun updateCfgObject(service: IConfService, cfgObject: ICfgObject): CfgService =
         (cfgObject as CfgService).also {
-            setProperty("name", name, it)
-            setProperty("solutionType", toCfgSolutionType(solutionType), it)
             setProperty("components", components?.map { component -> component.toCfgSolutionComponent(it) }, it)
             setProperty("SCSDBID", service.getObjectDbid(scs), it)
             setProperty("assignedTenantDBID", service.getObjectDbid(assignedTenant), it)

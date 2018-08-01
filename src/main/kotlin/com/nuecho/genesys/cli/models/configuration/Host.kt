@@ -62,11 +62,13 @@ data class Host(
     }
 
     override fun createCfgObject(service: IConfService) =
-        updateCfgObject(service, CfgHost(service))
+        updateCfgObject(service, CfgHost(service)).also {
+            setProperty("name", name, it)
+            setProperty(TYPE, toCfgHostType(type), it)
+        }
 
     override fun updateCfgObject(service: IConfService, cfgObject: ICfgObject) =
         (cfgObject as CfgHost).also { cfgHost ->
-            setProperty("name", name, cfgHost)
             setProperty("IPaddress", ipAddress, cfgHost)
             setProperty("LCAPort", lcaPort, cfgHost)
             setProperty(
@@ -79,8 +81,6 @@ data class Host(
                 service.getObjectDbid(scs),
                 cfgHost
             )
-            setProperty(TYPE, toCfgHostType(type), cfgHost)
-
             setProperty("userProperties", toKeyValueCollection(userProperties), cfgHost)
             setProperty("state", toCfgObjectState(state), cfgHost)
             setFolder(folder, cfgHost)

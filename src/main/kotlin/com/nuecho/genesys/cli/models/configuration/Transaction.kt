@@ -40,28 +40,28 @@ data class Transaction(
     constructor(transaction: CfgTransaction) : this(
         tenant = transaction.tenant.getReference(),
         name = transaction.name,
+        type = transaction.type.toShortName(),
         alias = transaction.alias,
         description = transaction.description,
         recordPeriod = transaction.recordPeriod,
         state = transaction.state?.toShortName(),
-        type = transaction.type.toShortName(),
         userProperties = transaction.userProperties?.asCategorizedProperties(),
         folder = transaction.getFolderReference()
     )
 
     override fun createCfgObject(service: IConfService) =
-        updateCfgObject(service, CfgTransaction(service).also { applyDefaultValues() })
+        updateCfgObject(service, CfgTransaction(service).also {
+            applyDefaultValues()
+            setProperty("tenantDBID", service.getObjectDbid(tenant), it)
+            setProperty("name", name, it)
+            setProperty("type", toCfgTransactionType(type), it)
+        })
 
     override fun updateCfgObject(service: IConfService, cfgObject: ICfgObject) =
         (cfgObject as CfgTransaction).also {
-
-            setProperty("tenantDBID", service.getObjectDbid(tenant), it)
             setProperty(ALIAS, alias, it)
             setProperty("description", description, it)
             setProperty("recordPeriod", recordPeriod, it)
-            setProperty("type", toCfgTransactionType(type), it)
-
-            setProperty("name", name, it)
             setProperty("userProperties", toKeyValueCollection(userProperties), it)
             setProperty("state", ConfigurationObjects.toCfgObjectState(state), it)
             setFolder(folder, it)

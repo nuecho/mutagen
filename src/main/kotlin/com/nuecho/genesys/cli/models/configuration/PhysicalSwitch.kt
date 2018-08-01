@@ -43,13 +43,13 @@ data class PhysicalSwitch(
     )
 
     override fun createCfgObject(service: IConfService) =
-        updateCfgObject(service, CfgPhysicalSwitch(service))
+        updateCfgObject(service, CfgPhysicalSwitch(service)).also {
+            setProperty("name", name, it)
+            setProperty(TYPE, toCfgSwitchType(type), it)
+        }
 
     override fun updateCfgObject(service: IConfService, cfgObject: ICfgObject) =
         (cfgObject as CfgPhysicalSwitch).also {
-
-            setProperty("name", name, it)
-            setProperty(TYPE, toCfgSwitchType(type), it)
             setProperty("state", toCfgObjectState(state), it)
             setProperty("userProperties", toKeyValueCollection(userProperties), it)
             setFolder(folder, it)

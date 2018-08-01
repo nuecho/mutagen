@@ -52,12 +52,13 @@ class Place(
     )
 
     override fun createCfgObject(service: IConfService) =
-        updateCfgObject(service, CfgPlace(service))
+        updateCfgObject(service, CfgPlace(service)).also {
+            setProperty("name", name, it)
+            setProperty("tenantDBID", service.getObjectDbid(tenant), it)
+        }
 
     override fun updateCfgObject(service: IConfService, cfgObject: ICfgObject) =
         (cfgObject as CfgPlace).also {
-            setProperty("tenantDBID", service.getObjectDbid(tenant), it)
-            setProperty("name", name, it)
             setProperty("DNDBIDs", dns?.map { service.getObjectDbid(it) } ?: emptyList<Int>(), it)
             setProperty("capacityRuleDBID", service.getObjectDbid(capacityRule), it)
             setProperty("contractDBID", service.getObjectDbid(contract), it)

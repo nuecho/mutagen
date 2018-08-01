@@ -84,14 +84,15 @@ data class GVPIVRProfile(
     )
 
     override fun createCfgObject(service: IConfService) =
-        updateCfgObject(service, CfgGVPIVRProfile(service))
+        updateCfgObject(service, CfgGVPIVRProfile(service)).also {
+            setProperty("name", name, it)
+            setProperty("customerDBID", service.getObjectDbid(customer), it)
+            setProperty("tenantDBID", service.getObjectDbid(tenant), it)
+        }
 
     override fun updateCfgObject(service: IConfService, cfgObject: ICfgObject) =
         (cfgObject as CfgGVPIVRProfile).also {
 
-            setProperty("name", name, it)
-            setProperty("tenantDBID", service.getObjectDbid(tenant), it)
-            setProperty("customerDBID", service.getObjectDbid(customer), it)
             setProperty(DISPLAY_NAME, displayName, it)
             setProperty("type", toCfgIVRProfileType(type), it)
             setProperty("notes", notes, it)
@@ -102,7 +103,6 @@ data class GVPIVRProfile(
             setProperty("tfn", tfn?.joinToString(), it)
             setProperty("status", status, it)
             setProperty("dids", dids?.map { service.getObjectDbid(it) }?.joinToString(), it)
-
             setProperty("userProperties", toKeyValueCollection(userProperties), it)
             setProperty("state", toCfgObjectState(state), it)
             setFolder(folder, it)
@@ -110,6 +110,7 @@ data class GVPIVRProfile(
 
     override fun cloneBare() = GVPIVRProfile(
         name = name,
+        customer = customer,
         displayName = displayName,
         tenant = tenant
     )
