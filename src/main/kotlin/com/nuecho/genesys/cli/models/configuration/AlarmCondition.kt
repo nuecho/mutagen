@@ -9,6 +9,7 @@ import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgAlarmCondition
 import com.genesyslab.platform.applicationblocks.com.objects.CfgDetectEvent
 import com.genesyslab.platform.applicationblocks.com.objects.CfgRemovalEvent
+import com.genesyslab.platform.configuration.protocol.types.CfgAppType.CFGNoApplication
 import com.nuecho.genesys.cli.asBoolean
 import com.nuecho.genesys.cli.getFolderReference
 import com.nuecho.genesys.cli.getReference
@@ -161,7 +162,8 @@ data class DetectEvent(
 
         return CfgDetectEvent(service, alarmCondition).also {
             setProperty("appDBID", service.getObjectDbid(app), it)
-            setProperty("appType", toCfgAppType(appType), it)
+            // CFGNoApplication is the default value set by the config server
+            setProperty("appType", appType?.let { toCfgAppType(it) } ?: CFGNoApplication, it)
             setProperty("logEventID", logEventID, it)
             setProperty("selectionMode", toCfgSelectionMode(selectionMode), it)
         }

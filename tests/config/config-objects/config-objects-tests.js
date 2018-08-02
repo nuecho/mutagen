@@ -40,7 +40,7 @@ function cfgObjectImportNewTest(cfgObjectType, configurationPath) {
 };
 
 function cfgObjectImportUnmodifiedTest(cfgObjectType, configurationPath) {
-  test(`should update the same ${cfgObjectType}`, () => {
+  test(`should skip the same ${cfgObjectType}`, () => {
     assertMutagenResult(`config import --auto-confirm ${configurationPath}`, `the ${cfgObjectType} have been updated`, 0);
   });
 };

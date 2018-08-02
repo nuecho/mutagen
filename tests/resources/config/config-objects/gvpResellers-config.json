@@ -7,7 +7,7 @@
     {
       "tenant": "Environment",
       "state": "enabled",
-      "startDate": "2018-05-06T21:17:50.105+0000",
+      "startDate": "2018-05-06T21:17:50.000+0000",
       "name": "cfgObjectTest",
       "timeZone": "GMT"
     }

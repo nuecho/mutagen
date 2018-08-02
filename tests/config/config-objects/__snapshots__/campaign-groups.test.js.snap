@@ -19,6 +19,25 @@ Completed. 11 object(s) imported.
 }
 `;
 
+exports[`[mutagen campaignGroups config import-export] should skip the same campaignGroups: the campaignGroups have been updated 1`] = `
+Object {
+  "stderr": "",
+  "stdout": "= agentgroup [Environment/campaignGroupAgentGroup]
+= application [campaignGroupApplication]
+= appprototype [campaignGroupAppPrototype]
+= campaigngroup [name: 'cfgObjectTest', campaign: 'campaignGroupCampaign']
+= campaign [Environment/campaignGroupCampaign]
+= dn [number: 'campaignGroupDN', switch: 'campaignGroupSwitch', type: 'routingpoint', tenant: 'Environment']
+= gvpivrprofile [campaignGroupIVRProfile]
+= physicalswitch [campaignGroupPhysicalSwitch]
+= script [Environment/campaignGroupCapacityRule]
+= script [Environment/campaignGroupInteractionQueue]
+= switch [Environment/campaignGroupSwitch]
+Completed. 11 object(s) imported.
+",
+}
+`;
+
 exports[`[mutagen campaignGroups config import-export] should throw exception when new campaignGroups to import miss mandatory properties campaignGroups: exception has been thrown 1`] = `
 Object {
   "stderr": "Validation failed.
@@ -35,25 +54,6 @@ Object {
   "stderr": "",
   "stdout": "~ campaigngroup [name: 'cfgObjectTest', campaign: 'campaignGroupCampaign']
 Completed. 1 object(s) imported.
-",
-}
-`;
-
-exports[`[mutagen campaignGroups config import-export] should update the same campaignGroups: the campaignGroups have been updated 1`] = `
-Object {
-  "stderr": "",
-  "stdout": "~ agentgroup [Environment/campaignGroupAgentGroup]
-~ application [campaignGroupApplication]
-~ appprototype [campaignGroupAppPrototype]
-~ campaigngroup [name: 'cfgObjectTest', campaign: 'campaignGroupCampaign']
-~ campaign [Environment/campaignGroupCampaign]
-~ dn [number: 'campaignGroupDN', switch: 'campaignGroupSwitch', type: 'routingpoint', tenant: 'Environment']
-~ gvpivrprofile [campaignGroupIVRProfile]
-~ physicalswitch [campaignGroupPhysicalSwitch]
-~ script [Environment/campaignGroupCapacityRule]
-~ script [Environment/campaignGroupInteractionQueue]
-~ switch [Environment/campaignGroupSwitch]
-Completed. 11 object(s) imported.
 ",
 }
 `;

@@ -106,6 +106,7 @@ private fun mockCfgHost(service: IConfService): CfgHost {
 
     val cfgHost = mockCfgHost(name = NAME)
     val osInfoMock = mockCfgOS(CfgOSType.CFGWindows, "8")
+    val applicationMock = mockCfgApplication(APPLICATION_NAME)
     val userPropertiesMock = mockKeyValueCollection()
 
     return cfgHost.apply {
@@ -114,6 +115,7 @@ private fun mockCfgHost(service: IConfService): CfgHost {
         every { lcaPort } returns LCA_PORT
         every { oSinfo } returns osInfoMock
         every { scsdbid } returns DEFAULT_OBJECT_DBID
+        every { scs } returns applicationMock
         every { resources } returns null
         every { type } returns CFGNetworkServer
 

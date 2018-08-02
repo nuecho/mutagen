@@ -9,6 +9,15 @@ Completed. 1 object(s) imported.
 }
 `;
 
+exports[`[mutagen physicalSwitches config import-export] should skip the same physicalSwitches: the physicalSwitches have been updated 1`] = `
+Object {
+  "stderr": "",
+  "stdout": "= physicalswitch [cfgObjectTest]
+Completed. 1 object(s) imported.
+",
+}
+`;
+
 exports[`[mutagen physicalSwitches config import-export] should throw exception when new physicalSwitches to import miss mandatory properties physicalSwitches: exception has been thrown 1`] = `
 Object {
   "stderr": "Validation failed.
@@ -21,15 +30,6 @@ Missing properties:
 `;
 
 exports[`[mutagen physicalSwitches config import-export] should update the modified physicalSwitches: the modified physicalSwitches have been updated 1`] = `
-Object {
-  "stderr": "",
-  "stdout": "~ physicalswitch [cfgObjectTest]
-Completed. 1 object(s) imported.
-",
-}
-`;
-
-exports[`[mutagen physicalSwitches config import-export] should update the same physicalSwitches: the physicalSwitches have been updated 1`] = `
 Object {
   "stderr": "",
   "stdout": "~ physicalswitch [cfgObjectTest]

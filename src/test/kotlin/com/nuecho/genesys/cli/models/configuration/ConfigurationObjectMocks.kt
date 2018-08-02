@@ -52,6 +52,7 @@ import com.genesyslab.platform.commons.collections.KeyValuePair
 import com.genesyslab.platform.configuration.protocol.types.CfgAppType
 import com.genesyslab.platform.configuration.protocol.types.CfgDNType
 import com.genesyslab.platform.configuration.protocol.types.CfgFlag
+import com.genesyslab.platform.configuration.protocol.types.CfgFlag.CFGFalse
 import com.genesyslab.platform.configuration.protocol.types.CfgFlag.CFGNoFlag
 import com.genesyslab.platform.configuration.protocol.types.CfgIVRProfileType
 import com.genesyslab.platform.configuration.protocol.types.CfgOSType
@@ -493,11 +494,11 @@ object ConfigurationObjectMocks {
         }
 
     fun mockCfgTenant(name: String, dbid: Int = DEFAULT_TENANT_DBID) =
-        mockk<CfgTenant>().also {
+        mockk<CfgTenant>(relaxed = true).also {
             every { it.name } returns name
             every { it.dbid } returns dbid
             every { it.objectDbid } returns dbid
-            every { it.dbid } returns dbid
+            every { it.isServiceProvider } returns CFGFalse
         }
 
     fun mockCfgTransaction(name: String?, tenant: CfgTenant = mockCfgTenant(DEFAULT_TENANT_NAME)) =

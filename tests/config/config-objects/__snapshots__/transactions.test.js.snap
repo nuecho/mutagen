@@ -9,6 +9,15 @@ Completed. 1 object(s) imported.
 }
 `;
 
+exports[`[mutagen transactions config import-export] should skip the same transactions: the transactions have been updated 1`] = `
+Object {
+  "stderr": "",
+  "stdout": "= transaction [name: 'cfgObjectTest', type: 'callData', tenant: 'Environment']
+Completed. 1 object(s) imported.
+",
+}
+`;
+
 exports[`[mutagen transactions config import-export] should throw exception when new transactions to import miss mandatory properties transactions: exception has been thrown 1`] = `
 Object {
   "stderr": "Validation failed.
@@ -21,15 +30,6 @@ Missing properties:
 `;
 
 exports[`[mutagen transactions config import-export] should update the modified transactions: the modified transactions have been updated 1`] = `
-Object {
-  "stderr": "",
-  "stdout": "~ transaction [name: 'cfgObjectTest', type: 'callData', tenant: 'Environment']
-Completed. 1 object(s) imported.
-",
-}
-`;
-
-exports[`[mutagen transactions config import-export] should update the same transactions: the transactions have been updated 1`] = `
 Object {
   "stderr": "",
   "stdout": "~ transaction [name: 'cfgObjectTest', type: 'callData', tenant: 'Environment']

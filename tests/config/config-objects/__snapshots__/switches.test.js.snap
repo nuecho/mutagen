@@ -9,6 +9,15 @@ Completed. 1 object(s) imported.
 }
 `;
 
+exports[`[mutagen switches config import-export] should skip the same switches: the switches have been updated 1`] = `
+Object {
+  "stderr": "",
+  "stdout": "= switch [Environment/cfgObjectTest]
+Completed. 1 object(s) imported.
+",
+}
+`;
+
 exports[`[mutagen switches config import-export] should throw exception when new switches to import miss mandatory properties switches: exception has been thrown 1`] = `
 Object {
   "stderr": "Validation failed.
@@ -21,15 +30,6 @@ Missing properties:
 `;
 
 exports[`[mutagen switches config import-export] should update the modified switches: the modified switches have been updated 1`] = `
-Object {
-  "stderr": "",
-  "stdout": "~ switch [Environment/cfgObjectTest]
-Completed. 1 object(s) imported.
-",
-}
-`;
-
-exports[`[mutagen switches config import-export] should update the same switches: the switches have been updated 1`] = `
 Object {
   "stderr": "",
   "stdout": "~ switch [Environment/cfgObjectTest]

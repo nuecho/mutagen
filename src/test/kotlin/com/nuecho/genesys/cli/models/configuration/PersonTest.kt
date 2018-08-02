@@ -65,7 +65,6 @@ private val person = Person(
     userName = "userName",
     password = "password",
     passwordHashAlgorithm = 1,
-    passwordUpdatingDate = 20180314,
     changePasswordOnNextLogin = false,
     emailAddress = "emailAddress",
     state = CfgObjectState.CFGEnabled.toShortName(),
@@ -126,7 +125,6 @@ class PersonTest : ConfigurationObjectTest(
                 assertThat(userName, equalTo(person.userName))
                 assertThat(password, equalTo(person.password))
                 assertThat(passwordHashAlgorithm, equalTo(person.passwordHashAlgorithm))
-                assertThat(passwordUpdatingDate, equalTo(person.passwordUpdatingDate))
                 assertThat(changePasswordOnNextLogin, equalTo(toCfgFlag(person.changePasswordOnNextLogin)))
                 assertThat(emailAddress, equalTo(person.emailAddress))
                 assertThat(state, equalTo(toCfgObjectState(person.state)))
@@ -180,7 +178,6 @@ private fun mockCfgPerson(): CfgPerson {
         every { userName } returns person.userName
         every { password } returns person.password
         every { passwordHashAlgorithm } returns person.passwordHashAlgorithm
-        every { passwordUpdatingDate } returns person.passwordUpdatingDate
         every { changePasswordOnNextLogin } returns CfgFlag.CFGFalse
         every { emailAddress } returns person.emailAddress
         every { state } returns toCfgObjectState(person.state)

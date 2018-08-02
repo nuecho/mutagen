@@ -11,7 +11,6 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgApplication
 import com.genesyslab.platform.applicationblocks.com.objects.CfgConnInfo
 import com.genesyslab.platform.applicationblocks.com.objects.CfgPortInfo
 import com.genesyslab.platform.applicationblocks.com.objects.CfgServer
-import com.nuecho.genesys.cli.Logging
 import com.nuecho.genesys.cli.asBoolean
 import com.nuecho.genesys.cli.getFolderReference
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setFolder
@@ -68,12 +67,17 @@ data class Application(
     @get:JsonIgnore
     override val reference = ApplicationReference(name)
 
+    // FIXME ignoring resources property
+
+    // TODO one of the portInfos needs to have `default` as id.
+    // we should consider having 2 fields: defaultPortInfos and additionalPortInfos
+
     constructor(cfgApplication: CfgApplication) : this(
         name = cfgApplication.name,
         appPrototype = if (cfgApplication.appPrototype != null) AppPrototypeReference(cfgApplication.appPrototype.name)
         else null,
         appServers = cfgApplication.appServers.map { ConnInfo(it) },
-        autoRestart = cfgApplication.autoRestart.asBoolean(),
+        autoRestart = cfgApplication.autoRestart?.asBoolean(),
         commandLine = cfgApplication.commandLine,
         commandLineArguments = cfgApplication.commandLineArguments,
         componentType = cfgApplication.componentType.toShortName(),
@@ -91,9 +95,7 @@ data class Application(
         state = cfgApplication.state?.toShortName(),
         userProperties = cfgApplication.userProperties?.asCategorizedProperties(),
         folder = cfgApplication.getFolderReference()
-    ) {
-        cfgApplication.resources?.let { Logging.warn { "Unsupported ResourceObject collection. Ignoring." } }
-    }
+    )
 
     override fun createCfgObject(service: IConfService): CfgApplication {
         val cfgAppPrototype = service.retrieveObject(appPrototype!!) as CfgAppPrototype
@@ -250,14 +252,14 @@ data class Server(
     val attempts: Int? = null,
     val backupServer: ApplicationReference? = null,
     val host: HostReference? = null,
-    val port: String? = null,
     val timeout: Int? = null
 ) {
+    // port is populated from default portInfos by config server. Since it's redundant we left it out of the model.
+
     constructor(cfgServer: CfgServer) : this(
         attempts = cfgServer.attempts,
         backupServer = if (cfgServer.backupServer != null) ApplicationReference(cfgServer.backupServer.name) else null,
         host = if (cfgServer.host != null) HostReference(cfgServer.host.name) else null,
-        port = cfgServer.port,
         timeout = cfgServer.timeout
     )
 
@@ -268,7 +270,7 @@ data class Server(
         setProperty("attempts", attempts, server)
         setProperty("backupServerDBID", service.getObjectDbid(backupServer), server)
         setProperty("hostDBID", service.getObjectDbid(host), server)
-        setProperty("port", port, server)
+        setProperty("port", application.portInfos.find { it.id == "default" }?.port, server)
         setProperty("timeout", timeout, server)
 
         return server

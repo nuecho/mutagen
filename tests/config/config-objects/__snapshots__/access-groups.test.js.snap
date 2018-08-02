@@ -9,16 +9,16 @@ Completed. 1 object(s) imported.
 }
 `;
 
-exports[`[mutagen accessGroups config import-export] should update the modified accessGroups: the modified accessGroups have been updated 1`] = `
+exports[`[mutagen accessGroups config import-export] should skip the same accessGroups: the accessGroups have been updated 1`] = `
 Object {
   "stderr": "",
-  "stdout": "~ accessgroup [Environment/cfgObjectTest]
+  "stdout": "= accessgroup [Environment/cfgObjectTest]
 Completed. 1 object(s) imported.
 ",
 }
 `;
 
-exports[`[mutagen accessGroups config import-export] should update the same accessGroups: the accessGroups have been updated 1`] = `
+exports[`[mutagen accessGroups config import-export] should update the modified accessGroups: the modified accessGroups have been updated 1`] = `
 Object {
   "stderr": "",
   "stdout": "~ accessgroup [Environment/cfgObjectTest]

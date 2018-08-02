@@ -114,7 +114,7 @@ data class CallingListInfo(
 ) {
     constructor(callingListInfo: CfgCallingListInfo) : this(
         callingList = callingListInfo.callingList.getReference(),
-        isActive = callingListInfo.isActive.asBoolean(),
+        isActive = callingListInfo.isActive?.asBoolean(),
         share = callingListInfo.share
     )
 }

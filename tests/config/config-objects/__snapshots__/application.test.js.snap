@@ -9,6 +9,15 @@ Completed. 1 object(s) imported.
 }
 `;
 
+exports[`[mutagen applications config import-export] should skip the same applications: the applications have been updated 1`] = `
+Object {
+  "stderr": "",
+  "stdout": "= application [cfgObjectTest]
+Completed. 1 object(s) imported.
+",
+}
+`;
+
 exports[`[mutagen applications config import-export] should throw exception when new applications to import miss mandatory properties applications: exception has been thrown 1`] = `
 Object {
   "stderr": "Validation failed.
@@ -23,15 +32,6 @@ Missing properties:
 `;
 
 exports[`[mutagen applications config import-export] should update the modified applications: the modified applications have been updated 1`] = `
-Object {
-  "stderr": "",
-  "stdout": "~ application [cfgObjectTest]
-Completed. 1 object(s) imported.
-",
-}
-`;
-
-exports[`[mutagen applications config import-export] should update the same applications: the applications have been updated 1`] = `
 Object {
   "stderr": "",
   "stdout": "~ application [cfgObjectTest]

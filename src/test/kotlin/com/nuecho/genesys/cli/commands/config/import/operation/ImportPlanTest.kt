@@ -1,12 +1,14 @@
 package com.nuecho.genesys.cli.commands.config.import.operation
 
 import com.genesyslab.platform.applicationblocks.com.objects.CfgAccessGroup
+import com.genesyslab.platform.applicationblocks.com.objects.CfgObjectiveTable
 import com.genesyslab.platform.applicationblocks.com.objects.CfgPhysicalSwitch
 import com.genesyslab.platform.applicationblocks.com.objects.CfgRole
 import com.genesyslab.platform.applicationblocks.com.objects.CfgScript
 import com.genesyslab.platform.applicationblocks.com.objects.CfgSwitch
 import com.genesyslab.platform.applicationblocks.com.objects.CfgTenant
 import com.genesyslab.platform.configuration.protocol.types.CfgDNType
+import com.genesyslab.platform.configuration.protocol.types.CfgObjectType
 import com.genesyslab.platform.configuration.protocol.types.CfgSwitchType.CFGFujitsu
 import com.nuecho.genesys.cli.CliOutputCaptureWrapper.captureOutput
 import com.nuecho.genesys.cli.TestResources
@@ -15,8 +17,8 @@ import com.nuecho.genesys.cli.commands.config.export.ExportFormat
 import com.nuecho.genesys.cli.models.configuration.AccessGroup
 import com.nuecho.genesys.cli.models.configuration.Configuration
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks
-import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_NAME
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_DBID
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_NAME
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_REFERENCE
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgTenant
 import com.nuecho.genesys.cli.models.configuration.DN
@@ -35,12 +37,12 @@ import io.mockk.every
 import io.mockk.just
 import io.mockk.objectMockk
 import io.mockk.runs
+import io.mockk.spyk
 import io.mockk.use
 import org.hamcrest.CoreMatchers
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.hasSize
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 
 @SuppressWarnings("LargeClass")
@@ -140,7 +142,9 @@ class ImportPlanTest {
         val cfgTenant = mockCfgTenant("tenantName")
 
         every { service.retrieveObject(CfgTenant::class.java, any()) } returns cfgTenant
+        every { service.retrieveObject(CfgObjectType.CFGTenant, DEFAULT_TENANT_DBID) } returns cfgTenant
         every { service.retrieveObject(CfgScript::class.java, any()) } returns null
+        every { service.retrieveObject(CfgObjectiveTable::class.java, any()) } returns null
 
         val operations = ImportPlan.applyOperationOrder(service, configuration)
 
@@ -188,7 +192,7 @@ class ImportPlanTest {
 
         val operation = ImportPlan.toOperation(
             service,
-            AccessGroup(tenant = ConfigurationObjectMocks.DEFAULT_TENANT_REFERENCE, name = "name")
+            AccessGroup(tenant = DEFAULT_TENANT_REFERENCE, name = "name")
         )
 
         assertThat(operation.type, CoreMatchers.equalTo(ImportOperationType.CREATE))
@@ -198,22 +202,27 @@ class ImportPlanTest {
     fun `operation type should be UPDATE when remote object exists and is modified`() {
         val service = mockConfService()
 
-        val mockCfgTenant = mockCfgTenant(DEFAULT_TENANT_NAME)
+        val cfgTenant = mockCfgTenant(DEFAULT_TENANT_NAME)
 
-        val remoteCfgObject = CfgRole(service).also {
-            it.tenantDBID = ConfigurationObjectMocks.DEFAULT_TENANT_DBID
-            it.name = "name"
+        val remoteCfgObject = spyk(CfgRole(service)).also {
+            every { it.name } returns "name"
+            every { it.tenant } returns cfgTenant
+            every { it.objectDbid } returns ConfigurationObjectMocks.DEFAULT_OBJECT_DBID
         }
 
+        every { service.retrieveObject(CfgTenant::class.java, any()) } returns cfgTenant
+        every { service.retrieveObject(CfgObjectType.CFGTenant, DEFAULT_TENANT_DBID) } returns cfgTenant
+
+        every { service.retrieveObject(CfgRole::class.java, any()) } returns remoteCfgObject
+
         val modifiedObject = Role(
-            tenant = ConfigurationObjectMocks.DEFAULT_TENANT_REFERENCE,
+            tenant = DEFAULT_TENANT_REFERENCE,
             name = "name",
             description = "updated description"
         )
 
         objectMockk(ImportOperation).use {
-            every { service.retrieveObject(CfgTenant::class.java, any()) } returns mockCfgTenant
-            every { service.retrieveObject(CfgRole::class.java, any()) } returns remoteCfgObject
+
             every { ImportOperation.save(any()) } just runs
 
             val operation = ImportPlan.toOperation(service, modifiedObject)
@@ -222,16 +231,15 @@ class ImportPlanTest {
         }
     }
 
-    @Disabled
     @Test
     fun `operation type should be SKIP when remote object exists and is not modified`() {
         val service = mockConfService()
 
-        val mockCfgTenant = mockCfgTenant(DEFAULT_TENANT_NAME)
+        val cfgTenant = mockCfgTenant(DEFAULT_TENANT_NAME)
 
         val remoteCfgObject = CfgRole(service).also {
-            it.tenantDBID = DEFAULT_TENANT_DBID
             it.name = "name"
+            it.tenant = cfgTenant
         }
 
         val unmodifiedObject = Role(
@@ -239,13 +247,13 @@ class ImportPlanTest {
             name = "name"
         )
 
-        objectMockk(ImportOperation).use {
-            every { service.retrieveObject(CfgTenant::class.java, any()) } returns mockCfgTenant
-            every { service.retrieveObject(CfgRole::class.java, any()) } returns remoteCfgObject
+        every { service.retrieveObject(CfgTenant::class.java, any()) } returns cfgTenant
+        every { service.retrieveObject(CfgObjectType.CFGTenant, DEFAULT_TENANT_DBID) } returns cfgTenant
 
-            val operation = ImportPlan.toOperation(service, unmodifiedObject)
+        every { service.retrieveObject(CfgRole::class.java, any()) } returns remoteCfgObject
 
-            assertThat(operation.type, CoreMatchers.equalTo(ImportOperationType.SKIP))
-        }
+        val operation = ImportPlan.toOperation(service, unmodifiedObject)
+
+        assertThat(operation.type, CoreMatchers.equalTo(ImportOperationType.SKIP))
     }
 }

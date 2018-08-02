@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.genesyslab.platform.applicationblocks.com.ICfgObject
 import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgScript
-import com.nuecho.genesys.cli.Logging.warn
 import com.nuecho.genesys.cli.getFolderReference
 import com.nuecho.genesys.cli.getReference
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setFolder
@@ -37,6 +36,8 @@ data class Script(
     @get:JsonIgnore
     override val reference = ScriptReference(name, tenant)
 
+    // FIXME ignoring resources property
+
     constructor(script: CfgScript) : this(
         tenant = script.tenant.getReference(),
         name = script.name,
@@ -45,9 +46,7 @@ data class Script(
         state = script.state?.toShortName(),
         userProperties = script.userProperties?.asCategorizedProperties(),
         folder = script.getFolderReference()
-    ) {
-        script.resources?.let { warn { "Unsupported ResourceObject collection in script object. Ignoring." } }
-    }
+    )
 
     override fun createCfgObject(service: IConfService) =
         updateCfgObject(service, CfgScript(service).also { applyDefaultValues()

@@ -37,7 +37,7 @@ data class GVPReseller(
     val tenant: TenantReference,
     val name: String,
     val timeZone: TimeZoneReference? = null,
-    val startDate: Date? = null,
+    val startDate: Date? = null, // FIXME we lose milliseconds somewhere down the line might be jackson or the confserv
     val displayName: String? = null,
     @get:JsonProperty("isParentNSP")
     val isParentNSP: Boolean? = null,

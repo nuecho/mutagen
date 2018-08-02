@@ -9,16 +9,16 @@ Completed. 1 object(s) imported.
 }
 `;
 
-exports[`[mutagen roles config import-export] should update the modified roles: the modified roles have been updated 1`] = `
+exports[`[mutagen roles config import-export] should skip the same roles: the roles have been updated 1`] = `
 Object {
   "stderr": "",
-  "stdout": "~ role [cfgObjectTest]
+  "stdout": "= role [cfgObjectTest]
 Completed. 1 object(s) imported.
 ",
 }
 `;
 
-exports[`[mutagen roles config import-export] should update the same roles: the roles have been updated 1`] = `
+exports[`[mutagen roles config import-export] should update the modified roles: the modified roles have been updated 1`] = `
 Object {
   "stderr": "",
   "stdout": "~ role [cfgObjectTest]

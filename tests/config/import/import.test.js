@@ -1,5 +1,6 @@
 const INVALID_TENANT_CONFIGURATION_PATH = getResourcePath("config/import/switch-with-invalid-tenant-config.json");
 const MULTIPLE_OBJECTS_CONFIGURATION_PATH = getResourcePath("config/import/multiple-objects-config.json");
+const MULTIPLE_OBJECTS_UPDATED_CONFIGURATION_PATH = getResourcePath("config/import/multiple-objects-update-config.json");
 const REPEATED_KEYS_CONFIGURATION_PATH = getResourcePath("config/import/same-key-switches-config.json");
 const CYCLE_CONFIGURATION_PATH = getResourcePath("config/import/cycle-config.json");
 const MULTIPLE_CYCLE_CONFIGURATION_PATH = getResourcePath("config/import/multiple-cycle-config.json");
@@ -27,8 +28,12 @@ test(`[mutagen config import file] should create multiple objects of different t
   assertMutagenResult(`config import --auto-confirm ${MULTIPLE_OBJECTS_CONFIGURATION_PATH}`, "every object has been created", 0);
 });
 
+test(`[mutagen config import file] should skip update of multiple identical objects of different types`, () => {
+  assertMutagenResult(`config import --auto-confirm ${MULTIPLE_OBJECTS_CONFIGURATION_PATH}`, "every object has been created", 0);
+});
+
 test(`[mutagen config import file] should update multiple objects of different types`, () => {
-  assertMutagenResult(`config import --auto-confirm ${MULTIPLE_OBJECTS_CONFIGURATION_PATH}`, "every object has been updated", 0);
+  assertMutagenResult(`config import --auto-confirm ${MULTIPLE_OBJECTS_UPDATED_CONFIGURATION_PATH}`, "every object has been updated", 0);
 });
 
 test(`[mutagen config import file] should only import objects with a unique key`, () => {

@@ -9,6 +9,15 @@ Completed. 1 object(s) imported.
 }
 `;
 
+exports[`[mutagen scripts config import-export] should skip the same scripts: the scripts have been updated 1`] = `
+Object {
+  "stderr": "",
+  "stdout": "= script [Environment/cfgObjectTest]
+Completed. 1 object(s) imported.
+",
+}
+`;
+
 exports[`[mutagen scripts config import-export] should throw exception when new scripts to import miss mandatory properties scripts: exception has been thrown 1`] = `
 Object {
   "stderr": "Validation failed.
@@ -21,15 +30,6 @@ Missing properties:
 `;
 
 exports[`[mutagen scripts config import-export] should update the modified scripts: the modified scripts have been updated 1`] = `
-Object {
-  "stderr": "",
-  "stdout": "~ script [Environment/cfgObjectTest]
-Completed. 1 object(s) imported.
-",
-}
-`;
-
-exports[`[mutagen scripts config import-export] should update the same scripts: the scripts have been updated 1`] = `
 Object {
   "stderr": "",
   "stdout": "~ script [Environment/cfgObjectTest]

@@ -65,7 +65,6 @@
   "serverInfo": {
     "attempts": 2,
     "host": "host",
-    "port": "8888",
     "timeout": 2
   },
   "state": "enabled",
