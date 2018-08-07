@@ -3,6 +3,7 @@ package com.nuecho.genesys.cli.models.configuration
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
+import com.genesyslab.platform.applicationblocks.com.CfgObject
 import com.genesyslab.platform.applicationblocks.com.ICfgObject
 import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgAppRank
@@ -108,6 +109,8 @@ data class Person(
 
     override fun checkMandatoryProperties(configuration: Configuration, service: ConfService): Set<String> =
         if (userName == null) setOf(USER_NAME) else emptySet()
+
+    override fun checkUnchangeableProperties(cfgObject: CfgObject) = emptySet<String>()
 
     override fun afterPropertiesSet() {
         agentInfo?.updateTenantReferences(tenant)

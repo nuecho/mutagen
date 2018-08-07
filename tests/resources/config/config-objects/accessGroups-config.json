@@ -12,7 +12,8 @@
       },
       "members": [
         "0"
-      ]
+      ],
+      "type": "usersgroup"
     }
   ]
 }

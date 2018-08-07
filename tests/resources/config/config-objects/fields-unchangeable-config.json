@@ -1,0 +1,19 @@
+{
+  "__metadata__": {
+    "formatName": "JSON",
+    "formatVersion": "1.0.0"
+  },
+  "fields": [
+    {
+      "name": "cfgObjectTest",
+      "tenant": "Environment",
+      "fieldType": "ftphone",
+      "isNullable": true,
+      "isPrimaryKey": true,
+      "isUnique": true,
+      "length": 4,
+      "type": "dtint"
+    }
+  ]
+}
+

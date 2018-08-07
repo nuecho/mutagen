@@ -19,6 +19,7 @@ import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mock
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgApplication
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgHost
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockKeyValueCollection
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgFlag
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgObjectState
 import com.nuecho.genesys.cli.models.configuration.ConfigurationTestData.defaultProperties
 import com.nuecho.genesys.cli.models.configuration.reference.AppPrototypeReference
@@ -69,7 +70,8 @@ private val application = Application(
     autoRestart = true,
     commandLine = "yes",
     componentType = CFGAppComponentUnknown.toShortName(),
-    isPrimary = true,
+    flexibleProperties = defaultProperties(),
+    isPrimary = false,
     options = defaultProperties(),
     portInfos = listOf(
         PortInfo(
@@ -110,6 +112,10 @@ class ApplicationTest : ConfigurationObjectTest(
 ) {
     val service = mockConfService()
 
+    override fun `object with different unchangeable properties' values should return the right unchangeable properties`() {
+        // not implemented, since object has no unchangeable properties
+    }
+
     @Test
     fun `server application missing mandatory server properties should return the missing properties' names`() {
         val configuration = Configuration(
@@ -145,8 +151,9 @@ class ApplicationTest : ConfigurationObjectTest(
                 assertThat(autoRestart.asBoolean(), equalTo(application.autoRestart))
                 assertThat(commandLine, equalTo(application.commandLine))
                 assertThat(componentType.toShortName(), equalTo(application.componentType))
+                assertThat(flexibleProperties.asCategorizedProperties(), equalTo(application.flexibleProperties))
                 assertThat(folderId, equalTo(DEFAULT_FOLDER_DBID))
-                assertThat(isPrimary.asBoolean(), equalTo(application.isPrimary))
+                assertThat(isPrimary?.asBoolean(), equalTo(application.isPrimary))
                 assertThat(name, equalTo(application.name))
                 assertThat(options.asCategorizedProperties(), equalTo(application.options))
                 assertThat(portInfos.toList(), equalTo(
@@ -185,7 +192,7 @@ private fun mockCfgApplication() = mockCfgApplication(application.name).apply {
     every { componentType } returns CFGAppComponentUnknown
     every { flexibleProperties } returns ConfigurationObjects.toKeyValueCollection(application.flexibleProperties)
     every { folderId } returns DEFAULT_OBJECT_DBID
-    every { isPrimary } returns CFGTrue
+    every { isPrimary } returns toCfgFlag(application.isPrimary)
     every { options } returns ConfigurationObjects.toKeyValueCollection(application.options)
     every { password } returns application.password
     every { portInfos } returns listOf(portInfo)

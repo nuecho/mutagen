@@ -1,2 +1,2 @@
 importDependencies("gvpCustomers-dependencies-config.json");
-cfgObjectTests("gvpCustomers");
+cfgObjectTests("gvpCustomers", {checkUnchangeableProperties: true});

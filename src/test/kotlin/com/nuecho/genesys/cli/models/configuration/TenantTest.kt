@@ -47,6 +47,10 @@ class TenantTest : ConfigurationObjectTest(
     mandatoryProperties = emptySet(),
     importedConfigurationObject = Tenant(mockCfgTenant())
 ) {
+    override fun `object with different unchangeable properties' values should return the right unchangeable properties`() {
+        // not implemented, since object has no unchangeable properties
+    }
+
     @Test
     fun `createCfgObject should properly create CfgTenant`() {
         val defaultTenant = mockCfgTenant(DEFAULT_TENANT_NAME)

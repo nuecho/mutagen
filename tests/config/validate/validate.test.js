@@ -1,5 +1,6 @@
 const MISSING_DEPENDENCY_CONFIGURATION_PATH = getResourcePath("config/validate/missing-dependency-config.json");
 const MULTIPLE_VALIDATION_ERRORS_CONFIGURATION_PATH = getResourcePath("config/validate/multiple-validation-errors-config.json");
+const VALIDATION_DEPENDENCIES_CONFIGURATION_PATH = getResourcePath("config/validate/validation-dependencies-config.json");
 const VALID_CONFIGURATION_PATH = getResourcePath("config/validate/valid-config.json");
 
 test(`[mutagen config validate file] should indicate validation failure if there are missing dependencies, and print them`, () => {
@@ -7,6 +8,7 @@ test(`[mutagen config validate file] should indicate validation failure if there
 });
 
 test(`[mutagen config validate file] should indicate validation failure if there are multiple validation errors, and print them`, () => {
+  mutagen(`config import --auto-confirm ${VALIDATION_DEPENDENCIES_CONFIGURATION_PATH}`);
   assertMutagenResult(`config validate ${MULTIPLE_VALIDATION_ERRORS_CONFIGURATION_PATH}`, "validation failed", 1);
 });
 

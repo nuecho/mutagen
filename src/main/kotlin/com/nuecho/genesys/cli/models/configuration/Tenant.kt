@@ -3,6 +3,7 @@ package com.nuecho.genesys.cli.models.configuration
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
+import com.genesyslab.platform.applicationblocks.com.CfgObject
 import com.genesyslab.platform.applicationblocks.com.ICfgObject
 import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgTenant
@@ -40,7 +41,6 @@ data class Tenant(
     override val reference = TenantReference(name)
 
     // field `isServiceProvider` is ignored since it's never returned by config server
-
     constructor(tenant: CfgTenant) : this(
         chargeableNumber = tenant.chargeableNumber,
         defaultCapacityRule = tenant.defaultCapacityRule?.getReference(),
@@ -54,10 +54,7 @@ data class Tenant(
     )
 
     override fun createCfgObject(service: IConfService) =
-        updateCfgObject(service, CfgTenant(service).also {
-            applyDefaultValues()
-            setProperty("name", name, it)
-        })
+        updateCfgObject(service, CfgTenant(service).also { setProperty("name", name, it) })
 
     override fun updateCfgObject(service: IConfService, cfgObject: ICfgObject) =
         (cfgObject as CfgTenant).also {
@@ -75,6 +72,8 @@ data class Tenant(
     override fun cloneBare() = Tenant(name)
 
     override fun checkMandatoryProperties(configuration: Configuration, service: ConfService): Set<String> = emptySet()
+
+    override fun checkUnchangeableProperties(cfgObject: CfgObject) = emptySet<String>()
 
     override fun afterPropertiesSet() {
         defaultContract?.tenant = reference

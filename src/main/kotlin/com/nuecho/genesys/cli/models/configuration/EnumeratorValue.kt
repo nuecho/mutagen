@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
+import com.genesyslab.platform.applicationblocks.com.CfgObject
 import com.genesyslab.platform.applicationblocks.com.ICfgObject
 import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgEnumeratorValue
@@ -83,6 +84,10 @@ data class EnumeratorValue(
 
         return missingMandatoryProperties
     }
+
+    // In theory, tenant is unchangeable, but changing the tenant changes the enumerator's reference and therefore
+    // changes the enumeratorValue reference, creating a new EnumeratorValue.
+    override fun checkUnchangeableProperties(cfgObject: CfgObject) = emptySet<String>()
 
     override fun afterPropertiesSet() {
         enumerator.tenant = tenant

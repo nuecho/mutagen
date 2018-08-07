@@ -3,6 +3,7 @@ package com.nuecho.genesys.cli.models.configuration
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
+import com.genesyslab.platform.applicationblocks.com.CfgObject
 import com.genesyslab.platform.applicationblocks.com.ICfgObject
 import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgDN
@@ -165,6 +166,8 @@ data class DN(
         // useOverride = CfgFlag.CFGTrue.asBoolean(),
         // accessNumbers = emptyList(),
     }
+
+    override fun checkUnchangeableProperties(cfgObject: CfgObject) = emptySet<String>()
 
     override fun afterPropertiesSet() {
         switch.tenant = tenant

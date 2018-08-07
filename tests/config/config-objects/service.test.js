@@ -1,1 +1,1 @@
-cfgObjectTests("services");
+cfgObjectTests("services", {checkUnchangeableProperties: true});

@@ -11,8 +11,8 @@ import com.genesyslab.platform.configuration.protocol.types.CfgOptimizationMetho
 import com.nuecho.genesys.cli.models.configuration.ConfigurationAsserts.checkSerialization
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_FOLDER_REFERENCE
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_OBJECT_DBID
-import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_NAME
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_DBID
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_NAME
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_REFERENCE
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgAgentGroup
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgApplication
@@ -98,6 +98,10 @@ class CampaignGroupTest : ConfigurationObjectTest(
     emptyConfigurationObject = CampaignGroup(campaign = CAMPAIGN_REFERENCE, name = campaignGroup.name),
     mandatoryProperties = setOf(GROUP)
 ) {
+    override fun `object with different unchangeable properties' values should return the right unchangeable properties`() {
+        // not implemented, since object has no unchangeable properties
+    }
+
     @Test
     override fun `initialized object should properly serialize`() {
         val service = mockConfService()

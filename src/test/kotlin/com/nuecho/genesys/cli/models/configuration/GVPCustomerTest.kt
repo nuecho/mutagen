@@ -6,6 +6,7 @@ import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFA
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_OBJECT_DBID
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_REFERENCE
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgGVPCustomer
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgTenant
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockKeyValueCollection
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgFlag
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgObjectState
@@ -46,6 +47,18 @@ class GVPCustomerTest : ConfigurationObjectTest(
     mandatoryProperties = setOf(CHANNEL, IS_ADMIN_CUSTOMER, IS_PROVISIONED, RESELLER, TENANT),
     importedConfigurationObject = GVPCustomer(mockCfgGVPCustomer())
 ) {
+    @Test
+    override fun `object with different unchangeable properties' values should return the right unchangeable properties`() {
+        val cfgGvpCustomer = mockCfgGVPCustomer(
+            name = gvpCustomer.name,
+            tenant = mockCfgTenant("differentTenantName")
+        ).also {
+            every { it.reseller } returns null
+        }
+
+        assertThat(configurationObject.checkUnchangeableProperties(cfgGvpCustomer), equalTo(setOf(RESELLER, TENANT)))
+    }
+
     @Test
     fun `createCfgObject should properly create CfgGVPCustomer`() {
         val service = mockConfService()

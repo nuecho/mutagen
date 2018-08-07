@@ -100,6 +100,10 @@ class PersonTest : ConfigurationObjectTest(
     mandatoryProperties = setOf(USER_NAME),
     importedConfigurationObject = Person(mockCfgPerson())
 ) {
+    override fun `object with different unchangeable properties' values should return the right unchangeable properties`() {
+        // not implemented, since object has no unchangeable properties
+    }
+
     @Test
     fun `createCfgObject should properly create CfgPerson`() {
         val service = mockConfService()

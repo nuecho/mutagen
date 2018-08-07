@@ -23,6 +23,14 @@ interface ConfigurationObject : Comparable<ConfigurationObject> {
 
     fun checkMandatoryProperties(configuration: Configuration, service: ConfService): Set<String>
 
+    /**
+     * This method is used to check whether an unchangeable property is being set to a different value than the one
+     * on the confServer.
+     * For optional properties, check should only be performed when property is actually set on the confServer (if
+     * remote is null, it can be set by update)
+     */
+    fun checkUnchangeableProperties(cfgObject: CfgObject): Set<String>
+
     fun applyDefaultValues() {}
 
     /**

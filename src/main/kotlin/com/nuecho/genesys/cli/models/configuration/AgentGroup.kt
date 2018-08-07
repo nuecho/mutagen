@@ -1,6 +1,7 @@
 package com.nuecho.genesys.cli.models.configuration
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import com.genesyslab.platform.applicationblocks.com.CfgObject
 import com.genesyslab.platform.applicationblocks.com.ICfgObject
 import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgAgentGroup
@@ -59,6 +60,8 @@ data class AgentGroup(
     override fun cloneBare() = AgentGroup(group = Group(group.tenant, group.name))
 
     override fun checkMandatoryProperties(configuration: Configuration, service: ConfService): Set<String> = emptySet()
+
+    override fun checkUnchangeableProperties(cfgObject: CfgObject) = emptySet<String>()
 
     override fun afterPropertiesSet() = group.updateTenantReferences()
 

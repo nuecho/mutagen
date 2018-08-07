@@ -1,6 +1,7 @@
 package com.nuecho.genesys.cli.models.configuration
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import com.genesyslab.platform.applicationblocks.com.CfgObject
 import com.genesyslab.platform.applicationblocks.com.ICfgObject
 import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgAccessGroup
@@ -68,6 +69,15 @@ data class AccessGroup(
     override fun cloneBare() = AccessGroup(Group(group.tenant, group.name))
 
     override fun checkMandatoryProperties(configuration: Configuration, service: ConfService): Set<String> = emptySet()
+
+    override fun checkUnchangeableProperties(cfgObject: CfgObject): Set<String> {
+        (cfgObject as CfgAccessGroup).also {
+            if (type != null && it.type != null && type.toLowerCase() != it.type.toShortName())
+                return setOf(TYPE)
+        }
+
+        return emptySet()
+    }
 
     override fun afterPropertiesSet() {
         group.updateTenantReferences()

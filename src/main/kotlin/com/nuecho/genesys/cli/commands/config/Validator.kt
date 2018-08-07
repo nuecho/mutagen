@@ -1,5 +1,6 @@
-package com.nuecho.genesys.cli.commands.config.import
+package com.nuecho.genesys.cli.commands.config
 
+import com.genesyslab.platform.applicationblocks.com.CfgObject
 import com.nuecho.genesys.cli.Logging
 import com.nuecho.genesys.cli.models.configuration.Configuration
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObject
@@ -36,6 +37,17 @@ class Validator(val configuration: Configuration, val service: ConfService) {
                 if (misses.isEmpty()) null else MissingProperties(it, misses)
             }
 
+    internal fun findUnchangeableProperties() =
+        configuration.asList
+            .mapNotNull { configurationObject ->
+                val cfgObject = service.retrieveObject(configurationObject.reference) as CfgObject?
+                cfgObject?.let { it ->
+                    val unchangeableProperties = configurationObject.checkUnchangeableProperties(it)
+                    if (unchangeableProperties.isEmpty()) null
+                    else UnchangeableProperties(configurationObject, unchangeableProperties)
+                }
+            }
+
     internal fun findMissingDependencies(): List<MissingDependencies> {
         val misses: MutableList<MissingDependencies> = mutableListOf()
 
@@ -55,12 +67,14 @@ class Validator(val configuration: Configuration, val service: ConfService) {
     internal fun findValidationErrors() =
         findMissingProperties()
             .plus(findMissingDependencies())
+            .plus(findUnchangeableProperties())
 }
 
 class ValidationException(validationErrors: List<ValidationError>) : Exception(
     "Validation failed."
             + validationErrors.toConsoleString(MissingProperties::class)
             + validationErrors.toConsoleString(MissingDependencies::class)
+            + validationErrors.toConsoleString(UnchangeableProperties::class)
 )
 
 fun List<ValidationError>.toConsoleString(classType: KClass<*>): String {
@@ -80,10 +94,10 @@ data class MissingDependencies(
 ) : ValidationError {
 
     override fun describe() = "Missing dependencies:"
-    override fun toConsoleString() = "$OBJECT_REFERENCE_PREFIX${configurationObject.reference.toConsoleString()}:\n" +
+    override fun toConsoleString() = configurationObject.toConsoleString() +
             dependencies
                 .map { it.toConsoleString() }
-                .joinToString(prefix = LIST_ELEMENT_PREFIX, separator = LIST_ELEMENT_SEPARATOR)
+                .toConsoleString()
 }
 
 data class MissingProperties(
@@ -92,6 +106,19 @@ data class MissingProperties(
 ) : ValidationError {
 
     override fun describe() = "Missing properties:"
-    override fun toConsoleString() = "$OBJECT_REFERENCE_PREFIX${configurationObject.reference.toConsoleString()}:\n" +
-            properties.joinToString(prefix = LIST_ELEMENT_PREFIX, separator = LIST_ELEMENT_SEPARATOR)
+    override fun toConsoleString() = "${configurationObject.toConsoleString()}${properties.toConsoleString()}"
 }
+
+data class UnchangeableProperties(
+    val configurationObject: ConfigurationObject,
+    val properties: Set<String>
+) : ValidationError {
+
+    override fun describe() = "Unchangeable properties:"
+    override fun toConsoleString() = "${configurationObject.toConsoleString()}${properties.toConsoleString()}"
+}
+
+fun ConfigurationObject.toConsoleString() = "$OBJECT_REFERENCE_PREFIX${this.reference.toConsoleString()}:\n"
+
+fun Collection<*>.toConsoleString() =
+    this.joinToString(prefix = LIST_ELEMENT_PREFIX, separator = LIST_ELEMENT_SEPARATOR)

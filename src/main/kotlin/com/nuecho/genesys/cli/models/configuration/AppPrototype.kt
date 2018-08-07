@@ -3,6 +3,7 @@ package com.nuecho.genesys.cli.models.configuration
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
+import com.genesyslab.platform.applicationblocks.com.CfgObject
 import com.genesyslab.platform.applicationblocks.com.ICfgObject
 import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgAppPrototype
@@ -67,6 +68,16 @@ data class AppPrototype(
         version ?: missingMandatoryProperties.add(VERSION)
 
         return missingMandatoryProperties
+    }
+
+    override fun checkUnchangeableProperties(cfgObject: CfgObject): Set<String> {
+        val unchangeableProperties = mutableSetOf<String>()
+        (cfgObject as CfgAppPrototype).also {
+            type?.run { if (this.toLowerCase() != it.type?.toShortName()) unchangeableProperties.add(TYPE) }
+            version?.run { if (this != it.version) unchangeableProperties.add(VERSION) }
+        }
+
+        return unchangeableProperties
     }
 
     override fun getReferences(): Set<ConfigurationObjectReference<*>> =

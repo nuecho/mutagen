@@ -3,7 +3,7 @@
 exports[`[mutagen transactions config import-export] should create the transactions: the transactions have been created 1`] = `
 Object {
   "stderr": "",
-  "stdout": "+ transaction [name: 'cfgObjectTest', type: 'callData', tenant: 'Environment']
+  "stdout": "+ transaction [name: 'cfgObjectTest', type: 'calldata', tenant: 'Environment']
 Completed. 1 object(s) imported.
 ",
 }
@@ -12,7 +12,7 @@ Completed. 1 object(s) imported.
 exports[`[mutagen transactions config import-export] should skip the same transactions: the transactions have been updated 1`] = `
 Object {
   "stderr": "",
-  "stdout": "= transaction [name: 'cfgObjectTest', type: 'callData', tenant: 'Environment']
+  "stdout": "= transaction [name: 'cfgObjectTest', type: 'calldata', tenant: 'Environment']
 Completed. 1 object(s) imported.
 ",
 }

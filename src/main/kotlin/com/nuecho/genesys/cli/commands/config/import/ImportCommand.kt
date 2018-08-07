@@ -4,6 +4,7 @@ import com.nuecho.genesys.cli.Console.confirm
 import com.nuecho.genesys.cli.Logging.info
 import com.nuecho.genesys.cli.commands.ConfigServerCommand
 import com.nuecho.genesys.cli.commands.config.Config
+import com.nuecho.genesys.cli.commands.config.Validator
 import com.nuecho.genesys.cli.commands.config.import.Import.importConfiguration
 import com.nuecho.genesys.cli.commands.config.import.operation.ImportPlan
 import com.nuecho.genesys.cli.core.defaultJsonObjectMapper

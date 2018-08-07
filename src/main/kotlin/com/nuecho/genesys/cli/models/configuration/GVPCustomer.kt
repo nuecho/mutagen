@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
+import com.genesyslab.platform.applicationblocks.com.CfgObject
 import com.genesyslab.platform.applicationblocks.com.ICfgObject
 import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgGVPCustomer
@@ -109,6 +110,16 @@ data class GVPCustomer(
         tenant ?: missingMandatoryProperties.add(TENANT)
 
         return missingMandatoryProperties
+    }
+
+    override fun checkUnchangeableProperties(cfgObject: CfgObject): Set<String> {
+        val unchangeableProperties = mutableSetOf<String>()
+        (cfgObject as CfgGVPCustomer).also {
+            reseller?.run { if (this != it.reseller?.getReference()) unchangeableProperties.add(RESELLER) }
+            tenant?.run { if (this != it.tenant?.getReference()) unchangeableProperties.add(TENANT) }
+        }
+
+        return unchangeableProperties
     }
 
     override fun afterPropertiesSet() {

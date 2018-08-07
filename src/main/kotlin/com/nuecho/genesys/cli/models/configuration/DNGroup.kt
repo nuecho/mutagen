@@ -1,6 +1,7 @@
 package com.nuecho.genesys.cli.models.configuration
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import com.genesyslab.platform.applicationblocks.com.CfgObject
 import com.genesyslab.platform.applicationblocks.com.ICfgObject
 import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgDN
@@ -86,6 +87,14 @@ data class DNGroup(
 
     override fun checkMandatoryProperties(configuration: Configuration, service: ConfService): Set<String> =
         if (type == null) setOf(TYPE) else emptySet()
+
+    override fun checkUnchangeableProperties(cfgObject: CfgObject): Set<String> {
+        (cfgObject as CfgDNGroup).also {
+            type?.run { if (this.toLowerCase() != it.type?.toShortName()) return setOf(TYPE) }
+        }
+
+        return emptySet()
+    }
 
     override fun afterPropertiesSet() {
         group.updateTenantReferences()

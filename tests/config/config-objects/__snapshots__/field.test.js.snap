@@ -24,6 +24,24 @@ Object {
 Missing properties:
   - field [Environment/cfgObjectTest]:
     - fieldType
+    - isNullable
+    - isPrimaryKey
+    - isUnique
+    - type
+",
+  "stdout": "",
+}
+`;
+
+exports[`[mutagen fields config import-export] should throw exception when updating fields with different values for unchangeable properties: exception has been thrown 1`] = `
+Object {
+  "stderr": "Validation failed.
+Unchangeable properties:
+  - field [Environment/cfgObjectTest]:
+    - isNullable
+    - isPrimaryKey
+    - isUnique
+    - type
 ",
   "stdout": "",
 }

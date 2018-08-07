@@ -31,6 +31,17 @@ Missing properties:
 }
 `;
 
+exports[`[mutagen hosts config import-export] should throw exception when updating hosts with different values for unchangeable properties: exception has been thrown 1`] = `
+Object {
+  "stderr": "Validation failed.
+Unchangeable properties:
+  - host [cfgObjectTest]:
+    - type
+",
+  "stdout": "",
+}
+`;
+
 exports[`[mutagen hosts config import-export] should update the modified hosts: the modified hosts have been updated 1`] = `
 Object {
   "stderr": "",

@@ -10,7 +10,7 @@
       "name": "cfgObjectTest",
       "state": "enabled",
       "tenant": "Environment",
-      "type": "callData",
+      "type": "calldata",
       "userProperties": {
         "section": {
           "number": 456,
@@ -18,7 +18,6 @@
         }
       }
     }
-    
   ]
 }
 

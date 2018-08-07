@@ -4,11 +4,11 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
+import com.genesyslab.platform.applicationblocks.com.CfgObject
 import com.genesyslab.platform.applicationblocks.com.ICfgObject
 import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgGVPIVRProfile
 import com.nuecho.genesys.cli.asBoolean
-import com.nuecho.genesys.cli.core.InitializingBean
 import com.nuecho.genesys.cli.getFolderReference
 import com.nuecho.genesys.cli.getReference
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setFolder
@@ -20,9 +20,7 @@ import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toKeyVal
 import com.nuecho.genesys.cli.models.configuration.reference.ConfigurationObjectReference
 import com.nuecho.genesys.cli.models.configuration.reference.DNReference
 import com.nuecho.genesys.cli.models.configuration.reference.FolderReference
-import com.nuecho.genesys.cli.models.configuration.reference.GVPCustomerReference
 import com.nuecho.genesys.cli.models.configuration.reference.GVPIVRProfileReference
-import com.nuecho.genesys.cli.models.configuration.reference.GVPResellerReference
 import com.nuecho.genesys.cli.models.configuration.reference.TenantReference
 import com.nuecho.genesys.cli.models.configuration.reference.referenceSetBuilder
 import com.nuecho.genesys.cli.services.ConfService
@@ -35,15 +33,13 @@ import java.util.GregorianCalendar
 
 /**
  * @See https://docs.genesys.com/Documentation/PSDK/8.5.x/ConfigLayerRef/CfgGVPIVRProfile
+ * Customer and reseller properties are not defined as they are not in use in GA.
  */
 data class GVPIVRProfile(
     val name: String,
     val tenant: TenantReference? = null,
-    val customer: GVPCustomerReference? = null,
-    val reseller: GVPResellerReference? = null,
     val displayName: String? = null,
     val type: String? = null,
-
     val notes: String? = null,
     val description: String? = null,
     val startServiceDate: Date? = null,
@@ -58,15 +54,13 @@ data class GVPIVRProfile(
     @JsonDeserialize(using = CategorizedPropertiesDeserializer::class)
     override val userProperties: CategorizedProperties? = null,
     override val folder: FolderReference? = null
-) : ConfigurationObject, InitializingBean {
+) : ConfigurationObject {
 
     @get:JsonIgnore
     override val reference = GVPIVRProfileReference(name)
 
     constructor(gvpivrProfile: CfgGVPIVRProfile) : this(
         name = gvpivrProfile.name,
-        customer = gvpivrProfile.customer?.getReference(),
-        reseller = gvpivrProfile.reseller?.getReference(),
         tenant = gvpivrProfile.tenant.getReference(),
         displayName = gvpivrProfile.displayName,
         type = gvpivrProfile.type?.toShortName(),
@@ -86,7 +80,6 @@ data class GVPIVRProfile(
     override fun createCfgObject(service: IConfService) =
         updateCfgObject(service, CfgGVPIVRProfile(service)).also {
             setProperty("name", name, it)
-            setProperty("customerDBID", service.getObjectDbid(customer), it)
             setProperty("tenantDBID", service.getObjectDbid(tenant), it)
         }
 
@@ -110,7 +103,6 @@ data class GVPIVRProfile(
 
     override fun cloneBare() = GVPIVRProfile(
         name = name,
-        customer = customer,
         displayName = displayName,
         tenant = tenant
     )
@@ -123,15 +115,17 @@ data class GVPIVRProfile(
         return missingMandatoryProperties
     }
 
-    override fun afterPropertiesSet() {
-        reseller?.tenant = tenant
+    override fun checkUnchangeableProperties(cfgObject: CfgObject): Set<String> {
+        (cfgObject as CfgGVPIVRProfile).also {
+            tenant?.run { if (it.tenant?.getReference() != tenant) return setOf(TENANT) }
+        }
+
+        return emptySet()
     }
 
     override fun getReferences(): Set<ConfigurationObjectReference<*>> =
         referenceSetBuilder()
             .add(tenant)
-            .add(reseller)
-            .add(customer)
             .add(dids)
             .add(folder)
             .toSet()
@@ -139,7 +133,7 @@ data class GVPIVRProfile(
 
 fun setDateProperty(field: String, serviceDate: Date?, cfgObject: CfgGVPIVRProfile) {
     // XXX technically, there's no reason why we should stick to GMT.
-    // While reseller do have a timeZone, ivr profile do not.
+    // While resellers do have a timeZone, ivr profiles do not.
     val zoneId = ZoneId.of("GMT", ZoneId.SHORT_IDS)
     if (serviceDate != null) {
         val date = GregorianCalendar.from(ZonedDateTime.ofInstant(serviceDate.toInstant(), zoneId))

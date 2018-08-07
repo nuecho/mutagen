@@ -1,0 +1,20 @@
+{
+  "__metadata__": {
+    "formatName": "JSON",
+    "formatVersion": "1.0.0"
+  },
+  "switches": [
+    {
+      "name": "cfgObjectTest",
+      "tenant": "Environment",
+      "physicalSwitch": "different-physSwitchForSwitch"
+    }
+  ],
+  "physicalSwitches": [
+    {
+      "name": "different-physSwitchForSwitch",
+      "type": "fujitsu"
+    }
+  ]
+}
+

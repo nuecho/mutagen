@@ -59,6 +59,7 @@ import com.genesyslab.platform.configuration.protocol.types.CfgOSType
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectType
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectType.CFGFolder
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectType.CFGTenant
+import com.genesyslab.platform.configuration.protocol.types.CfgScriptType
 import com.genesyslab.platform.configuration.protocol.types.CfgSelectionMode
 import com.nuecho.genesys.cli.models.configuration.ConfigurationTestData.CATEGORIZED_PROPERTIES_NUMBER
 import com.nuecho.genesys.cli.models.configuration.ConfigurationTestData.CATEGORIZED_PROPERTIES_STRING
@@ -436,11 +437,13 @@ object ConfigurationObjectMocks {
     fun mockCfgScript(
         name: String,
         tenant: CfgTenant = mockCfgTenant(DEFAULT_TENANT_NAME),
-        dbid: Int = DEFAULT_OBJECT_DBID
+        dbid: Int = DEFAULT_OBJECT_DBID,
+        type: CfgScriptType? = null
     ) =
         mockk<CfgScript>().also {
             every { it.name } returns name
             every { it.tenant } returns tenant
+            every { it.type } returns type
             every { it.objectDbid } returns dbid
             every { it.dbid } returns dbid
         }

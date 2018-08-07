@@ -6,7 +6,6 @@ import com.genesyslab.platform.configuration.protocol.types.CfgDNType.CFGCellula
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectState.CFGEnabled
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_FOLDER_DBID
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_FOLDER_REFERENCE
-import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_OBJECT_DBID
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_DBID
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_REFERENCE
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgFolder
@@ -61,6 +60,10 @@ class PlaceTest : ConfigurationObjectTest(
     mandatoryProperties = emptySet(),
     importedConfigurationObject = Place(mockCfgPlace())
 ) {
+    override fun `object with different unchangeable properties' values should return the right unchangeable properties`() {
+        // not implemented, since object has no unchangeable properties
+    }
+
     @Test
     fun `updateCfgObject should properly create CfgPlace`() {
         val contractDbid = 222

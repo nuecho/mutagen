@@ -25,6 +25,12 @@
   "autoRestart": true,
   "commandLine": "yes",
   "componentType": "appcomponentunknown",
+  "flexibleProperties": {
+    "section": {
+      "number": 456,
+      "string": "def"
+    }
+  },
   "folder": {
     "owner": {
       "name": "tenant",
@@ -35,7 +41,7 @@
     ],
     "type": "folder"
   },
-  "isPrimary": true,
+  "isPrimary": false,
   "name": "foo",
   "options": {
     "section": {

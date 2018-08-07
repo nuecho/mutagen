@@ -2,6 +2,7 @@ package com.nuecho.genesys.cli.models.configuration
 
 import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgHost
+import com.genesyslab.platform.configuration.protocol.types.CfgHostType.CFGAgentWorkstation
 import com.genesyslab.platform.configuration.protocol.types.CfgHostType.CFGNetworkServer
 import com.genesyslab.platform.configuration.protocol.types.CfgOSType
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectState
@@ -54,6 +55,15 @@ class HostTest : ConfigurationObjectTest(
     emptyConfigurationObject = Host(name = NAME),
     mandatoryProperties = setOf("lcaPort", "osInfo", TYPE)
 ) {
+    @Test
+    override fun `object with different unchangeable properties' values should return the right unchangeable properties`() {
+        val cfgHost = mockCfgHost(name = host.name).also {
+            every { it.type } returns CFGAgentWorkstation
+        }
+
+        assertThat(configurationObject.checkUnchangeableProperties(cfgHost), equalTo(setOf(TYPE)))
+    }
+
     @Test
     override fun `initialized object should properly serialize`() {
         val service = mockConfService()

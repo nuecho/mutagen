@@ -11,9 +11,7 @@ import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgFla
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgObjectState
 import com.nuecho.genesys.cli.models.configuration.ConfigurationTestData.defaultProperties
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockConfigurationObjectRepository
-import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveCustomer
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveFolderByDbid
-import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveReseller
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveTenant
 import com.nuecho.genesys.cli.services.ConfigurationObjectRepository
 import com.nuecho.genesys.cli.services.ServiceMocks.mockConfService
@@ -54,12 +52,23 @@ class GVPIVRProfileTest : ConfigurationObjectTest(
     importedConfigurationObject = GVPIVRProfile(mockCfgGVPIVRProfile())
 ) {
     @Test
+    override fun `object with different unchangeable properties' values should return the right unchangeable properties`() {
+        val cfgGvpIVRProfile = ConfigurationObjectMocks.mockCfgGVPIVRProfile(
+            name = gvpIVRProfile.name,
+            tenant = ConfigurationObjectMocks.mockCfgTenant("differentTenantName")
+        )
+
+        assertThat(
+            configurationObject.checkUnchangeableProperties(cfgGvpIVRProfile),
+            equalTo(setOf(TENANT))
+        )
+    }
+
+    @Test
     fun `createCfgObject should properly create CfgGVPIVRProfile`() {
         val service = mockConfService()
         every { service.retrieveObject(CfgGVPIVRProfile::class.java, any()) } returns null
         mockRetrieveTenant(service)
-        mockRetrieveCustomer(service)
-        mockRetrieveReseller(service)
 
         objectMockk(ConfigurationObjectRepository).use {
             mockConfigurationObjectRepository()

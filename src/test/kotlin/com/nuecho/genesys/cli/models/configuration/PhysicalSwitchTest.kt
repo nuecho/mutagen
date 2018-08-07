@@ -2,6 +2,7 @@ package com.nuecho.genesys.cli.models.configuration
 
 import com.genesyslab.platform.applicationblocks.com.objects.CfgPhysicalSwitch
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectState.CFGEnabled
+import com.genesyslab.platform.configuration.protocol.types.CfgSwitchType.CFG3511ProtocolInterface
 import com.genesyslab.platform.configuration.protocol.types.CfgSwitchType.CFGFujitsu
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_FOLDER_REFERENCE
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_OBJECT_DBID
@@ -37,6 +38,15 @@ class PhysicalSwitchTest : ConfigurationObjectTest(
     importedConfigurationObject = PhysicalSwitch(mockPhysicalSwitch())
 ) {
     val service = mockConfService()
+
+    @Test
+    override fun `object with different unchangeable properties' values should return the right unchangeable properties`() {
+        val cfgPhysicalSwitch = mockCfgPhysicalSwitch(name = physicalSwitch.name).also {
+            every { it.type } returns CFG3511ProtocolInterface
+        }
+
+        assertThat(configurationObject.checkUnchangeableProperties(cfgPhysicalSwitch), equalTo(setOf(TYPE)))
+    }
 
     @Test
     fun `createCfgObject should properly create CfgPhysicalSwitch`() {

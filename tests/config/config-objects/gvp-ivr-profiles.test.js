@@ -1,1 +1,1 @@
-cfgObjectTests("gvpIVRProfiles");
+cfgObjectTests("gvpIVRProfiles", {checkUnchangeableProperties: true});

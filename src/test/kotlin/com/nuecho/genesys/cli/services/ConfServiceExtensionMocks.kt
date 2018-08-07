@@ -9,7 +9,6 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgCallingList
 import com.genesyslab.platform.applicationblocks.com.objects.CfgCampaign
 import com.genesyslab.platform.applicationblocks.com.objects.CfgDN
 import com.genesyslab.platform.applicationblocks.com.objects.CfgDNGroup
-import com.genesyslab.platform.applicationblocks.com.objects.CfgGVPCustomer
 import com.genesyslab.platform.applicationblocks.com.objects.CfgGVPReseller
 import com.genesyslab.platform.applicationblocks.com.objects.CfgHost
 import com.genesyslab.platform.applicationblocks.com.objects.CfgObjectiveTable
@@ -25,6 +24,7 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgTimeZone
 import com.genesyslab.platform.configuration.protocol.types.CfgAppType
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectType
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectType.CFGEnumerator
+import com.genesyslab.platform.configuration.protocol.types.CfgScriptType
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_FOLDER
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_FOLDER_REFERENCE
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_OBJECT_DBID
@@ -39,7 +39,6 @@ import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mock
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgDNGroup
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgEnumerator
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgFolder
-import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgGVPCustomer
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgGVPReseller
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgHost
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgObjectiveTable
@@ -69,9 +68,9 @@ object ConfServiceExtensionMocks {
             mockCfgApplication(name = DEFAULT_NAME, dbid = dbid)
         }
 
-    fun mockRetrieveScript(service: IConfService, dbid: Int = DEFAULT_OBJECT_DBID) =
+    fun mockRetrieveScript(service: IConfService, dbid: Int = DEFAULT_OBJECT_DBID, type: CfgScriptType? = null) =
         every { service.retrieveObject(CfgScript::class.java, any()) } answers {
-            mockCfgScript(name = DEFAULT_NAME, dbid = dbid)
+            mockCfgScript(name = DEFAULT_NAME, dbid = dbid, type = type)
         }
 
     fun mockRetrieveCallingList(service: IConfService, dbid: Int = DEFAULT_OBJECT_DBID) =
@@ -165,12 +164,6 @@ object ConfServiceExtensionMocks {
     fun mockRetrieveReseller(service: IConfService, dbid: Int = DEFAULT_OBJECT_DBID) {
         every { service.retrieveObject(CfgGVPReseller::class.java, any()) } answers {
             mockCfgGVPReseller(name = DEFAULT_NAME, dbid = dbid)
-        }
-    }
-
-    fun mockRetrieveCustomer(service: IConfService, dbid: Int = DEFAULT_OBJECT_DBID) {
-        every { service.retrieveObject(CfgGVPCustomer::class.java, any()) } answers {
-            mockCfgGVPCustomer(name = DEFAULT_NAME, dbid = dbid)
         }
     }
 

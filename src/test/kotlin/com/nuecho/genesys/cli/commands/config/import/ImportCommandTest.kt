@@ -6,6 +6,7 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgTenant
 import com.genesyslab.platform.configuration.protocol.types.CfgSwitchType.CFGFujitsu
 import com.nuecho.genesys.cli.Console
 import com.nuecho.genesys.cli.commands.config.ConfigMocks
+import com.nuecho.genesys.cli.commands.config.ValidationException
 import com.nuecho.genesys.cli.commands.config.export.ExportFormat
 import com.nuecho.genesys.cli.commands.config.import.operation.ImportOperation
 import com.nuecho.genesys.cli.models.configuration.Configuration

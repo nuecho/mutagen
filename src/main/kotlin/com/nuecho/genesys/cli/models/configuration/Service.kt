@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
+import com.genesyslab.platform.applicationblocks.com.CfgObject
 import com.genesyslab.platform.applicationblocks.com.ICfgObject
 import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgService
@@ -91,6 +92,14 @@ data class Service(
         version ?: missingMandatoryProperties.add(VERSION)
 
         return missingMandatoryProperties
+    }
+
+    override fun checkUnchangeableProperties(cfgObject: CfgObject): Set<String> {
+        (cfgObject as CfgService).also {
+            solutionType?.run { if (this != it.solutionType?.toShortName()) return setOf(SOLUTION_TYPE) }
+        }
+
+        return emptySet()
     }
 
     override fun getReferences(): Set<ConfigurationObjectReference<*>> =

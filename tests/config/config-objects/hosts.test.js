@@ -1,1 +1,1 @@
-cfgObjectTests("hosts");
+cfgObjectTests("hosts", {checkUnchangeableProperties: true});

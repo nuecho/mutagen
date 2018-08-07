@@ -11,7 +11,7 @@
       "isNullable": false,
       "isPrimaryKey": false,
       "isUnique": false,
-      "length": 3,
+      "length": 4,
       "name": "cfgObjectTest",
       "state": "enabled",
       "tenant": "Environment",

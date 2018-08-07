@@ -3,6 +3,7 @@ package com.nuecho.genesys.cli.models.configuration
 import com.genesyslab.platform.applicationblocks.com.objects.CfgScript
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectState.CFGEnabled
 import com.genesyslab.platform.configuration.protocol.types.CfgScriptType.CFGBusinessProcess
+import com.genesyslab.platform.configuration.protocol.types.CfgScriptType.CFGSchedule
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_FOLDER_REFERENCE
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_OBJECT_DBID
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_REFERENCE
@@ -40,6 +41,16 @@ class ScriptTest : ConfigurationObjectTest(
     mandatoryProperties = setOf(TYPE),
     importedConfigurationObject = Script(mockCfgScript())
 ) {
+
+    @Test
+    override fun `object with different unchangeable properties' values should return the right unchangeable properties`() {
+        val cfgScript = mockCfgScript(name = script.name).also {
+            every { it.type } returns CFGSchedule
+        }
+
+        assertThat(configurationObject.checkUnchangeableProperties(cfgScript), equalTo(setOf(TYPE)))
+    }
+
     @Test
     fun `createCfgObject should properly create CfgScript`() {
         val service = mockConfService()

@@ -5,13 +5,13 @@
   },
   "gvpIVRProfiles": [
     {
-      "state": "enabled",
-      "type": "outbound",
-      "description": "a description",
-      "tenant": "Environment",
       "name": "cfgObjectTest",
+      "description": "a description",
       "displayName": "a display name",
-      "notes": "a note"
+      "notes": "a note",
+      "state": "enabled",
+      "tenant": "Environment",
+      "type": "outbound"
     }
   ]
 }

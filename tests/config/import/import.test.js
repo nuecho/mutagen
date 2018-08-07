@@ -9,6 +9,7 @@ const MULTIPLE_VALIDATION_ERRORS_CONFIGURATION_PATH = getResourcePath("config/va
 const ACCEPT_CHANGES_CONFIGURATION_PATH = getResourcePath("config/import/accept-changes-config.json");
 const REJECT_CHANGES_CONFIGURATION_PATH = getResourcePath("config/import/reject-changes-config.json");
 const SWITCH_DEPENDENCIES_CONFIGURATION_PATH = getResourcePath("config/config-objects/switch-dependencies-config.json");
+const VALIDATION_DEPENDENCIES_CONFIGURATION_PATH = getResourcePath("config/validate/validation-dependencies-config.json");
 
 test(`[mutagen config import --help] should print import usage`, () => {
   assertMutagenResult(`config import --help`, "import usage", 0);
@@ -55,6 +56,7 @@ test(`[mutagen config import file] should not import any objects if some depende
 });
 
 test(`[mutagen config import file] should not import any objects if some dependencies cannot be resolved and some mandatory properties for creation are missing`, () => {
+  mutagen(`config import --auto-confirm ${VALIDATION_DEPENDENCIES_CONFIGURATION_PATH}`);
   assertMutagenResult(`config import --auto-confirm ${MULTIPLE_VALIDATION_ERRORS_CONFIGURATION_PATH}`, "found missing dependencies and properties", 1);
 });
 

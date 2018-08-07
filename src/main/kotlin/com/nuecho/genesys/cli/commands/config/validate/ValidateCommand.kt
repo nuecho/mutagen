@@ -2,7 +2,7 @@ package com.nuecho.genesys.cli.commands.config.validate
 
 import com.nuecho.genesys.cli.commands.ConfigServerCommand
 import com.nuecho.genesys.cli.commands.config.Config
-import com.nuecho.genesys.cli.commands.config.import.Validator
+import com.nuecho.genesys.cli.commands.config.Validator
 import com.nuecho.genesys.cli.core.defaultJsonObjectMapper
 import com.nuecho.genesys.cli.models.configuration.Configuration
 import com.nuecho.genesys.cli.services.ConfService

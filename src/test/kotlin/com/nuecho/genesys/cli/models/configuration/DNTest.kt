@@ -86,6 +86,9 @@ class DNTest : ConfigurationObjectTest(
     mandatoryProperties = setOf(ROUTE_TYPE),
     importedConfigurationObject = DN(mockCfgDN())
 ) {
+    override fun `object with different unchangeable properties' values should return the right unchangeable properties`() {
+        // not implemented, since object has no unchangeable properties
+    }
 
     @Test
     fun `createCfgObject should properly create CfgDN`() {

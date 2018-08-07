@@ -25,6 +25,9 @@ Missing dependencies:
     - script [MissingDependencyTenant1/NonExistingScript1]
   - tenant [MissingDependencyTenant2]:
     - script [MissingDependencyTenant2/NonExistingScript2]
+Unchangeable properties:
+  - physicalswitch [unchangeablePropertyPhysicalSwitch]:
+    - type
 ",
   "stdout": "",
 }

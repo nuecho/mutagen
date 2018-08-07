@@ -30,6 +30,18 @@ Missing properties:
 }
 `;
 
+exports[`[mutagen appPrototypes config import-export] should throw exception when updating appPrototypes with different values for unchangeable properties: exception has been thrown 1`] = `
+Object {
+  "stderr": "Validation failed.
+Unchangeable properties:
+  - appprototype [cfgObjectTest]:
+    - type
+    - version
+",
+  "stdout": "",
+}
+`;
+
 exports[`[mutagen appPrototypes config import-export] should update the modified appPrototypes: the modified appPrototypes have been updated 1`] = `
 Object {
   "stderr": "",

@@ -20,13 +20,19 @@ abstract class ConfigurationObjectTest(
     val importedConfigurationObject: ConfigurationObject?
 ) {
 
-    constructor(configurationObject: ConfigurationObject, emptyConfigurationObject: ConfigurationObject, mandatoryProperties: Set<String>) :
-            this(configurationObject, emptyConfigurationObject, mandatoryProperties, null)
+    constructor(
+        configurationObject: ConfigurationObject,
+        emptyConfigurationObject: ConfigurationObject,
+        mandatoryProperties: Set<String>
+    ) : this(configurationObject, emptyConfigurationObject, mandatoryProperties, null)
 
     private val configurationObjectType = configurationObject::class.simpleName!!.toLowerCase()
 
     @Test
-    fun `empty object missing mandatory properties should throw MandatoryPropertiesNotSetException`() {
+    abstract fun `object with different unchangeable properties' values should return the right unchangeable properties`()
+
+    @Test
+    fun `empty object missing mandatory properties should return the right missing properties for an object containing only non nullable fields`() {
         assertThat(emptyConfigurationObject.checkMandatoryProperties(EMPTY_CONFIGURATION, mockConfService()), equalTo(mandatoryProperties))
     }
 

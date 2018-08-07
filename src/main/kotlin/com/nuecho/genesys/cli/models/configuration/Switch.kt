@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
+import com.genesyslab.platform.applicationblocks.com.CfgObject
 import com.genesyslab.platform.applicationblocks.com.ICfgObject
 import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgSwitch
@@ -66,11 +67,11 @@ data class Switch(
         updateCfgObject(service, CfgSwitch(service)).also {
             setProperty("tenantDBID", service.getObjectDbid(tenant), it)
             setProperty("name", name, it)
+            setProperty("physSwitchDBID", service.getObjectDbid(physicalSwitch), it)
         }
 
     override fun updateCfgObject(service: IConfService, cfgObject: ICfgObject) =
         (cfgObject as CfgSwitch).also { switch ->
-            setProperty("physSwitchDBID", service.getObjectDbid(physicalSwitch), switch)
             setProperty("TServerDBID", service.getObjectDbid(tServer), switch)
             setProperty("linkType", toCfgLinkType(linkType), switch)
             setProperty(
@@ -92,6 +93,14 @@ data class Switch(
 
     override fun checkMandatoryProperties(configuration: Configuration, service: ConfService): Set<String> =
         if (physicalSwitch == null) setOf(PHYSICAL_SWITCH) else emptySet()
+
+    override fun checkUnchangeableProperties(cfgObject: CfgObject): Set<String> {
+        (cfgObject as CfgSwitch).also {
+            physicalSwitch?.run { if (this != it.physSwitch?.getReference()) return setOf(PHYSICAL_SWITCH) }
+        }
+
+        return emptySet()
+    }
 
     override fun afterPropertiesSet() {
         switchAccessCodes?.forEach { it.updateTenantReferences(tenant) }

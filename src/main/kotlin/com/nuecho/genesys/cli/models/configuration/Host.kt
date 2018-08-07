@@ -3,6 +3,7 @@ package com.nuecho.genesys.cli.models.configuration
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
+import com.genesyslab.platform.applicationblocks.com.CfgObject
 import com.genesyslab.platform.applicationblocks.com.ICfgObject
 import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgHost
@@ -87,6 +88,14 @@ data class Host(
         type ?: missingMandatoryProperties.add(TYPE)
 
         return missingMandatoryProperties
+    }
+
+    override fun checkUnchangeableProperties(cfgObject: CfgObject): Set<String> {
+        (cfgObject as CfgHost).also {
+            type?.run { if (this.toLowerCase() != it.type?.toShortName()) return setOf(TYPE) }
+        }
+
+        return emptySet()
     }
 
     override fun getReferences(): Set<ConfigurationObjectReference<*>> =
