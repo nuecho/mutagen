@@ -23,7 +23,7 @@ abstract class ImportOperation(
         if (detailed) {
             // TODO: move part of this within Console (i.e. print object to console with margin or something)
             val printableConfigurationObject = configurationObject.toJson().replace("\n", "\n$PRINT_MARGIN")
-            buffer.append("\n$PRINT_MARGIN$printableConfigurationObject")
+            buffer.append("${System.lineSeparator()}$PRINT_MARGIN$printableConfigurationObject")
         }
 
         buffer.append("|@")
