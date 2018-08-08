@@ -5,7 +5,7 @@ Object {
   "stderr": "",
   "stdout": "+ script [Environment/campaignScript]
 + campaign [Environment/cfgObjectTest]
-Completed. 2 object(s) imported.
+Completed. 2 objects created. 0 object updated. 0 object skipped.
 ",
 }
 `;
@@ -15,7 +15,7 @@ Object {
   "stderr": "",
   "stdout": "= campaign [Environment/cfgObjectTest]
 = script [Environment/campaignScript]
-Completed. 2 object(s) imported.
+Completed. 0 object created. 0 object updated. 2 objects skipped.
 ",
 }
 `;
@@ -24,7 +24,7 @@ exports[`[mutagen campaigns config import-export] should update the modified cam
 Object {
   "stderr": "",
   "stdout": "~ campaign [Environment/cfgObjectTest]
-Completed. 1 object(s) imported.
+Completed. 0 object created. 1 object updated. 0 object skipped.
 ",
 }
 `;

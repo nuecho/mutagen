@@ -4,7 +4,7 @@ exports[`[mutagen gvpIVRProfiles config import-export] should create the gvpIVRP
 Object {
   "stderr": "",
   "stdout": "+ gvpivrprofile [cfgObjectTest]
-Completed. 1 object(s) imported.
+Completed. 1 object created. 0 object updated. 0 object skipped.
 ",
 }
 `;
@@ -13,7 +13,7 @@ exports[`[mutagen gvpIVRProfiles config import-export] should skip the same gvpI
 Object {
   "stderr": "",
   "stdout": "= gvpivrprofile [cfgObjectTest]
-Completed. 1 object(s) imported.
+Completed. 0 object created. 0 object updated. 1 object skipped.
 ",
 }
 `;
@@ -45,7 +45,7 @@ exports[`[mutagen gvpIVRProfiles config import-export] should update the modifie
 Object {
   "stderr": "",
   "stdout": "~ gvpivrprofile [cfgObjectTest]
-Completed. 1 object(s) imported.
+Completed. 0 object created. 1 object updated. 0 object skipped.
 ",
 }
 `;

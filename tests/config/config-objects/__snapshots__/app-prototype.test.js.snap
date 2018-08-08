@@ -4,7 +4,7 @@ exports[`[mutagen appPrototypes config import-export] should create the appProto
 Object {
   "stderr": "",
   "stdout": "+ appprototype [cfgObjectTest]
-Completed. 1 object(s) imported.
+Completed. 1 object created. 0 object updated. 0 object skipped.
 ",
 }
 `;
@@ -13,7 +13,7 @@ exports[`[mutagen appPrototypes config import-export] should skip the same appPr
 Object {
   "stderr": "",
   "stdout": "= appprototype [cfgObjectTest]
-Completed. 1 object(s) imported.
+Completed. 0 object created. 0 object updated. 1 object skipped.
 ",
 }
 `;
@@ -46,7 +46,7 @@ exports[`[mutagen appPrototypes config import-export] should update the modified
 Object {
   "stderr": "",
   "stdout": "~ appprototype [cfgObjectTest]
-Completed. 1 object(s) imported.
+Completed. 0 object created. 1 object updated. 0 object skipped.
 ",
 }
 `;

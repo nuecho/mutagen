@@ -6,7 +6,7 @@ Object {
   "stdout": "+ appprototype [IVRServer-AppPrototype]
 + application [IVRServer-Application]
 + ivr [cfgObjectTest]
-Completed. 3 object(s) imported.
+Completed. 3 objects created. 0 object updated. 0 object skipped.
 ",
 }
 `;
@@ -17,7 +17,7 @@ Object {
   "stdout": "= application [IVRServer-Application]
 = appprototype [IVRServer-AppPrototype]
 = ivr [cfgObjectTest]
-Completed. 3 object(s) imported.
+Completed. 0 object created. 0 object updated. 3 objects skipped.
 ",
 }
 `;
@@ -51,7 +51,7 @@ exports[`[mutagen ivrs config import-export] should update the modified ivrs: th
 Object {
   "stderr": "",
   "stdout": "~ ivr [cfgObjectTest]
-Completed. 1 object(s) imported.
+Completed. 0 object created. 1 object updated. 0 object skipped.
 ",
 }
 `;

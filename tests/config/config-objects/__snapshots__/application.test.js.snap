@@ -5,7 +5,7 @@ Object {
   "stderr": "",
   "stdout": "+ application [backupServer]
 + application [cfgObjectTest]
-Completed. 2 object(s) imported.
+Completed. 2 objects created. 0 object updated. 0 object skipped.
 ",
 }
 `;
@@ -15,7 +15,7 @@ Object {
   "stderr": "",
   "stdout": "= application [cfgObjectTest]
 = application [backupServer]
-Completed. 2 object(s) imported.
+Completed. 0 object created. 0 object updated. 2 objects skipped.
 ",
 }
 `;
@@ -37,7 +37,7 @@ exports[`[mutagen applications config import-export] should update the modified 
 Object {
   "stderr": "",
   "stdout": "~ application [cfgObjectTest]
-Completed. 1 object(s) imported.
+Completed. 0 object created. 1 object updated. 0 object skipped.
 ",
 }
 `;

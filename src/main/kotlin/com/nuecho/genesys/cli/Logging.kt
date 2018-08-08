@@ -37,3 +37,6 @@ object Logging {
         logger.debug(message)
     }
 }
+
+fun String.pluralize(count: Int, plural: String? = null): String? =
+    if (count > 1) plural ?: this + 's' else this

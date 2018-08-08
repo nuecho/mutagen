@@ -4,7 +4,7 @@ exports[`[mutagen accessGroups config import-export] should create the accessGro
 Object {
   "stderr": "",
   "stdout": "+ accessgroup [Environment/cfgObjectTest]
-Completed. 1 object(s) imported.
+Completed. 1 object created. 0 object updated. 0 object skipped.
 ",
 }
 `;
@@ -13,7 +13,7 @@ exports[`[mutagen accessGroups config import-export] should skip the same access
 Object {
   "stderr": "",
   "stdout": "= accessgroup [Environment/cfgObjectTest]
-Completed. 1 object(s) imported.
+Completed. 0 object created. 0 object updated. 1 object skipped.
 ",
 }
 `;
@@ -33,7 +33,7 @@ exports[`[mutagen accessGroups config import-export] should update the modified 
 Object {
   "stderr": "",
   "stdout": "~ accessgroup [Environment/cfgObjectTest]
-Completed. 1 object(s) imported.
+Completed. 0 object created. 1 object updated. 0 object skipped.
 ",
 }
 `;

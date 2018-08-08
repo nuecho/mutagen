@@ -4,7 +4,7 @@ exports[`[mutagen roles config import-export] should create the roles: the roles
 Object {
   "stderr": "",
   "stdout": "+ role [cfgObjectTest]
-Completed. 1 object(s) imported.
+Completed. 1 object created. 0 object updated. 0 object skipped.
 ",
 }
 `;
@@ -13,7 +13,7 @@ exports[`[mutagen roles config import-export] should skip the same roles: the ro
 Object {
   "stderr": "",
   "stdout": "= role [cfgObjectTest]
-Completed. 1 object(s) imported.
+Completed. 0 object created. 0 object updated. 1 object skipped.
 ",
 }
 `;
@@ -22,7 +22,7 @@ exports[`[mutagen roles config import-export] should update the modified roles: 
 Object {
   "stderr": "",
   "stdout": "~ role [cfgObjectTest]
-Completed. 1 object(s) imported.
+Completed. 0 object created. 1 object updated. 0 object skipped.
 ",
 }
 `;

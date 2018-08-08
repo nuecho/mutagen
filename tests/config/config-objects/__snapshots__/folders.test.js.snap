@@ -5,7 +5,7 @@ Object {
   "stderr": "",
   "stdout": "+ folder [type: 'person', owner: 'tenant/Environment', path: 'Persons/cfgObjectTest']
 + folder [type: 'person', owner: 'tenant/Environment', path: 'Persons/cfgObjectTest/personSubFolder']
-Completed. 2 object(s) imported.
+Completed. 2 objects created. 0 object updated. 0 object skipped.
 ",
 }
 `;
@@ -15,7 +15,7 @@ Object {
   "stderr": "",
   "stdout": "= folder [type: 'person', owner: 'tenant/Environment', path: 'Persons/cfgObjectTest']
 ~ folder [type: 'person', owner: 'tenant/Environment', path: 'Persons/cfgObjectTest/personSubFolder']
-Completed. 2 object(s) imported.
+Completed. 0 object created. 1 object updated. 1 object skipped.
 ",
 }
 `;
@@ -24,7 +24,7 @@ exports[`[mutagen folders config import-export] should update the modified folde
 Object {
   "stderr": "",
   "stdout": "~ folder [type: 'person', owner: 'tenant/Environment', path: 'Persons/cfgObjectTest']
-Completed. 1 object(s) imported.
+Completed. 0 object created. 1 object updated. 0 object skipped.
 ",
 }
 `;
