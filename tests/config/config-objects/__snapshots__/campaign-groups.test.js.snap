@@ -14,7 +14,7 @@ Object {
 + switch [Environment/campaignGroupSwitch]
 + dn [number: 'campaignGroupDN', switch: 'campaignGroupSwitch', type: 'routingpoint', tenant: 'Environment']
 + campaigngroup [name: 'cfgObjectTest', campaign: 'campaignGroupCampaign']
-Completed. 11 object(s) imported.
+Completed. 11 objects created. 0 object updated. 0 object skipped.
 ",
 }
 `;
@@ -33,7 +33,7 @@ Object {
 = script [Environment/campaignGroupCapacityRule]
 = script [Environment/campaignGroupInteractionQueue]
 = switch [Environment/campaignGroupSwitch]
-Completed. 11 object(s) imported.
+Completed. 0 object created. 0 object updated. 11 objects skipped.
 ",
 }
 `;
@@ -53,7 +53,7 @@ exports[`[mutagen campaignGroups config import-export] should update the modifie
 Object {
   "stderr": "",
   "stdout": "~ campaigngroup [name: 'cfgObjectTest', campaign: 'campaignGroupCampaign']
-Completed. 1 object(s) imported.
+Completed. 0 object created. 1 object updated. 0 object skipped.
 ",
 }
 `;

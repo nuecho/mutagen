@@ -27,7 +27,7 @@ class ImportPlan(val configuration: Configuration, val service: ConfService) {
 
     fun print() = printPlan(orderedOperations)
 
-    fun apply(): Int {
+    fun apply(): Map<ImportOperationType, Int> {
         for (operation in orderedOperations) {
             operation.configurationObject.reference.let {
                 Logging.info { "Processing ${it.toConsoleString()}." }
@@ -37,8 +37,17 @@ class ImportPlan(val configuration: Configuration, val service: ConfService) {
             operation.print(false)
         }
 
-        // FIXME: We should probably expose the count for each operation type instead (see AR-359)
-        return orderedOperations.filter { it !is UpdateReferenceOperation }.count()
+        val count = mutableMapOf(CREATE to 0, SKIP to 0, UPDATE to 0)
+
+        return orderedOperations.fold(count) { accumulator, importOperation ->
+            accumulator.apply {
+                when (importOperation.type) {
+                    CREATE -> accumulator[CREATE] = accumulator[CREATE]!! + 1
+                    SKIP -> accumulator[SKIP] = accumulator[SKIP]!! + 1
+                    UPDATE -> accumulator[UPDATE] = accumulator[UPDATE]!! + 1
+                }
+            }
+        }
     }
 
     companion object {

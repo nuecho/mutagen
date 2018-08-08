@@ -4,7 +4,7 @@ exports[`[mutagen actionCodes config import-export] should create the actionCode
 Object {
   "stderr": "",
   "stdout": "+ actioncode [name: 'cfgObjectTest', type: 'transfer', tenant: 'Environment']
-Completed. 1 object(s) imported.
+Completed. 1 object created. 0 object updated. 0 object skipped.
 ",
 }
 `;
@@ -13,7 +13,7 @@ exports[`[mutagen actionCodes config import-export] should skip the same actionC
 Object {
   "stderr": "",
   "stdout": "= actioncode [name: 'cfgObjectTest', type: 'transfer', tenant: 'Environment']
-Completed. 1 object(s) imported.
+Completed. 0 object created. 0 object updated. 1 object skipped.
 ",
 }
 `;
@@ -33,7 +33,7 @@ exports[`[mutagen actionCodes config import-export] should update the modified a
 Object {
   "stderr": "",
   "stdout": "~ actioncode [name: 'cfgObjectTest', type: 'transfer', tenant: 'Environment']
-Completed. 1 object(s) imported.
+Completed. 0 object created. 1 object updated. 0 object skipped.
 ",
 }
 `;

@@ -4,7 +4,7 @@ exports[`[mutagen enumeratorValues config import-export] should create the enume
 Object {
   "stderr": "",
   "stdout": "+ enumeratorvalue [name: 'cfgObjectTest', enumerator: 'Environment/MediaType']
-Completed. 1 object(s) imported.
+Completed. 1 object created. 0 object updated. 0 object skipped.
 ",
 }
 `;
@@ -13,7 +13,7 @@ exports[`[mutagen enumeratorValues config import-export] should skip the same en
 Object {
   "stderr": "",
   "stdout": "= enumeratorvalue [name: 'cfgObjectTest', enumerator: 'Environment/MediaType']
-Completed. 1 object(s) imported.
+Completed. 0 object created. 0 object updated. 1 object skipped.
 ",
 }
 `;
@@ -37,7 +37,7 @@ exports[`[mutagen enumeratorValues config import-export] should update the modif
 Object {
   "stderr": "",
   "stdout": "~ enumeratorvalue [name: 'cfgObjectTest', enumerator: 'Environment/MediaType']
-Completed. 1 object(s) imported.
+Completed. 0 object created. 1 object updated. 0 object skipped.
 ",
 }
 `;

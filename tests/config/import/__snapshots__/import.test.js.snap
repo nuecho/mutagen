@@ -23,7 +23,7 @@ Object {
 + switch [Environment/MultiObjectImportSwitch2]
 + switch [Environment/MultiObjectImportSwitch3]
 + dn [number: '123', switch: 'MultiObjectImportSwitch1', type: 'Extension', name: 'MultiObjectImportDN', tenant: 'Environment']
-Completed. 6 object(s) imported.
+Completed. 6 objects created. 0 object updated. 0 object skipped.
 ",
 }
 `;
@@ -35,7 +35,7 @@ Object {
 + tenant [CycleConfigTenant]
 + script [CycleConfigTenant/CycleConfigScript]
 ~ tenant [CycleConfigTenant]
-Completed. 3 object(s) imported.
+Completed. 3 objects created. 1 object updated. 0 object skipped.
 ",
 }
 `;
@@ -77,7 +77,7 @@ Object {
 Please confirm [y|n]: + physicalswitch [AcceptChangesPhysicalSwitch]
 + switch [Environment/AcceptChangesSwitch]
 + dn [number: '123', switch: 'AcceptChangesSwitch', type: 'Extension', name: 'AcceptChangesDN', tenant: 'Environment']
-Completed. 3 object(s) imported.
+Completed. 3 objects created. 0 object updated. 0 object skipped.
 ",
 }
 `;
@@ -169,7 +169,7 @@ exports[`[mutagen config import file] should only import objects with a unique k
 Object {
   "stderr": "",
   "stdout": "+ switch [Environment/sameSwitch]
-Completed. 1 object(s) imported.
+Completed. 1 object created. 0 object updated. 0 object skipped.
 ",
 }
 `;
@@ -183,7 +183,7 @@ Object {
 = switch [Environment/MultiObjectImportSwitch1]
 = switch [Environment/MultiObjectImportSwitch2]
 = switch [Environment/MultiObjectImportSwitch3]
-Completed. 6 object(s) imported.
+Completed. 0 object created. 0 object updated. 6 objects skipped.
 ",
 }
 `;
@@ -197,7 +197,7 @@ Object {
 ~ switch [Environment/MultiObjectImportSwitch1]
 ~ switch [Environment/MultiObjectImportSwitch2]
 ~ switch [Environment/MultiObjectImportSwitch3]
-Completed. 6 object(s) imported.
+Completed. 0 object created. 6 objects updated. 0 object skipped.
 ",
 }
 `;

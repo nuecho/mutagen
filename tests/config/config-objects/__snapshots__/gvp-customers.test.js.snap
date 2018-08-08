@@ -4,7 +4,7 @@ exports[`[mutagen gvpCustomers config import-export] should create the gvpCustom
 Object {
   "stderr": "",
   "stdout": "+ gvpcustomer [cfgObjectTest]
-Completed. 1 object(s) imported.
+Completed. 1 object created. 0 object updated. 0 object skipped.
 ",
 }
 `;
@@ -13,7 +13,7 @@ exports[`[mutagen gvpCustomers config import-export] should skip the same gvpCus
 Object {
   "stderr": "",
   "stdout": "= gvpcustomer [cfgObjectTest]
-Completed. 1 object(s) imported.
+Completed. 0 object created. 0 object updated. 1 object skipped.
 ",
 }
 `;
@@ -49,7 +49,7 @@ exports[`[mutagen gvpCustomers config import-export] should update the modified 
 Object {
   "stderr": "",
   "stdout": "~ gvpcustomer [cfgObjectTest]
-Completed. 1 object(s) imported.
+Completed. 0 object created. 1 object updated. 0 object skipped.
 ",
 }
 `;

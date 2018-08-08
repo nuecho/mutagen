@@ -4,7 +4,7 @@ exports[`[mutagen hosts config import-export] should create the hosts: the hosts
 Object {
   "stderr": "",
   "stdout": "+ host [cfgObjectTest]
-Completed. 1 object(s) imported.
+Completed. 1 object created. 0 object updated. 0 object skipped.
 ",
 }
 `;
@@ -13,7 +13,7 @@ exports[`[mutagen hosts config import-export] should skip the same hosts: the ho
 Object {
   "stderr": "",
   "stdout": "= host [cfgObjectTest]
-Completed. 1 object(s) imported.
+Completed. 0 object created. 0 object updated. 1 object skipped.
 ",
 }
 `;
@@ -46,7 +46,7 @@ exports[`[mutagen hosts config import-export] should update the modified hosts: 
 Object {
   "stderr": "",
   "stdout": "~ host [cfgObjectTest]
-Completed. 1 object(s) imported.
+Completed. 0 object created. 1 object updated. 0 object skipped.
 ",
 }
 `;

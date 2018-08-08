@@ -7,7 +7,7 @@ Object {
 + host [Host1]
 + application [Application1]
 + service [cfgObjectTest]
-Completed. 4 object(s) imported.
+Completed. 4 objects created. 0 object updated. 0 object skipped.
 ",
 }
 `;
@@ -19,7 +19,7 @@ Object {
 = appprototype [serviceAppPrototype]
 = host [Host1]
 = service [cfgObjectTest]
-Completed. 4 object(s) imported.
+Completed. 0 object created. 0 object updated. 4 objects skipped.
 ",
 }
 `;
@@ -51,7 +51,7 @@ exports[`[mutagen services config import-export] should update the modified serv
 Object {
   "stderr": "",
   "stdout": "~ service [cfgObjectTest]
-Completed. 1 object(s) imported.
+Completed. 0 object created. 1 object updated. 0 object skipped.
 ",
 }
 `;

@@ -7,7 +7,7 @@ Object {
 + script [Environment/reactionScript1]
 + script [Environment/reactionScript2]
 + alarmcondition [cfgObjectTest]
-Completed. 4 object(s) imported.
+Completed. 4 objects created. 0 object updated. 0 object skipped.
 ",
 }
 `;
@@ -19,7 +19,7 @@ Object {
 = script [Environment/detectionScript]
 = script [Environment/reactionScript1]
 = script [Environment/reactionScript2]
-Completed. 4 object(s) imported.
+Completed. 0 object created. 0 object updated. 4 objects skipped.
 ",
 }
 `;
@@ -41,7 +41,7 @@ exports[`[mutagen alarmConditions config import-export] should update the modifi
 Object {
   "stderr": "",
   "stdout": "~ alarmcondition [cfgObjectTest]
-Completed. 1 object(s) imported.
+Completed. 0 object created. 1 object updated. 0 object skipped.
 ",
 }
 `;

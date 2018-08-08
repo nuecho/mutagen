@@ -6,9 +6,13 @@ import com.nuecho.genesys.cli.commands.ConfigServerCommand
 import com.nuecho.genesys.cli.commands.config.Config
 import com.nuecho.genesys.cli.commands.config.Validator
 import com.nuecho.genesys.cli.commands.config.import.Import.importConfiguration
+import com.nuecho.genesys.cli.commands.config.import.operation.ImportOperationType.CREATE
+import com.nuecho.genesys.cli.commands.config.import.operation.ImportOperationType.SKIP
+import com.nuecho.genesys.cli.commands.config.import.operation.ImportOperationType.UPDATE
 import com.nuecho.genesys.cli.commands.config.import.operation.ImportPlan
 import com.nuecho.genesys.cli.core.defaultJsonObjectMapper
 import com.nuecho.genesys.cli.models.configuration.Configuration
+import com.nuecho.genesys.cli.pluralize
 import com.nuecho.genesys.cli.services.ConfService
 import com.nuecho.genesys.cli.services.ConfigurationObjectRepository
 import picocli.CommandLine
@@ -42,8 +46,10 @@ class ImportCommand : ConfigServerCommand() {
         val result = withEnvironmentConfService { service: ConfService, _ ->
             ConfigurationObjectRepository.prefetchConfigurationObjects(service)
 
-            val configurationString = inputFile!!.readText()
-            Configuration.interpolateVariables(configurationString, System.getenv().toMap())
+            val configurationString = Configuration.interpolateVariables(
+                inputFile!!.readText(),
+                System.getenv().toMap()
+            )
 
             val configuration = defaultJsonObjectMapper().readValue(configurationString, Configuration::class.java)
             importConfiguration(configuration, service, autoConfirm)
@@ -76,7 +82,12 @@ object Import {
         info { "Beginning import." }
         val count = plan.apply()
 
-        println("Completed. $count object(s) imported.")
+        println(
+            "Completed. ${count[CREATE]} ${"object".pluralize(count[CREATE]!!)} created. " +
+                    "${count[UPDATE]} ${"object".pluralize(count[UPDATE]!!)} updated. " +
+                    "${count[SKIP]} ${"object".pluralize(count[SKIP]!!)} skipped."
+        )
+
         return true
     }
 }

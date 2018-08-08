@@ -4,7 +4,7 @@ exports[`[mutagen transactions config import-export] should create the transacti
 Object {
   "stderr": "",
   "stdout": "+ transaction [name: 'cfgObjectTest', type: 'calldata', tenant: 'Environment']
-Completed. 1 object(s) imported.
+Completed. 1 object created. 0 object updated. 0 object skipped.
 ",
 }
 `;
@@ -13,7 +13,7 @@ exports[`[mutagen transactions config import-export] should skip the same transa
 Object {
   "stderr": "",
   "stdout": "= transaction [name: 'cfgObjectTest', type: 'calldata', tenant: 'Environment']
-Completed. 1 object(s) imported.
+Completed. 0 object created. 0 object updated. 1 object skipped.
 ",
 }
 `;
@@ -33,7 +33,7 @@ exports[`[mutagen transactions config import-export] should update the modified 
 Object {
   "stderr": "",
   "stdout": "~ transaction [name: 'cfgObjectTest', type: 'callData', tenant: 'Environment']
-Completed. 1 object(s) imported.
+Completed. 0 object created. 1 object updated. 0 object skipped.
 ",
 }
 `;
