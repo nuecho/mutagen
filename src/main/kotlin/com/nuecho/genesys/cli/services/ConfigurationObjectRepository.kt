@@ -17,6 +17,10 @@ object ConfigurationObjectRepository {
 
     operator fun get(reference: ConfigurationObjectReference<*>) = configurationObjects[reference]
 
+    operator fun set(reference: ConfigurationObjectReference<*>, cfgObject: ICfgObject) {
+        configurationObjects[reference] = cfgObject
+    }
+
     fun prefetchConfigurationObjects(confService: IConfService) {
         debug { "Prefetching configuration objects." }
 
