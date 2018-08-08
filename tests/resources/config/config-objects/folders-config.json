@@ -26,6 +26,20 @@
           "string": "def"
         }
       }
+    },
+    {
+      "folder": {
+        "owner": {
+          "name": "Environment",
+          "type": "tenant"
+        },
+        "path": [
+          "Persons",
+          "cfgObjectTest"
+        ],
+        "type": "person"
+      },
+      "name": "personSubFolder"
     }
   ]
 }

@@ -16,6 +16,7 @@ import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgObj
 import com.nuecho.genesys.cli.models.configuration.reference.ConfigurationObjectReference
 import com.nuecho.genesys.cli.models.configuration.reference.FolderReference
 import com.nuecho.genesys.cli.services.ConfService
+import com.nuecho.genesys.cli.services.ConfigurationObjectRepository
 import com.nuecho.genesys.cli.toShortName
 
 data class Folder(
@@ -52,6 +53,8 @@ data class Folder(
             setProperty("ownerID", folder.owner.toCfgOwnerID(it), it)
             setProperty("type", toCfgObjectType(folder.type), it)
             setProperty("folderClass", toCfgFolderClass(folderClass), it)
+
+            ConfigurationObjectRepository[reference] = it
         })
 
     override fun updateCfgObject(service: IConfService, cfgObject: ICfgObject) =
