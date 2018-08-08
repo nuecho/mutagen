@@ -12,6 +12,7 @@ import com.nuecho.genesys.cli.asBoolean
 import com.nuecho.genesys.cli.core.InitializingBean
 import com.nuecho.genesys.cli.getFolderReference
 import com.nuecho.genesys.cli.getReference
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.checkUnchangeableProperties
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setFolder
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setProperty
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgObjectState
@@ -63,6 +64,7 @@ data class EnumeratorValue(
             setProperty("enumeratorDBID", service.getObjectDbid(enumerator), it)
             setProperty("name", name, it)
             setProperty("tenantDBID", service.getObjectDbid(tenant), it)
+            setFolder(folder, it)
         })
 
     override fun updateCfgObject(service: IConfService, cfgObject: ICfgObject) =
@@ -72,7 +74,6 @@ data class EnumeratorValue(
             setProperty("isDefault", ConfigurationObjects.toCfgFlag(isDefault), cfgEnumeratorValue)
             setProperty("state", toCfgObjectState(state), cfgEnumeratorValue)
             setProperty("userProperties", ConfigurationObjects.toKeyValueCollection(userProperties), cfgEnumeratorValue)
-            setFolder(folder, cfgEnumeratorValue)
         }
 
     override fun cloneBare() = null
@@ -87,7 +88,7 @@ data class EnumeratorValue(
 
     // In theory, tenant is unchangeable, but changing the tenant changes the enumerator's reference and therefore
     // changes the enumeratorValue reference, creating a new EnumeratorValue.
-    override fun checkUnchangeableProperties(cfgObject: CfgObject) = emptySet<String>()
+    override fun checkUnchangeableProperties(cfgObject: CfgObject) = checkUnchangeableProperties(this, cfgObject)
 
     override fun afterPropertiesSet() {
         enumerator.tenant = tenant

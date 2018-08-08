@@ -44,6 +44,7 @@ import com.genesyslab.platform.configuration.protocol.types.CfgSwitchType
 import com.genesyslab.platform.configuration.protocol.types.CfgTargetType
 import com.genesyslab.platform.configuration.protocol.types.CfgTraceMode
 import com.genesyslab.platform.configuration.protocol.types.CfgTransactionType
+import com.nuecho.genesys.cli.getFolderReference
 import com.nuecho.genesys.cli.models.configuration.reference.FolderReference
 
 object ConfigurationObjects {
@@ -69,6 +70,17 @@ object ConfigurationObjects {
 
     fun setProperty(name: String, value: Any?, cfgBase: ICfgBase) =
         value?.let { cfgBase.setProperty(name, it) }
+
+    fun checkUnchangeableProperties(configurationObject: ConfigurationObject, cfgObject: CfgObject) =
+        mutableSetOf<String>().also { unchangeableProperties ->
+            configurationObject.folder?.let {
+                val remoteFolder = cfgObject.getFolderReference()
+                // root folders are represented as null server side
+                if (it != remoteFolder && !(remoteFolder == null && it.isRoot())) {
+                    unchangeableProperties.add(FOLDER)
+                }
+            }
+        }
 
     @Suppress("UNCHECKED_CAST")
     fun toKeyValueCollection(map: Map<String, Any>?): KeyValueCollection? =

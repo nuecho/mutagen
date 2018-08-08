@@ -9,6 +9,7 @@ import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgHost
 import com.nuecho.genesys.cli.getFolderReference
 import com.nuecho.genesys.cli.getReference
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.checkUnchangeableProperties
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setFolder
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setProperty
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgHostType
@@ -60,6 +61,7 @@ data class Host(
         updateCfgObject(service, CfgHost(service)).also {
             setProperty("name", name, it)
             setProperty(TYPE, toCfgHostType(type), it)
+            setFolder(folder, it)
         }
 
     override fun updateCfgObject(service: IConfService, cfgObject: ICfgObject) =
@@ -71,7 +73,6 @@ data class Host(
 
             setProperty("userProperties", toKeyValueCollection(userProperties), cfgHost)
             setProperty("state", toCfgObjectState(state), cfgHost)
-            setFolder(folder, cfgHost)
         }
 
     override fun cloneBare() = Host(
@@ -90,13 +91,12 @@ data class Host(
         return missingMandatoryProperties
     }
 
-    override fun checkUnchangeableProperties(cfgObject: CfgObject): Set<String> {
-        (cfgObject as CfgHost).also {
-            type?.run { if (this.toLowerCase() != it.type?.toShortName()) return setOf(TYPE) }
+    override fun checkUnchangeableProperties(cfgObject: CfgObject) =
+        checkUnchangeableProperties(this, cfgObject).also { unchangeableProperties ->
+            (cfgObject as CfgHost).also {
+                type?.run { if (this.toLowerCase() != it.type?.toShortName()) unchangeableProperties.add(TYPE) }
+            }
         }
-
-        return emptySet()
-    }
 
     override fun getReferences(): Set<ConfigurationObjectReference<*>> =
         referenceSetBuilder()

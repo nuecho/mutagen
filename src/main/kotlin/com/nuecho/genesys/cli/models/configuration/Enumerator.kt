@@ -9,6 +9,7 @@ import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgEnumerator
 import com.nuecho.genesys.cli.getFolderReference
 import com.nuecho.genesys.cli.getReference
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.checkUnchangeableProperties
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setFolder
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setProperty
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgEnumeratorType
@@ -52,6 +53,7 @@ data class Enumerator(
         updateCfgObject(service, CfgEnumerator(service)).also {
             setProperty("name", name, it)
             setProperty("tenantDBID", service.getObjectDbid(tenant), it)
+            setFolder(folder, it)
         }
 
     override fun updateCfgObject(service: IConfService, cfgObject: ICfgObject) =
@@ -61,12 +63,11 @@ data class Enumerator(
             setProperty(TYPE, toCfgEnumeratorType(type), it)
             setProperty("state", toCfgObjectState(state), it)
             setProperty("userProperties", ConfigurationObjects.toKeyValueCollection(userProperties), it)
-            setFolder(folder, it)
         }
 
     override fun cloneBare() = null
 
-    override fun checkUnchangeableProperties(cfgObject: CfgObject) = emptySet<String>()
+    override fun checkUnchangeableProperties(cfgObject: CfgObject) = checkUnchangeableProperties(this, cfgObject)
 
     override fun checkMandatoryProperties(configuration: Configuration, service: ConfService): Set<String> {
         val missingMandatoryProperties = mutableSetOf<String>()

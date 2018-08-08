@@ -60,6 +60,12 @@ test(`[mutagen config import file] should not import any objects if some depende
   assertMutagenResult(`config import --auto-confirm ${MULTIPLE_VALIDATION_ERRORS_CONFIGURATION_PATH}`, "found missing dependencies and properties", 1);
 });
 
+test(`[mutagen --password-from-stdin config import file] should fail if --auto-confirm is not set`, () => {
+  const { code, output } = exec(`echo "password" | ${MUTAGEN_PATH} --password-from-stdin --env=nopassword config import config.json`)
+  expect(output).toMatchSnapshot("import stdin password");
+  expect(code).toBe(1);
+});
+
 test(`[mutagen config import file] should not import the objects if the user does not confirm the changes`, (done) => {
   const childProcess = mutagenAsync(`config import ${REJECT_CHANGES_CONFIGURATION_PATH}`, ({ code, output }) => {
     expect(output).toMatchSnapshot("changes not applied");

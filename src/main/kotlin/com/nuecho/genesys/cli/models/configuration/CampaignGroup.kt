@@ -12,6 +12,7 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgPlaceGroup
 import com.nuecho.genesys.cli.core.InitializingBean
 import com.nuecho.genesys.cli.getFolderReference
 import com.nuecho.genesys.cli.getReference
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.checkUnchangeableProperties
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setFolder
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setProperty
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgDialMode
@@ -106,6 +107,7 @@ data class CampaignGroup(
         updateCfgObject(service, CfgCampaignGroup(service)).also {
             setProperty("campaignDBID", campaign.let { service.getObjectDbid(it) }, it)
             setProperty("name", name, it)
+            setFolder(folder, it)
         }
 
     override fun updateCfgObject(service: IConfService, cfgObject: ICfgObject) =
@@ -148,7 +150,6 @@ data class CampaignGroup(
 
             setProperty("state", toCfgObjectState(state), cfgCampaignGroup)
             setProperty("userProperties", toKeyValueCollection(userProperties), cfgCampaignGroup)
-            setFolder(folder, cfgCampaignGroup)
         }
 
     override fun cloneBare() = CampaignGroup(campaign = campaign, name = name, group = group)
@@ -156,7 +157,7 @@ data class CampaignGroup(
     override fun checkMandatoryProperties(configuration: Configuration, service: ConfService): Set<String> =
         if (group == null) setOf(GROUP) else emptySet()
 
-    override fun checkUnchangeableProperties(cfgObject: CfgObject) = emptySet<String>()
+    override fun checkUnchangeableProperties(cfgObject: CfgObject) = checkUnchangeableProperties(this, cfgObject)
 
     override fun afterPropertiesSet() {
         group?.tenant = campaign.tenant

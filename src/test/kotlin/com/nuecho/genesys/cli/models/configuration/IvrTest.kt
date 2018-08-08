@@ -67,15 +67,13 @@ class IvrTest : ConfigurationObjectTest(
     }
 
     @Test
-    override fun `object with different unchangeable properties' values should return the right unchangeable properties`() {
-        val differentTenant = mockCfgTenant("differentTenant")
-        val cfgIvr = mockCfgIvr(name = ivr.name).also {
+    override fun `object with different unchangeable properties' values should return the right unchangeable properties`() =
+        mockCfgIvr(ivr.name).let {
+            val differentTenant = mockCfgTenant("differentTenant")
             every { it.type } returns CFGIVRTAmerex
             every { it.tenant } returns differentTenant
+            assertUnchangeableProperties(it, FOLDER, TENANT, TYPE)
         }
-
-        assertThat(configurationObject.checkUnchangeableProperties(cfgIvr), equalTo(setOf(TENANT, TYPE)))
-    }
 
     @Test
     fun `updateCfgObject should properly create CfgIVR`() {

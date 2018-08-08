@@ -66,20 +66,15 @@ class FieldTest : ConfigurationObjectTest(
     }
 
     @Test
-    override fun `object with different unchangeable properties' values should return the right unchangeable properties`() {
-        val cfgField = mockCfgField(name = field.name).also {
+    override fun `object with different unchangeable properties' values should return the right unchangeable properties`() =
+        mockCfgField(name = field.name).let {
             every { it.type } returns CFGDTDateTime
             every { it.length } returns 4
             every { it.isNullable } returns CFGTrue
             every { it.isPrimaryKey } returns CFGTrue
             every { it.isUnique } returns CFGTrue
+            assertUnchangeableProperties(it, FOLDER, TYPE, LENGTH, IS_NULLABLE, IS_PRIMARY_KEY, IS_UNIQUE)
         }
-
-        assertThat(
-            configurationObject.checkUnchangeableProperties(cfgField),
-            equalTo(setOf(TYPE, LENGTH, IS_NULLABLE, IS_PRIMARY_KEY, IS_UNIQUE))
-        )
-    }
 
     @Test
     fun `updateCfgObject should properly create CfgField`() {

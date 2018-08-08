@@ -90,13 +90,11 @@ class ServiceTest : ConfigurationObjectTest(
     }
 
     @Test
-    override fun `object with different unchangeable properties' values should return the right unchangeable properties`() {
-        val cfgService = mockCfgService(name = service.name).also {
+    override fun `object with different unchangeable properties' values should return the right unchangeable properties`() =
+        mockCfgService(name = service.name).let {
             every { it.solutionType } returns CFGSTDesktopNETServerSolution
+            assertUnchangeableProperties(it, FOLDER, SOLUTION_TYPE)
         }
-
-        assertThat(configurationObject.checkUnchangeableProperties(cfgService), equalTo(setOf(SOLUTION_TYPE)))
-    }
 
     @Test
     fun `updateCfgObject should properly create CfgService`() {

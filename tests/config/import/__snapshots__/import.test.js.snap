@@ -1,5 +1,13 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`[mutagen --password-from-stdin config import file] should fail if --auto-confirm is not set: import stdin password 1`] = `
+Object {
+  "stderr": "--auto-confirm must be specified in conjunction with --password-from-stdin.
+",
+  "stdout": "",
+}
+`;
+
 exports[`[mutagen config import --help] should print import usage: import usage 1`] = `
 Object {
   "stderr": "",

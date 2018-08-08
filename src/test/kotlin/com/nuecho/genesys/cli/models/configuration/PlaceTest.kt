@@ -78,9 +78,9 @@ class PlaceTest : ConfigurationObjectTest(
         assertThat(place.getReferences(), equalTo(expected))
     }
 
-    override fun `object with different unchangeable properties' values should return the right unchangeable properties`() {
-        // not implemented, since object has no unchangeable properties
-    }
+    @Test
+    override fun `object with different unchangeable properties' values should return the right unchangeable properties`() =
+        assertUnchangeableProperties(mockCfgPlace(), FOLDER)
 
     @Test
     fun `updateCfgObject should properly create CfgPlace`() {

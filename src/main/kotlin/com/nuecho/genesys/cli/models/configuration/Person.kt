@@ -12,6 +12,7 @@ import com.nuecho.genesys.cli.asBoolean
 import com.nuecho.genesys.cli.core.InitializingBean
 import com.nuecho.genesys.cli.getFolderReference
 import com.nuecho.genesys.cli.getReference
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.checkUnchangeableProperties
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setFolder
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setProperty
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgAppType
@@ -80,6 +81,7 @@ data class Person(
         updateCfgObject(service, CfgPerson(service)).also {
             setProperty("tenantDBID", service.getObjectDbid(tenant), it)
             setProperty("employeeID", employeeId, it)
+            setFolder(folder, it)
         }
 
     override fun updateCfgObject(service: IConfService, cfgObject: ICfgObject) =
@@ -98,7 +100,6 @@ data class Person(
             setProperty("appRanks", toCfgAppRankList(appRanks, it), it)
             setProperty("userProperties", toKeyValueCollection(userProperties), it)
             setProperty("agentInfo", agentInfo?.toCfgAgentInfo(it), it)
-            setFolder(folder, it)
         }
 
     override fun cloneBare() = Person(
@@ -110,7 +111,7 @@ data class Person(
     override fun checkMandatoryProperties(configuration: Configuration, service: ConfService): Set<String> =
         if (userName == null) setOf(USER_NAME) else emptySet()
 
-    override fun checkUnchangeableProperties(cfgObject: CfgObject) = emptySet<String>()
+    override fun checkUnchangeableProperties(cfgObject: CfgObject) = checkUnchangeableProperties(this, cfgObject)
 
     override fun afterPropertiesSet() {
         agentInfo?.updateTenantReferences(tenant)

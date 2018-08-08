@@ -10,6 +10,7 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgTenant
 import com.nuecho.genesys.cli.core.InitializingBean
 import com.nuecho.genesys.cli.getFolderReference
 import com.nuecho.genesys.cli.getReference
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.checkUnchangeableProperties
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setFolder
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setProperty
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgObjectState
@@ -54,7 +55,10 @@ data class Tenant(
     )
 
     override fun createCfgObject(service: IConfService) =
-        updateCfgObject(service, CfgTenant(service).also { setProperty("name", name, it) })
+        updateCfgObject(service, CfgTenant(service).also {
+            setProperty("name", name, it)
+            setFolder(folder, it)
+        })
 
     override fun updateCfgObject(service: IConfService, cfgObject: ICfgObject) =
         (cfgObject as CfgTenant).also {
@@ -66,14 +70,13 @@ data class Tenant(
 
             setProperty("state", toCfgObjectState(state), it)
             setProperty("userProperties", toKeyValueCollection(userProperties), it)
-            setFolder(folder, it)
         }
 
     override fun cloneBare() = Tenant(name)
 
     override fun checkMandatoryProperties(configuration: Configuration, service: ConfService): Set<String> = emptySet()
 
-    override fun checkUnchangeableProperties(cfgObject: CfgObject) = emptySet<String>()
+    override fun checkUnchangeableProperties(cfgObject: CfgObject) = checkUnchangeableProperties(this, cfgObject)
 
     override fun afterPropertiesSet() {
         defaultContract?.tenant = reference

@@ -10,6 +10,7 @@ import com.genesyslab.platform.configuration.protocol.types.CfgObjectType.CFGPla
 import com.nuecho.genesys.cli.core.InitializingBean
 import com.nuecho.genesys.cli.getFolderReference
 import com.nuecho.genesys.cli.getReference
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.checkUnchangeableProperties
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setFolder
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setProperty
 import com.nuecho.genesys.cli.models.configuration.reference.ConfigurationObjectReference
@@ -46,7 +47,9 @@ data class PlaceGroup(
     )
 
     override fun createCfgObject(service: IConfService) =
-        updateCfgObject(service, CfgPlaceGroup(service))
+        updateCfgObject(service, CfgPlaceGroup(service).also {
+            setFolder(folder, it)
+        })
 
     override fun updateCfgObject(service: IConfService, cfgObject: ICfgObject) =
         (cfgObject as CfgPlaceGroup).also { cfgPlaceGroup ->
@@ -58,14 +61,13 @@ data class PlaceGroup(
 
             setProperty("groupInfo", groupInfo, cfgPlaceGroup)
             setProperty("placeDBIDs", places?.map { service.getObjectDbid(it) }, cfgPlaceGroup)
-            setFolder(folder, cfgPlaceGroup)
         }
 
     override fun cloneBare() = PlaceGroup(Group(group.tenant, group.name))
 
     override fun checkMandatoryProperties(configuration: Configuration, service: ConfService): Set<String> = emptySet()
 
-    override fun checkUnchangeableProperties(cfgObject: CfgObject) = emptySet<String>()
+    override fun checkUnchangeableProperties(cfgObject: CfgObject) = checkUnchangeableProperties(this, cfgObject)
 
     override fun afterPropertiesSet() {
         group.updateTenantReferences()

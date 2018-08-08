@@ -9,6 +9,7 @@ import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgTransaction
 import com.nuecho.genesys.cli.getFolderReference
 import com.nuecho.genesys.cli.getReference
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.checkUnchangeableProperties
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setFolder
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setProperty
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgTransactionType
@@ -56,6 +57,7 @@ data class Transaction(
             setProperty("tenantDBID", service.getObjectDbid(tenant), it)
             setProperty("name", name, it)
             setProperty("type", toCfgTransactionType(type), it)
+            setFolder(folder, it)
         })
 
     override fun updateCfgObject(service: IConfService, cfgObject: ICfgObject) =
@@ -65,7 +67,6 @@ data class Transaction(
             setProperty("recordPeriod", recordPeriod, it)
             setProperty("userProperties", toKeyValueCollection(userProperties), it)
             setProperty("state", ConfigurationObjects.toCfgObjectState(state), it)
-            setFolder(folder, it)
         }
 
     override fun cloneBare() = null
@@ -73,7 +74,7 @@ data class Transaction(
     override fun checkMandatoryProperties(configuration: Configuration, service: ConfService): Set<String> =
         if (alias == null) setOf(ALIAS) else emptySet()
 
-    override fun checkUnchangeableProperties(cfgObject: CfgObject) = emptySet<String>()
+    override fun checkUnchangeableProperties(cfgObject: CfgObject) = checkUnchangeableProperties(this, cfgObject)
 
     override fun applyDefaultValues() {
         // alias = name

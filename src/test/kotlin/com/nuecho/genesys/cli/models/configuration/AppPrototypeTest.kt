@@ -60,18 +60,16 @@ class AppPrototypeTest : ConfigurationObjectTest(
     }
 
     @Test
-    override fun `object with different unchangeable properties' values should return the right unchangeable properties`() {
-        val cfgAppPrototype = mockCfgAppPrototype(
+    override fun `object with different unchangeable properties' values should return the right unchangeable properties`() =
+        mockCfgAppPrototype(
             name = appPrototype.name,
             type = CFGMaxAppType,
             version = "different-${appPrototype.version}"
-        ).also {
+        ).let {
             every { it.options } returns null
             every { it.userProperties } returns null
+            assertUnchangeableProperties(it, FOLDER, TYPE, VERSION)
         }
-
-        assertThat(configurationObject.checkUnchangeableProperties(cfgAppPrototype), equalTo(setOf(TYPE, VERSION)))
-    }
 
     @Test
     fun `updateCfgObject should properly create CfgAppPrototype`() {

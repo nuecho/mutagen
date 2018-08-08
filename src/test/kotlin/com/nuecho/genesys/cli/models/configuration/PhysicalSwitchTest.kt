@@ -50,13 +50,11 @@ class PhysicalSwitchTest : ConfigurationObjectTest(
     }
 
     @Test
-    override fun `object with different unchangeable properties' values should return the right unchangeable properties`() {
-        val cfgPhysicalSwitch = mockCfgPhysicalSwitch(name = physicalSwitch.name).also {
+    override fun `object with different unchangeable properties' values should return the right unchangeable properties`() =
+        mockCfgPhysicalSwitch(name = physicalSwitch.name).let {
             every { it.type } returns CFG3511ProtocolInterface
+            assertUnchangeableProperties(it, FOLDER, TYPE)
         }
-
-        assertThat(configurationObject.checkUnchangeableProperties(cfgPhysicalSwitch), equalTo(setOf(TYPE)))
-    }
 
     @Test
     fun `createCfgObject should properly create CfgPhysicalSwitch`() {

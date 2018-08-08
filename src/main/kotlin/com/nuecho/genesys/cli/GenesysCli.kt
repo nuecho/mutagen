@@ -32,6 +32,7 @@ _   .-')                .-') _      ('-.                   ('-.       .-') _
 const val SYNOPSIS = "mutagen [OPTIONS] <command>"
 const val FOOTER = "See 'mutagen <command> --help' to read about a specific command."
 const val EXTRA_FOOTER = "Please specify a command."
+const val PASSWORD_FROM_STDIN = "--password-from-stdin"
 
 @CommandLine.Command(
     name = "mutagen",
@@ -108,7 +109,7 @@ open class GenesysCli : GenesysCliCommand() {
     var environmentName = Preferences.DEFAULT_ENVIRONMENT
 
     @CommandLine.Option(
-        names = ["-p", "--read-password-from-stdin"],
+        names = ["-p", PASSWORD_FROM_STDIN],
         description = ["Read password from standard input."]
     )
     var readPasswordFromStdin = false

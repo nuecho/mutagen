@@ -68,13 +68,11 @@ class HostTest : ConfigurationObjectTest(
     }
 
     @Test
-    override fun `object with different unchangeable properties' values should return the right unchangeable properties`() {
-        val cfgHost = mockCfgHost(name = host.name).also {
+    override fun `object with different unchangeable properties' values should return the right unchangeable properties`() =
+        mockCfgHost(name = host.name).let {
             every { it.type } returns CFGAgentWorkstation
+            assertUnchangeableProperties(it, FOLDER, TYPE)
         }
-
-        assertThat(configurationObject.checkUnchangeableProperties(cfgHost), equalTo(setOf(TYPE)))
-    }
 
     @Test
     override fun `initialized object should properly serialize`() {

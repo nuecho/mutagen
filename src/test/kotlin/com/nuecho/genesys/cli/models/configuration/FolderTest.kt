@@ -51,9 +51,9 @@ class FolderTest : ConfigurationObjectTest(
         assertThat(folder.getReferences(), equalTo(expected))
     }
 
-    override fun `object with different unchangeable properties' values should return the right unchangeable properties`() {
-        // not implemented, since object has no unchangeable properties
-    }
+    @Test
+    override fun `object with different unchangeable properties' values should return the right unchangeable properties`() =
+        assertUnchangeableProperties(mockCfgFolder(), FOLDER)
 
     @Test
     fun `createCfgObject should properly create CfgFolder`() {

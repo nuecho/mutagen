@@ -8,6 +8,7 @@ import com.genesyslab.platform.applicationblocks.com.ICfgObject
 import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgAppPrototype
 import com.nuecho.genesys.cli.getFolderReference
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.checkUnchangeableProperties
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setFolder
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setProperty
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgAppType
@@ -50,6 +51,7 @@ data class AppPrototype(
             setProperty("name", name, it)
             setProperty(TYPE, toCfgAppType(type), it)
             setProperty(VERSION, version, it)
+            setFolder(folder, it)
         }
 
     override fun updateCfgObject(service: IConfService, cfgObject: ICfgObject) =
@@ -57,7 +59,6 @@ data class AppPrototype(
             setProperty("options", ConfigurationObjects.toKeyValueCollection(options), it)
             setProperty("state", toCfgObjectState(state), it)
             setProperty("userProperties", ConfigurationObjects.toKeyValueCollection(userProperties), it)
-            setFolder(folder, it)
         }
 
     override fun cloneBare() = null
@@ -70,15 +71,13 @@ data class AppPrototype(
         return missingMandatoryProperties
     }
 
-    override fun checkUnchangeableProperties(cfgObject: CfgObject): Set<String> {
-        val unchangeableProperties = mutableSetOf<String>()
-        (cfgObject as CfgAppPrototype).also {
-            type?.run { if (this.toLowerCase() != it.type?.toShortName()) unchangeableProperties.add(TYPE) }
-            version?.run { if (this != it.version) unchangeableProperties.add(VERSION) }
+    override fun checkUnchangeableProperties(cfgObject: CfgObject) =
+        checkUnchangeableProperties(this, cfgObject).also { unchangeableProperties ->
+            (cfgObject as CfgAppPrototype).also {
+                type?.run { if (this.toLowerCase() != it.type?.toShortName()) unchangeableProperties.add(TYPE) }
+                version?.run { if (this != it.version) unchangeableProperties.add(VERSION) }
+            }
         }
-
-        return unchangeableProperties
-    }
 
     override fun getReferences(): Set<ConfigurationObjectReference<*>> =
         referenceSetBuilder()

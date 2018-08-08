@@ -14,6 +14,7 @@ import com.genesyslab.platform.configuration.protocol.types.CfgAppType.CFGNoAppl
 import com.nuecho.genesys.cli.asBoolean
 import com.nuecho.genesys.cli.getFolderReference
 import com.nuecho.genesys.cli.getReference
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.checkUnchangeableProperties
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setFolder
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setProperty
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgAlarmCategory
@@ -88,6 +89,7 @@ data class AlarmCondition(
         updateCfgObject(service, CfgAlarmCondition(service).also {
             applyDefaultValues()
             setProperty("name", name, it)
+            setFolder(folder, it)
         })
 
     override fun updateCfgObject(service: IConfService, cfgObject: ICfgObject) =
@@ -124,7 +126,6 @@ data class AlarmCondition(
             )
             setProperty("state", toCfgObjectState(state), cfgAlarmCondition)
             setProperty("userProperties", toKeyValueCollection(userProperties), cfgAlarmCondition)
-            setFolder(folder, cfgAlarmCondition)
         }
 
     override fun cloneBare() = AlarmCondition(
@@ -142,7 +143,7 @@ data class AlarmCondition(
         return missingMandatoryProperties
     }
 
-    override fun checkUnchangeableProperties(cfgObject: CfgObject) = emptySet<String>()
+    override fun checkUnchangeableProperties(cfgObject: CfgObject) = checkUnchangeableProperties(this, cfgObject)
 
     override fun getReferences(): Set<ConfigurationObjectReference<*>> =
         referenceSetBuilder()

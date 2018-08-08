@@ -88,9 +88,9 @@ class AlarmConditionTest : ConfigurationObjectTest(
         assertThat(alarmCondition.getReferences(), equalTo(expected))
     }
 
-    override fun `object with different unchangeable properties' values should return the right unchangeable properties`() {
-        // not implemented, since object has no unchangeable properties
-    }
+    @Test
+    override fun `object with different unchangeable properties' values should return the right unchangeable properties`() =
+        assertUnchangeableProperties(mockAlarmCondition(), FOLDER)
 
     val service = mockConfService()
     val script1 = mockCfgScript(name = SCRIPT_NAME1, dbid = 102, type = CFGAlarmReaction)

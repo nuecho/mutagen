@@ -10,6 +10,7 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgActionCode
 import com.genesyslab.platform.applicationblocks.com.objects.CfgSubcode
 import com.nuecho.genesys.cli.getFolderReference
 import com.nuecho.genesys.cli.getReference
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.checkUnchangeableProperties
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setFolder
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setProperty
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgActionCodeType
@@ -55,6 +56,7 @@ data class ActionCode(
             setProperty("name", name, it)
             setProperty("tenantDBID", service.getObjectDbid(tenant), it)
             setProperty("type", toCfgActionCodeType(type), it)
+            setFolder(folder, it)
         }
 
     override fun updateCfgObject(service: IConfService, cfgObject: ICfgObject) =
@@ -63,7 +65,6 @@ data class ActionCode(
             setProperty("subcodes", toCfgSubcodeList(subcodes, it), it)
             setProperty("state", toCfgObjectState(state), it)
             setProperty("userProperties", toKeyValueCollection(userProperties), it)
-            setFolder(folder, it)
         }
 
     override fun cloneBare() = null
@@ -71,7 +72,7 @@ data class ActionCode(
     override fun checkMandatoryProperties(configuration: Configuration, service: ConfService): Set<String> =
         if (code == null) setOf(CODE) else emptySet()
 
-    override fun checkUnchangeableProperties(cfgObject: CfgObject) = emptySet<String>()
+    override fun checkUnchangeableProperties(cfgObject: CfgObject) = checkUnchangeableProperties(this, cfgObject)
 
     override fun getReferences(): Set<ConfigurationObjectReference<*>> =
         referenceSetBuilder()

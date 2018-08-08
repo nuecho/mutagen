@@ -11,6 +11,7 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgSwitch
 import com.nuecho.genesys.cli.core.InitializingBean
 import com.nuecho.genesys.cli.getFolderReference
 import com.nuecho.genesys.cli.getReference
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.checkUnchangeableProperties
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setFolder
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setProperty
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgLinkType
@@ -68,6 +69,7 @@ data class Switch(
             setProperty("tenantDBID", service.getObjectDbid(tenant), it)
             setProperty("name", name, it)
             setProperty("physSwitchDBID", service.getObjectDbid(physicalSwitch), it)
+            setFolder(folder, it)
         }
 
     override fun updateCfgObject(service: IConfService, cfgObject: ICfgObject) =
@@ -82,7 +84,6 @@ data class Switch(
             setProperty("DNRange", dnRange, switch)
             setProperty("state", toCfgObjectState(state), switch)
             setProperty("userProperties", toKeyValueCollection(userProperties), switch)
-            setFolder(folder, switch)
         }
 
     override fun cloneBare() = Switch(
@@ -94,13 +95,14 @@ data class Switch(
     override fun checkMandatoryProperties(configuration: Configuration, service: ConfService): Set<String> =
         if (physicalSwitch == null) setOf(PHYSICAL_SWITCH) else emptySet()
 
-    override fun checkUnchangeableProperties(cfgObject: CfgObject): Set<String> {
-        (cfgObject as CfgSwitch).also {
-            physicalSwitch?.run { if (this != it.physSwitch?.getReference()) return setOf(PHYSICAL_SWITCH) }
+    override fun checkUnchangeableProperties(cfgObject: CfgObject) =
+        checkUnchangeableProperties(this, cfgObject).also { unchangeableProperties ->
+            (cfgObject as CfgSwitch).also {
+                physicalSwitch?.run {
+                    if (this != it.physSwitch?.getReference()) unchangeableProperties.add(PHYSICAL_SWITCH)
+                }
+            }
         }
-
-        return emptySet()
-    }
 
     override fun afterPropertiesSet() {
         switchAccessCodes?.forEach { it.updateTenantReferences(tenant) }
