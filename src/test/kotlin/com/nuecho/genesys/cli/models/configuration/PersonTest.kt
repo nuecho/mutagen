@@ -34,6 +34,7 @@ import com.nuecho.genesys.cli.models.configuration.reference.PlaceReference
 import com.nuecho.genesys.cli.models.configuration.reference.ScriptReference
 import com.nuecho.genesys.cli.models.configuration.reference.SkillReference
 import com.nuecho.genesys.cli.models.configuration.reference.SwitchReference
+import com.nuecho.genesys.cli.models.configuration.reference.referenceSetBuilder
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockConfigurationObjectRepository
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveAgentLogin
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveFolderByDbid
@@ -100,6 +101,22 @@ class PersonTest : ConfigurationObjectTest(
     mandatoryProperties = setOf(USER_NAME),
     importedConfigurationObject = Person(mockCfgPerson())
 ) {
+    @Test
+    override fun `getReferences() should return all object's references`() {
+        val expected = referenceSetBuilder()
+            .add(person.tenant)
+            .add(person.agentInfo!!.capacityRule)
+            .add(person.agentInfo!!.contract)
+            .add(person.agentInfo!!.place)
+            .add(person.agentInfo!!.site)
+            .add(person.agentInfo!!.skillLevels!!.keys)
+            .add(person.agentInfo!!.agentLogins!!.map { it.agentLogin })
+            .add(person.folder)
+            .toSet()
+
+        assertThat(person.getReferences(), equalTo(expected))
+    }
+
     override fun `object with different unchangeable properties' values should return the right unchangeable properties`() {
         // not implemented, since object has no unchangeable properties
     }

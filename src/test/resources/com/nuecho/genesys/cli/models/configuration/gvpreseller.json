@@ -13,6 +13,7 @@
   "startDate": "2018-06-06T21:17:50.105+0000",
   "state": "enabled",
   "tenant": "tenant",
+  "timeZone": "GMT",
   "userProperties": {
     "section": {
       "number": 456,

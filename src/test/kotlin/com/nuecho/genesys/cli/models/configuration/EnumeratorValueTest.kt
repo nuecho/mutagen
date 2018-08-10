@@ -14,6 +14,7 @@ import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mock
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgFlag
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgObjectState
 import com.nuecho.genesys.cli.models.configuration.reference.EnumeratorReference
+import com.nuecho.genesys.cli.models.configuration.reference.referenceSetBuilder
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockConfigurationObjectRepository
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveEnumerator
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveFolderByDbid
@@ -55,6 +56,17 @@ class EnumeratorValueTest : ConfigurationObjectTest(
     ),
     mandatoryProperties = setOf(DISPLAY_NAME, TENANT)
 ) {
+    @Test
+    override fun `getReferences() should return all object's references`() {
+        val expected = referenceSetBuilder()
+            .add(enumeratorValue.tenant)
+            .add(enumeratorValue.enumerator)
+            .add(enumeratorValue.folder)
+            .toSet()
+
+        assertThat(enumeratorValue.getReferences(), equalTo(expected))
+    }
+
     override fun `object with different unchangeable properties' values should return the right unchangeable properties`() {
         // not implemented, since object has no unchangeable properties
     }

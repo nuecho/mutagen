@@ -28,10 +28,12 @@ import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgObj
 import com.nuecho.genesys.cli.models.configuration.reference.AgentGroupReference
 import com.nuecho.genesys.cli.models.configuration.reference.ApplicationReference
 import com.nuecho.genesys.cli.models.configuration.reference.CampaignGroupCampaignReference
+import com.nuecho.genesys.cli.models.configuration.reference.ConfigurationObjectReference
 import com.nuecho.genesys.cli.models.configuration.reference.DNReference
 import com.nuecho.genesys.cli.models.configuration.reference.GVPIVRProfileReference
 import com.nuecho.genesys.cli.models.configuration.reference.ScriptReference
 import com.nuecho.genesys.cli.models.configuration.reference.SwitchReference
+import com.nuecho.genesys.cli.models.configuration.reference.referenceSetBuilder
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockConfigurationObjectRepository
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveAgentGroup
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveCampaign
@@ -98,6 +100,23 @@ class CampaignGroupTest : ConfigurationObjectTest(
     emptyConfigurationObject = CampaignGroup(campaign = CAMPAIGN_REFERENCE, name = campaignGroup.name),
     mandatoryProperties = setOf(GROUP)
 ) {
+    @Test
+    override fun `getReferences() should return all object's references`() {
+        val expected = referenceSetBuilder()
+            .add(campaignGroup.campaign.toCampaignReference())
+            .add(campaignGroup.group as ConfigurationObjectReference<*>)
+            .add(campaignGroup.interactionQueue)
+            .add(campaignGroup.ivrProfile)
+            .add(campaignGroup.origDN)
+            .add(campaignGroup.script)
+            .add(campaignGroup.servers)
+            .add(campaignGroup.tenant)
+            .add(campaignGroup.folder)
+            .toSet()
+
+        assertThat(campaignGroup.getReferences(), equalTo(expected))
+    }
+
     override fun `object with different unchangeable properties' values should return the right unchangeable properties`() {
         // not implemented, since object has no unchangeable properties
     }

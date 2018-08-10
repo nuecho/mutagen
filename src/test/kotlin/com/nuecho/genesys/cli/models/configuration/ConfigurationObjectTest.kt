@@ -28,8 +28,9 @@ abstract class ConfigurationObjectTest(
 
     private val configurationObjectType = configurationObject::class.simpleName!!.toLowerCase()
 
-    @Test
     abstract fun `object with different unchangeable properties' values should return the right unchangeable properties`()
+
+    abstract fun `getReferences() should return all object's references`()
 
     @Test
     fun `empty object missing mandatory properties should return the right missing properties for an object containing only non nullable fields`() {

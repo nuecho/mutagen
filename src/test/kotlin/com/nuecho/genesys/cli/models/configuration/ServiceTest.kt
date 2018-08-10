@@ -15,11 +15,14 @@ import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFA
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_REFERENCE
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgService
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockKeyValueCollection
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgAppType
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgFlag
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgObjectState
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgSolutionType
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgStartupType
 import com.nuecho.genesys.cli.models.configuration.ConfigurationTestData.defaultProperties
 import com.nuecho.genesys.cli.models.configuration.reference.ApplicationReference
+import com.nuecho.genesys.cli.models.configuration.reference.referenceSetBuilder
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockConfigurationObjectRepository
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveApplication
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveFolderByDbid
@@ -73,6 +76,18 @@ class ServiceTest : ConfigurationObjectTest(
     val confService = mockConfService()
 
     @Test
+    override fun `getReferences() should return all object's references`() {
+        val expected = referenceSetBuilder()
+            .add(service.assignedTenant)
+            .add(service.components!!.map { it.app })
+            .add(service.scs)
+            .add(service.folder)
+            .toSet()
+
+        assertThat(service.getReferences(), equalTo(expected))
+    }
+
+    @Test
     override fun `object with different unchangeable properties' values should return the right unchangeable properties`() {
         val cfgService = mockCfgService(name = service.name).also {
             every { it.solutionType } returns CFGSTDesktopNETServerSolution
@@ -93,11 +108,19 @@ class ServiceTest : ConfigurationObjectTest(
             with(cfgService) {
                 assertThat(name, equalTo(service.name))
                 assertThat(assignedTenantDBID, equalTo(DEFAULT_TENANT_DBID))
-                assertThat(componentDefinitions.toList(), equalTo(
-                    service.componentDefinitions?.map {
-                        it.toCfgSolutionComponentDefinition(this)
-                    } as Collection<CfgSolutionComponentDefinition>
-                ))
+                with(componentDefinitions.toList()[0]) {
+                    val expectedComponent = service.componentDefinitions!![0]
+                    assertThat(startupPriority, equalTo(expectedComponent.startupPriority))
+                    assertThat(type, equalTo(toCfgAppType(expectedComponent.type)))
+                    assertThat(isOptional, equalTo(toCfgFlag(expectedComponent.isOptional)))
+                    assertThat(version, equalTo(expectedComponent.version))
+                }
+                with(components.toList()[0]) {
+                    val expectedComponent = service.components!![0]
+                    assertThat(appDBID, equalTo(DEFAULT_OBJECT_DBID))
+                    assertThat(startupPriority, equalTo(expectedComponent.startupPriority))
+                    assertThat(isOptional, equalTo(toCfgFlag(expectedComponent.isOptional)))
+                }
                 assertThat(components.toList(), equalTo(
                     service.components?.map { it.toCfgSolutionComponent(this) } as Collection<CfgSolutionComponent>
                 ))

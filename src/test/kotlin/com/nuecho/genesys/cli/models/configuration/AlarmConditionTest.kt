@@ -24,6 +24,7 @@ import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgSel
 import com.nuecho.genesys.cli.models.configuration.ConfigurationTestData.defaultProperties
 import com.nuecho.genesys.cli.models.configuration.reference.AlarmConditionScriptReference
 import com.nuecho.genesys.cli.models.configuration.reference.ApplicationReference
+import com.nuecho.genesys.cli.models.configuration.reference.referenceSetBuilder
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockConfigurationObjectRepository
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveApplication
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveFolderByDbid
@@ -76,6 +77,19 @@ class AlarmConditionTest : ConfigurationObjectTest(
     mandatoryProperties = setOf(ALARM_DETECT_EVENT, ALARM_DETECT_EVENT_LOG_EVENT_ID, CATEGORY),
     importedConfigurationObject = AlarmCondition(mockAlarmCondition())
 ) {
+    @Test
+    override fun `getReferences() should return all object's references`() {
+        val expected = referenceSetBuilder()
+            .add(alarmCondition.alarmDetectEvent!!.app)
+            .add(alarmCondition.alarmDetectScript!!.toScriptReference())
+            .add(alarmCondition.clearanceScripts!![0].toScriptReference())
+            .add(alarmCondition.reactionScripts!![0].toScriptReference())
+            .add(alarmCondition.folder)
+            .toSet()
+
+        assertThat(alarmCondition.getReferences(), equalTo(expected))
+    }
+
     override fun `object with different unchangeable properties' values should return the right unchangeable properties`() {
         // not implemented, since object has no unchangeable properties
     }

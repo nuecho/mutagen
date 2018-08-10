@@ -1,7 +1,6 @@
 package com.nuecho.genesys.cli.models.configuration
 
 import com.genesyslab.platform.applicationblocks.com.objects.CfgAppPrototype
-import com.genesyslab.platform.applicationblocks.com.objects.CfgApplication
 import com.genesyslab.platform.applicationblocks.com.objects.CfgConnInfo
 import com.genesyslab.platform.applicationblocks.com.objects.CfgPortInfo
 import com.genesyslab.platform.applicationblocks.com.objects.CfgServer
@@ -14,6 +13,7 @@ import com.genesyslab.platform.configuration.protocol.types.CfgTraceMode.CFGTMNo
 import com.nuecho.genesys.cli.asBoolean
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_FOLDER_DBID
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_OBJECT_DBID
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_DBID
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_REFERENCE
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgAppPrototype
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgApplication
@@ -21,34 +21,39 @@ import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mock
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockKeyValueCollection
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgFlag
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgObjectState
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgTraceMode
 import com.nuecho.genesys.cli.models.configuration.ConfigurationTestData.defaultProperties
 import com.nuecho.genesys.cli.models.configuration.reference.AppPrototypeReference
 import com.nuecho.genesys.cli.models.configuration.reference.ApplicationReference
 import com.nuecho.genesys.cli.models.configuration.reference.HostReference
+import com.nuecho.genesys.cli.models.configuration.reference.referenceSetBuilder
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockConfigurationObjectRepository
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveFolderByDbid
 import com.nuecho.genesys.cli.services.ConfigurationObjectRepository
 import com.nuecho.genesys.cli.services.ServiceMocks.mockConfService
+import com.nuecho.genesys.cli.services.retrieveObject
 import com.nuecho.genesys.cli.toShortName
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.objectMockk
+import io.mockk.staticMockk
 import io.mockk.use
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers
 import org.junit.jupiter.api.Test
 
-private const val APP_PROTOTYPE_DBID = 102
 private const val APP_PROTOTYPE_VERSION = "1.2.3"
+private const val APP_SERVER_NAME = "appServer"
+private const val BACKUP_SERVER_NAME = "backupServer"
 private val application = Application(
     name = "foo",
     appPrototype = AppPrototypeReference("foo"),
     appServers = listOf(
         ConnInfo(
             appParams = "appParams",
-            appServer = ApplicationReference("appServer"),
+            appServer = ApplicationReference(APP_SERVER_NAME),
             charField1 = "1",
             charField2 = "2",
             charField3 = "3",
@@ -95,6 +100,7 @@ private val application = Application(
     serverInfo = Server(
         attempts = 2,
         host = HostReference("host"),
+        backupServer = ApplicationReference(BACKUP_SERVER_NAME),
         timeout = 2
     ),
     tenants = listOf(DEFAULT_TENANT_REFERENCE),
@@ -111,6 +117,20 @@ class ApplicationTest : ConfigurationObjectTest(
     importedConfigurationObject = Application(mockCfgApplication())
 ) {
     val service = mockConfService()
+
+    @Test
+    override fun `getReferences() should return all object's references`() {
+        val expected = referenceSetBuilder()
+            .add(application.appPrototype)
+            .add(application.appServers!![0].appServer)
+            .add(application.serverInfo!!.host)
+            .add(application.serverInfo!!.backupServer)
+            .add(application.tenants)
+            .add(application.folder)
+            .toSet()
+
+        assertThat(application.getReferences(), equalTo(expected))
+    }
 
     override fun `object with different unchangeable properties' values should return the right unchangeable properties`() {
         // not implemented, since object has no unchangeable properties
@@ -134,38 +154,88 @@ class ApplicationTest : ConfigurationObjectTest(
 
     @Test
     fun `updateCfgObject should properly create CfgApplication`() {
-        every { service.retrieveObject(CfgApplication::class.java, any()) } returns null
-        ConfServiceExtensionMocks.mockRetrieveHost(service)
+        val appServerDbid = 110
+        val backupServerDbid = 111
+        val hostDbid = 112
+        val appPrototypeDbid = 1113
+
+        ConfServiceExtensionMocks.mockRetrieveHost(service, hostDbid)
         ConfServiceExtensionMocks.mockRetrieveTenant(service)
-        ConfServiceExtensionMocks.mockRetrieveAppPrototype(service, APP_PROTOTYPE_DBID, CFGAgentDesktop, APP_PROTOTYPE_VERSION)
+        ConfServiceExtensionMocks.mockRetrieveAppPrototype(service, appPrototypeDbid, CFGAgentDesktop, APP_PROTOTYPE_VERSION)
 
-        objectMockk(ConfigurationObjectRepository).use {
-            mockConfigurationObjectRepository()
-            val cfgApplication = application.createCfgObject(service)
+        staticMockk("com.nuecho.genesys.cli.services.ConfServiceExtensionsKt").use {
+            val appServer = mockCfgApplication(APP_SERVER_NAME, appServerDbid)
+            val backupServer = mockCfgApplication(BACKUP_SERVER_NAME, backupServerDbid)
+            every { service.retrieveObject(application.reference) } returns null
+            every { service.retrieveObject(application.appServers!![0].appServer!!) } returns appServer
+            every { service.retrieveObject(application.serverInfo!!.backupServer!!) } returns backupServer
 
-            with(cfgApplication) {
-                assertThat(appPrototypeDBID, equalTo(APP_PROTOTYPE_DBID))
-                assertThat(appServers.toList(), equalTo(
-                    application.appServers?.map { it.toCfgConnInfo(this) } as Collection<CfgConnInfo>
-                ))
-                assertThat(autoRestart.asBoolean(), equalTo(application.autoRestart))
-                assertThat(commandLine, equalTo(application.commandLine))
-                assertThat(componentType.toShortName(), equalTo(application.componentType))
-                assertThat(flexibleProperties.asCategorizedProperties(), equalTo(application.flexibleProperties))
-                assertThat(folderId, equalTo(DEFAULT_FOLDER_DBID))
-                assertThat(isPrimary?.asBoolean(), equalTo(application.isPrimary))
-                assertThat(name, equalTo(application.name))
-                assertThat(options.asCategorizedProperties(), equalTo(application.options))
-                assertThat(portInfos.toList(), equalTo(
-                    application.portInfos?.map { it.toCfgPortInfo(this) } as Collection<CfgPortInfo>
-                ))
-                assertThat(redundancyType.toShortName(), equalTo(application.redundancyType))
-                assertThat(serverInfo, equalTo(application.serverInfo?.toCfgServer(this)))
-                assertThat(state, equalTo(toCfgObjectState(application.state)))
-                assertThat(type, equalTo(CFGAgentDesktop))
-                assertThat(userProperties.asCategorizedProperties(), equalTo(application.userProperties))
-                assertThat(version, equalTo(APP_PROTOTYPE_VERSION))
-                assertThat(workDirectory, equalTo(application.workDirectory))
+            objectMockk(ConfigurationObjectRepository).use {
+                mockConfigurationObjectRepository()
+                val cfgApplication = application.createCfgObject(service)
+
+                with(cfgApplication) {
+                    assertThat(appPrototypeDBID, equalTo(appPrototypeDbid))
+                    assertThat(autoRestart.asBoolean(), equalTo(application.autoRestart))
+                    assertThat(commandLine, equalTo(application.commandLine))
+                    assertThat(componentType.toShortName(), equalTo(application.componentType))
+                    assertThat(flexibleProperties.asCategorizedProperties(), equalTo(application.flexibleProperties))
+                    assertThat(folderId, equalTo(DEFAULT_FOLDER_DBID))
+                    assertThat(isPrimary?.asBoolean(), equalTo(application.isPrimary))
+                    assertThat(name, equalTo(application.name))
+                    assertThat(options.asCategorizedProperties(), equalTo(application.options))
+                    assertThat(redundancyType.toShortName(), equalTo(application.redundancyType))
+                    assertThat(state, equalTo(toCfgObjectState(application.state)))
+                    assertThat(tenantDBIDs.toList(), equalTo(listOf(DEFAULT_TENANT_DBID)))
+                    assertThat(type, equalTo(CFGAgentDesktop))
+                    assertThat(userProperties.asCategorizedProperties(), equalTo(application.userProperties))
+                    assertThat(version, equalTo(APP_PROTOTYPE_VERSION))
+                    assertThat(workDirectory, equalTo(application.workDirectory))
+
+                    val actualAppServer = appServers.toList()[0]
+                    val expectedAppServer = application.appServers!![0]
+                    assertThat(actualAppServer.appParams, equalTo(expectedAppServer.appParams))
+                    assertThat(actualAppServer.appServerDBID, equalTo(appServerDbid))
+                    assertThat(actualAppServer.charField1, equalTo(expectedAppServer.charField1))
+                    assertThat(actualAppServer.charField2, equalTo(expectedAppServer.charField2))
+                    assertThat(actualAppServer.charField3, equalTo(expectedAppServer.charField3))
+                    assertThat(actualAppServer.charField4, equalTo(expectedAppServer.charField4))
+                    assertThat(actualAppServer.connProtocol, equalTo(expectedAppServer.connProtocol))
+                    assertThat(actualAppServer.description, equalTo(expectedAppServer.description))
+                    assertThat(actualAppServer.id, equalTo(expectedAppServer.id))
+                    assertThat(actualAppServer.longField1, equalTo(expectedAppServer.longField1))
+                    assertThat(actualAppServer.longField2, equalTo(expectedAppServer.longField2))
+                    assertThat(actualAppServer.longField3, equalTo(expectedAppServer.longField3))
+                    assertThat(actualAppServer.longField4, equalTo(expectedAppServer.longField4))
+                    assertThat(actualAppServer.mode, equalTo(toCfgTraceMode(expectedAppServer.mode)))
+                    assertThat(actualAppServer.proxyParams, equalTo(expectedAppServer.proxyParams))
+                    assertThat(actualAppServer.timoutLocal, equalTo(expectedAppServer.timeoutLocal))
+                    assertThat(actualAppServer.timoutRemote, equalTo(expectedAppServer.timeoutRemote))
+                    assertThat(actualAppServer.transportParams, equalTo(expectedAppServer.transportParams))
+
+                    val actualPortInfo = portInfos.toList()[0]
+                    val expectedPortInfo = application.portInfos!![0]
+                    assertThat(actualPortInfo.appParams, equalTo(expectedPortInfo.appParams))
+                    assertThat(actualPortInfo.charField1, equalTo(expectedPortInfo.charField1))
+                    assertThat(actualPortInfo.charField2, equalTo(expectedPortInfo.charField2))
+                    assertThat(actualPortInfo.charField3, equalTo(expectedPortInfo.charField3))
+                    assertThat(actualPortInfo.charField4, equalTo(expectedPortInfo.charField4))
+                    assertThat(actualPortInfo.connProtocol, equalTo(expectedPortInfo.connProtocol))
+                    assertThat(actualPortInfo.description, equalTo(expectedPortInfo.description))
+                    assertThat(actualPortInfo.id, equalTo(expectedPortInfo.id))
+                    assertThat(actualPortInfo.longField1, equalTo(expectedPortInfo.longField1))
+                    assertThat(actualPortInfo.longField2, equalTo(expectedPortInfo.longField2))
+                    assertThat(actualPortInfo.longField3, equalTo(expectedPortInfo.longField3))
+                    assertThat(actualPortInfo.longField4, equalTo(expectedPortInfo.longField4))
+                    assertThat(actualPortInfo.port, equalTo(expectedPortInfo.port))
+                    assertThat(actualPortInfo.transportParams, equalTo(expectedPortInfo.transportParams))
+
+                    val expectedServerInfo = application.serverInfo!!
+                    assertThat(serverInfo.attempts, equalTo(expectedServerInfo.attempts))
+                    assertThat(serverInfo.hostDBID, equalTo(hostDbid))
+                    assertThat(serverInfo.backupServerDBID, equalTo(backupServerDbid))
+                    assertThat(serverInfo.timeout, equalTo(expectedServerInfo.timeout))
+                }
             }
         }
     }
@@ -260,11 +330,11 @@ private fun mockCfgPortInfo(): CfgPortInfo {
 private fun mockCfgServer(): CfgServer {
     val cfgServer = mockk<CfgServer>()
     val host = mockCfgHost("host")
+    val backupServer = mockCfgApplication("backupServer")
 
     every { cfgServer.attempts } returns 2
-    // could be another application but I think that's overkill for unit tests
-    every { cfgServer.backupServer } returns null
-    every { cfgServer.backupServerDBID } returns null
+    every { cfgServer.backupServer } returns backupServer
+    every { cfgServer.backupServerDBID } returns DEFAULT_OBJECT_DBID
     every { cfgServer.host } returns host
     every { cfgServer.hostDBID } returns 123
     every { cfgServer.port } returns "8888"

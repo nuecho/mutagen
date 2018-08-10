@@ -1,5 +1,6 @@
 {
   "channel": "achannel",
+  "displayName": "DisplayName",
   "folder": {
     "owner": {
       "name": "tenant",
@@ -17,6 +18,7 @@
   "reseller": "areseller",
   "state": "enabled",
   "tenant": "tenant",
+  "timeZone": "timeZone1",
   "userProperties": {
     "section": {
       "number": 456,

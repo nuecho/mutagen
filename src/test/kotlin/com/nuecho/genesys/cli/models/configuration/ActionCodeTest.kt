@@ -14,6 +14,7 @@ import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mock
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgActionCodeType
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgObjectState
 import com.nuecho.genesys.cli.models.configuration.ConfigurationTestData.defaultProperties
+import com.nuecho.genesys.cli.models.configuration.reference.referenceSetBuilder
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockConfigurationObjectRepository
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveFolderByDbid
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveTenant
@@ -49,6 +50,16 @@ class ActionCodeTest : ConfigurationObjectTest(
     mandatoryProperties = setOf(CODE),
     importedConfigurationObject = ActionCode(mockCfgActionCode())
 ) {
+    @Test
+    override fun `getReferences() should return all object's references`() {
+        val expected = referenceSetBuilder()
+            .add(actionCode.tenant)
+            .add(actionCode.folder)
+            .toSet()
+
+        assertThat(actionCode.getReferences(), equalTo(expected))
+    }
+
     override fun `object with different unchangeable properties' values should return the right unchangeable properties`() {
         // not implemented, since object has no unchangeable properties
     }

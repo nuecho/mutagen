@@ -18,7 +18,9 @@ import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mock
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockKeyValueCollection
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgHostType
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgObjectState
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgOsType
 import com.nuecho.genesys.cli.models.configuration.reference.ApplicationReference
+import com.nuecho.genesys.cli.models.configuration.reference.referenceSetBuilder
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockConfigurationObjectRepository
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveFolderByDbid
 import com.nuecho.genesys.cli.services.ConfigurationObjectRepository
@@ -55,6 +57,16 @@ class HostTest : ConfigurationObjectTest(
     emptyConfigurationObject = Host(name = NAME),
     mandatoryProperties = setOf("lcaPort", "osInfo", TYPE)
 ) {
+    @Test
+    override fun `getReferences() should return all object's references`() {
+        val expected = referenceSetBuilder()
+            .add(host.scs)
+            .add(host.folder)
+            .toSet()
+
+        assertThat(host.getReferences(), equalTo(expected))
+    }
+
     @Test
     override fun `object with different unchangeable properties' values should return the right unchangeable properties`() {
         val cfgHost = mockCfgHost(name = host.name).also {
@@ -98,10 +110,10 @@ class HostTest : ConfigurationObjectTest(
                     assertThat(name, equalTo(host.name))
                     assertThat(iPaddress, equalTo(host.ipAddress))
                     assertThat(lcaPort, equalTo(host.lcaPort))
-                    assertThat(oSinfo, equalTo(host.osInfo?.toCfgOs(service, cfgHost)))
+                    assertThat(oSinfo.oStype, equalTo(toCfgOsType(host.osInfo!!.type)))
+                    assertThat(oSinfo.oSversion, equalTo(host.osInfo!!.version))
                     assertThat(scsdbid, equalTo(DEFAULT_OBJECT_DBID))
                     assertThat(type, equalTo(toCfgHostType(host.type)))
-
                     assertThat(folderId, equalTo(DEFAULT_FOLDER_DBID))
                     assertThat(state, equalTo(toCfgObjectState(host.state)))
                     assertThat(userProperties.asCategorizedProperties(), equalTo(host.userProperties))

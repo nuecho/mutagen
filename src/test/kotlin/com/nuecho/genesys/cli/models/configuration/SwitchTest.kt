@@ -21,6 +21,7 @@ import com.nuecho.genesys.cli.models.configuration.ConfigurationTestData.default
 import com.nuecho.genesys.cli.models.configuration.reference.ApplicationReference
 import com.nuecho.genesys.cli.models.configuration.reference.PhysicalSwitchReference
 import com.nuecho.genesys.cli.models.configuration.reference.SwitchReference
+import com.nuecho.genesys.cli.models.configuration.reference.referenceSetBuilder
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockConfigurationObjectRepository
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveApplication
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveFolderByDbid
@@ -88,6 +89,18 @@ class SwitchTest : ConfigurationObjectTest(
     mandatoryProperties = setOf(PHYSICAL_SWITCH),
     importedConfigurationObject = Switch(mockMainCfgSwitch())
 ) {
+    @Test
+    override fun `getReferences() should return all object's references`() {
+        val expected = referenceSetBuilder()
+            .add(mainSwitch.tenant)
+            .add(mainSwitch.physicalSwitch)
+            .add(mainSwitch.tServer)
+            .add(mainSwitch.switchAccessCodes!!.mapNotNull { it.switch })
+            .add(mainSwitch.folder)
+            .toSet()
+
+        assertThat(mainSwitch.getReferences(), equalTo(expected))
+    }
 
     @Test
     override fun `object with different unchangeable properties' values should return the right unchangeable properties`() {

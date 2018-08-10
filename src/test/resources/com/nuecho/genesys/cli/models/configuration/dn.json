@@ -1,11 +1,16 @@
 {
-  "accessNumbers": [],
+  "accessNumbers": [
+    {
+      "number": "321",
+      "switch": "switch2"
+    }
+  ],
   "association": "anassociation",
   "contract": "acontract",
   "destinationDNs": [
     {
       "number": "1234",
-      "switch": "aswitch",
+      "switch": "switch1",
       "type": "acdqueue"
     }
   ],
@@ -36,7 +41,7 @@
     "type": "folder"
   },
   "state": "enabled",
-  "switch": "aswitch",
+  "switch": "switch1",
   "tenant": "tenant",
   "trunks": 1,
   "type": "nodn",

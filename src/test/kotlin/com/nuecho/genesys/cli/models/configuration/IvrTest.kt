@@ -18,6 +18,7 @@ import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgIVR
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgObjectState
 import com.nuecho.genesys.cli.models.configuration.ConfigurationTestData.defaultProperties
 import com.nuecho.genesys.cli.models.configuration.reference.ApplicationReference
+import com.nuecho.genesys.cli.models.configuration.reference.referenceSetBuilder
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockConfigurationObjectRepository
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveApplication
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveFolderByDbid
@@ -54,6 +55,17 @@ class IvrTest : ConfigurationObjectTest(
     mandatoryProperties = setOf(TENANT, TYPE, VERSION),
     importedConfigurationObject = Ivr(mockCfgIvr())
 ) {
+    @Test
+    override fun `getReferences() should return all object's references`() {
+        val expected = referenceSetBuilder()
+            .add(ivr.ivrServer)
+            .add(ivr.tenant)
+            .add(ivr.folder)
+            .toSet()
+
+        assertThat(ivr.getReferences(), equalTo(expected))
+    }
+
     @Test
     override fun `object with different unchangeable properties' values should return the right unchangeable properties`() {
         val differentTenant = mockCfgTenant("differentTenant")

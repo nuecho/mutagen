@@ -24,6 +24,7 @@ import com.nuecho.genesys.cli.models.configuration.reference.ObjectiveTableRefer
 import com.nuecho.genesys.cli.models.configuration.reference.PersonReference
 import com.nuecho.genesys.cli.models.configuration.reference.ScriptReference
 import com.nuecho.genesys.cli.models.configuration.reference.StatTableReference
+import com.nuecho.genesys.cli.models.configuration.reference.referenceSetBuilder
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockConfigurationObjectRepository
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveDN
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveFolderByDbid
@@ -80,6 +81,17 @@ class AgentGroupTest : ConfigurationObjectTest(
     mandatoryProperties = emptySet(),
     importedConfigurationObject = AgentGroup(mockCfgAgentGroup())
 ) {
+    @Test
+    override fun `getReferences() should return all object's references`() {
+        val expected = referenceSetBuilder()
+            .add(agentGroup.agents)
+            .add(agentGroup.group.getReferences())
+            .add(agentGroup.folder)
+            .toSet()
+
+        assertThat(agentGroup.getReferences(), equalTo(expected))
+    }
+
     override fun `object with different unchangeable properties' values should return the right unchangeable properties`() {
         // not implemented, since object has no unchangeable properties
     }

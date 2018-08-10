@@ -120,6 +120,7 @@ data class Person(
         referenceSetBuilder()
             .add(tenant)
             .add(folder)
+            .add(agentInfo?.getReferences())
             .toSet()
 }
 

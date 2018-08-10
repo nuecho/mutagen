@@ -12,6 +12,7 @@ import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mock
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgObjectState
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgScriptType
 import com.nuecho.genesys.cli.models.configuration.ConfigurationTestData.defaultProperties
+import com.nuecho.genesys.cli.models.configuration.reference.referenceSetBuilder
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockConfigurationObjectRepository
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveFolderByDbid
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveTenant
@@ -41,6 +42,15 @@ class ScriptTest : ConfigurationObjectTest(
     mandatoryProperties = setOf(TYPE),
     importedConfigurationObject = Script(mockCfgScript())
 ) {
+    @Test
+    override fun `getReferences() should return all object's references`() {
+        val expected = referenceSetBuilder()
+            .add(script.tenant)
+            .add(script.folder)
+            .toSet()
+
+        assertThat(script.getReferences(), equalTo(expected))
+    }
 
     @Test
     override fun `object with different unchangeable properties' values should return the right unchangeable properties`() {

@@ -27,7 +27,6 @@ import com.nuecho.genesys.cli.models.configuration.reference.AlarmConditionScrip
 import com.nuecho.genesys.cli.models.configuration.reference.ApplicationReference
 import com.nuecho.genesys.cli.models.configuration.reference.ConfigurationObjectReference
 import com.nuecho.genesys.cli.models.configuration.reference.FolderReference
-import com.nuecho.genesys.cli.models.configuration.reference.ScriptReference
 import com.nuecho.genesys.cli.models.configuration.reference.referenceSetBuilder
 import com.nuecho.genesys.cli.services.ConfService
 import com.nuecho.genesys.cli.services.getObjectDbid
@@ -147,9 +146,10 @@ data class AlarmCondition(
 
     override fun getReferences(): Set<ConfigurationObjectReference<*>> =
         referenceSetBuilder()
-            .add(alarmDetectScript?.let { ScriptReference(it.primaryKey, it.tenant) })
-            .add(clearanceScripts?.map { ScriptReference(it.primaryKey, it.tenant) })
-            .add(reactionScripts?.map { ScriptReference(it.primaryKey, it.tenant) })
+            .add(alarmDetectEvent?.app)
+            .add(alarmDetectScript?.toScriptReference())
+            .add(clearanceScripts?.map { it.toScriptReference() })
+            .add(reactionScripts?.map { it.toScriptReference() })
             .add(folder)
             .toSet()
 }

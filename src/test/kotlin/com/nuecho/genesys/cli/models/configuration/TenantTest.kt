@@ -15,6 +15,7 @@ import com.nuecho.genesys.cli.models.configuration.ConfigurationTestData.default
 import com.nuecho.genesys.cli.models.configuration.reference.ObjectiveTableReference
 import com.nuecho.genesys.cli.models.configuration.reference.ScriptReference
 import com.nuecho.genesys.cli.models.configuration.reference.TenantReference
+import com.nuecho.genesys.cli.models.configuration.reference.referenceSetBuilder
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockConfigurationObjectRepository
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveFolderByDbid
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveObjectiveTable
@@ -47,6 +48,18 @@ class TenantTest : ConfigurationObjectTest(
     mandatoryProperties = emptySet(),
     importedConfigurationObject = Tenant(mockCfgTenant())
 ) {
+    @Test
+    override fun `getReferences() should return all object's references`() {
+        val expected = referenceSetBuilder()
+            .add(tenant.parentTenant)
+            .add(tenant.defaultCapacityRule)
+            .add(tenant.defaultContract)
+            .add(tenant.folder)
+            .toSet()
+
+        assertThat(tenant.getReferences(), equalTo(expected))
+    }
+
     override fun `object with different unchangeable properties' values should return the right unchangeable properties`() {
         // not implemented, since object has no unchangeable properties
     }

@@ -24,7 +24,6 @@ import com.nuecho.genesys.cli.models.configuration.reference.AgentGroupReference
 import com.nuecho.genesys.cli.models.configuration.reference.ApplicationReference
 import com.nuecho.genesys.cli.models.configuration.reference.CampaignGroupCampaignReference
 import com.nuecho.genesys.cli.models.configuration.reference.CampaignGroupReference
-import com.nuecho.genesys.cli.models.configuration.reference.CampaignReference
 import com.nuecho.genesys.cli.models.configuration.reference.ConfigurationObjectReference
 import com.nuecho.genesys.cli.models.configuration.reference.DNReference
 import com.nuecho.genesys.cli.models.configuration.reference.FolderReference
@@ -169,22 +168,16 @@ data class CampaignGroup(
         script?.tenant = campaign.tenant
     }
 
-    @Suppress("IMPLICIT_CAST_TO_ANY") // reported issue: https://youtrack.jetbrains.com/issue/KT-24458
     override fun getReferences(): Set<ConfigurationObjectReference<*>> =
         referenceSetBuilder()
-            .add(campaign.let { CampaignReference(it.primaryKey, it.tenant) })
-            .add(
-                when (group) {
-                    is AgentGroupReference -> group
-                    is PlaceGroupReference -> group
-                    else -> null
-                } as ConfigurationObjectReference<*>?
-            )
+            .add(campaign.toCampaignReference())
+            .add(group as ConfigurationObjectReference<*>?)
             .add(interactionQueue)
             .add(ivrProfile)
             .add(origDN)
             .add(script)
             .add(servers)
             .add(folder)
+            .add(tenant)
             .toSet()
 }
