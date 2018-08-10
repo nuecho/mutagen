@@ -5,7 +5,7 @@ import com.genesyslab.platform.configuration.protocol.types.CfgFolderClass.CFGFC
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectState.CFGEnabled
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_FOLDER_DBID
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_FOLDER_REFERENCE
-import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_OBJECT_DBID
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_DBID
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockKeyValueCollection
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgFolderClass
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgObjectState
@@ -13,9 +13,9 @@ import com.nuecho.genesys.cli.models.configuration.ConfigurationTestData.default
 import com.nuecho.genesys.cli.models.configuration.reference.referenceSetBuilder
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockConfigurationObjectRepository
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveFolderByDbid
+import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveTenant
 import com.nuecho.genesys.cli.services.ConfigurationObjectRepository
 import com.nuecho.genesys.cli.services.ServiceMocks.mockConfService
-import com.nuecho.genesys.cli.services.getObjectDbid
 import com.nuecho.genesys.cli.toShortName
 import io.mockk.every
 import io.mockk.objectMockk
@@ -58,9 +58,9 @@ class FolderTest : ConfigurationObjectTest(
     @Test
     fun `createCfgObject should properly create CfgFolder`() {
         val service = mockConfService()
+        mockRetrieveTenant(service)
 
         staticMockk("com.nuecho.genesys.cli.services.ConfServiceExtensionsKt").use {
-            every { service.getObjectDbid(any()) } answers { DEFAULT_OBJECT_DBID }
 
             objectMockk(ConfigurationObjectRepository).use {
                 mockConfigurationObjectRepository()
@@ -75,6 +75,7 @@ class FolderTest : ConfigurationObjectTest(
                     assertThat(state, equalTo(toCfgObjectState(folder.state)))
                     assertThat(userProperties.asCategorizedProperties(), equalTo(folder.userProperties))
                     assertThat(folderId, equalTo(DEFAULT_FOLDER_DBID))
+                    assertThat(ownerID.dbid, equalTo(DEFAULT_TENANT_DBID))
                 }
             }
         }
@@ -93,6 +94,6 @@ private fun mockCfgFolder(): CfgFolder {
         every { customType } returns folder.customType
         every { state } returns toCfgObjectState(folder.state)
         every { userProperties } returns mockKeyValueCollection()
-        every { folderId } returns DEFAULT_OBJECT_DBID
+        every { folderId } returns DEFAULT_FOLDER_DBID
     }
 }

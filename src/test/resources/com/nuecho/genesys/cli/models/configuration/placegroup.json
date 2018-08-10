@@ -11,13 +11,8 @@
   },
   "group": {
     "name": "placeGroup",
-    "tenant": "tenant",
-    "userProperties": {
-      "section": {
-        "number": 456,
-        "string": "def"
-      }
-    }
+    "state": "enabled",
+    "tenant": "tenant"
   },
   "places": [
     "place1",

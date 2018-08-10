@@ -2,10 +2,11 @@ package com.nuecho.genesys.cli.models.configuration
 
 import com.genesyslab.platform.applicationblocks.com.objects.CfgGVPCustomer
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectState
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_FOLDER_DBID
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_FOLDER_REFERENCE
-import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_OBJECT_DBID
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_REFERENCE
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgGVPCustomer
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgGVPReseller
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgTenant
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgTimeZone
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockKeyValueCollection
@@ -79,10 +80,13 @@ class GVPCustomerTest : ConfigurationObjectTest(
     @Test
     fun `createCfgObject should properly create CfgGVPCustomer`() {
         val service = mockConfService()
+        val resellerDbid = 102
+        val timeZoneDbid = 103
+
         every { service.retrieveObject(CfgGVPCustomer::class.java, any()) } returns null
         mockRetrieveTenant(service)
-        mockRetrieveReseller(service)
-        mockRetrieveTimeZone(service)
+        mockRetrieveReseller(service, resellerDbid)
+        mockRetrieveTimeZone(service, timeZoneDbid)
 
         objectMockk(ConfigurationObjectRepository).use {
             mockConfigurationObjectRepository()
@@ -95,8 +99,8 @@ class GVPCustomerTest : ConfigurationObjectTest(
                 assertThat(isProvisioned, equalTo(toCfgFlag(gvpCustomer.isProvisioned)))
                 assertThat(isAdminCustomer, equalTo(toCfgFlag(gvpCustomer.isAdminCustomer)))
                 assertThat(notes, equalTo(gvpCustomer.notes))
-                assertThat(resellerDBID, equalTo(DEFAULT_OBJECT_DBID))
-                assertThat(timeZoneDBID, equalTo(DEFAULT_OBJECT_DBID))
+                assertThat(resellerDBID, equalTo(resellerDbid))
+                assertThat(timeZoneDBID, equalTo(timeZoneDbid))
                 assertThat(state, equalTo(toCfgObjectState(gvpCustomer.state)))
                 assertThat(userProperties.asCategorizedProperties(), equalTo(gvpCustomer.userProperties))
                 assertThat(folderId, equalTo(ConfigurationObjectMocks.DEFAULT_FOLDER_DBID))
@@ -109,7 +113,7 @@ private fun mockCfgGVPCustomer() = mockCfgGVPCustomer(gvpCustomer.name).apply {
     val service = mockConfService()
     mockRetrieveFolderByDbid(service)
 
-    val resellerMock = ConfigurationObjectMocks.mockCfgGVPReseller(gvpCustomer.reseller!!.primaryKey)
+    val resellerMock = mockCfgGVPReseller(gvpCustomer.reseller!!.primaryKey)
     val timezone = mockCfgTimeZone("timeZone1")
 
     every { configurationService } returns service
@@ -125,5 +129,5 @@ private fun mockCfgGVPCustomer() = mockCfgGVPCustomer(gvpCustomer.name).apply {
     every { timeZone } returns timezone
 
     every { userProperties } returns mockKeyValueCollection()
-    every { folderId } returns DEFAULT_OBJECT_DBID
+    every { folderId } returns DEFAULT_FOLDER_DBID
 }

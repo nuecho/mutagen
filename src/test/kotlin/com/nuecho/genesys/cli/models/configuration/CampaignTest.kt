@@ -6,7 +6,6 @@ import com.genesyslab.platform.configuration.protocol.types.CfgObjectState.CFGEn
 import com.nuecho.genesys.cli.models.configuration.ConfigurationAsserts.checkSerialization
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_FOLDER_DBID
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_FOLDER_REFERENCE
-import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_OBJECT_DBID
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_REFERENCE
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgCallingList
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgCallingListInfo
@@ -35,8 +34,6 @@ import org.junit.jupiter.api.Test
 
 private const val CALLING_LIST_NAME = "callingList"
 private const val CAMPAIGN_NAME = "campaign"
-private const val CALLING_LIST_DBID = 102
-private const val SCRIPT_DBID = 103
 private val campaign = Campaign(
     tenant = DEFAULT_TENANT_REFERENCE,
     name = CAMPAIGN_NAME,
@@ -86,10 +83,12 @@ class CampaignTest : ConfigurationObjectTest(
     @Test
     fun `createCfgObject should properly create CfgCampaign`() {
         val service = mockConfService()
+        val callingListDbid = 102
+        val scriptDbid = 103
 
         every { service.retrieveObject(CfgCampaign::class.java, any()) } returns null
-        mockRetrieveCallingList(service, CALLING_LIST_DBID)
-        mockRetrieveScript(service, SCRIPT_DBID)
+        mockRetrieveCallingList(service, callingListDbid)
+        mockRetrieveScript(service, scriptDbid)
         mockRetrieveTenant(service)
 
         objectMockk(ConfigurationObjectRepository).use {
@@ -97,10 +96,10 @@ class CampaignTest : ConfigurationObjectTest(
             val cfgCampaign = campaign.createCfgObject(service)
 
             with(cfgCampaign) {
-                assertThat(callingLists.toList()[0].callingListDBID, equalTo(CALLING_LIST_DBID))
+                assertThat(callingLists.toList()[0].callingListDBID, equalTo(callingListDbid))
                 assertThat(description, equalTo(campaign.description))
                 assertThat(name, equalTo(campaign.name))
-                assertThat(scriptDBID, equalTo(SCRIPT_DBID))
+                assertThat(scriptDBID, equalTo(scriptDbid))
 
                 assertThat(folderId, equalTo(DEFAULT_FOLDER_DBID))
                 assertThat(state, equalTo(toCfgObjectState(campaign.state)))
@@ -127,6 +126,6 @@ private fun mockCfgCampaign(): CfgCampaign {
         every { script } returns mockScript
         every { state } returns toCfgObjectState(campaign.state)
         every { userProperties } returns mockKeyValueCollection()
-        every { folderId } returns DEFAULT_OBJECT_DBID
+        every { folderId } returns DEFAULT_FOLDER_DBID
     }
 }

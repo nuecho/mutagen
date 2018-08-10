@@ -5,8 +5,8 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgRole
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectState
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectType.CFGPerson
 import com.nuecho.genesys.cli.models.configuration.ConfigurationAsserts.checkSerialization
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_FOLDER_DBID
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_FOLDER_REFERENCE
-import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_OBJECT_DBID
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_REFERENCE
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgPerson
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgRole
@@ -115,6 +115,6 @@ private fun mockCfgRole(service: IConfService): CfgRole {
         every { state } returns cfgState
         every { members } returns listOf(member, member, member)
         every { userProperties } returns mockKeyValueCollection()
-        every { folderId } returns DEFAULT_OBJECT_DBID
+        every { folderId } returns DEFAULT_FOLDER_DBID
     }
 }

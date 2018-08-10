@@ -2,10 +2,9 @@ package com.nuecho.genesys.cli.models.configuration
 
 import com.genesyslab.platform.applicationblocks.com.objects.CfgTenant
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectState.CFGEnabled
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_FOLDER_DBID
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_FOLDER_REFERENCE
-import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_OBJECT_DBID
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_DBID
-import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_NAME
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_REFERENCE
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgObjectiveTable
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgScript
@@ -20,6 +19,7 @@ import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockConfigurati
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveFolderByDbid
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveObjectiveTable
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveScript
+import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveTenant
 import com.nuecho.genesys.cli.services.ConfigurationObjectRepository
 import com.nuecho.genesys.cli.services.ServiceMocks.mockConfService
 import com.nuecho.genesys.cli.toShortName
@@ -66,12 +66,13 @@ class TenantTest : ConfigurationObjectTest(
 
     @Test
     fun `createCfgObject should properly create CfgTenant`() {
-        val defaultTenant = mockCfgTenant(DEFAULT_TENANT_NAME)
         val service = mockConfService()
-        every { service.retrieveObject(CfgTenant::class.java, any()) } returns defaultTenant
+        mockRetrieveTenant(service)
+        val objectiveTableDbid = 102
+        val scriptDbid = 103
 
-        mockRetrieveObjectiveTable(service)
-        mockRetrieveScript(service)
+        mockRetrieveObjectiveTable(service, objectiveTableDbid)
+        mockRetrieveScript(service, scriptDbid)
 
         objectMockk(ConfigurationObjectRepository).use {
             mockConfigurationObjectRepository()
@@ -79,8 +80,8 @@ class TenantTest : ConfigurationObjectTest(
 
             with(cfgTenant) {
                 assertThat(name, equalTo(tenant.name))
-                assertThat(defaultCapacityRuleDBID, equalTo(DEFAULT_OBJECT_DBID))
-                assertThat(defaultContractDBID, equalTo(DEFAULT_OBJECT_DBID))
+                assertThat(defaultCapacityRuleDBID, equalTo(scriptDbid))
+                assertThat(defaultContractDBID, equalTo(objectiveTableDbid))
                 assertThat(chargeableNumber, equalTo(tenant.chargeableNumber))
                 assertThat(parentTenantDBID, equalTo(DEFAULT_TENANT_DBID))
                 assertThat(password, equalTo(tenant.password))
@@ -108,6 +109,6 @@ private fun mockCfgTenant(): CfgTenant {
         every { it.defaultCapacityRule } returns capacityRule
         every { it.defaultContract } returns contract
         every { it.parentTenant } returns parentTenant
-        every { it.folderId } returns DEFAULT_OBJECT_DBID
+        every { it.folderId } returns DEFAULT_FOLDER_DBID
     }
 }

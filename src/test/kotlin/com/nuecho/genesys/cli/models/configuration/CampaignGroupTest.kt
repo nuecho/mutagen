@@ -5,22 +5,21 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgCampaignGroup
 import com.genesyslab.platform.configuration.protocol.types.CfgDialMode.CFGDMPredict
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectState.CFGEnabled
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectType.CFGAgentGroup
-import com.genesyslab.platform.configuration.protocol.types.CfgObjectType.CFGFolder
 import com.genesyslab.platform.configuration.protocol.types.CfgOperationMode.CFGOMManual
 import com.genesyslab.platform.configuration.protocol.types.CfgOptimizationMethod.CFGOMOverdialRate
 import com.nuecho.genesys.cli.models.configuration.ConfigurationAsserts.checkSerialization
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_FOLDER_DBID
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_FOLDER_REFERENCE
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_OBJECT_DBID
-import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_DBID
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_NAME
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_REFERENCE
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgAgentGroup
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgApplication
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgCampaignGroup
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgDN
-import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgFolder
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgGVPIVRProfile
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgScript
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgSwitch
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgTenant
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockKeyValueCollection
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgDNType
@@ -36,7 +35,10 @@ import com.nuecho.genesys.cli.models.configuration.reference.SwitchReference
 import com.nuecho.genesys.cli.models.configuration.reference.referenceSetBuilder
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockConfigurationObjectRepository
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveAgentGroup
+import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveApplication
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveCampaign
+import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveFolderByDbid
+import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveTenant
 import com.nuecho.genesys.cli.services.ConfigurationObjectRepository
 import com.nuecho.genesys.cli.services.ServiceMocks.mockConfService
 import com.nuecho.genesys.cli.services.getObjectDbid
@@ -51,11 +53,6 @@ import org.junit.jupiter.api.Test
 
 private const val AGENT_GROUP_DBID = 108
 private const val CAMPAIGN_DBID = 109
-private const val ORIG_DN_DBID = 110
-private const val IVR_PROFILE_DBID = 111
-private const val SCRIPT1_DBID = 112
-private const val SCRIPT2_DBID = 113
-private const val SERVER_DBID = 114
 
 private const val CAMPAIGN = "campaign"
 private val CAMPAIGN_REFERENCE = CampaignGroupCampaignReference(CAMPAIGN, DEFAULT_TENANT_REFERENCE)
@@ -124,11 +121,10 @@ class CampaignGroupTest : ConfigurationObjectTest(
     @Test
     override fun `initialized object should properly serialize`() {
         val service = mockConfService()
-        val folder = mockCfgFolder()
         val agentGroup = mockCfgAgentGroup("group")
+        mockRetrieveFolderByDbid(service)
 
         objectMockk(ConfigurationObjects).use {
-            every { service.retrieveObject(CFGFolder, any()) } returns folder
             every { service.retrieveObject(CFGAgentGroup, AGENT_GROUP_DBID) } returns agentGroup
 
             val campaignGroup = CampaignGroup(mockCfgCampaignGroup(service))
@@ -138,18 +134,23 @@ class CampaignGroupTest : ConfigurationObjectTest(
 
     @Test
     fun `createCfgObject should properly create CfgCampaignGroup`() {
-
         val service = mockConfService()
+        val origDnDbid = 110
+        val ivrProfileDbid = 111
+        val script1Dbid = 112
+        val script2Dbid = 113
+        val applicationDbid = 114
+
+        mockRetrieveTenant(service)
         mockRetrieveAgentGroup(service, AGENT_GROUP_DBID)
+        mockRetrieveApplication(service, applicationDbid)
         mockRetrieveCampaign(service, CAMPAIGN_DBID)
 
         staticMockk("com.nuecho.genesys.cli.services.ConfServiceExtensionsKt").use {
-            every { service.getObjectDbid(campaignGroup.interactionQueue) } answers { SCRIPT1_DBID }
-            every { service.getObjectDbid(campaignGroup.ivrProfile) } answers { IVR_PROFILE_DBID }
-            every { service.getObjectDbid(campaignGroup.origDN) } answers { ORIG_DN_DBID }
-            every { service.getObjectDbid(campaignGroup.script) } answers { SCRIPT2_DBID }
-            every { service.getObjectDbid(campaignGroup.servers!![0]) } answers { SERVER_DBID }
-            every { service.getObjectDbid(campaignGroup.tenant) } answers { DEFAULT_TENANT_DBID }
+            every { service.getObjectDbid(campaignGroup.interactionQueue) } returns script1Dbid
+            every { service.getObjectDbid(campaignGroup.ivrProfile) } returns ivrProfileDbid
+            every { service.getObjectDbid(campaignGroup.origDN) } returns origDnDbid
+            every { service.getObjectDbid(campaignGroup.script) } returns script2Dbid
 
             objectMockk(ConfigurationObjectRepository).use {
                 mockConfigurationObjectRepository()
@@ -158,12 +159,12 @@ class CampaignGroupTest : ConfigurationObjectTest(
 
                 with(cfgCampaignGroup) {
                     assertThat(campaignDBID, equalTo(CAMPAIGN_DBID))
-                    assertThat(interactionQueueDBID, equalTo(SCRIPT1_DBID))
-                    assertThat(ivrProfileDBID, equalTo(IVR_PROFILE_DBID))
+                    assertThat(interactionQueueDBID, equalTo(script1Dbid))
+                    assertThat(ivrProfileDBID, equalTo(ivrProfileDbid))
                     assertThat(groupDBID, equalTo(AGENT_GROUP_DBID))
-                    assertThat(origDNDBID, equalTo(ORIG_DN_DBID))
-                    assertThat(scriptDBID, equalTo(SCRIPT2_DBID))
-                    assertThat(serverDBIDs.toList(), equalTo(listOf(SERVER_DBID)))
+                    assertThat(origDNDBID, equalTo(origDnDbid))
+                    assertThat(scriptDBID, equalTo(script2Dbid))
+                    assertThat(serverDBIDs.toList(), equalTo(listOf(applicationDbid)))
 
                     assertThat(campaignDBID, equalTo(CAMPAIGN_DBID))
                     assertThat(description, equalTo(campaignGroup.description))
@@ -187,7 +188,7 @@ class CampaignGroupTest : ConfigurationObjectTest(
 
 private fun mockCfgCampaignGroup(service: IConfService): CfgCampaignGroup {
     val cfgCampaignGroup = mockCfgCampaignGroup(campaignGroup.name)
-    val cfgSwitch = ConfigurationObjectMocks.mockCfgSwitch("switch")
+    val cfgSwitch = mockCfgSwitch("switch")
 
     val mockInteractionQueue = mockCfgScript(SCRIPT1)
     val mockScript = mockCfgScript(SCRIPT2)
@@ -202,9 +203,9 @@ private fun mockCfgCampaignGroup(service: IConfService): CfgCampaignGroup {
 
     return cfgCampaignGroup.apply {
         every { configurationService } returns service
-        every { folderId } returns DEFAULT_OBJECT_DBID
+        every { folderId } returns DEFAULT_FOLDER_DBID
         every { name } returns campaignGroup.name
-        every { campaignDBID } returns CAMPAIGN_DBID
+        every { campaignDBID } returns DEFAULT_OBJECT_DBID
         every { description } returns campaignGroup.description
         every { dialMode } returns CFGDMPredict
         every { groupDBID } returns AGENT_GROUP_DBID

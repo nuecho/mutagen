@@ -15,7 +15,6 @@ import com.genesyslab.platform.configuration.protocol.types.CfgRank.CFGUser
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_FOLDER
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_FOLDER_DBID
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_FOLDER_REFERENCE
-import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_OBJECT_DBID
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_REFERENCE
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgAgentLoginInfo
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgFolder
@@ -124,14 +123,18 @@ class PersonTest : ConfigurationObjectTest(
     @Test
     fun `createCfgObject should properly create CfgPerson`() {
         val service = mockConfService()
+        val placeDbid = 102
+        val objectiveTableDbid = 103
+        val scriptDbid = 104
+        val skillDbid = 105
 
         every { service.retrieveObject(CfgPerson::class.java, any()) } returns null
         mockRetrieveTenant(service)
         mockRetrieveAgentLogin(service)
-        mockRetrieveObjectiveTable(service)
-        mockRetrievePlace(service)
-        mockRetrieveScript(service)
-        mockRetrieveSkill(service)
+        mockRetrieveObjectiveTable(service, objectiveTableDbid)
+        mockRetrievePlace(service, placeDbid)
+        mockRetrieveScript(service, scriptDbid)
+        mockRetrieveSkill(service, skillDbid)
 
         objectMockk(ConfigurationObjectRepository).use {
             mockConfigurationObjectRepository()
@@ -157,10 +160,11 @@ class PersonTest : ConfigurationObjectTest(
 
             with(cfgPerson.agentInfo) {
                 assertThat(siteDBID, equalTo(DEFAULT_FOLDER_DBID))
-                assertThat(placeDBID, equalTo(DEFAULT_OBJECT_DBID))
-                assertThat(contractDBID, equalTo(DEFAULT_OBJECT_DBID))
-                assertThat(capacityRuleDBID, equalTo(DEFAULT_OBJECT_DBID))
+                assertThat(placeDBID, equalTo(placeDbid))
+                assertThat(contractDBID, equalTo(objectiveTableDbid))
+                assertThat(capacityRuleDBID, equalTo(scriptDbid))
                 assertThat(skillLevels, hasSize(3))
+                assertThat(skillLevels.toList()[0].skillDBID, equalTo(skillDbid))
                 assertThat(agentLogins, hasSize(0))
             }
         }
@@ -207,7 +211,7 @@ private fun mockCfgPerson(): CfgPerson {
         every { appRanks } returns cfgAppRanks
         every { userProperties } returns mockKeyValueCollection()
         every { agentInfo } returns cfgAgentInfo
-        every { folderId } returns DEFAULT_OBJECT_DBID
+        every { folderId } returns DEFAULT_FOLDER_DBID
     }
 }
 

@@ -35,7 +35,9 @@
     "type": "acdqueue"
   },
   "script": "script2",
-  "servers": [ "applicationServer" ],
+  "servers": [
+    "applicationServer"
+  ],
   "state": "enabled",
   "tenant": "tenant",
   "userProperties": {

@@ -5,8 +5,8 @@ import com.genesyslab.platform.configuration.protocol.types.CfgTransactionType.C
 import com.genesyslab.platform.configuration.protocol.types.CfgTransactionType.CFGTRTStatType
 import com.nuecho.genesys.cli.TestResources.loadJsonConfiguration
 import com.nuecho.genesys.cli.models.configuration.ConfigurationAsserts.checkSerialization
-import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_DBID
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_NAME
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_REFERENCE
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgTenant
 import com.nuecho.genesys.cli.services.ServiceMocks.mockConfService
@@ -48,7 +48,7 @@ class TransactionReferenceTest {
 
     @Test
     fun `TransactionReference toQuery should create the proper query`() {
-        val cfgTenant = mockCfgTenant(ConfigurationObjectMocks.DEFAULT_TENANT_NAME)
+        val cfgTenant = mockCfgTenant(DEFAULT_TENANT_NAME)
 
         val service = mockConfService()
         every { service.retrieveObject(CfgTenant::class.java, any()) } returns cfgTenant
@@ -61,7 +61,7 @@ class TransactionReferenceTest {
 
     @Test
     fun `toString should generate the proper string`() {
-        assertThat("name: '$NAME', type: '${TYPE.toShortName()}', tenant: '${ConfigurationObjectMocks.DEFAULT_TENANT_NAME}'", equalTo(transactionReference.toString()))
+        assertThat("name: '$NAME', type: '${TYPE.toShortName()}', tenant: '$DEFAULT_TENANT_NAME'", equalTo(transactionReference.toString()))
     }
 
     @Test

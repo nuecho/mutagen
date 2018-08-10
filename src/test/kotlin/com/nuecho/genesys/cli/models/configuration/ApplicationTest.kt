@@ -12,12 +12,14 @@ import com.genesyslab.platform.configuration.protocol.types.CfgObjectState.CFGEn
 import com.genesyslab.platform.configuration.protocol.types.CfgTraceMode.CFGTMNone
 import com.nuecho.genesys.cli.asBoolean
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_FOLDER_DBID
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_FOLDER_REFERENCE
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_OBJECT_DBID
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_DBID
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_REFERENCE
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgAppPrototype
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgApplication
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgHost
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgTenant
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockKeyValueCollection
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgFlag
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgObjectState
@@ -107,7 +109,7 @@ private val application = Application(
     workDirectory = "/tmp",
     state = CFGEnabled.toShortName(),
     userProperties = defaultProperties(),
-    folder = ConfigurationObjectMocks.DEFAULT_FOLDER_REFERENCE
+    folder = DEFAULT_FOLDER_REFERENCE
 )
 
 class ApplicationTest : ConfigurationObjectTest(
@@ -248,7 +250,7 @@ private fun mockCfgApplication() = mockCfgApplication(application.name).apply {
     val connInfo = mockCfgConnInfo()
     val server = mockCfgServer()
     val portInfo = mockCfgPortInfo()
-    val tenant = ConfigurationObjectMocks.mockCfgTenant("tenant")
+    val tenant = mockCfgTenant("tenant")
     val prototype = mockCfgAppPrototype("foo", 102)
 
     every { configurationService } returns service
@@ -261,7 +263,7 @@ private fun mockCfgApplication() = mockCfgApplication(application.name).apply {
     every { commandLineArguments } returns application.commandLineArguments
     every { componentType } returns CFGAppComponentUnknown
     every { flexibleProperties } returns ConfigurationObjects.toKeyValueCollection(application.flexibleProperties)
-    every { folderId } returns DEFAULT_OBJECT_DBID
+    every { folderId } returns DEFAULT_FOLDER_DBID
     every { isPrimary } returns toCfgFlag(application.isPrimary)
     every { options } returns ConfigurationObjects.toKeyValueCollection(application.options)
     every { password } returns application.password

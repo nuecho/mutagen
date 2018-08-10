@@ -8,15 +8,11 @@ import com.genesyslab.platform.configuration.protocol.types.CfgObjectType.CFGPla
 import com.nuecho.genesys.cli.models.configuration.ConfigurationAsserts.checkSerialization
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_FOLDER_DBID
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_FOLDER_REFERENCE
-import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_OBJECT_DBID
-import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_NAME
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_REFERENCE
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgFolder
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgPlace
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgPlaceGroup
-import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgTenant
-import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockKeyValueCollection
-import com.nuecho.genesys.cli.models.configuration.ConfigurationTestData.defaultProperties
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockEmptyCfgGroup
 import com.nuecho.genesys.cli.models.configuration.reference.PlaceReference
 import com.nuecho.genesys.cli.models.configuration.reference.referenceSetBuilder
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockConfigurationObjectRepository
@@ -43,7 +39,7 @@ private val placeGroup = PlaceGroup(
     group = Group(
         tenant = DEFAULT_TENANT_REFERENCE,
         name = NAME,
-        userProperties = defaultProperties()
+        state = "enabled"
     ),
     places = listOf(PlaceReference(PLACE1, DEFAULT_TENANT_REFERENCE), PlaceReference(PLACE2, DEFAULT_TENANT_REFERENCE)),
     folder = DEFAULT_FOLDER_REFERENCE
@@ -108,12 +104,9 @@ class PlaceGroupTest : ConfigurationObjectTest(
                 val cfgPlaceGroup = placeGroup.createCfgObject(service)
 
                 with(cfgPlaceGroup) {
-                    assertThat(folderId, equalTo(DEFAULT_FOLDER_DBID))
                     assertThat(placeDBIDs.toList(), equalTo(listOf(PLACE1_DBID, PLACE2_DBID)))
-
-                    assertThat(groupInfo.name, equalTo(placeGroup.group.name))
-                    assertThat(groupInfo.tenantDBID, equalTo(TENANT_DBID))
-                    assertThat(groupInfo.userProperties.asCategorizedProperties(), equalTo(placeGroup.userProperties))
+                    assertThat(groupInfo, equalTo(placeGroup.group.toCfgGroup(service, this)))
+                    assertThat(folderId, equalTo(DEFAULT_FOLDER_DBID))
                 }
             }
         }
@@ -122,24 +115,13 @@ class PlaceGroupTest : ConfigurationObjectTest(
 
 private fun mockCfgPlaceGroup(service: IConfService): CfgPlaceGroup {
     val cfgPlaceGroup = mockCfgPlaceGroup(placeGroup.group.name)
-    val tenant = mockCfgTenant(DEFAULT_TENANT_NAME)
+    val groupInfoMock = mockEmptyCfgGroup(placeGroup.group.name)
 
     return cfgPlaceGroup.apply {
         every { configurationService } returns service
-        every { folderId } returns DEFAULT_OBJECT_DBID
+        every { folderId } returns DEFAULT_FOLDER_DBID
         every { placeDBIDs } returns listOf(PLACE1_DBID, PLACE2_DBID)
 
-        every { groupInfo.name } returns placeGroup.group.name
-        every { groupInfo.tenant } returns tenant
-        every { groupInfo.userProperties } returns mockKeyValueCollection()
-
-        every { groupInfo.capacityRule } returns null
-        every { groupInfo.capacityTable } returns null
-        every { groupInfo.contract } returns null
-        every { groupInfo.managers } returns null
-        every { groupInfo.quotaTable } returns null
-        every { groupInfo.routeDNs } returns null
-        every { groupInfo.site } returns null
-        every { groupInfo.state } returns null
+        every { groupInfo } returns groupInfoMock
     }
 }

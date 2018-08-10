@@ -29,29 +29,9 @@
     "type": "folder"
   },
   "group": {
-    "capacityRule": "capacityRule",
-    "capacityTable": "capacityTable",
-    "contract": "contract",
     "name": "dnGroup",
-    "quotaTable": "quotaTable",
-    "site": {
-      "owner": {
-        "name": "tenant",
-        "type": "tenant"
-      },
-      "path": [
-        "folder"
-      ],
-      "type": "folder"
-    },
     "state": "enabled",
-    "tenant": "tenant",
-    "userProperties": {
-      "section": {
-        "number": 456,
-        "string": "def"
-      }
-    }
+    "tenant": "tenant"
   },
   "type": "acdqueues"
 }

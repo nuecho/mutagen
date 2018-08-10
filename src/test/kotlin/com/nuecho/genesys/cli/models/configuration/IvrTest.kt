@@ -7,10 +7,10 @@ import com.genesyslab.platform.configuration.protocol.types.CfgObjectState
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectState.CFGEnabled
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_FOLDER_DBID
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_FOLDER_REFERENCE
-import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_OBJECT_DBID
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_DBID
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_NAME
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_REFERENCE
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgApplication
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgIvr
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgTenant
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockKeyValueCollection
@@ -111,7 +111,7 @@ private fun mockCfgIvr(): CfgIVR {
     mockRetrieveFolderByDbid(service)
 
     val cfgTenant = mockCfgTenant(name = DEFAULT_TENANT_NAME)
-    val cfgApplication = ConfigurationObjectMocks.mockCfgApplication(name = IVR_SERVER_NAME)
+    val cfgApplication = mockCfgApplication(name = IVR_SERVER_NAME)
     val cfgIvr = mockCfgIvr(name = NAME)
     val userPropertiesMock = mockKeyValueCollection()
 
@@ -122,7 +122,7 @@ private fun mockCfgIvr(): CfgIVR {
         every { type } returns IVR_TYPE
         every { version } returns ivr.version
         every { ivrServer } returns cfgApplication
-        every { folderId } returns DEFAULT_OBJECT_DBID
+        every { folderId } returns DEFAULT_FOLDER_DBID
         every { state } returns CFGEnabled
         every { userProperties } returns userPropertiesMock
     }

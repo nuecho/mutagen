@@ -9,8 +9,11 @@ import com.genesyslab.platform.configuration.protocol.types.CfgObjectType
 import com.nuecho.genesys.cli.TestResources
 import com.nuecho.genesys.cli.models.configuration.ConfigurationAsserts.checkSerialization
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_FOLDER
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_FOLDER_REFERENCE
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_DBID
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_NAME
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_REFERENCE
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgDN
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgFolder
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgObjectiveTable
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgPerson
@@ -26,6 +29,9 @@ import com.nuecho.genesys.cli.models.configuration.reference.PersonReference
 import com.nuecho.genesys.cli.models.configuration.reference.ScriptReference
 import com.nuecho.genesys.cli.models.configuration.reference.StatTableReference
 import com.nuecho.genesys.cli.models.configuration.reference.referenceSetBuilder
+import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveObjectiveTable
+import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveScript
+import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveTenant
 import com.nuecho.genesys.cli.services.ServiceMocks.mockConfService
 import com.nuecho.genesys.cli.services.getObjectDbid
 import com.nuecho.genesys.cli.toShortName
@@ -57,7 +63,7 @@ private val group = Group(
     state = CfgObjectState.CFGEnabled.toShortName(),
     userProperties = ConfigurationTestData.defaultProperties(),
     capacityRule = ScriptReference("capacityRule", DEFAULT_TENANT_REFERENCE),
-    site = ConfigurationObjectMocks.DEFAULT_FOLDER_REFERENCE,
+    site = DEFAULT_FOLDER_REFERENCE,
     contract = ObjectiveTableReference("contract", DEFAULT_TENANT_REFERENCE)
 )
 
@@ -107,7 +113,6 @@ class GroupTest {
         val service = mockConfService()
         val parentObject = CfgPlaceGroup(service)
 
-        val tenantDbid = 110
         val capacityTableDbid = 111
         val quotaTableDbid = 112
         val capacityRuleDbid = 113
@@ -119,22 +124,22 @@ class GroupTest {
         val dn2Dbid = 119
 
         staticMockk("com.nuecho.genesys.cli.services.ConfServiceExtensionsKt").use {
-            every { service.getObjectDbid(group.tenant) } answers { tenantDbid }
-            every { service.getObjectDbid(group.capacityTable) } answers { capacityTableDbid }
-            every { service.getObjectDbid(group.quotaTable) } answers { quotaTableDbid }
-            every { service.getObjectDbid(group.capacityRule) } answers { capacityRuleDbid }
-            every { service.getObjectDbid(group.site) } answers { siteDbid }
-            every { service.getObjectDbid(group.contract) } answers { contractDbid }
-            every { service.getObjectDbid(group.managers!![0]) } answers { manager1Dbid }
-            every { service.getObjectDbid(group.managers!![1]) } answers { manager2Dbid }
-            every { service.getObjectDbid(group.routeDNs!![0]) } answers { dn1Dbid }
-            every { service.getObjectDbid(group.routeDNs!![1]) } answers { dn2Dbid }
+            mockRetrieveTenant(service)
+            mockRetrieveObjectiveTable(service, contractDbid)
+            mockRetrieveScript(service, capacityRuleDbid)
+            every { service.getObjectDbid(group.capacityTable) } returns capacityTableDbid
+            every { service.getObjectDbid(group.quotaTable) } returns quotaTableDbid
+            every { service.getObjectDbid(group.site) } returns siteDbid
+            every { service.getObjectDbid(group.managers!![0]) } returns manager1Dbid
+            every { service.getObjectDbid(group.managers!![1]) } returns manager2Dbid
+            every { service.getObjectDbid(group.routeDNs!![0]) } returns dn1Dbid
+            every { service.getObjectDbid(group.routeDNs!![1]) } returns dn2Dbid
 
             val cfgGroup = group.toCfgGroup(service, parentObject)
 
             with(cfgGroup) {
                 assertThat(name, equalTo(group.name))
-                assertThat(tenantDBID, equalTo(tenantDbid))
+                assertThat(tenantDBID, equalTo(DEFAULT_TENANT_DBID))
                 assertThat(capacityTableDBID, equalTo(capacityTableDbid))
                 assertThat(quotaTableDBID, equalTo(quotaTableDbid))
                 assertThat(capacityRuleDBID, equalTo(capacityRuleDbid))
@@ -163,7 +168,7 @@ private fun mockGroup(): CfgGroup {
 
     val routeDNsMock = group.routeDNs?.map { ref ->
         val cfgSwitch = mockCfgSwitch(ref.switch.primaryKey)
-        ConfigurationObjectMocks.mockCfgDN(ref.number, toCfgDNType(ref.type)!!).apply {
+        mockCfgDN(ref.number, toCfgDNType(ref.type)!!).apply {
             every { switch } returns cfgSwitch
             every { name } returns null
         }

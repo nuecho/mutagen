@@ -3,8 +3,8 @@ package com.nuecho.genesys.cli.models.configuration
 import com.genesyslab.platform.applicationblocks.com.objects.CfgActionCode
 import com.genesyslab.platform.configuration.protocol.types.CfgActionCodeType.CFGTransfer
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectState.CFGEnabled
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_FOLDER_DBID
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_FOLDER_REFERENCE
-import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_OBJECT_DBID
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_REFERENCE
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.SUBCODE
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.SUBNAME
@@ -36,9 +36,7 @@ private val actionCode = ActionCode(
     name = NAME,
     type = TYPE,
     code = "code",
-    subcodes = mapOf(
-        SUBNAME to SUBCODE
-    ),
+    subcodes = mapOf(SUBNAME to SUBCODE),
     state = CFGEnabled.toShortName(),
     userProperties = defaultProperties(),
     folder = DEFAULT_FOLDER_REFERENCE
@@ -106,6 +104,6 @@ private fun mockCfgActionCode(): CfgActionCode {
         every { subcodes } returns listOf(subcode)
         every { state } returns toCfgObjectState(actionCode.state)
         every { userProperties } returns mockKeyValueCollection()
-        every { folderId } returns DEFAULT_OBJECT_DBID
+        every { folderId } returns DEFAULT_FOLDER_DBID
     }
 }
