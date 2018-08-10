@@ -18,6 +18,7 @@ import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgFie
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgFlag
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgObjectState
 import com.nuecho.genesys.cli.models.configuration.ConfigurationTestData.defaultProperties
+import com.nuecho.genesys.cli.models.configuration.reference.referenceSetBuilder
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockConfigurationObjectRepository
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveFolderByDbid
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveTenant
@@ -54,6 +55,16 @@ class FieldTest : ConfigurationObjectTest(
     importedConfigurationObject = Field(mockField())
 ) {
     val service = mockConfService()
+
+    @Test
+    override fun `getReferences() should return all object's references`() {
+        val expected = referenceSetBuilder()
+            .add(field.tenant)
+            .add(field.folder)
+            .toSet()
+
+        assertThat(field.getReferences(), equalTo(expected))
+    }
 
     @Test
     override fun `object with different unchangeable properties' values should return the right unchangeable properties`() {

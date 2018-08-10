@@ -18,6 +18,7 @@ import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mock
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockKeyValueCollection
 import com.nuecho.genesys.cli.models.configuration.ConfigurationTestData.defaultProperties
 import com.nuecho.genesys.cli.models.configuration.reference.PlaceReference
+import com.nuecho.genesys.cli.models.configuration.reference.referenceSetBuilder
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockConfigurationObjectRepository
 import com.nuecho.genesys.cli.services.ConfigurationObjectRepository
 import com.nuecho.genesys.cli.services.ServiceMocks.mockConfService
@@ -53,6 +54,17 @@ class PlaceGroupTest : ConfigurationObjectTest(
     emptyConfigurationObject = PlaceGroup(tenant = DEFAULT_TENANT_REFERENCE, name = NAME),
     mandatoryProperties = emptySet()
 ) {
+    @Test
+    override fun `getReferences() should return all object's references`() {
+        val expected = referenceSetBuilder()
+            .add(placeGroup.group.getReferences())
+            .add(placeGroup.places)
+            .add(placeGroup.folder)
+            .toSet()
+
+        assertThat(placeGroup.getReferences(), equalTo(expected))
+    }
+
     override fun `object with different unchangeable properties' values should return the right unchangeable properties`() {
         // not implemented, since object has no unchangeable properties
     }

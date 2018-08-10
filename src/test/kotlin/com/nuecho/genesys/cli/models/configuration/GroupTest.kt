@@ -25,6 +25,7 @@ import com.nuecho.genesys.cli.models.configuration.reference.ObjectiveTableRefer
 import com.nuecho.genesys.cli.models.configuration.reference.PersonReference
 import com.nuecho.genesys.cli.models.configuration.reference.ScriptReference
 import com.nuecho.genesys.cli.models.configuration.reference.StatTableReference
+import com.nuecho.genesys.cli.models.configuration.reference.referenceSetBuilder
 import com.nuecho.genesys.cli.services.ServiceMocks.mockConfService
 import com.nuecho.genesys.cli.services.getObjectDbid
 import com.nuecho.genesys.cli.toShortName
@@ -61,6 +62,22 @@ private val group = Group(
 )
 
 class GroupTest {
+    @Test
+    fun `getReferences() should return all references`() {
+        val expected = referenceSetBuilder()
+            .add(group.tenant)
+            .add(group.managers)
+            .add(group.routeDNs)
+            .add(group.capacityTable)
+            .add(group.quotaTable)
+            .add(group.capacityRule)
+            .add(group.site)
+            .add(group.contract)
+            .toSet()
+
+        assertThat(group.getReferences(), equalTo(expected))
+    }
+
     @Test
     fun `empty object should properly serialize`() {
         checkSerialization(Group(DEFAULT_TENANT_REFERENCE, "empty-group"), EMPTY_GROUP_EXPECTED_FILE)

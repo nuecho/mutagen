@@ -34,6 +34,7 @@ import com.nuecho.genesys.cli.models.configuration.reference.ObjectiveTableRefer
 import com.nuecho.genesys.cli.models.configuration.reference.PersonReference
 import com.nuecho.genesys.cli.models.configuration.reference.ScriptReference
 import com.nuecho.genesys.cli.models.configuration.reference.StatTableReference
+import com.nuecho.genesys.cli.models.configuration.reference.referenceSetBuilder
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockConfigurationObjectRepository
 import com.nuecho.genesys.cli.services.ConfigurationObjectRepository
 import com.nuecho.genesys.cli.services.ServiceMocks.mockConfService
@@ -79,6 +80,16 @@ class AccessGroupTest : ConfigurationObjectTest(
     emptyConfigurationObject = AccessGroup(tenant = DEFAULT_TENANT_REFERENCE, name = NAME),
     mandatoryProperties = emptySet()
 ) {
+    @Test
+    override fun `getReferences() should return all object's references`() {
+        val expected = referenceSetBuilder()
+            .add(accessGroup.members)
+            .add(accessGroup.folder)
+            .add(accessGroup.group.getReferences())
+            .toSet()
+
+        assertThat(accessGroup.getReferences(), equalTo(expected))
+    }
 
     @Test
     override fun `object with different unchangeable properties' values should return the right unchangeable properties`() {

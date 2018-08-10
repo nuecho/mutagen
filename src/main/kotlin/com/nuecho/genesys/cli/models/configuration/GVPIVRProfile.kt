@@ -71,7 +71,7 @@ data class GVPIVRProfile(
         isProvisioned = gvpivrProfile.isProvisioned?.asBoolean(),
         tfn = gvpivrProfile.tfn?.split(',')?.map { it.trim() }?.toList(),
         status = gvpivrProfile.status,
-        dids = gvpivrProfile.diDs?.map { DNReference(it.number, it.switch.name, it.type) },
+        dids = gvpivrProfile.diDs?.map { it.getReference() },
         state = gvpivrProfile.state?.toShortName(),
         userProperties = gvpivrProfile.userProperties?.asCategorizedProperties(),
         folder = gvpivrProfile.getFolderReference()

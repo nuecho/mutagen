@@ -4,10 +4,14 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgGVPReseller
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectState
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_FOLDER_REFERENCE
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_OBJECT_DBID
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_DBID
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_REFERENCE
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgTimeZone
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockKeyValueCollection
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgObjectState
 import com.nuecho.genesys.cli.models.configuration.ConfigurationTestData.defaultProperties
+import com.nuecho.genesys.cli.models.configuration.reference.TimeZoneReference
+import com.nuecho.genesys.cli.models.configuration.reference.referenceSetBuilder
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockConfigurationObjectRepository
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveFolderByDbid
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveTenant
@@ -30,6 +34,7 @@ private const val NAME = "reseller"
 private val gvpReseller = GVPReseller(
     tenant = DEFAULT_TENANT_REFERENCE,
     name = NAME,
+    timeZone = TimeZoneReference("GMT", DEFAULT_TENANT_REFERENCE),
     startDate = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ").parse("2018-06-06T21:17:50.105+0000"),
     state = CfgObjectState.CFGEnabled.toShortName(),
     userProperties = defaultProperties(),
@@ -42,6 +47,17 @@ class GVPResellerTest : ConfigurationObjectTest(
     mandatoryProperties = emptySet(),
     importedConfigurationObject = GVPReseller(mockCfgGVPReseller())
 ) {
+    @Test
+    override fun `getReferences() should return all object's references`() {
+        val expected = referenceSetBuilder()
+            .add(gvpReseller.tenant)
+            .add(gvpReseller.timeZone)
+            .add(gvpReseller.folder)
+            .toSet()
+
+        assertThat(gvpReseller.getReferences(), equalTo(expected))
+    }
+
     override fun `object with different unchangeable properties' values should return the right unchangeable properties`() {
         // not implemented, since object has no unchangeable properties
     }
@@ -58,9 +74,13 @@ class GVPResellerTest : ConfigurationObjectTest(
             val cfgGVPReseller = gvpReseller.createCfgObject(service)
 
             with(cfgGVPReseller) {
+                assertThat(tenantDBID, equalTo(DEFAULT_TENANT_DBID))
                 assertThat(name, equalTo(gvpReseller.name))
-                assertThat(state, equalTo(ConfigurationObjects.toCfgObjectState(gvpReseller.state)))
+                assertThat(timeZoneDBID, equalTo(DEFAULT_OBJECT_DBID))
+                assertThat(startDate.time, equalTo(gvpReseller.startDate))
+                assertThat(state, equalTo(toCfgObjectState(gvpReseller.state)))
                 assertThat(userProperties.asCategorizedProperties(), equalTo(gvpReseller.userProperties))
+                assertThat(folderId, equalTo(ConfigurationObjectMocks.DEFAULT_FOLDER_DBID))
             }
         }
     }
@@ -69,13 +89,14 @@ class GVPResellerTest : ConfigurationObjectTest(
 private fun mockCfgGVPReseller() =
     ConfigurationObjectMocks.mockCfgGVPReseller(gvpReseller.name).apply {
         val service = mockConfService()
+        val timezone = mockCfgTimeZone(name = gvpReseller.timeZone!!.primaryKey)
         mockRetrieveFolderByDbid(service)
 
         every { configurationService } returns service
         every { displayName } returns null
         every { isParentNSP } returns ConfigurationObjects.toCfgFlag(gvpReseller.isParentNSP)
         every { notes } returns gvpReseller.notes
-        every { timeZone } returns null
+        every { timeZone } returns timezone
         every { startDate } returns GregorianCalendar.from(
             ZonedDateTime.ofInstant(gvpReseller.startDate!!.toInstant(), ZoneId.systemDefault())
         )

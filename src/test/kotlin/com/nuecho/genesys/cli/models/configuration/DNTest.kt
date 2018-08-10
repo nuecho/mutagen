@@ -1,6 +1,7 @@
 package com.nuecho.genesys.cli.models.configuration
 
 import com.genesyslab.platform.applicationblocks.com.objects.CfgDN
+import com.genesyslab.platform.applicationblocks.com.objects.CfgDNAccessNumber
 import com.genesyslab.platform.configuration.protocol.types.CfgDNType.CFGACDQueue
 import com.genesyslab.platform.configuration.protocol.types.CfgDNType.CFGNoDN
 import com.genesyslab.platform.configuration.protocol.types.CfgDNType.CFGRoutingQueue
@@ -28,6 +29,7 @@ import com.nuecho.genesys.cli.models.configuration.reference.DNGroupReference
 import com.nuecho.genesys.cli.models.configuration.reference.DNReference
 import com.nuecho.genesys.cli.models.configuration.reference.ObjectiveTableReference
 import com.nuecho.genesys.cli.models.configuration.reference.SwitchReference
+import com.nuecho.genesys.cli.models.configuration.reference.referenceSetBuilder
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockConfigurationObjectRepository
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveDNGroup
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveFolderByDbid
@@ -38,6 +40,7 @@ import com.nuecho.genesys.cli.services.ConfigurationObjectRepository
 import com.nuecho.genesys.cli.services.ServiceMocks.mockConfService
 import com.nuecho.genesys.cli.toShortName
 import io.mockk.every
+import io.mockk.mockk
 import io.mockk.objectMockk
 import io.mockk.use
 import org.hamcrest.MatcherAssert.assertThat
@@ -45,20 +48,21 @@ import org.hamcrest.Matchers.equalTo
 import org.junit.jupiter.api.Test
 
 private const val NUMBER = "123"
-private const val SWITCH_NAME = "aswitch"
+private const val SWITCH1_NAME = "switch1"
+private const val SWITCH2_NAME = "switch2"
 private val dn = DN(
     tenant = DEFAULT_TENANT_REFERENCE,
     number = NUMBER,
-    switch = SwitchReference(SWITCH_NAME, DEFAULT_TENANT_REFERENCE),
+    switch = SwitchReference(SWITCH1_NAME, DEFAULT_TENANT_REFERENCE),
     type = CFGNoDN.toShortName(),
     group = DNGroupReference("dnGroup", DEFAULT_TENANT_REFERENCE),
-    accessNumbers = emptyList(),
+    accessNumbers = listOf(DNAccessNumber("321", SwitchReference(SWITCH2_NAME, DEFAULT_TENANT_REFERENCE))),
     association = "anassociation",
     routeType = CfgRouteType.CFGDirect.toShortName(),
     destinationDNs = listOf(
         DNReference(
             number = "1234",
-            switch = "aswitch",
+            switch = "switch1",
             type = CFGACDQueue,
             tenant = DEFAULT_TENANT_REFERENCE
         )
@@ -86,6 +90,22 @@ class DNTest : ConfigurationObjectTest(
     mandatoryProperties = setOf(ROUTE_TYPE),
     importedConfigurationObject = DN(mockCfgDN())
 ) {
+    @Test
+    override fun `getReferences() should return all object's references`() {
+        val expected = referenceSetBuilder()
+            .add(dn.tenant)
+            .add(dn.switch)
+            .add(dn.group)
+            .add(dn.destinationDNs)
+            .add(dn.site)
+            .add(dn.contract)
+            .add(dn.folder)
+            .add(dn.accessNumbers!!.map { it.switch })
+            .toSet()
+
+        assertThat(dn.getReferences(), equalTo(expected))
+    }
+
     override fun `object with different unchangeable properties' values should return the right unchangeable properties`() {
         // not implemented, since object has no unchangeable properties
     }
@@ -110,6 +130,10 @@ class DNTest : ConfigurationObjectTest(
                 assertThat(switchSpecificType, equalTo(dn.switchSpecificType))
                 assertThat(state, equalTo(toCfgObjectState(dn.state)))
                 assertThat(userProperties.asCategorizedProperties(), equalTo(dn.userProperties))
+                with(accessNumbers.toList()[0]) {
+                    assertThat(number, equalTo(dn.accessNumbers!![0].number))
+                    assertThat(switchDBID, equalTo(DEFAULT_OBJECT_DBID))
+                }
             }
         }
     }
@@ -121,20 +145,26 @@ private fun mockCfgDN(): CfgDN {
 
     val cfgState = toCfgObjectState(dn.state)
     val cfgDNGroup = mockCfgDNGroup(dn.group!!.primaryKey)
-    val cfgSwitch = mockCfgSwitch(dn.switch.primaryKey)
+    val cfgSwitch1 = mockCfgSwitch(SWITCH1_NAME)
+    val cfgSwitch2 = mockCfgSwitch(SWITCH2_NAME)
     val cfgSite = mockCfgFolder(DEFAULT_FOLDER, CFGFolder)
     val cfgDestDN = mockCfgDN(dn.destinationDNs!!.first().number).apply {
-        every { switch } returns cfgSwitch
+        every { switch } returns cfgSwitch1
         every { type } returns CFGACDQueue
         every { name } returns null
     }
-    val cfgObjectiveTable = mockCfgObjectiveTable(dn.contract!!.primaryKey)
-    every { cfgObjectiveTable.dbid } returns 111
+    val cfgObjectiveTable = mockCfgObjectiveTable(dn.contract!!.primaryKey).apply {
+        every { dbid } returns 111
+    }
+    val cfgAccessNumber = mockk<CfgDNAccessNumber>().apply {
+        every { number } returns dn.accessNumbers!![0].number
+        every { switch } returns cfgSwitch2
+    }
 
     return mockCfgDN(dn.number).apply {
         every { configurationService } returns service
         every { group } returns cfgDNGroup
-        every { switch } returns cfgSwitch
+        every { switch } returns cfgSwitch1
         every { registerAll } returns toCfgDNRegisterFlag(dn.registerAll)
         every { switchSpecificType } returns dn.switchSpecificType
 
@@ -146,7 +176,7 @@ private fun mockCfgDN(): CfgDN {
         every { dnLoginID } returns dn.dnLoginID
         every { trunks } returns dn.trunks
         every { override } returns dn.override
-        every { accessNumbers } returns emptyList()
+        every { accessNumbers } returns listOf(cfgAccessNumber)
         every { state } returns cfgState
         every { userProperties } returns mockKeyValueCollection()
 

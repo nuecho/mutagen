@@ -138,6 +138,8 @@ class CampaignGroupCampaignReference(name: String, val tenant: TenantReference) 
     override fun toQuery(service: IConfService) = CfgCampaignQuery(primaryKey).apply {
         tenantDbid = getTenantDbid(tenant, service)
     }
+
+    fun toCampaignReference() = CampaignReference(primaryKey, tenant)
 }
 
 @JsonSerialize(using = SimpleObjectReferenceSerializer::class)
@@ -295,6 +297,8 @@ class AlarmConditionScriptReference(name: String, val tenant: TenantReference) :
     override fun toQuery(service: IConfService) = CfgScriptQuery(primaryKey).apply {
         tenantDbid = getTenantDbid(tenant, service)
     }
+
+    fun toScriptReference() = ScriptReference(primaryKey, tenant)
 }
 
 @JsonSerialize(using = SimpleObjectReferenceSerializer::class)

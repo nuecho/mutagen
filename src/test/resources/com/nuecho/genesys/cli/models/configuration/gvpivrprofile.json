@@ -1,5 +1,13 @@
 {
   "description": "a description",
+  "dids": [
+    {
+      "name": "dnName1",
+      "number": "number1",
+      "switch": "switch1",
+      "type": "acdqueue"
+    }
+  ],
   "displayName": "name",
   "endServiceDate": "2019-06-06T21:17:50.105+0000",
   "folder": {

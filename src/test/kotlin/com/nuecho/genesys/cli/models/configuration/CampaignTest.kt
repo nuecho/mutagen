@@ -17,6 +17,7 @@ import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgObj
 import com.nuecho.genesys.cli.models.configuration.ConfigurationTestData.defaultProperties
 import com.nuecho.genesys.cli.models.configuration.reference.CallingListReference
 import com.nuecho.genesys.cli.models.configuration.reference.ScriptReference
+import com.nuecho.genesys.cli.models.configuration.reference.referenceSetBuilder
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockConfigurationObjectRepository
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveCallingList
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveFolderByDbid
@@ -53,6 +54,18 @@ class CampaignTest : ConfigurationObjectTest(
     emptyConfigurationObject = Campaign(tenant = DEFAULT_TENANT_REFERENCE, name = campaign.name),
     mandatoryProperties = emptySet()
 ) {
+    @Test
+    override fun `getReferences() should return all object's references`() {
+        val expected = referenceSetBuilder()
+            .add(campaign.tenant)
+            .add(campaign.callingLists!![0].callingList)
+            .add(campaign.script)
+            .add(campaign.folder)
+            .toSet()
+
+        assertThat(campaign.getReferences(), equalTo(expected))
+    }
+
     override fun `object with different unchangeable properties' values should return the right unchangeable properties`() {
         // not implemented, since object has no unchangeable properties
     }

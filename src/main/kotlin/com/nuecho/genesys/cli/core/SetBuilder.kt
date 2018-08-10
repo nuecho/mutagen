@@ -13,7 +13,7 @@ class SetBuilder<T> {
         return this
     }
 
-    fun toSet() = items
+    fun toSet() = items.toSet() // To immutable set.
 }
 
 fun <T> setBuilder() = SetBuilder<T>()

@@ -33,6 +33,7 @@ import com.nuecho.genesys.cli.models.configuration.reference.ObjectiveTableRefer
 import com.nuecho.genesys.cli.models.configuration.reference.ScriptReference
 import com.nuecho.genesys.cli.models.configuration.reference.StatTableReference
 import com.nuecho.genesys.cli.models.configuration.reference.SwitchReference
+import com.nuecho.genesys.cli.models.configuration.reference.referenceSetBuilder
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockConfigurationObjectRepository
 import com.nuecho.genesys.cli.services.ConfServiceExtensionMocks.mockRetrieveFolderByDbid
 import com.nuecho.genesys.cli.services.ConfigurationObjectRepository
@@ -83,6 +84,17 @@ class DNGrouptTest : ConfigurationObjectTest(
     emptyConfigurationObject = DNGroup(tenant = DEFAULT_TENANT_REFERENCE, name = DN_GROUP),
     mandatoryProperties = setOf(TYPE)
 ) {
+    @Test
+    override fun `getReferences() should return all object's references`() {
+        val expected = referenceSetBuilder()
+            .add(dnGroup.group.getReferences())
+            .add(dnGroup.dns!!.map { it.dn })
+            .add(dnGroup.folder)
+            .toSet()
+
+        assertThat(dnGroup.getReferences(), equalTo(expected))
+    }
+
     @Test
     override fun `object with different unchangeable properties' values should return the right unchangeable properties`() {
         val cfgDNGroup = mockCfgDNGroup(name = dnGroup.group.name).also {
