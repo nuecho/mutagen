@@ -3,8 +3,8 @@ package com.nuecho.genesys.cli.models.configuration
 import com.genesyslab.platform.applicationblocks.com.objects.CfgEnumerator
 import com.genesyslab.platform.configuration.protocol.types.CfgEnumeratorType.CFGENTRole
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectState.CFGEnabled
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_FOLDER_DBID
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_FOLDER_REFERENCE
-import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_OBJECT_DBID
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_REFERENCE
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgEnumerator
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockKeyValueCollection
@@ -103,5 +103,5 @@ private fun mockCfgEnumerator() = mockCfgEnumerator(enumerator.name).apply {
     every { type } returns toCfgEnumeratorType(enumerator.type)
     every { state } returns toCfgObjectState(enumerator.state)
     every { userProperties } returns mockKeyValueCollection()
-    every { folderId } returns DEFAULT_OBJECT_DBID
+    every { folderId } returns DEFAULT_FOLDER_DBID
 }

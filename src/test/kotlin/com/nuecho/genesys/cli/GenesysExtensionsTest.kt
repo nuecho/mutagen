@@ -2,7 +2,7 @@ package com.nuecho.genesys.cli
 
 import com.genesyslab.platform.reporting.protocol.statserver.DnActions
 import com.nuecho.genesys.cli.commands.agent.mockAgentStatus
-import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgTimeZone
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.equalTo
 import org.junit.jupiter.api.Test
@@ -35,10 +35,10 @@ class GenesysExtensionsTest {
 
     @Test
     fun `CFGTimeZone to ZoneID should be correct`() {
-        var cfgTimeZone = ConfigurationObjectMocks.mockCfgTimeZone("GMT")
+        var cfgTimeZone = mockCfgTimeZone("GMT")
         assertThat(TimeZone.getTimeZone(ZoneId.of("GMT", ZoneId.SHORT_IDS)).getDisplayName(false, TimeZone.SHORT), equalTo(cfgTimeZone.toTimeZoneId()))
 
-        cfgTimeZone = ConfigurationObjectMocks.mockCfgTimeZone("ECT")
+        cfgTimeZone = mockCfgTimeZone("ECT")
         assertThat(TimeZone.getTimeZone(ZoneId.of("ECT", ZoneId.SHORT_IDS)).getDisplayName(false, TimeZone.SHORT), equalTo(cfgTimeZone.toTimeZoneId()))
     }
 }

@@ -15,49 +15,8 @@
     "type": "folder"
   },
   "group": {
-    "capacityRule": "capacityRule",
-    "capacityTable": "capacityTable",
-    "contract": "contract",
-    "managers": [
-      "manager1",
-      "manager2"
-    ],
     "name": "name",
-    "quotaTable": "quotaTable",
-    "routeDNs": [
-      {
-        "number": "123",
-        "switch": "switch",
-        "type": "cp"
-      },
-      {
-        "number": "456",
-        "switch": "switch",
-        "type": "cp"
-      },
-      {
-        "number": "789",
-        "switch": "switch",
-        "type": "cp"
-      }
-    ],
-    "site": {
-      "owner": {
-        "name": "tenant",
-        "type": "tenant"
-      },
-      "path": [
-        "folder"
-      ],
-      "type": "folder"
-    },
     "state": "enabled",
-    "tenant": "tenant",
-    "userProperties": {
-      "section": {
-        "number": 456,
-        "string": "def"
-      }
-    }
+    "tenant": "tenant"
   }
 }

@@ -99,7 +99,8 @@ class HostTest : ConfigurationObjectTest(
         every { service.retrieveObject(CfgHost::class.java, any()) } returns null
 
         staticMockk("com.nuecho.genesys.cli.services.ConfServiceExtensionsKt").use {
-            every { service.getObjectDbid(any()) } answers { DEFAULT_OBJECT_DBID }
+            val scsDbid = 102
+            every { service.getObjectDbid(host.scs) } answers { scsDbid }
 
             objectMockk(ConfigurationObjectRepository).use {
                 mockConfigurationObjectRepository()
@@ -112,7 +113,7 @@ class HostTest : ConfigurationObjectTest(
                     assertThat(lcaPort, equalTo(host.lcaPort))
                     assertThat(oSinfo.oStype, equalTo(toCfgOsType(host.osInfo!!.type)))
                     assertThat(oSinfo.oSversion, equalTo(host.osInfo!!.version))
-                    assertThat(scsdbid, equalTo(DEFAULT_OBJECT_DBID))
+                    assertThat(scsdbid, equalTo(scsDbid))
                     assertThat(type, equalTo(toCfgHostType(host.type)))
                     assertThat(folderId, equalTo(DEFAULT_FOLDER_DBID))
                     assertThat(state, equalTo(toCfgObjectState(host.state)))
@@ -141,7 +142,7 @@ private fun mockCfgHost(service: IConfService): CfgHost {
         every { resources } returns null
         every { type } returns CFGNetworkServer
 
-        every { folderId } returns DEFAULT_OBJECT_DBID
+        every { folderId } returns DEFAULT_FOLDER_DBID
         every { state } returns CFGEnabled
         every { userProperties } returns userPropertiesMock
     }

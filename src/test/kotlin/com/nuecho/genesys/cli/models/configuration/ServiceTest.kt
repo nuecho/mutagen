@@ -13,7 +13,9 @@ import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFA
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_OBJECT_DBID
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_DBID
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_REFERENCE
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgApplication
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgService
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgTenant
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockKeyValueCollection
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgAppType
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgFlag
@@ -98,7 +100,8 @@ class ServiceTest : ConfigurationObjectTest(
 
     @Test
     fun `updateCfgObject should properly create CfgService`() {
-        mockRetrieveApplication(confService)
+        val applicationDbid = 102
+        mockRetrieveApplication(confService, applicationDbid)
         mockRetrieveTenant(confService)
 
         objectMockk(ConfigurationObjectRepository).use {
@@ -117,14 +120,14 @@ class ServiceTest : ConfigurationObjectTest(
                 }
                 with(components.toList()[0]) {
                     val expectedComponent = service.components!![0]
-                    assertThat(appDBID, equalTo(DEFAULT_OBJECT_DBID))
+                    assertThat(appDBID, equalTo(applicationDbid))
                     assertThat(startupPriority, equalTo(expectedComponent.startupPriority))
                     assertThat(isOptional, equalTo(toCfgFlag(expectedComponent.isOptional)))
                 }
                 assertThat(components.toList(), equalTo(
                     service.components?.map { it.toCfgSolutionComponent(this) } as Collection<CfgSolutionComponent>
                 ))
-                assertThat(scsdbid, equalTo(DEFAULT_OBJECT_DBID))
+                assertThat(scsdbid, equalTo(applicationDbid))
                 assertThat(solutionType, equalTo(toCfgSolutionType(service.solutionType)))
                 assertThat(startupType, equalTo(toCfgStartupType(service.startupType)))
                 assertThat(version, equalTo(service.version))
@@ -140,10 +143,10 @@ private fun mockService() = mockCfgService(service.name).apply {
     val confService = mockConfService()
     mockRetrieveFolderByDbid(confService)
 
-    val application = ConfigurationObjectMocks.mockCfgApplication("foo")
+    val application = mockCfgApplication("foo")
     val solutionComponentDefinition = mockSolutionComponentDefinition()
     val solutionComponent = mockSolutionComponent()
-    val tenant = ConfigurationObjectMocks.mockCfgTenant("tenant")
+    val tenant = mockCfgTenant("tenant")
 
     every { configurationService } returns confService
     every { assignedTenant } returns tenant
@@ -157,29 +160,25 @@ private fun mockService() = mockCfgService(service.name).apply {
     every { version } returns service.version
     every { state } returns toCfgObjectState(service.state)
     every { userProperties } returns mockKeyValueCollection()
-    every { folderId } returns DEFAULT_OBJECT_DBID
+    every { folderId } returns DEFAULT_FOLDER_DBID
 }
 
-private fun mockSolutionComponentDefinition(): CfgSolutionComponentDefinition {
-    val cfgSolutionComponentDefinition = mockk<CfgSolutionComponentDefinition>()
-
-    every { cfgSolutionComponentDefinition.startupPriority } returns STARTUP_PRIORITY
-    every { cfgSolutionComponentDefinition.isOptional } returns CfgFlag.CFGTrue
-    every { cfgSolutionComponentDefinition.type } returns CFGAgentDesktop
-    every { cfgSolutionComponentDefinition.version } returns "1234"
-
-    return cfgSolutionComponentDefinition
+private fun mockSolutionComponentDefinition() = mockk<CfgSolutionComponentDefinition>().apply {
+    every { startupPriority } returns STARTUP_PRIORITY
+    every { isOptional } returns CfgFlag.CFGTrue
+    every { type } returns CFGAgentDesktop
+    every { version } returns "1234"
 }
 
 private fun mockSolutionComponent(): CfgSolutionComponent {
-    val cfgSolutionComponent = mockk<CfgSolutionComponent>()
+    val application = mockCfgApplication("foo")
 
-    val application = ConfigurationObjectMocks.mockCfgApplication("foo")
-
-    every { cfgSolutionComponent.startupPriority } returns STARTUP_PRIORITY
-    every { cfgSolutionComponent.isOptional } returns CfgFlag.CFGTrue
-    every { cfgSolutionComponent.app } returns application
-    every { cfgSolutionComponent.appDBID } returns DEFAULT_OBJECT_DBID
+    val cfgSolutionComponent = mockk<CfgSolutionComponent>().apply {
+        every { startupPriority } returns STARTUP_PRIORITY
+        every { isOptional } returns CfgFlag.CFGTrue
+        every { app } returns application
+        every { appDBID } returns DEFAULT_OBJECT_DBID
+    }
 
     return cfgSolutionComponent
 }

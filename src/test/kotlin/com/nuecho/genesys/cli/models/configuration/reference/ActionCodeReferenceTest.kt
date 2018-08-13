@@ -6,7 +6,7 @@ import com.genesyslab.platform.configuration.protocol.types.CfgActionCodeType.CF
 import com.genesyslab.platform.configuration.protocol.types.CfgActionCodeType.CFGLogin
 import com.nuecho.genesys.cli.TestResources.loadJsonConfiguration
 import com.nuecho.genesys.cli.models.configuration.ConfigurationAsserts.checkSerialization
-import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_DBID
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_NAME
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_REFERENCE
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgTenant
@@ -55,7 +55,7 @@ class ActionCodeReferenceTest {
         every { service.retrieveObject(CfgTenant::class.java, any()) } returns cfgTenant
 
         val query = actionCodeReference.toQuery(service)
-        assertThat(query.tenantDbid, equalTo(ConfigurationObjectMocks.DEFAULT_TENANT_DBID))
+        assertThat(query.tenantDbid, equalTo(DEFAULT_TENANT_DBID))
         assertThat(query.codeType, equalTo(TYPE))
         assertThat(query.name, equalTo(NAME))
     }

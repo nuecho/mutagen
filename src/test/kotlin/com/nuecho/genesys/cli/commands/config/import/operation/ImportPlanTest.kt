@@ -16,7 +16,7 @@ import com.nuecho.genesys.cli.commands.config.ConfigMocks
 import com.nuecho.genesys.cli.commands.config.export.ExportFormat
 import com.nuecho.genesys.cli.models.configuration.AccessGroup
 import com.nuecho.genesys.cli.models.configuration.Configuration
-import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_OBJECT_DBID
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_DBID
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_NAME
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_REFERENCE
@@ -207,7 +207,7 @@ class ImportPlanTest {
         val remoteCfgObject = spyk(CfgRole(service)).also {
             every { it.name } returns "name"
             every { it.tenant } returns cfgTenant
-            every { it.objectDbid } returns ConfigurationObjectMocks.DEFAULT_OBJECT_DBID
+            every { it.objectDbid } returns DEFAULT_OBJECT_DBID
         }
 
         every { service.retrieveObject(CfgTenant::class.java, any()) } returns cfgTenant

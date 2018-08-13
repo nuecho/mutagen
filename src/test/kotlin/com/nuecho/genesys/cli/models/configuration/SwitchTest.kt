@@ -6,8 +6,8 @@ import com.genesyslab.platform.configuration.protocol.types.CfgLinkType
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectState.CFGEnabled
 import com.genesyslab.platform.configuration.protocol.types.CfgRouteType
 import com.genesyslab.platform.configuration.protocol.types.CfgTargetType
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_FOLDER_DBID
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_FOLDER_REFERENCE
-import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_OBJECT_DBID
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_REFERENCE
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgApplication
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgPhysicalSwitch
@@ -115,9 +115,12 @@ class SwitchTest : ConfigurationObjectTest(
     @Test
     fun `createCfgObject should properly create CfgSwitch`() {
         val service = mockConfService()
+        val physicalSwitchDbid = 102
+        val applicationDbid = 103
+
         mockRetrieveTenant(service)
-        mockRetrievePhysicalSwitch(service)
-        mockRetrieveApplication(service)
+        mockRetrievePhysicalSwitch(service, physicalSwitchDbid)
+        mockRetrieveApplication(service, applicationDbid)
 
         staticMockk("com.nuecho.genesys.cli.services.ConfServiceExtensionsKt").use {
             val otherCfgSwitch = mockOtherCfgSwitch()
@@ -130,8 +133,8 @@ class SwitchTest : ConfigurationObjectTest(
 
                 with(cfgSwitch) {
                     assertThat(name, equalTo(mainSwitch.name))
-                    assertThat(physSwitchDBID, equalTo(DEFAULT_OBJECT_DBID))
-                    assertThat(tServerDBID, equalTo(DEFAULT_OBJECT_DBID))
+                    assertThat(physSwitchDBID, equalTo(physicalSwitchDbid))
+                    assertThat(tServerDBID, equalTo(applicationDbid))
                     assertThat(linkType, equalTo(CfgLinkType.CFGMadgeLink))
                     assertThat(dnRange, equalTo(mainSwitch.dnRange))
                     assertThat(state, equalTo(toCfgObjectState(mainSwitch.state)))
@@ -203,7 +206,7 @@ private fun mockMainCfgSwitch(): CfgSwitch {
             every { userProperties } returns mockKeyValueCollection()
             every { physSwitch } returns physicalSwitch
             every { tServer } returns tServerApplication
-            every { folderId } returns DEFAULT_OBJECT_DBID
+            every { folderId } returns DEFAULT_FOLDER_DBID
         }
     }
 }

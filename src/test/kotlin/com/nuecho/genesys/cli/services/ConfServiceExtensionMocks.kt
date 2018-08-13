@@ -9,6 +9,7 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgCallingList
 import com.genesyslab.platform.applicationblocks.com.objects.CfgCampaign
 import com.genesyslab.platform.applicationblocks.com.objects.CfgDN
 import com.genesyslab.platform.applicationblocks.com.objects.CfgDNGroup
+import com.genesyslab.platform.applicationblocks.com.objects.CfgEnumerator
 import com.genesyslab.platform.applicationblocks.com.objects.CfgGVPReseller
 import com.genesyslab.platform.applicationblocks.com.objects.CfgHost
 import com.genesyslab.platform.applicationblocks.com.objects.CfgObjectiveTable
@@ -23,9 +24,9 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgTenant
 import com.genesyslab.platform.applicationblocks.com.objects.CfgTimeZone
 import com.genesyslab.platform.configuration.protocol.types.CfgAppType
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectType
-import com.genesyslab.platform.configuration.protocol.types.CfgObjectType.CFGEnumerator
 import com.genesyslab.platform.configuration.protocol.types.CfgScriptType
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_FOLDER
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_FOLDER_DBID
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_FOLDER_REFERENCE
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_OBJECT_DBID
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_DBID
@@ -132,7 +133,7 @@ object ConfServiceExtensionMocks {
     }
 
     fun mockRetrieveEnumerator(service: IConfService, name: String?, dbid: Int = DEFAULT_OBJECT_DBID) {
-        every { service.retrieveObject(CFGEnumerator, any()) } answers {
+        every { service.retrieveObject(CfgEnumerator::class.java, any()) } answers {
             mockCfgEnumerator(name = name, dbid = dbid)
         }
     }
@@ -183,8 +184,8 @@ object ConfServiceExtensionMocks {
         }
     }
 
-    fun mockRetrieveFolderByDbid(service: IConfService, dbid: Int = DEFAULT_OBJECT_DBID) {
+    fun mockRetrieveFolderByDbid(service: IConfService, dbid: Int = DEFAULT_FOLDER_DBID) {
         val folder = mockCfgFolder(name = DEFAULT_FOLDER, dbid = dbid)
-        every { service.retrieveObject(CfgObjectType.CFGFolder, any()) } returns folder
+        every { service.retrieveObject(CfgObjectType.CFGFolder, DEFAULT_FOLDER_DBID) } returns folder
     }
 }

@@ -4,8 +4,8 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgPhysicalSwitch
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectState.CFGEnabled
 import com.genesyslab.platform.configuration.protocol.types.CfgSwitchType.CFG3511ProtocolInterface
 import com.genesyslab.platform.configuration.protocol.types.CfgSwitchType.CFGFujitsu
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_FOLDER_DBID
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_FOLDER_REFERENCE
-import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_OBJECT_DBID
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgPhysicalSwitch
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockKeyValueCollection
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgObjectState
@@ -84,5 +84,5 @@ private fun mockPhysicalSwitch() = mockCfgPhysicalSwitch(physicalSwitch.name).ap
     every { type } returns toCfgSwitchType(physicalSwitch.type)
     every { state } returns toCfgObjectState(physicalSwitch.state)
     every { userProperties } returns mockKeyValueCollection()
-    every { folderId } returns DEFAULT_OBJECT_DBID
+    every { folderId } returns DEFAULT_FOLDER_DBID
 }

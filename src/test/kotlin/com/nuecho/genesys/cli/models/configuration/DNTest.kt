@@ -11,8 +11,8 @@ import com.genesyslab.platform.configuration.protocol.types.CfgObjectType.CFGFol
 import com.genesyslab.platform.configuration.protocol.types.CfgRouteType
 import com.nuecho.genesys.cli.asBoolean
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_FOLDER
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_FOLDER_DBID
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_FOLDER_REFERENCE
-import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_OBJECT_DBID
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_REFERENCE
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgDN
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgDNGroup
@@ -113,10 +113,11 @@ class DNTest : ConfigurationObjectTest(
     @Test
     fun `createCfgObject should properly create CfgDN`() {
         val service = mockConfService()
+        val switchDbid = 102
         every { service.retrieveObject(CfgDN::class.java, any()) } returns null
         mockRetrieveTenant(service)
         mockRetrieveDNGroup(service)
-        mockRetrieveSwitch(service)
+        mockRetrieveSwitch(service, switchDbid)
         mockRetrieveObjectiveTable(service)
 
         objectMockk(ConfigurationObjectRepository).use {
@@ -125,14 +126,14 @@ class DNTest : ConfigurationObjectTest(
 
             with(cfgDN) {
                 assertThat(name, equalTo(dn.name))
-                assertThat(switchDBID, equalTo(DEFAULT_OBJECT_DBID))
+                assertThat(switchDBID, equalTo(switchDbid))
                 assertThat(registerAll, equalTo(toCfgDNRegisterFlag(dn.registerAll)))
                 assertThat(switchSpecificType, equalTo(dn.switchSpecificType))
                 assertThat(state, equalTo(toCfgObjectState(dn.state)))
                 assertThat(userProperties.asCategorizedProperties(), equalTo(dn.userProperties))
                 with(accessNumbers.toList()[0]) {
                     assertThat(number, equalTo(dn.accessNumbers!![0].number))
-                    assertThat(switchDBID, equalTo(DEFAULT_OBJECT_DBID))
+                    assertThat(switchDBID, equalTo(switchDbid))
                 }
             }
         }
@@ -184,6 +185,6 @@ private fun mockCfgDN(): CfgDN {
         every { useOverride } returns toCfgFlag(dn.useOverride)
         every { site } returns cfgSite
         every { contract } returns cfgObjectiveTable
-        every { folderId } returns DEFAULT_OBJECT_DBID
+        every { folderId } returns DEFAULT_FOLDER_DBID
     }
 }

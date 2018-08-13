@@ -7,16 +7,14 @@ import com.genesyslab.platform.configuration.protocol.types.CfgFlag.CFGFalse
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectState.CFGEnabled
 import com.genesyslab.platform.configuration.protocol.types.CfgScriptType.CFGAlarmDetection
 import com.genesyslab.platform.configuration.protocol.types.CfgScriptType.CFGAlarmReaction
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_FOLDER_DBID
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_FOLDER_REFERENCE
-import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_OBJECT_DBID
-import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_NAME
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_REFERENCE
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgAlarmCondition
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgApplication
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgDetectEvent
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgRemovalEvent
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgScript
-import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgTenant
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockKeyValueCollection
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgAppType
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgObjectState
@@ -95,16 +93,16 @@ class AlarmConditionTest : ConfigurationObjectTest(
     }
 
     val service = mockConfService()
-    val application = mockCfgApplication(APPLICATION_NAME)
-    val tenant = mockCfgTenant(DEFAULT_TENANT_NAME)
     val script1 = mockCfgScript(name = SCRIPT_NAME1, dbid = 102, type = CFGAlarmReaction)
     val script2 = mockCfgScript(name = SCRIPT_NAME2, dbid = 103, type = CFGAlarmDetection)
     val script3 = mockCfgScript(name = SCRIPT_NAME3, dbid = 104, type = CFGAlarmDetection)
 
     @Test
     fun `createCfgObject should properly create CfgAlarmCondition`() {
+        val applicationDbid = 102
+
         mockRetrieveTenant(service)
-        mockRetrieveApplication(service)
+        mockRetrieveApplication(service, applicationDbid)
 
         every { service.retrieveObject(CfgAlarmCondition::class.java, any()) } returns null
         every {
@@ -116,7 +114,7 @@ class AlarmConditionTest : ConfigurationObjectTest(
             val cfgAlarmCondition = alarmCondition.createCfgObject(service)
 
             with(cfgAlarmCondition) {
-                assertThat(alarmDetectEvent.appDBID, equalTo(DEFAULT_OBJECT_DBID))
+                assertThat(alarmDetectEvent.appDBID, equalTo(applicationDbid))
                 assertThat(alarmDetectEvent.appType, equalTo(toCfgAppType(DETECT_EVENT.appType)))
                 assertThat(alarmDetectEvent.logEventID, equalTo(DETECT_EVENT.logEventID))
                 assertThat(alarmDetectEvent.selectionMode, equalTo(toCfgSelectionMode(DETECT_EVENT.selectionMode)))
@@ -169,5 +167,5 @@ private fun mockAlarmCondition() = mockCfgAlarmCondition(alarmCondition.name).ap
 
     every { state } returns toCfgObjectState(alarmCondition.state)
     every { userProperties } returns mockKeyValueCollection()
-    every { folderId } returns DEFAULT_OBJECT_DBID
+    every { folderId } returns DEFAULT_FOLDER_DBID
 }

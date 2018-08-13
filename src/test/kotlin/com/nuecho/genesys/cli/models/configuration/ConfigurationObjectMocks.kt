@@ -23,6 +23,7 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgFolder
 import com.genesyslab.platform.applicationblocks.com.objects.CfgGVPCustomer
 import com.genesyslab.platform.applicationblocks.com.objects.CfgGVPIVRProfile
 import com.genesyslab.platform.applicationblocks.com.objects.CfgGVPReseller
+import com.genesyslab.platform.applicationblocks.com.objects.CfgGroup
 import com.genesyslab.platform.applicationblocks.com.objects.CfgHost
 import com.genesyslab.platform.applicationblocks.com.objects.CfgID
 import com.genesyslab.platform.applicationblocks.com.objects.CfgIVR
@@ -56,6 +57,7 @@ import com.genesyslab.platform.configuration.protocol.types.CfgFlag.CFGFalse
 import com.genesyslab.platform.configuration.protocol.types.CfgFlag.CFGNoFlag
 import com.genesyslab.platform.configuration.protocol.types.CfgIVRProfileType
 import com.genesyslab.platform.configuration.protocol.types.CfgOSType
+import com.genesyslab.platform.configuration.protocol.types.CfgObjectState.CFGEnabled
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectType
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectType.CFGFolder
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectType.CFGTenant
@@ -257,6 +259,7 @@ object ConfigurationObjectMocks {
         every { it.type } returns type
         every { it.tenant } returns tenant
         every { it.objectDbid } returns dbid
+        every { it.dbid } returns dbid
         every { it.switch } returns switch
     }
 
@@ -325,7 +328,7 @@ object ConfigurationObjectMocks {
 
     fun mockCfgOwnerID() =
         mockk<CfgOwnerID>().also {
-            val tenant = ConfigurationObjectMocks.mockCfgTenant(DEFAULT_TENANT_NAME)
+            val tenant = mockCfgTenant(DEFAULT_TENANT_NAME)
 
             val confService = mockConfService()
             every { confService.retrieveObject(CFGTenant, DEFAULT_TENANT_DBID) } returns tenant
@@ -540,5 +543,20 @@ object ConfigurationObjectMocks {
             every { it.tenant } returns tenant
             every { it.objectDbid } returns dbid
             every { it.dbid } returns dbid
+        }
+
+    fun mockEmptyCfgGroup(name: String?, tenant: CfgTenant = mockCfgTenant(DEFAULT_TENANT_NAME)) =
+        mockk<CfgGroup>().also {
+            every { it.tenant } returns tenant
+            every { it.name } returns name
+            every { it.managers } returns null
+            every { it.routeDNs } returns null
+            every { it.capacityTable } returns null
+            every { it.quotaTable } returns null
+            every { it.state } returns CFGEnabled
+            every { it.userProperties } returns null
+            every { it.capacityRule } returns null
+            every { it.site } returns null
+            every { it.contract } returns null
         }
 }

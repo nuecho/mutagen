@@ -6,11 +6,12 @@ import com.genesyslab.platform.configuration.protocol.types.CfgObjectState
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_FOLDER_DBID
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_FOLDER_REFERENCE
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_IVR_PROFILE_TYPE
-import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_OBJECT_DBID
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_DBID
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_REFERENCE
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgDN
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgGVPIVRProfile
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgSwitch
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgTenant
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockKeyValueCollection
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgDNType
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgFlag
@@ -78,9 +79,9 @@ class GVPIVRProfileTest : ConfigurationObjectTest(
 
     @Test
     override fun `object with different unchangeable properties' values should return the right unchangeable properties`() {
-        val cfgGvpIVRProfile = ConfigurationObjectMocks.mockCfgGVPIVRProfile(
+        val cfgGvpIVRProfile = mockCfgGVPIVRProfile(
             name = gvpIVRProfile.name,
-            tenant = ConfigurationObjectMocks.mockCfgTenant("differentTenantName")
+            tenant = mockCfgTenant("differentTenantName")
         )
 
         assertThat(
@@ -92,9 +93,11 @@ class GVPIVRProfileTest : ConfigurationObjectTest(
     @Test
     fun `createCfgObject should properly create CfgGVPIVRProfile`() {
         val service = mockConfService()
+        val dnDbid = 102
+
         every { service.retrieveObject(CfgGVPIVRProfile::class.java, any()) } returns null
         mockRetrieveTenant(service)
-        mockRetrieveDN(service, mockCfgSwitch(SWITCH_NAME))
+        mockRetrieveDN(service, mockCfgSwitch(SWITCH_NAME), dnDbid)
         mockRetrieveSwitch(service)
 
         objectMockk(ConfigurationObjectRepository).use {
@@ -103,7 +106,7 @@ class GVPIVRProfileTest : ConfigurationObjectTest(
 
             with(cfgGVPIVRProfile) {
                 assertThat(description, equalTo(gvpIVRProfile.description))
-                assertThat(diddbiDs.toList(), equalTo(listOf(DEFAULT_OBJECT_DBID)))
+                assertThat(diddbiDs.toList(), equalTo(listOf(dnDbid)))
                 assertThat(displayName, equalTo(gvpIVRProfile.displayName))
                 assertThat(endServiceDate.time, equalTo(gvpIVRProfile.endServiceDate))
                 assertThat(folderId, equalTo(DEFAULT_FOLDER_DBID))
@@ -120,7 +123,7 @@ class GVPIVRProfileTest : ConfigurationObjectTest(
     }
 }
 
-private fun mockCfgGVPIVRProfile() = ConfigurationObjectMocks.mockCfgGVPIVRProfile(gvpIVRProfile.name).apply {
+private fun mockCfgGVPIVRProfile() = mockCfgGVPIVRProfile(gvpIVRProfile.name).apply {
     val service = mockConfService()
     mockRetrieveFolderByDbid(service)
 
@@ -153,5 +156,5 @@ private fun mockCfgGVPIVRProfile() = ConfigurationObjectMocks.mockCfgGVPIVRProfi
 
     every { state } returns toCfgObjectState(gvpIVRProfile.state)
     every { userProperties } returns mockKeyValueCollection()
-    every { folderId } returns DEFAULT_OBJECT_DBID
+    every { folderId } returns DEFAULT_FOLDER_DBID
 }

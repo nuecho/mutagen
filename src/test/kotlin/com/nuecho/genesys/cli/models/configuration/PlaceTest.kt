@@ -8,10 +8,13 @@ import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFA
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_FOLDER_REFERENCE
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_DBID
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_REFERENCE
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgDN
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgFolder
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgObjectiveTable
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgPlace
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgScript
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockCfgSwitch
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.mockKeyValueCollection
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgObjectState
 import com.nuecho.genesys.cli.models.configuration.ConfigurationTestData.defaultProperties
 import com.nuecho.genesys.cli.models.configuration.reference.DNReference
@@ -115,7 +118,7 @@ class PlaceTest : ConfigurationObjectTest(
     }
 }
 
-private fun mockCfgPlace() = ConfigurationObjectMocks.mockCfgPlace(place.name).apply {
+private fun mockCfgPlace() = mockCfgPlace(place.name).apply {
     val service = mockConfService()
     mockRetrieveFolderByDbid(service)
 
@@ -131,11 +134,11 @@ private fun mockCfgPlace() = ConfigurationObjectMocks.mockCfgPlace(place.name).a
     every { contract } returns contractMock
     every { site } returns siteMock
     every { state } returns ConfigurationObjects.toCfgObjectState(place.state)
-    every { userProperties } returns ConfigurationObjectMocks.mockKeyValueCollection()
-    every { folderId } returns ConfigurationObjectMocks.DEFAULT_OBJECT_DBID
+    every { userProperties } returns mockKeyValueCollection()
+    every { folderId } returns DEFAULT_FOLDER_DBID
 }
 
-private fun mockCfgDN(number: String, dbid: Int) = ConfigurationObjectMocks.mockCfgDN(
+private fun mockCfgDN(number: String, dbid: Int) = mockCfgDN(
     number = number,
     dbid = dbid
 ).also {
