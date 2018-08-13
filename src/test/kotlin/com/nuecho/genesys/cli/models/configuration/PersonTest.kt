@@ -116,9 +116,9 @@ class PersonTest : ConfigurationObjectTest(
         assertThat(person.getReferences(), equalTo(expected))
     }
 
-    override fun `object with different unchangeable properties' values should return the right unchangeable properties`() {
-        // not implemented, since object has no unchangeable properties
-    }
+    @Test
+    override fun `object with different unchangeable properties' values should return the right unchangeable properties`() =
+        assertUnchangeableProperties(mockCfgPerson(), FOLDER)
 
     @Test
     fun `createCfgObject should properly create CfgPerson`() {

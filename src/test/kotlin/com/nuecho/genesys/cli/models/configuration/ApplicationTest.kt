@@ -134,9 +134,9 @@ class ApplicationTest : ConfigurationObjectTest(
         assertThat(application.getReferences(), equalTo(expected))
     }
 
-    override fun `object with different unchangeable properties' values should return the right unchangeable properties`() {
-        // not implemented, since object has no unchangeable properties
-    }
+    @Test
+    override fun `object with different unchangeable properties' values should return the right unchangeable properties`() =
+        assertUnchangeableProperties(mockCfgApplication(), FOLDER)
 
     @Test
     fun `server application missing mandatory server properties should return the missing properties' names`() {

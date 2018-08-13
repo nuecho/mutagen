@@ -28,7 +28,6 @@ import io.mockk.staticMockk
 import io.mockk.use
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.equalTo
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 
 private const val NAME = "enumeratorValue"
@@ -70,10 +69,9 @@ class EnumeratorValueTest : ConfigurationObjectTest(
         assertThat(enumeratorValue.getReferences(), equalTo(expected))
     }
 
-    @Disabled
-    override fun `object with different unchangeable properties' values should return the right unchangeable properties`() {
-        // not implemented, since object has no unchangeable properties
-    }
+    @Test
+    override fun `object with different unchangeable properties' values should return the right unchangeable properties`() =
+        assertUnchangeableProperties(mockCfgEnumeratorValue(mockConfService()), FOLDER)
 
     @Test
     override fun `initialized object should properly serialize`() {

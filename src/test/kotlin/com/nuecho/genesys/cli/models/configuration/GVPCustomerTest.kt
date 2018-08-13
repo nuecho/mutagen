@@ -66,16 +66,14 @@ class GVPCustomerTest : ConfigurationObjectTest(
     }
 
     @Test
-    override fun `object with different unchangeable properties' values should return the right unchangeable properties`() {
-        val cfgGvpCustomer = mockCfgGVPCustomer(
+    override fun `object with different unchangeable properties' values should return the right unchangeable properties`() =
+        mockCfgGVPCustomer(
             name = gvpCustomer.name,
             tenant = mockCfgTenant("differentTenantName")
-        ).also {
+        ).let {
             every { it.reseller } returns null
+            assertUnchangeableProperties(it, FOLDER, RESELLER, TENANT)
         }
-
-        assertThat(configurationObject.checkUnchangeableProperties(cfgGvpCustomer), equalTo(setOf(RESELLER, TENANT)))
-    }
 
     @Test
     fun `createCfgObject should properly create CfgGVPCustomer`() {

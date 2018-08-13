@@ -11,6 +11,7 @@ import com.genesyslab.platform.configuration.protocol.types.CfgObjectType.CFGDN
 import com.nuecho.genesys.cli.core.InitializingBean
 import com.nuecho.genesys.cli.getFolderReference
 import com.nuecho.genesys.cli.getReference
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.checkUnchangeableProperties
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setFolder
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setProperty
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgDNGroupType
@@ -55,6 +56,7 @@ data class DNGroup(
     override fun createCfgObject(service: IConfService) =
         updateCfgObject(service, CfgDNGroup(service)).also {
             setProperty(TYPE, toCfgDNGroupType(type), it)
+            setFolder(folder, it)
         }
 
     override fun updateCfgObject(service: IConfService, cfgObject: ICfgObject) =
@@ -77,7 +79,6 @@ data class DNGroup(
                 },
                 cfgDNGroup
             )
-            setFolder(folder, cfgDNGroup)
         }
 
     override fun cloneBare() = DNGroup(
@@ -88,13 +89,12 @@ data class DNGroup(
     override fun checkMandatoryProperties(configuration: Configuration, service: ConfService): Set<String> =
         if (type == null) setOf(TYPE) else emptySet()
 
-    override fun checkUnchangeableProperties(cfgObject: CfgObject): Set<String> {
-        (cfgObject as CfgDNGroup).also {
-            type?.run { if (this.toLowerCase() != it.type?.toShortName()) return setOf(TYPE) }
+    override fun checkUnchangeableProperties(cfgObject: CfgObject) =
+        checkUnchangeableProperties(this, cfgObject).also { unchangeableProperties ->
+            (cfgObject as CfgDNGroup).also {
+                type?.run { if (this.toLowerCase() != it.type?.toShortName()) unchangeableProperties.add(TYPE) }
+            }
         }
-
-        return emptySet()
-    }
 
     override fun afterPropertiesSet() {
         group.updateTenantReferences()

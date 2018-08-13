@@ -58,9 +58,9 @@ class RoleTest : ConfigurationObjectTest(
         assertThat(role.getReferences(), equalTo(expected))
     }
 
-    override fun `object with different unchangeable properties' values should return the right unchangeable properties`() {
-        // not implemented, since object has no unchangeable properties
-    }
+    @Test
+    override fun `object with different unchangeable properties' values should return the right unchangeable properties`() =
+        assertUnchangeableProperties(mockCfgRole(mockConfService()), FOLDER)
 
     @Test
     override fun `initialized object should properly serialize`() {

@@ -9,6 +9,9 @@ import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgIVR
 import com.nuecho.genesys.cli.getFolderReference
 import com.nuecho.genesys.cli.getReference
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.checkUnchangeableProperties
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setFolder
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setProperty
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgIVRType
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgObjectState
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toKeyValueCollection
@@ -51,19 +54,19 @@ data class Ivr(
 
     override fun createCfgObject(service: IConfService) =
         updateCfgObject(service, CfgIVR(service)).also {
-            ConfigurationObjects.setProperty("name", name, it)
-            ConfigurationObjects.setProperty("tenantDBID", service.getObjectDbid(tenant), it)
-            ConfigurationObjects.setProperty(TYPE, toCfgIVRType(type), it)
+            setProperty("name", name, it)
+            setProperty("tenantDBID", service.getObjectDbid(tenant), it)
+            setProperty(TYPE, toCfgIVRType(type), it)
+            setFolder(folder, it)
         }
 
     override fun updateCfgObject(service: IConfService, cfgObject: ICfgObject) =
         (cfgObject as CfgIVR).also { cfgIvr ->
-            ConfigurationObjects.setProperty("description", description, cfgIvr)
-            ConfigurationObjects.setProperty("version", version, cfgIvr)
-            ConfigurationObjects.setProperty("IVRServerDBID", service.getObjectDbid(ivrServer), cfgIvr)
-            ConfigurationObjects.setProperty("state", toCfgObjectState(state), cfgIvr)
-            ConfigurationObjects.setProperty("userProperties", toKeyValueCollection(userProperties), cfgIvr)
-            ConfigurationObjects.setFolder(folder, cfgIvr)
+            setProperty("description", description, cfgIvr)
+            setProperty("version", version, cfgIvr)
+            setProperty("IVRServerDBID", service.getObjectDbid(ivrServer), cfgIvr)
+            setProperty("state", toCfgObjectState(state), cfgIvr)
+            setProperty("userProperties", toKeyValueCollection(userProperties), cfgIvr)
         }
 
     override fun cloneBare() = Ivr(name = name, tenant = tenant, type = type, version = version)
@@ -76,15 +79,13 @@ data class Ivr(
         return missingMandatoryProperties
     }
 
-    override fun checkUnchangeableProperties(cfgObject: CfgObject): Set<String> {
-        val unchangeableProperties = mutableSetOf<String>()
-        (cfgObject as CfgIVR).also {
-            tenant?.run { if (this != it.tenant?.getReference()) unchangeableProperties.add(TENANT) }
-            type?.run { if (this.toLowerCase() != it.type?.toShortName()) unchangeableProperties.add(TYPE) }
+    override fun checkUnchangeableProperties(cfgObject: CfgObject) =
+        checkUnchangeableProperties(this, cfgObject).also { unchangeableProperties ->
+            (cfgObject as CfgIVR).also {
+                tenant?.run { if (this != it.tenant?.getReference()) unchangeableProperties.add(TENANT) }
+                type?.run { if (this.toLowerCase() != it.type?.toShortName()) unchangeableProperties.add(TYPE) }
+            }
         }
-
-        return unchangeableProperties
-    }
 
     override fun getReferences() = referenceSetBuilder()
         .add(folder)

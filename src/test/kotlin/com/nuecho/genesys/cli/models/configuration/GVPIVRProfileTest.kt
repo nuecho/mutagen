@@ -78,17 +78,10 @@ class GVPIVRProfileTest : ConfigurationObjectTest(
     }
 
     @Test
-    override fun `object with different unchangeable properties' values should return the right unchangeable properties`() {
-        val cfgGvpIVRProfile = mockCfgGVPIVRProfile(
-            name = gvpIVRProfile.name,
-            tenant = mockCfgTenant("differentTenantName")
+    override fun `object with different unchangeable properties' values should return the right unchangeable properties`() =
+        assertUnchangeableProperties(
+            mockCfgGVPIVRProfile(gvpIVRProfile.name, mockCfgTenant("differentTenantName")), FOLDER, TENANT
         )
-
-        assertThat(
-            configurationObject.checkUnchangeableProperties(cfgGvpIVRProfile),
-            equalTo(setOf(TENANT))
-        )
-    }
 
     @Test
     fun `createCfgObject should properly create CfgGVPIVRProfile`() {

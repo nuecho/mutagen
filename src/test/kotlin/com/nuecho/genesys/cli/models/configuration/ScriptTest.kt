@@ -53,13 +53,11 @@ class ScriptTest : ConfigurationObjectTest(
     }
 
     @Test
-    override fun `object with different unchangeable properties' values should return the right unchangeable properties`() {
-        val cfgScript = mockCfgScript(name = script.name).also {
+    override fun `object with different unchangeable properties' values should return the right unchangeable properties`() =
+        mockCfgScript(name = script.name).let {
             every { it.type } returns CFGSchedule
+            assertUnchangeableProperties(it, FOLDER, TYPE)
         }
-
-        assertThat(configurationObject.checkUnchangeableProperties(cfgScript), equalTo(setOf(TYPE)))
-    }
 
     @Test
     fun `createCfgObject should properly create CfgScript`() {

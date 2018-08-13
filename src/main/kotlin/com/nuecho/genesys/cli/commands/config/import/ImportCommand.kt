@@ -2,6 +2,7 @@ package com.nuecho.genesys.cli.commands.config.import
 
 import com.nuecho.genesys.cli.Console.confirm
 import com.nuecho.genesys.cli.Logging.info
+import com.nuecho.genesys.cli.PASSWORD_FROM_STDIN
 import com.nuecho.genesys.cli.commands.ConfigServerCommand
 import com.nuecho.genesys.cli.commands.config.Config
 import com.nuecho.genesys.cli.commands.config.Validator
@@ -17,6 +18,8 @@ import com.nuecho.genesys.cli.services.ConfService
 import com.nuecho.genesys.cli.services.ConfigurationObjectRepository
 import picocli.CommandLine
 import java.io.File
+
+private const val AUTO_CONFIRM = "--auto-confirm"
 
 @CommandLine.Command(
     name = "import",
@@ -35,7 +38,7 @@ class ImportCommand : ConfigServerCommand() {
     private var inputFile: File? = null
 
     @CommandLine.Option(
-        names = ["--auto-confirm"],
+        names = [AUTO_CONFIRM],
         description = ["Skip interactive approval before applying."]
     )
     private var autoConfirm: Boolean = false
@@ -43,6 +46,9 @@ class ImportCommand : ConfigServerCommand() {
     override fun getGenesysCli() = config!!.getGenesysCli()
 
     override fun execute(): Int {
+        if (getGenesysCli().readPasswordFromStdin && !autoConfirm)
+            throw ConfigImportException("$AUTO_CONFIRM must be specified in conjunction with $PASSWORD_FROM_STDIN.")
+
         val result = withEnvironmentConfService { service: ConfService, _ ->
             ConfigurationObjectRepository.prefetchConfigurationObjects(service)
 
@@ -91,3 +97,5 @@ object Import {
         return true
     }
 }
+
+class ConfigImportException(message: String, cause: Throwable? = null) : Exception(message, cause)

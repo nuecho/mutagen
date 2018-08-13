@@ -1,16 +1,31 @@
 package com.nuecho.genesys.cli.models.configuration
 
+import com.genesyslab.platform.applicationblocks.com.CfgObject
 import com.genesyslab.platform.applicationblocks.com.objects.CfgAppPrototype
+import com.genesyslab.platform.configuration.protocol.types.CfgObjectType.CFGTenant
 import com.nuecho.genesys.cli.TestResources.loadJsonConfiguration
+import com.nuecho.genesys.cli.getFolderReference
 import com.nuecho.genesys.cli.models.configuration.ConfigurationAsserts.checkSerialization
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_FOLDER_TYPE
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_NAME
+import com.nuecho.genesys.cli.models.configuration.reference.FolderReference
+import com.nuecho.genesys.cli.models.configuration.reference.OwnerReference
 import com.nuecho.genesys.cli.services.ServiceMocks
 import com.nuecho.genesys.cli.services.ServiceMocks.mockConfService
+import com.nuecho.genesys.cli.toShortName
 import io.mockk.every
+import io.mockk.staticMockk
+import io.mockk.use
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.equalTo
 import org.junit.jupiter.api.Test
 
 private val EMPTY_CONFIGURATION = Configuration(Metadata(formatName = "JSON", formatVersion = "1.0.0"))
+private val OTHER_FOLDER_REFERENCE = FolderReference(
+    DEFAULT_FOLDER_TYPE.toShortName(),
+    OwnerReference(CFGTenant.toShortName(), DEFAULT_TENANT_NAME),
+    listOf("otherFolder")
+)
 
 @Suppress("UnnecessaryAbstractClass")
 abstract class ConfigurationObjectTest(
@@ -73,6 +88,13 @@ abstract class ConfigurationObjectTest(
         val bare = configurationObject.cloneBare()
         bare?.let {
             assertThat(bare.checkMandatoryProperties(EMPTY_CONFIGURATION, service), equalTo(emptySet()))
+        }
+    }
+
+    internal fun assertUnchangeableProperties(cfgObject: CfgObject, vararg unchangeableProperties: String) {
+        staticMockk("com.nuecho.genesys.cli.GenesysExtensionsKt").use {
+            every { cfgObject.getFolderReference() } returns OTHER_FOLDER_REFERENCE
+            assertThat(configurationObject.checkUnchangeableProperties(cfgObject), equalTo(setOf(*unchangeableProperties)))
         }
     }
 }

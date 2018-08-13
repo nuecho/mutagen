@@ -79,13 +79,11 @@ class DNGrouptTest : ConfigurationObjectTest(
     }
 
     @Test
-    override fun `object with different unchangeable properties' values should return the right unchangeable properties`() {
-        val cfgDNGroup = mockCfgDNGroup(name = dnGroup.group.name).also {
+    override fun `object with different unchangeable properties' values should return the right unchangeable properties`() =
+        mockCfgDNGroup(name = dnGroup.group.name).let {
             every { it.type } returns CFGMaxDNGroupType
+            assertUnchangeableProperties(it, FOLDER, TYPE)
         }
-
-        assertThat(configurationObject.checkUnchangeableProperties(cfgDNGroup), equalTo(setOf(TYPE)))
-    }
 
     @Test
     override fun `initialized object should properly serialize`() {

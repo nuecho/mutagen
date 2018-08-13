@@ -67,6 +67,7 @@ data class Service(
         updateCfgObject(service, CfgService(service)).also {
             setProperty("name", name, it)
             setProperty("solutionType", toCfgSolutionType(solutionType), it)
+            setFolder(folder, it)
         }
 
     override fun updateCfgObject(service: IConfService, cfgObject: ICfgObject): CfgService =
@@ -81,7 +82,6 @@ data class Service(
             setProperty("startupType", toCfgStartupType(startupType), it)
             setProperty("state", toCfgObjectState(state), it)
             setProperty("userProperties", ConfigurationObjects.toKeyValueCollection(userProperties), it)
-            setFolder(folder, it)
         }
 
     override fun cloneBare() = Service(name = name, solutionType = solutionType, version = version)
@@ -94,13 +94,14 @@ data class Service(
         return missingMandatoryProperties
     }
 
-    override fun checkUnchangeableProperties(cfgObject: CfgObject): Set<String> {
-        (cfgObject as CfgService).also {
-            solutionType?.run { if (this != it.solutionType?.toShortName()) return setOf(SOLUTION_TYPE) }
+    override fun checkUnchangeableProperties(cfgObject: CfgObject) =
+        ConfigurationObjects.checkUnchangeableProperties(this, cfgObject).also { unchangeableProperties ->
+            (cfgObject as CfgService).also {
+                solutionType?.run {
+                    if (this != it.solutionType?.toShortName()) unchangeableProperties.add(SOLUTION_TYPE)
+                }
+            }
         }
-
-        return emptySet()
-    }
 
     override fun getReferences(): Set<ConfigurationObjectReference<*>> =
         referenceSetBuilder()

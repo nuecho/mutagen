@@ -12,6 +12,7 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgRole
 import com.nuecho.genesys.cli.Logging.warn
 import com.nuecho.genesys.cli.getFolderReference
 import com.nuecho.genesys.cli.getReference
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.checkUnchangeableProperties
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setFolder
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setProperty
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgObjectState
@@ -71,6 +72,7 @@ data class Role(
         updateCfgObject(service, CfgRole(service)).also {
             setProperty("tenantDBID", service.getObjectDbid(tenant), it)
             setProperty("name", name, it)
+            setFolder(folder, it)
         }
 
     override fun updateCfgObject(service: IConfService, cfgObject: ICfgObject) =
@@ -79,14 +81,13 @@ data class Role(
             setProperty("description", description, it)
             setProperty("state", toCfgObjectState(state), it)
             setProperty("userProperties", toKeyValueCollection(userProperties), it)
-            setFolder(folder, it)
         }
 
     override fun cloneBare() = null
 
     override fun checkMandatoryProperties(configuration: Configuration, service: ConfService): Set<String> = emptySet()
 
-    override fun checkUnchangeableProperties(cfgObject: CfgObject) = emptySet<String>()
+    override fun checkUnchangeableProperties(cfgObject: CfgObject) = checkUnchangeableProperties(this, cfgObject)
 
     override fun getReferences(): Set<ConfigurationObjectReference<*>> =
         referenceSetBuilder()

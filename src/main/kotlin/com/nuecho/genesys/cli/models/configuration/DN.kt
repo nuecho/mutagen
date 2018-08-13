@@ -12,6 +12,7 @@ import com.nuecho.genesys.cli.asBoolean
 import com.nuecho.genesys.cli.core.InitializingBean
 import com.nuecho.genesys.cli.getFolderReference
 import com.nuecho.genesys.cli.getReference
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.checkUnchangeableProperties
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setFolder
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setProperty
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgDNRegisterFlag
@@ -111,6 +112,7 @@ data class DN(
             setProperty("switchDBID", service.getObjectDbid(switch), it)
             setProperty("tenantDBID", service.getObjectDbid(tenant), it)
             setProperty("type", toCfgDNType(type), it)
+            setFolder(folder, it)
         }
 
     override fun updateCfgObject(service: IConfService, cfgObject: ICfgObject) =
@@ -142,8 +144,6 @@ data class DN(
             setProperty("siteDBID", service.getObjectDbid(site), it)
 
             setProperty("contractDBID", service.getObjectDbid(contract), it)
-
-            setFolder(folder, it)
         }
 
     override fun cloneBare() = DN(
@@ -167,7 +167,7 @@ data class DN(
         // accessNumbers = emptyList(),
     }
 
-    override fun checkUnchangeableProperties(cfgObject: CfgObject) = emptySet<String>()
+    override fun checkUnchangeableProperties(cfgObject: CfgObject) = checkUnchangeableProperties(this, cfgObject)
 
     override fun afterPropertiesSet() {
         switch.tenant = tenant

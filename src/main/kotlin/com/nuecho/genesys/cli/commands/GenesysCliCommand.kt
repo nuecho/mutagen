@@ -46,7 +46,7 @@ abstract class GenesysCliCommand : Callable<Int> {
             }
         } finally {
             genesysCli.metricsFile?.let {
-                it.parentFile.mkdirs()
+                it.parentFile?.mkdirs()
                 it.outputStream().use { Metrics.output(it) }
             }
         }

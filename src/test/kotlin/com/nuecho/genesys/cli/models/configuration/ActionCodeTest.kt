@@ -58,9 +58,9 @@ class ActionCodeTest : ConfigurationObjectTest(
         assertThat(actionCode.getReferences(), equalTo(expected))
     }
 
-    override fun `object with different unchangeable properties' values should return the right unchangeable properties`() {
-        // not implemented, since object has no unchangeable properties
-    }
+    @Test
+    override fun `object with different unchangeable properties' values should return the right unchangeable properties`() =
+        assertUnchangeableProperties(mockCfgActionCode(), FOLDER)
 
     @Test
     fun `createCfgObject should properly create CfgActionCode`() {

@@ -67,13 +67,11 @@ class AccessGroupTest : ConfigurationObjectTest(
     }
 
     @Test
-    override fun `object with different unchangeable properties' values should return the right unchangeable properties`() {
-        val cfgAccessGroup = mockCfgAccessGroup().also {
+    override fun `object with different unchangeable properties' values should return the right unchangeable properties`() =
+        mockCfgAccessGroup().let {
             every { it.type } returns CFGAdministratorsGroup
+            assertUnchangeableProperties(it, FOLDER, TYPE)
         }
-
-        assertThat(configurationObject.checkUnchangeableProperties(cfgAccessGroup), equalTo(setOf(TYPE)))
-    }
 
     @Test
     override fun `initialized object should properly serialize`() {

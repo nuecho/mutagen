@@ -62,9 +62,9 @@ class AgentGroupTest : ConfigurationObjectTest(
         assertThat(agentGroup.getReferences(), equalTo(expected))
     }
 
-    override fun `object with different unchangeable properties' values should return the right unchangeable properties`() {
-        // not implemented, since object has no unchangeable properties
-    }
+    @Test
+    override fun `object with different unchangeable properties' values should return the right unchangeable properties`() =
+        assertUnchangeableProperties(mockCfgAgentGroup(), FOLDER)
 
     val service = ServiceMocks.mockConfService()
 

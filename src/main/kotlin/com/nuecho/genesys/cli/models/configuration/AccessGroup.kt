@@ -10,6 +10,7 @@ import com.genesyslab.platform.configuration.protocol.types.CfgObjectType.CFGPer
 import com.nuecho.genesys.cli.core.InitializingBean
 import com.nuecho.genesys.cli.getFolderReference
 import com.nuecho.genesys.cli.getReference
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.checkUnchangeableProperties
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setFolder
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setProperty
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgAccessGroupType
@@ -51,6 +52,7 @@ data class AccessGroup(
     override fun createCfgObject(service: IConfService) =
         updateCfgObject(service, CfgAccessGroup(service)).also {
             setProperty("type", toCfgAccessGroupType(type), it)
+            setFolder(folder, it)
         }
 
     override fun updateCfgObject(service: IConfService, cfgObject: ICfgObject) =
@@ -63,21 +65,19 @@ data class AccessGroup(
 
             setProperty("groupInfo", groupInfo, cfgAccessGroup)
             setProperty("memberIDs", members?.map { it.toCfgID(service, cfgAccessGroup) }, cfgAccessGroup)
-            setFolder(folder, cfgAccessGroup)
         }
 
     override fun cloneBare() = AccessGroup(Group(group.tenant, group.name))
 
     override fun checkMandatoryProperties(configuration: Configuration, service: ConfService): Set<String> = emptySet()
 
-    override fun checkUnchangeableProperties(cfgObject: CfgObject): Set<String> {
-        (cfgObject as CfgAccessGroup).also {
-            if (type != null && it.type != null && type.toLowerCase() != it.type.toShortName())
-                return setOf(TYPE)
+    override fun checkUnchangeableProperties(cfgObject: CfgObject) =
+        checkUnchangeableProperties(this, cfgObject).also { unchangeableProperties ->
+            (cfgObject as CfgAccessGroup).also {
+                if (type != null && it.type != null && type.toLowerCase() != it.type.toShortName())
+                    unchangeableProperties.add(TYPE)
+            }
         }
-
-        return emptySet()
-    }
 
     override fun afterPropertiesSet() {
         group.updateTenantReferences()

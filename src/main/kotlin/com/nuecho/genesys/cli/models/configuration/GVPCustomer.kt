@@ -12,6 +12,7 @@ import com.nuecho.genesys.cli.asBoolean
 import com.nuecho.genesys.cli.core.InitializingBean
 import com.nuecho.genesys.cli.getFolderReference
 import com.nuecho.genesys.cli.getReference
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.checkUnchangeableProperties
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setFolder
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setProperty
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgFlag
@@ -77,6 +78,7 @@ data class GVPCustomer(
             setProperty("name", name, it)
             setProperty("resellerDBID", service.getObjectDbid(reseller), it)
             setProperty("tenantDBID", service.getObjectDbid(tenant), it)
+            setFolder(folder, it)
         }
 
     override fun updateCfgObject(service: IConfService, cfgObject: ICfgObject) =
@@ -89,7 +91,6 @@ data class GVPCustomer(
             setProperty("timeZoneDBID", service.getObjectDbid(timeZone), it)
             setProperty("userProperties", toKeyValueCollection(userProperties), it)
             setProperty("state", toCfgObjectState(state), it)
-            setFolder(folder, it)
         }
 
     override fun cloneBare() = GVPCustomer(
@@ -112,15 +113,13 @@ data class GVPCustomer(
         return missingMandatoryProperties
     }
 
-    override fun checkUnchangeableProperties(cfgObject: CfgObject): Set<String> {
-        val unchangeableProperties = mutableSetOf<String>()
-        (cfgObject as CfgGVPCustomer).also {
-            reseller?.run { if (this != it.reseller?.getReference()) unchangeableProperties.add(RESELLER) }
-            tenant?.run { if (this != it.tenant?.getReference()) unchangeableProperties.add(TENANT) }
+    override fun checkUnchangeableProperties(cfgObject: CfgObject) =
+        checkUnchangeableProperties(this, cfgObject).also { unchangeableProperties ->
+            (cfgObject as CfgGVPCustomer).also {
+                reseller?.run { if (this != it.reseller?.getReference()) unchangeableProperties.add(RESELLER) }
+                tenant?.run { if (this != it.tenant?.getReference()) unchangeableProperties.add(TENANT) }
+            }
         }
-
-        return unchangeableProperties
-    }
 
     override fun afterPropertiesSet() {
         reseller?.tenant = tenant

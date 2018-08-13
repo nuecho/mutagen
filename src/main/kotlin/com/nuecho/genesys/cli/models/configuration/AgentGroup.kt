@@ -8,6 +8,7 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgAgentGroup
 import com.nuecho.genesys.cli.core.InitializingBean
 import com.nuecho.genesys.cli.getFolderReference
 import com.nuecho.genesys.cli.getReference
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.checkUnchangeableProperties
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setFolder
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setProperty
 import com.nuecho.genesys.cli.models.configuration.reference.AgentGroupReference
@@ -42,7 +43,9 @@ data class AgentGroup(
     )
 
     override fun createCfgObject(service: IConfService) =
-        updateCfgObject(service, CfgAgentGroup(service))
+        updateCfgObject(service, CfgAgentGroup(service).also {
+            setFolder(folder, it)
+        })
 
     override fun updateCfgObject(service: IConfService, cfgObject: ICfgObject) =
         (cfgObject as CfgAgentGroup).also { cfgAgentGroup ->
@@ -54,14 +57,13 @@ data class AgentGroup(
 
             setProperty("groupInfo", groupInfo, cfgAgentGroup)
             setProperty("agentDBIDs", agents?.mapNotNull { service.getObjectDbid(it) }, cfgAgentGroup)
-            setFolder(folder, cfgAgentGroup)
         }
 
     override fun cloneBare() = AgentGroup(group = Group(group.tenant, group.name))
 
     override fun checkMandatoryProperties(configuration: Configuration, service: ConfService): Set<String> = emptySet()
 
-    override fun checkUnchangeableProperties(cfgObject: CfgObject) = emptySet<String>()
+    override fun checkUnchangeableProperties(cfgObject: CfgObject) = checkUnchangeableProperties(this, cfgObject)
 
     override fun afterPropertiesSet() = group.updateTenantReferences()
 

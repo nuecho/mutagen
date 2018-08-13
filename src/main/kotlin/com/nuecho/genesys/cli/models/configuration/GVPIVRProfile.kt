@@ -11,6 +11,7 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgGVPIVRProfile
 import com.nuecho.genesys.cli.asBoolean
 import com.nuecho.genesys.cli.getFolderReference
 import com.nuecho.genesys.cli.getReference
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.checkUnchangeableProperties
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setFolder
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setProperty
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgFlag
@@ -81,6 +82,7 @@ data class GVPIVRProfile(
         updateCfgObject(service, CfgGVPIVRProfile(service)).also {
             setProperty("name", name, it)
             setProperty("tenantDBID", service.getObjectDbid(tenant), it)
+            setFolder(folder, it)
         }
 
     override fun updateCfgObject(service: IConfService, cfgObject: ICfgObject) =
@@ -95,10 +97,9 @@ data class GVPIVRProfile(
             setProperty("isProvisioned", toCfgFlag(isProvisioned), it)
             setProperty("tfn", tfn?.joinToString(), it)
             setProperty("status", status, it)
-            setProperty("DIDDBIDs", dids?.map { service.getObjectDbid(it) }, it)
+            setProperty("DIDDBIDs", dids?.map { did -> service.getObjectDbid(did) }, it)
             setProperty("userProperties", toKeyValueCollection(userProperties), it)
             setProperty("state", toCfgObjectState(state), it)
-            setFolder(folder, it)
         }
 
     override fun cloneBare() = GVPIVRProfile(
@@ -115,13 +116,12 @@ data class GVPIVRProfile(
         return missingMandatoryProperties
     }
 
-    override fun checkUnchangeableProperties(cfgObject: CfgObject): Set<String> {
-        (cfgObject as CfgGVPIVRProfile).also {
-            tenant?.run { if (it.tenant?.getReference() != tenant) return setOf(TENANT) }
+    override fun checkUnchangeableProperties(cfgObject: CfgObject) =
+        checkUnchangeableProperties(this, cfgObject).also { unchangeableProperties ->
+            (cfgObject as CfgGVPIVRProfile).also {
+                tenant?.run { if (it.tenant?.getReference() != tenant) unchangeableProperties.add(TENANT) }
+            }
         }
-
-        return emptySet()
-    }
 
     override fun getReferences(): Set<ConfigurationObjectReference<*>> =
         referenceSetBuilder()

@@ -14,6 +14,7 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgPortInfo
 import com.genesyslab.platform.applicationblocks.com.objects.CfgServer
 import com.nuecho.genesys.cli.asBoolean
 import com.nuecho.genesys.cli.getFolderReference
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.checkUnchangeableProperties
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setFolder
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setProperty
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgAppComponentType
@@ -105,6 +106,7 @@ data class Application(
             setProperty("name", name, it)
             setProperty("type", cfgAppPrototype.type, it)
             setProperty("version", cfgAppPrototype.version, it)
+            setFolder(folder, it)
         }
     }
 
@@ -129,7 +131,6 @@ data class Application(
             setProperty("tenantDBIDs", tenants?.map { service.getObjectDbid(it) }, it)
             setProperty("userProperties", ConfigurationObjects.toKeyValueCollection(userProperties), it)
             setProperty("workDirectory", workDirectory, it)
-            setFolder(folder, it)
         }
 
     override fun cloneBare() = Application(
@@ -167,7 +168,7 @@ data class Application(
     }
 
     // FIXME ignoring unchangeable `flexibleProperties` when application is backupServer (`isPrimary` is CFGFalse)
-    override fun checkUnchangeableProperties(cfgObject: CfgObject) = emptySet<String>()
+    override fun checkUnchangeableProperties(cfgObject: CfgObject) = checkUnchangeableProperties(this, cfgObject)
 
     private fun isServer(type: String) = !notServerAppTypes.contains(type)
 

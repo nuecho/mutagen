@@ -11,6 +11,7 @@ import com.genesyslab.platform.applicationblocks.com.objects.CfgField
 import com.nuecho.genesys.cli.asBoolean
 import com.nuecho.genesys.cli.getFolderReference
 import com.nuecho.genesys.cli.getReference
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.checkUnchangeableProperties
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setFolder
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setProperty
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgDataType
@@ -74,6 +75,7 @@ data class Field(
             setProperty(IS_PRIMARY_KEY, toCfgFlag(isPrimaryKey), it)
             setProperty(IS_UNIQUE, toCfgFlag(isUnique), it)
             setProperty(TYPE, toCfgDataType(type), it)
+            setFolder(folder, it)
         }
 
     override fun updateCfgObject(service: IConfService, cfgObject: ICfgObject): CfgField =
@@ -83,7 +85,6 @@ data class Field(
             if (!it.isSaved || it.length == 0) setProperty(LENGTH, length ?: 0, it)
             setProperty("state", ConfigurationObjects.toCfgObjectState(state), it)
             setProperty("userProperties", ConfigurationObjects.toKeyValueCollection(userProperties), it)
-            setFolder(folder, it)
         }
 
     override fun cloneBare() = Field(
@@ -109,24 +110,22 @@ data class Field(
     }
 
     @Suppress("ComplexMethod")
-    override fun checkUnchangeableProperties(cfgObject: CfgObject): Set<String> {
-        val unchangeableProperties = mutableSetOf<String>()
-        (cfgObject as CfgField).also {
-            if (isNullable != null && isNullable != it.isNullable?.asBoolean())
-                unchangeableProperties.add(IS_NULLABLE)
-            if (isPrimaryKey != null && isPrimaryKey != it.isPrimaryKey?.asBoolean())
-                unchangeableProperties.add(IS_PRIMARY_KEY)
-            if (isUnique != null && isUnique != it.isUnique?.asBoolean())
-                unchangeableProperties.add(IS_UNIQUE)
-            // as long as length is 0, it is not considered specified
-            if (it.length != 0 && length != null && length != it.length)
-                unchangeableProperties.add(LENGTH)
-            if (type != null && type.toLowerCase() != it.type?.toShortName())
-                unchangeableProperties.add(TYPE)
+    override fun checkUnchangeableProperties(cfgObject: CfgObject) =
+        checkUnchangeableProperties(this, cfgObject).also { unchangeableProperties ->
+            (cfgObject as CfgField).also {
+                if (isNullable != null && isNullable != it.isNullable?.asBoolean())
+                    unchangeableProperties.add(IS_NULLABLE)
+                if (isPrimaryKey != null && isPrimaryKey != it.isPrimaryKey?.asBoolean())
+                    unchangeableProperties.add(IS_PRIMARY_KEY)
+                if (isUnique != null && isUnique != it.isUnique?.asBoolean())
+                    unchangeableProperties.add(IS_UNIQUE)
+                // as long as length is 0, it is not considered specified
+                if (it.length != 0 && length != null && length != it.length)
+                    unchangeableProperties.add(LENGTH)
+                if (type != null && type.toLowerCase() != it.type?.toShortName())
+                    unchangeableProperties.add(TYPE)
+            }
         }
-
-        return unchangeableProperties
-    }
 
     override fun getReferences(): Set<ConfigurationObjectReference<*>> =
         referenceSetBuilder()
