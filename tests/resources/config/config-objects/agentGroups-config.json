@@ -6,8 +6,11 @@
   "agentGroups": [
     {
       "group": {
+        "capacityRule": "agentGroupCapacityRule",
+        "managers": [
+          "0"
+        ],
         "name": "cfgObjectTest",
-        "state": "enabled",
         "tenant": "Environment",
         "userProperties": {
           "section": {
@@ -16,6 +19,13 @@
           }
         }
       }
+    }
+  ],
+  "scripts": [
+    {
+      "name": "agentGroupCapacityRule",
+      "tenant": "Environment",
+      "type": "capacityRule"
     }
   ]
 }

@@ -10,7 +10,7 @@ Completed. 2 objects created. 0 object updated. 0 object skipped.
 }
 `;
 
-exports[`[mutagen applications config import-export] should skip the same applications: the applications have been updated 1`] = `
+exports[`[mutagen applications config import-export] should skip the same applications: the applications have not been updated 1`] = `
 Object {
   "stderr": "",
   "stdout": "= application [cfgObjectTest]

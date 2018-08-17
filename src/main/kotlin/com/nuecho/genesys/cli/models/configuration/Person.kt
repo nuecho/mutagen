@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.genesyslab.platform.applicationblocks.com.CfgObject
 import com.genesyslab.platform.applicationblocks.com.ICfgObject
 import com.genesyslab.platform.applicationblocks.com.IConfService
+import com.genesyslab.platform.applicationblocks.com.objects.CfgAgentInfo
 import com.genesyslab.platform.applicationblocks.com.objects.CfgAppRank
 import com.genesyslab.platform.applicationblocks.com.objects.CfgPerson
 import com.nuecho.genesys.cli.asBoolean
@@ -99,7 +100,11 @@ data class Person(
             setProperty("isExternalAuth", toCfgFlag(externalAuth), it)
             setProperty("appRanks", toCfgAppRankList(appRanks, it), it)
             setProperty("userProperties", toKeyValueCollection(userProperties), it)
-            setProperty("agentInfo", agentInfo?.toCfgAgentInfo(it), it)
+            setProperty(
+                "agentInfo",
+                agentInfo?.toUpdatedCfgAgentInfo( service, it.agentInfo ?: CfgAgentInfo(service, it)),
+                it
+            )
         }
 
     override fun cloneBare() = Person(

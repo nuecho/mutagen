@@ -6,17 +6,17 @@
   "placeGroups": [
     {
       "group": {
-        "capacityRule": "placeGroupCapacityRuleNew",
         "name": "cfgObjectTest",
-        "tenant": "Environment"
+        "tenant": "Environment",
+        "places": [
+          "placeGroupPlace1"
+        ],
+        "userProperties": {
+          "section": {
+            "number": 123
+          }
+        }
       }
-    }
-  ],
-  "scripts": [
-    {
-      "name": "placeGroupCapacityRuleNew",
-      "tenant": "Environment",
-      "type": "capacityRule"
     }
   ]
 }

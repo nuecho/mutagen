@@ -52,7 +52,7 @@ function cfgObjectImportNewTest(cfgObjectType, configurationPath) {
 
 function cfgObjectImportUnmodifiedTest(cfgObjectType, configurationPath) {
   test(`should skip the same ${cfgObjectType}`, () => {
-    assertMutagenResult(`config import --auto-confirm ${configurationPath}`, `the ${cfgObjectType} have been updated`, 0);
+    assertMutagenResult(`config import --auto-confirm ${configurationPath}`, `the ${cfgObjectType} have not been updated`, 0);
   });
 };
 

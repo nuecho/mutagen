@@ -9,7 +9,7 @@ Completed. 1 object created. 0 object updated. 0 object skipped.
 }
 `;
 
-exports[`[mutagen fields config import-export] should skip the same fields: the fields have been updated 1`] = `
+exports[`[mutagen fields config import-export] should skip the same fields: the fields have not been updated 1`] = `
 Object {
   "stderr": "",
   "stdout": "= field [Environment/cfgObjectTest]

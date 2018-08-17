@@ -3,11 +3,11 @@ package com.nuecho.genesys.cli.models.configuration
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
-import com.genesyslab.platform.applicationblocks.com.CfgObject
 import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgGroup
 import com.nuecho.genesys.cli.getReference
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setProperty
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgObjectState
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toKeyValueCollection
 import com.nuecho.genesys.cli.models.configuration.reference.ConfigurationObjectReference
 import com.nuecho.genesys.cli.models.configuration.reference.DNReference
@@ -51,20 +51,21 @@ data class Group(
         contract = group.contract?.getReference()
     )
 
-    fun toCfgGroup(service: IConfService, parent: CfgObject): CfgGroup =
-        CfgGroup(service, parent).also {
-            setProperty("tenantDBID", service.getObjectDbid(tenant), it)
-            setProperty("name", name, it)
-            setProperty("managerDBIDs", managers?.mapNotNull { service.getObjectDbid(it) }, it)
-            setProperty("routeDNDBIDs", routeDNs?.mapNotNull { service.getObjectDbid(it) }, it)
-            setProperty("capacityTableDBID", service.getObjectDbid(capacityTable), it)
-            setProperty("quotaTableDBID", service.getObjectDbid(quotaTable), it)
-            setProperty("state", ConfigurationObjects.toCfgObjectState(state), it)
-            setProperty("userProperties", toKeyValueCollection(userProperties), it)
-            setProperty("capacityRuleDBID", service.getObjectDbid(capacityRule), it)
-            setProperty("siteDBID", service.getObjectDbid(site), it)
-            setProperty("contractDBID", service.getObjectDbid(contract), it)
-        }
+    fun toUpdatedCfgGroup(service: IConfService, groupInfo: CfgGroup) = groupInfo.also {
+        setProperty("tenantDBID", service.getObjectDbid(tenant), it)
+        setProperty("name", name, it)
+        setProperty("managerDBIDs", managers?.map { service.getObjectDbid(it) }, it)
+
+        setProperty("routeDNDBIDs", routeDNs?.mapNotNull { service.getObjectDbid(it) }, it)
+        setProperty("capacityTableDBID", service.getObjectDbid(capacityTable), it)
+        setProperty("quotaTableDBID", service.getObjectDbid(quotaTable), it)
+        setProperty("state", toCfgObjectState(state), it)
+        setProperty("userProperties", toKeyValueCollection(userProperties), it)
+        setProperty("capacityRuleDBID", service.getObjectDbid(capacityRule), it)
+
+        setProperty("siteDBID", service.getObjectDbid(site), it)
+        setProperty("contractDBID", service.getObjectDbid(contract), it)
+    }
 
     fun updateTenantReferences() {
         managers?.forEach { it.tenant = tenant }

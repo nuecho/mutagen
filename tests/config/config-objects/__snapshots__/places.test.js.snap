@@ -14,7 +14,7 @@ Completed. 6 objects created. 0 object updated. 0 object skipped.
 }
 `;
 
-exports[`[mutagen places config import-export] should skip the same places: the places have been updated 1`] = `
+exports[`[mutagen places config import-export] should skip the same places: the places have not been updated 1`] = `
 Object {
   "stderr": "",
   "stdout": "= dn [number: 'placeDN', switch: 'placeSwitch', type: 'cellular', tenant: 'Environment']

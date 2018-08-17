@@ -3,6 +3,7 @@ package com.nuecho.genesys.cli.models.configuration
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
+import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgAgentInfo
 import com.genesyslab.platform.applicationblocks.com.objects.CfgPerson
 import com.genesyslab.platform.applicationblocks.com.objects.CfgSkillLevel
@@ -39,18 +40,13 @@ data class AgentInfo(
         agentLogins = agentInfo.agentLogins?.map { AgentLoginInfo(it) }
     )
 
-    fun toCfgAgentInfo(person: CfgPerson): CfgAgentInfo {
-        val service = person.configurationService
-        val agentInfo = CfgAgentInfo(person.configurationService, person)
-
+    fun toUpdatedCfgAgentInfo(service: IConfService, agentInfo: CfgAgentInfo) = agentInfo.also {
         // agentLogins are not exported
-        setProperty("capacityRuleDBID", service.getObjectDbid(capacityRule), agentInfo)
-        setProperty("contractDBID", service.getObjectDbid(contract), agentInfo)
-        setProperty("placeDBID", service.getObjectDbid(place), agentInfo)
-        setProperty("siteDBID", service.getObjectDbid(site), agentInfo)
-        setProperty("skillLevels", toCfgSkillLevelList(skillLevels, person), agentInfo)
-
-        return agentInfo
+        setProperty("capacityRuleDBID", service.getObjectDbid(capacityRule), it)
+        setProperty("contractDBID", service.getObjectDbid(contract), it)
+        setProperty("placeDBID", service.getObjectDbid(place), it)
+        setProperty("siteDBID", service.getObjectDbid(site), it)
+        setProperty("skillLevels", toCfgSkillLevelList(skillLevels, it.parent as CfgPerson), it)
     }
 
     @JsonIgnore

@@ -7,6 +7,7 @@ import com.genesyslab.platform.applicationblocks.com.CfgObject
 import com.genesyslab.platform.applicationblocks.com.ICfgObject
 import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgHost
+import com.genesyslab.platform.applicationblocks.com.objects.CfgOS
 import com.nuecho.genesys.cli.getFolderReference
 import com.nuecho.genesys.cli.getReference
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.checkUnchangeableProperties
@@ -68,7 +69,11 @@ data class Host(
         (cfgObject as CfgHost).also { cfgHost ->
             setProperty("IPaddress", ipAddress, cfgHost)
             setProperty("LCAPort", lcaPort, cfgHost)
-            setProperty("OSinfo", osInfo?.toCfgOs(service, cfgHost), cfgHost)
+            setProperty(
+                "OSinfo",
+                osInfo?.toUpdatedCfgOS(cfgHost.oSinfo ?: CfgOS(service, cfgHost)),
+                cfgHost
+            )
             setProperty("SCSDBID", service.getObjectDbid(scs), cfgHost)
 
             setProperty("userProperties", toKeyValueCollection(userProperties), cfgHost)

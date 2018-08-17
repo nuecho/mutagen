@@ -7,6 +7,7 @@ import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgDN
 import com.genesyslab.platform.applicationblocks.com.objects.CfgDNGroup
 import com.genesyslab.platform.applicationblocks.com.objects.CfgDNInfo
+import com.genesyslab.platform.applicationblocks.com.objects.CfgGroup
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectType.CFGDN
 import com.nuecho.genesys.cli.core.InitializingBean
 import com.nuecho.genesys.cli.getFolderReference
@@ -60,24 +61,22 @@ data class DNGroup(
         }
 
     override fun updateCfgObject(service: IConfService, cfgObject: ICfgObject) =
-        (cfgObject as CfgDNGroup).also { cfgDNGroup ->
-            val groupInfo = group.toCfgGroup(service, cfgDNGroup).also {
-                cfgDNGroup.dbid?.let { dbid ->
-                    it.dbid = dbid
-                }
+        (cfgObject as CfgDNGroup).also {
+            val groupInfo = group.toUpdatedCfgGroup(service, it.groupInfo ?: CfgGroup(service, it)).also { cfgGroup ->
+                it.dbid?.let { dbid -> cfgGroup.dbid = dbid }
             }
 
-            setProperty("groupInfo", groupInfo, cfgDNGroup)
+            setProperty("groupInfo", groupInfo, it)
             setProperty(
                 "DNs",
                 dns?.map { dnInfo ->
                     val dn = service.retrieveObject(dnInfo.dn)!!
-                    CfgDNInfo(service, cfgDNGroup).also {
+                    CfgDNInfo(service, it).also {
                         setProperty("DNDBID", dn.dbid, it)
                         setProperty("trunks", dnInfo.trunks, it)
                     }
                 },
-                cfgDNGroup
+                it
             )
         }
 

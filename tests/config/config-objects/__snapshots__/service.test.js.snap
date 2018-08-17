@@ -12,7 +12,7 @@ Completed. 4 objects created. 0 object updated. 0 object skipped.
 }
 `;
 
-exports[`[mutagen services config import-export] should skip the same services: the services have been updated 1`] = `
+exports[`[mutagen services config import-export] should skip the same services: the services have not been updated 1`] = `
 Object {
   "stderr": "",
   "stdout": "= application [Application1]

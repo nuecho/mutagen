@@ -195,11 +195,9 @@ fun toCfgDNAccessNumberList(accessNumbers: List<DNAccessNumber>?, dn: CfgDN) =
     else {
         val service = dn.configurationService
         accessNumbers.map {
-            val cfgDNAccessNumber = CfgDNAccessNumber(service, dn)
-
-            cfgDNAccessNumber.setProperty("number", it.number)
-            cfgDNAccessNumber.setProperty("switchDBID", service.getObjectDbid(it.switch))
-
-            cfgDNAccessNumber
+            CfgDNAccessNumber(service, dn).apply {
+                number = it.number
+                switchDBID = service.getObjectDbid(it.switch)
+            }
         }
     }

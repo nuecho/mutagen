@@ -9,7 +9,7 @@ Completed. 1 object created. 0 object updated. 0 object skipped.
 }
 `;
 
-exports[`[mutagen accessGroups config import-export] should skip the same accessGroups: the accessGroups have been updated 1`] = `
+exports[`[mutagen accessGroups config import-export] should skip the same accessGroups: the accessGroups have not been updated 1`] = `
 Object {
   "stderr": "",
   "stdout": "= accessgroup [Environment/cfgObjectTest]

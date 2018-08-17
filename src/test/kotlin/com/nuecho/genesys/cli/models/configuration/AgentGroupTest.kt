@@ -1,6 +1,7 @@
 package com.nuecho.genesys.cli.models.configuration
 
 import com.genesyslab.platform.applicationblocks.com.objects.CfgAgentGroup
+import com.genesyslab.platform.applicationblocks.com.objects.CfgGroup
 import com.genesyslab.platform.applicationblocks.com.objects.CfgSwitch
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_FOLDER_DBID
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_FOLDER_REFERENCE
@@ -92,7 +93,7 @@ class AgentGroupTest : ConfigurationObjectTest(
 
             with(cfgAgentGroup) {
                 assertThat(agentDBIDs, contains(personDbid, personDbid, personDbid))
-                assertThat(groupInfo, equalTo(agentGroup.group.toCfgGroup(service, this)))
+                assertThat(groupInfo, equalTo(agentGroup.group.toUpdatedCfgGroup(service, CfgGroup(service, this))))
                 assertThat(folderId, equalTo(DEFAULT_FOLDER_DBID))
             }
         }

@@ -33,8 +33,8 @@ import java.util.Date
 import java.util.GregorianCalendar
 
 /**
- * @See https://docs.genesys.com/Documentation/PSDK/8.5.x/ConfigLayerRef/CfgGVPIVRProfile
  * Customer and reseller properties are not defined as they are not in use in GA.
+ * @See https://docs.genesys.com/Documentation/PSDK/8.5.x/ConfigLayerRef/CfgGVPIVRProfile
  */
 data class GVPIVRProfile(
     val name: String,

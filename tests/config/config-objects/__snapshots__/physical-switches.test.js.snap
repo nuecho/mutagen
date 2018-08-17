@@ -9,7 +9,7 @@ Completed. 1 object created. 0 object updated. 0 object skipped.
 }
 `;
 
-exports[`[mutagen physicalSwitches config import-export] should skip the same physicalSwitches: the physicalSwitches have been updated 1`] = `
+exports[`[mutagen physicalSwitches config import-export] should skip the same physicalSwitches: the physicalSwitches have not been updated 1`] = `
 Object {
   "stderr": "",
   "stdout": "= physicalswitch [cfgObjectTest]

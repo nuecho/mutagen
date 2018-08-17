@@ -1,6 +1,7 @@
 package com.nuecho.genesys.cli.models.configuration
 
 import com.genesyslab.platform.applicationblocks.com.IConfService
+import com.genesyslab.platform.applicationblocks.com.objects.CfgGroup
 import com.genesyslab.platform.applicationblocks.com.objects.CfgPlace
 import com.genesyslab.platform.applicationblocks.com.objects.CfgPlaceGroup
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectType.CFGFolder
@@ -105,7 +106,7 @@ class PlaceGroupTest : ConfigurationObjectTest(
 
                 with(cfgPlaceGroup) {
                     assertThat(placeDBIDs.toList(), equalTo(listOf(PLACE1_DBID, PLACE2_DBID)))
-                    assertThat(groupInfo, equalTo(placeGroup.group.toCfgGroup(service, this)))
+                    assertThat(groupInfo, equalTo(placeGroup.group.toUpdatedCfgGroup(service, CfgGroup(service, this))))
                     assertThat(folderId, equalTo(DEFAULT_FOLDER_DBID))
                 }
             }

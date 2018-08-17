@@ -3,17 +3,19 @@
 exports[`[mutagen agentGroups config import-export] should create the agentGroups: the agentGroups have been created 1`] = `
 Object {
   "stderr": "",
-  "stdout": "+ agentgroup [Environment/cfgObjectTest]
-Completed. 1 object created. 0 object updated. 0 object skipped.
+  "stdout": "+ script [Environment/agentGroupCapacityRule]
++ agentgroup [Environment/cfgObjectTest]
+Completed. 2 objects created. 0 object updated. 0 object skipped.
 ",
 }
 `;
 
-exports[`[mutagen agentGroups config import-export] should skip the same agentGroups: the agentGroups have been updated 1`] = `
+exports[`[mutagen agentGroups config import-export] should skip the same agentGroups: the agentGroups have not been updated 1`] = `
 Object {
   "stderr": "",
   "stdout": "= agentgroup [Environment/cfgObjectTest]
-Completed. 0 object created. 0 object updated. 1 object skipped.
+= script [Environment/agentGroupCapacityRule]
+Completed. 0 object created. 0 object updated. 2 objects skipped.
 ",
 }
 `;

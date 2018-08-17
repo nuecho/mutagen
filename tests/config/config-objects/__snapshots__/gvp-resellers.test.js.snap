@@ -9,7 +9,7 @@ Completed. 1 object created. 0 object updated. 0 object skipped.
 }
 `;
 
-exports[`[mutagen gvpResellers config import-export] should skip the same gvpResellers: the gvpResellers have been updated 1`] = `
+exports[`[mutagen gvpResellers config import-export] should skip the same gvpResellers: the gvpResellers have not been updated 1`] = `
 Object {
   "stderr": "",
   "stdout": "= gvpreseller [Environment/cfgObjectTest]

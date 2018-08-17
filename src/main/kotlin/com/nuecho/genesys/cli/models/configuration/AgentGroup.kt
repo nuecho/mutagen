@@ -5,6 +5,7 @@ import com.genesyslab.platform.applicationblocks.com.CfgObject
 import com.genesyslab.platform.applicationblocks.com.ICfgObject
 import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgAgentGroup
+import com.genesyslab.platform.applicationblocks.com.objects.CfgGroup
 import com.nuecho.genesys.cli.core.InitializingBean
 import com.nuecho.genesys.cli.getFolderReference
 import com.nuecho.genesys.cli.getReference
@@ -48,15 +49,13 @@ data class AgentGroup(
         })
 
     override fun updateCfgObject(service: IConfService, cfgObject: ICfgObject) =
-        (cfgObject as CfgAgentGroup).also { cfgAgentGroup ->
-            val groupInfo = group.toCfgGroup(service, cfgAgentGroup).also {
-                cfgAgentGroup.dbid?.let { dbid ->
-                    it.dbid = dbid
-                }
+        (cfgObject as CfgAgentGroup).also {
+            val groupInfo = group.toUpdatedCfgGroup(service, it.groupInfo ?: CfgGroup(service, it)).also { cfgGroup ->
+                it.dbid?.let { dbid -> cfgGroup.dbid = dbid }
             }
 
-            setProperty("groupInfo", groupInfo, cfgAgentGroup)
-            setProperty("agentDBIDs", agents?.mapNotNull { service.getObjectDbid(it) }, cfgAgentGroup)
+            setProperty("groupInfo", groupInfo, it)
+            setProperty("agentDBIDs", agents?.mapNotNull { agent -> service.getObjectDbid(agent) }, it)
         }
 
     override fun cloneBare() = AgentGroup(group = Group(group.tenant, group.name))

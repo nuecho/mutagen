@@ -3,6 +3,7 @@ package com.nuecho.genesys.cli.models.configuration
 import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgDN
 import com.genesyslab.platform.applicationblocks.com.objects.CfgDNGroup
+import com.genesyslab.platform.applicationblocks.com.objects.CfgGroup
 import com.genesyslab.platform.configuration.protocol.types.CfgDNGroupType.CFGACDQueues
 import com.genesyslab.platform.configuration.protocol.types.CfgDNGroupType.CFGMaxDNGroupType
 import com.genesyslab.platform.configuration.protocol.types.CfgDNType.CFGACDQueue
@@ -123,7 +124,7 @@ class DNGrouptTest : ConfigurationObjectTest(
                     assertThat(dNs.toList()[1].trunks, equalTo(2))
                     assertThat(dNs.toList()[1].dndbid, equalTo(DN_DBID2))
 
-                    assertThat(groupInfo, equalTo(dnGroup.group.toCfgGroup(service, this)))
+                    assertThat(groupInfo, equalTo(dnGroup.group.toUpdatedCfgGroup(service, CfgGroup(service, this))))
                     assertThat(folderId, equalTo(DEFAULT_FOLDER_DBID))
                 }
             }

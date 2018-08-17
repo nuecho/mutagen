@@ -12,7 +12,7 @@ Completed. 4 objects created. 0 object updated. 0 object skipped.
 }
 `;
 
-exports[`[mutagen alarmConditions config import-export] should skip the same alarmConditions: the alarmConditions have been updated 1`] = `
+exports[`[mutagen alarmConditions config import-export] should skip the same alarmConditions: the alarmConditions have not been updated 1`] = `
 Object {
   "stderr": "",
   "stdout": "= alarmcondition [cfgObjectTest]

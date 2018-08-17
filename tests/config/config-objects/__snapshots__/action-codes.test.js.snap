@@ -9,7 +9,7 @@ Completed. 1 object created. 0 object updated. 0 object skipped.
 }
 `;
 
-exports[`[mutagen actionCodes config import-export] should skip the same actionCodes: the actionCodes have been updated 1`] = `
+exports[`[mutagen actionCodes config import-export] should skip the same actionCodes: the actionCodes have not been updated 1`] = `
 Object {
   "stderr": "",
   "stdout": "= actioncode [name: 'cfgObjectTest', type: 'transfer', tenant: 'Environment']

@@ -93,39 +93,34 @@ data class AlarmCondition(
         })
 
     override fun updateCfgObject(service: IConfService, cfgObject: ICfgObject) =
-        (cfgObject as CfgAlarmCondition).also { cfgAlarmCondition ->
-
+        (cfgObject as CfgAlarmCondition).also {
             setProperty(
                 ALARM_DETECT_EVENT,
-                alarmDetectEvent?.toCfgDetectEvent(cfgAlarmCondition),
-                cfgAlarmCondition
+                alarmDetectEvent?.toUpdatedCfgDetectEvent(service, it.alarmDetectEvent ?: CfgDetectEvent(service, it)),
+                it
             )
             setProperty(
                 "alarmDetectScriptDBID",
                 alarmDetectScript?.let { service.getObjectDbid(it) },
-                cfgAlarmCondition
+                it
             )
             setProperty(
                 "alarmRemovalEvent",
-                alarmRemovalEvent?.toCfgRemovalEvent(cfgAlarmCondition),
-                cfgAlarmCondition
+                alarmRemovalEvent?.toUpdatedCfgRemovalEvent(it.alarmRemovalEvent ?: CfgRemovalEvent(service, it)),
+                it
             )
-            setProperty(CATEGORY, toCfgAlarmCategory(category), cfgAlarmCondition)
-            setProperty(
-                "clearanceScriptDBIDs",
-                clearanceScripts?.map { service.getObjectDbid(it) },
-                cfgAlarmCondition
-            )
-            setProperty("clearanceTimeout", clearanceTimeout, cfgAlarmCondition)
-            setProperty("description", description, cfgAlarmCondition)
-            setProperty("isMasked", toCfgFlag(isMasked), cfgAlarmCondition)
+            setProperty(CATEGORY, toCfgAlarmCategory(category), it)
+            setProperty("clearanceScriptDBIDs", clearanceScripts?.map { service.getObjectDbid(it) }, it)
+            setProperty("clearanceTimeout", clearanceTimeout, it)
+            setProperty("description", description, it)
+            setProperty("isMasked", toCfgFlag(isMasked), it)
             setProperty(
                 "reactionScriptDBIDs",
-                reactionScripts?.map { service.getObjectDbid(it) },
-                cfgAlarmCondition
+                reactionScripts?.map { reactionScript -> service.getObjectDbid(reactionScript) },
+                it
             )
-            setProperty("state", toCfgObjectState(state), cfgAlarmCondition)
-            setProperty("userProperties", toKeyValueCollection(userProperties), cfgAlarmCondition)
+            setProperty("state", toCfgObjectState(state), it)
+            setProperty("userProperties", toKeyValueCollection(userProperties), it)
         }
 
     override fun cloneBare() = AlarmCondition(
@@ -161,16 +156,12 @@ data class DetectEvent(
     val logEventID: Int? = null,
     val selectionMode: String? = null
 ) {
-    fun toCfgDetectEvent(alarmCondition: CfgAlarmCondition): CfgDetectEvent {
-        val service = alarmCondition.configurationService
-
-        return CfgDetectEvent(service, alarmCondition).also {
-            setProperty("appDBID", service.getObjectDbid(app), it)
-            // CFGNoApplication is the default value set by the config server
-            setProperty("appType", appType?.let { toCfgAppType(it) } ?: CFGNoApplication, it)
-            setProperty("logEventID", logEventID, it)
-            setProperty("selectionMode", toCfgSelectionMode(selectionMode), it)
-        }
+    fun toUpdatedCfgDetectEvent(service: IConfService, cfgDetectEvent: CfgDetectEvent) = cfgDetectEvent.also {
+        setProperty("appDBID", service.getObjectDbid(app), it)
+        // CFGNoApplication is the default value set by the config server
+        setProperty("appType", appType?.let { toCfgAppType(it) } ?: CFGNoApplication, it)
+        setProperty("logEventID", logEventID, it)
+        setProperty("selectionMode", toCfgSelectionMode(selectionMode), it)
     }
 }
 
@@ -178,12 +169,8 @@ data class RemovalEvent(
     val logEventID: Int? = null,
     val selectionMode: String? = null
 ) {
-    fun toCfgRemovalEvent(alarmCondition: CfgAlarmCondition): CfgRemovalEvent {
-        val service = alarmCondition.configurationService
-
-        return CfgRemovalEvent(service, alarmCondition).also {
-            setProperty("logEventID", logEventID, it)
-            setProperty("selectionMode", toCfgSelectionMode(selectionMode), it)
-        }
+    fun toUpdatedCfgRemovalEvent(cfgRemovalEvent: CfgRemovalEvent) = cfgRemovalEvent.also {
+        setProperty("logEventID", logEventID, it)
+        setProperty("selectionMode", toCfgSelectionMode(selectionMode), it)
     }
 }
