@@ -9,7 +9,7 @@ Completed. 1 object created. 0 object updated. 0 object skipped.
 }
 `;
 
-exports[`[mutagen dnGroups config import-export] should skip the same dnGroups: the dnGroups have been updated 1`] = `
+exports[`[mutagen dnGroups config import-export] should skip the same dnGroups: the dnGroups have not been updated 1`] = `
 Object {
   "stderr": "",
   "stdout": "= dngroup [Environment/cfgObjectTest]

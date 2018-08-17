@@ -34,6 +34,13 @@ import com.nuecho.genesys.cli.services.getObjectDbid
 import com.nuecho.genesys.cli.services.retrieveObject
 import com.nuecho.genesys.cli.toShortName
 
+/**
+ *  Version and type properties are not defined.
+ *  They could be set with mutagen, but
+ *  - they cannot be set explicitly in GA nor GAX
+ *  - specifying an appPrototype (Application Template) is mandatory on creation in GAX and GA
+ *  - in GAX and GA, they are set automatically from the appPrototype
+ */
 @Suppress("DataClassContainsFunctions")
 data class Application(
     val name: String,
@@ -124,7 +131,11 @@ data class Application(
             setProperty("password", password, it)
             setProperty("portInfos", portInfos?.map { portInfo -> portInfo.toCfgPortInfo(it) }, it)
             setProperty("redundancyType", toCfgHAType(redundancyType), it)
-            setProperty("serverInfo", serverInfo?.toCfgServer(it), it)
+            setProperty(
+                "serverInfo",
+                serverInfo?.toUpdatedCfgServer(service, it.serverInfo ?: CfgServer(service, it)),
+                it
+            )
             setProperty("shutdownTimeout", shutdownTimeout, it)
             setProperty("startupTimeout", startupTimeout, it)
             setProperty("state", toCfgObjectState(state), it)
@@ -148,6 +159,7 @@ data class Application(
         val missingMandatoryProperties = mutableSetOf<String>()
         val prototype = getAppPrototype(configuration, service)
 
+        // appPrototype is mandatory, because it is needed to set mandatory properties version and type
         appPrototype ?: missingMandatoryProperties.add(APP_PROTOTYPE)
         autoRestart ?: missingMandatoryProperties.add(AUTO_RESTART)
         redundancyType ?: missingMandatoryProperties.add(REDUNDANCY_TYPE)
@@ -266,17 +278,12 @@ data class Server(
         timeout = cfgServer.timeout
     )
 
-    fun toCfgServer(application: CfgApplication): CfgServer {
-        val service = application.configurationService
-        val server = CfgServer(application.configurationService, application)
-
-        setProperty("attempts", attempts, server)
-        setProperty("backupServerDBID", service.getObjectDbid(backupServer), server)
-        setProperty("hostDBID", service.getObjectDbid(host), server)
-        setProperty("port", application.portInfos.find { it.id == "default" }?.port, server)
-        setProperty("timeout", timeout, server)
-
-        return server
+    fun toUpdatedCfgServer(service: IConfService, cfgServer: CfgServer) = cfgServer.also {
+        setProperty("attempts", attempts, it)
+        setProperty("backupServerDBID", service.getObjectDbid(backupServer), it)
+        setProperty("hostDBID", service.getObjectDbid(host), it)
+        setProperty("port", (it.parent as CfgApplication).portInfos.find { it.id == "default" }?.port, it)
+        setProperty("timeout", timeout, it)
     }
 }
 

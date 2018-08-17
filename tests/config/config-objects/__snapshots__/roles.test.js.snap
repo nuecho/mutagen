@@ -9,7 +9,7 @@ Completed. 1 object created. 0 object updated. 0 object skipped.
 }
 `;
 
-exports[`[mutagen roles config import-export] should skip the same roles: the roles have been updated 1`] = `
+exports[`[mutagen roles config import-export] should skip the same roles: the roles have not been updated 1`] = `
 Object {
   "stderr": "",
   "stdout": "= role [cfgObjectTest]

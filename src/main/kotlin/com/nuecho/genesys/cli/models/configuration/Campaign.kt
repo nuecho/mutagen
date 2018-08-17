@@ -16,6 +16,7 @@ import com.nuecho.genesys.cli.getReference
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.checkUnchangeableProperties
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setFolder
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.setProperty
+import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgFlag
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toCfgObjectState
 import com.nuecho.genesys.cli.models.configuration.ConfigurationObjects.toKeyValueCollection
 import com.nuecho.genesys.cli.models.configuration.reference.CallingListReference
@@ -100,13 +101,11 @@ fun toCfgCallingListList(callingListInfos: List<CallingListInfo>?, campaign: Cfg
     else {
         val service = campaign.configurationService
         callingListInfos.map {
-            val cfgCallingListInfo = CfgCallingListInfo(service, campaign)
-
-            setProperty("callingListDBID", service.getObjectDbid(it.callingList), cfgCallingListInfo)
-            setProperty("isActive", it.isActive, cfgCallingListInfo)
-            setProperty("share", it.share, cfgCallingListInfo)
-
-            cfgCallingListInfo
+            CfgCallingListInfo(service, campaign).apply {
+                callingListDBID = service.getObjectDbid(it.callingList)
+                isActive = toCfgFlag(it.isActive)
+                share = it.share
+            }
         }
     }
 

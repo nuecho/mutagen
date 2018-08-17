@@ -16,7 +16,7 @@ Completed. 8 objects created. 0 object updated. 0 object skipped.
 }
 `;
 
-exports[`[mutagen placeGroups config import-export] should skip the same placeGroups: the placeGroups have been updated 1`] = `
+exports[`[mutagen placeGroups config import-export] should skip the same placeGroups: the placeGroups have not been updated 1`] = `
 Object {
   "stderr": "",
   "stdout": "= dn [number: 'placeGroupDN1', switch: 'placeGroupSwitch', type: 'cellular', tenant: 'Environment']
@@ -35,9 +35,8 @@ Completed. 0 object created. 0 object updated. 8 objects skipped.
 exports[`[mutagen placeGroups config import-export] should update the modified placeGroups: the modified placeGroups have been updated 1`] = `
 Object {
   "stderr": "",
-  "stdout": "+ script [Environment/placeGroupCapacityRuleNew]
-~ placegroup [Environment/cfgObjectTest]
-Completed. 1 object created. 1 object updated. 0 object skipped.
+  "stdout": "~ placegroup [Environment/cfgObjectTest]
+Completed. 0 object created. 1 object updated. 0 object skipped.
 ",
 }
 `;

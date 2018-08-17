@@ -109,7 +109,7 @@ class GroupTest {
     }
 
     @Test
-    fun `toCfgGroup should properly create CfgGroup instance`() {
+    fun `toUpdatedCfgGroup should properly update CfgGroup instance`() {
         val service = mockConfService()
         val parentObject = CfgPlaceGroup(service)
 
@@ -135,7 +135,7 @@ class GroupTest {
             every { service.getObjectDbid(group.routeDNs!![0]) } returns dn1Dbid
             every { service.getObjectDbid(group.routeDNs!![1]) } returns dn2Dbid
 
-            val cfgGroup = group.toCfgGroup(service, parentObject)
+            val cfgGroup = group.toUpdatedCfgGroup(service, CfgGroup(service, parentObject))
 
             with(cfgGroup) {
                 assertThat(name, equalTo(group.name))

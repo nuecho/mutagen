@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import com.genesyslab.platform.applicationblocks.com.CfgObject
 import com.genesyslab.platform.applicationblocks.com.ICfgObject
 import com.genesyslab.platform.applicationblocks.com.IConfService
+import com.genesyslab.platform.applicationblocks.com.objects.CfgGroup
 import com.genesyslab.platform.applicationblocks.com.objects.CfgPlace
 import com.genesyslab.platform.applicationblocks.com.objects.CfgPlaceGroup
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectType.CFGPlace
@@ -52,15 +53,13 @@ data class PlaceGroup(
         })
 
     override fun updateCfgObject(service: IConfService, cfgObject: ICfgObject) =
-        (cfgObject as CfgPlaceGroup).also { cfgPlaceGroup ->
-            val groupInfo = group.toCfgGroup(service, cfgPlaceGroup).also {
-                cfgPlaceGroup.dbid?.let { dbid ->
-                    it.dbid = dbid
-                }
+        (cfgObject as CfgPlaceGroup).also {
+            val groupInfo = group.toUpdatedCfgGroup(service, it.groupInfo ?: CfgGroup(service, it)).also { cfgGroup ->
+                it.dbid?.let { dbid -> cfgGroup.dbid = dbid }
             }
 
-            setProperty("groupInfo", groupInfo, cfgPlaceGroup)
-            setProperty("placeDBIDs", places?.map { service.getObjectDbid(it) }, cfgPlaceGroup)
+            setProperty("groupInfo", groupInfo, it)
+            setProperty("placeDBIDs", places?.map { place -> service.getObjectDbid(place) }, it)
         }
 
     override fun cloneBare() = PlaceGroup(Group(group.tenant, group.name))

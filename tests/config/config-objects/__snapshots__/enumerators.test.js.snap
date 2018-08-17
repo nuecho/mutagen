@@ -9,7 +9,7 @@ Completed. 1 object created. 0 object updated. 0 object skipped.
 }
 `;
 
-exports[`[mutagen enumerators config import-export] should skip the same enumerators: the enumerators have been updated 1`] = `
+exports[`[mutagen enumerators config import-export] should skip the same enumerators: the enumerators have not been updated 1`] = `
 Object {
   "stderr": "",
   "stdout": "= enumerator [Environment/cfgObjectTest]

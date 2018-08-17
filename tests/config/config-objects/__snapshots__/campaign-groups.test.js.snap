@@ -19,7 +19,7 @@ Completed. 11 objects created. 0 object updated. 0 object skipped.
 }
 `;
 
-exports[`[mutagen campaignGroups config import-export] should skip the same campaignGroups: the campaignGroups have been updated 1`] = `
+exports[`[mutagen campaignGroups config import-export] should skip the same campaignGroups: the campaignGroups have not been updated 1`] = `
 Object {
   "stderr": "",
   "stdout": "= agentgroup [Environment/campaignGroupAgentGroup]

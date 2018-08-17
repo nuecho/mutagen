@@ -11,7 +11,7 @@ Completed. 3 objects created. 0 object updated. 0 object skipped.
 }
 `;
 
-exports[`[mutagen ivrs config import-export] should skip the same ivrs: the ivrs have been updated 1`] = `
+exports[`[mutagen ivrs config import-export] should skip the same ivrs: the ivrs have not been updated 1`] = `
 Object {
   "stderr": "",
   "stdout": "= application [IVRServer-Application]

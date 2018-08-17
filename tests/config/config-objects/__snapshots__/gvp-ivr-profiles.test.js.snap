@@ -9,7 +9,7 @@ Completed. 1 object created. 0 object updated. 0 object skipped.
 }
 `;
 
-exports[`[mutagen gvpIVRProfiles config import-export] should skip the same gvpIVRProfiles: the gvpIVRProfiles have been updated 1`] = `
+exports[`[mutagen gvpIVRProfiles config import-export] should skip the same gvpIVRProfiles: the gvpIVRProfiles have not been updated 1`] = `
 Object {
   "stderr": "",
   "stdout": "= gvpivrprofile [cfgObjectTest]

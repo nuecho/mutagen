@@ -2,6 +2,7 @@ package com.nuecho.genesys.cli.models.configuration
 
 import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgAccessGroup
+import com.genesyslab.platform.applicationblocks.com.objects.CfgGroup
 import com.genesyslab.platform.configuration.protocol.types.CfgAccessGroupType
 import com.genesyslab.platform.configuration.protocol.types.CfgAccessGroupType.CFGAdministratorsGroup
 import com.genesyslab.platform.configuration.protocol.types.CfgAccessGroupType.CFGDefaultGroup
@@ -115,7 +116,7 @@ class AccessGroupTest : ConfigurationObjectTest(
                     assertThat(memberIDs.toList()[1].type, equalTo(CFGPerson))
 
                     assertThat(groupInfo.name, equalTo(accessGroup.group.name))
-                    assertThat(groupInfo, equalTo(accessGroup.group.toCfgGroup(service, cfgAccessGroup)))
+                    assertThat(groupInfo, equalTo(accessGroup.group.toUpdatedCfgGroup(service, CfgGroup(service, cfgAccessGroup))))
                     assertThat(folderId, equalTo(DEFAULT_FOLDER_DBID))
                 }
             }

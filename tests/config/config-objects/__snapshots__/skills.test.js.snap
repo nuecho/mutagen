@@ -9,7 +9,7 @@ Completed. 1 object created. 0 object updated. 0 object skipped.
 }
 `;
 
-exports[`[mutagen skills config import-export] should skip the same skills: the skills have been updated 1`] = `
+exports[`[mutagen skills config import-export] should skip the same skills: the skills have not been updated 1`] = `
 Object {
   "stderr": "",
   "stdout": "= skill [Environment/cfgObjectTest]

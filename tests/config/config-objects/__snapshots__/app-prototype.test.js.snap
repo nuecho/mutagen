@@ -9,7 +9,7 @@ Completed. 1 object created. 0 object updated. 0 object skipped.
 }
 `;
 
-exports[`[mutagen appPrototypes config import-export] should skip the same appPrototypes: the appPrototypes have been updated 1`] = `
+exports[`[mutagen appPrototypes config import-export] should skip the same appPrototypes: the appPrototypes have not been updated 1`] = `
 Object {
   "stderr": "",
   "stdout": "= appprototype [cfgObjectTest]
