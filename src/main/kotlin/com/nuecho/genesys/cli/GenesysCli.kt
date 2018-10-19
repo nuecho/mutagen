@@ -42,6 +42,7 @@ _   .-')                .-') _      ('-.                   ('-.       .-') _
  |  |   |  |('  '-'(_.-'   |  |     |  | |  | |  '--'  |  |  `---.|  | \   |
  `--'   `--'  `-----'      `--'     `--' `--'  `------'   `------'`--'  `--'
  Your Genesys Toolbox. (https://sites.google.com/m.nuecho.com/hub/mutagen)
+ Nu Echo Inc - Contact: mutagen@nuecho.com
 """
 
 const val SYNOPSIS = "mutagen [OPTIONS] <command>"
