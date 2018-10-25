@@ -13,14 +13,17 @@
  * limitations under the License.
  */
 
-test("[mutagen] should print usage with banner", () => {
-  assertMutagenResult("", "usage with banner", 0);
-});
+package com.nuecho.mutagen.cli.commands.license
 
-test("[mutagen --help] should print usage", () => {
-  assertMutagenResult("--help", "usage", 0);
-});
+import com.nuecho.mutagen.cli.CliOutputCaptureWrapper
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Test
 
-test("[mutagen license] should print license", () => {
-  assertMutagenResult("license", "license", 0);
-});
+class PrintLicenseCommandTest {
+    @Test
+    fun `executing Status with no arguments should print usage`() {
+        val expectedOutput = ClassLoader.getSystemClassLoader().getResource(PrintLicenseCommand.LICENSE_FILENAME).readText()
+        val output = CliOutputCaptureWrapper.execute("license")
+        Assertions.assertEquals(expectedOutput, output)
+    }
+}

@@ -13,14 +13,23 @@
  * limitations under the License.
  */
 
-test("[mutagen] should print usage with banner", () => {
-  assertMutagenResult("", "usage with banner", 0);
-});
+package com.nuecho.mutagen.cli.commands.license
 
-test("[mutagen --help] should print usage", () => {
-  assertMutagenResult("--help", "usage", 0);
-});
+import picocli.CommandLine
+import java.util.concurrent.Callable
 
-test("[mutagen license] should print license", () => {
-  assertMutagenResult("license", "license", 0);
-});
+@CommandLine.Command(
+    name = "license",
+    description = ["Print mutagen license"]
+)
+class PrintLicenseCommand : Callable<Int> {
+    override fun call(): Int {
+        val license = ClassLoader.getSystemClassLoader().getResource(LICENSE_FILENAME).readText()
+        System.out.print(license)
+        return 0
+    }
+
+    companion object {
+        const val LICENSE_FILENAME = "LICENSE"
+    }
+}
