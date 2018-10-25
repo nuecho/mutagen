@@ -200,6 +200,12 @@ launch4j {
     copyConfigurable = project.tasks.shadowJar.outputs.files
 }
 
+task copyLicense(type: Copy) {
+    description 'Copy license file into mutagen resources folder.'
+    from(file("LICENSE"))
+    into(file("src/main/resources"))
+}
+
 task shellExecutable(type: Copy, dependsOn: 'installShadowDist') {
     description 'Copy executable script and replace classpath variable for self location.'
 
@@ -238,3 +244,4 @@ task release(dependsOn: ['createAllExecutables', 'changeShellExecutablePermissio
 }
 
 check.dependsOn detektCheck
+compileKotlin.dependsOn copyLicense

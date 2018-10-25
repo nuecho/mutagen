@@ -106,3 +106,5 @@ gradle-app.setting
 
 
 # End of https://www.gitignore.io/api/gradle,kotlin,intellij+iml
+
+/src/main/resources/LICENSE
