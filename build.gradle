@@ -42,7 +42,7 @@ apply plugin: 'application'
 description = 'Nu Echo\'s Genesys Command Line Interface'
 group = 'com.nuecho'
 version = "${version}"
-mainClassName = 'com.nuecho.genesys.cli.GenesysCli'
+mainClassName = 'com.nuecho.mutagen.cli.MutagenCli'
 
 sourceCompatibility = '1.8'
 targetCompatibility = '1.8'
