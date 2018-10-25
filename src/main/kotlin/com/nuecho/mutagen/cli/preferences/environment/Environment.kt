@@ -17,8 +17,6 @@ package com.nuecho.mutagen.cli.preferences.environment
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.nuecho.mutagen.cli.preferences.Passwords.decrypt
-import com.nuecho.mutagen.cli.preferences.Passwords.isEncrypted
 import com.nuecho.mutagen.cli.preferences.SecurePassword
 import com.nuecho.mutagen.cli.services.GenesysServices
 
@@ -34,11 +32,8 @@ data class Environment(
 ) {
     var password: SecurePassword?
         @JsonIgnore
-        get() = when {
-            rawPassword == null -> null
-            isEncrypted(rawPassword) -> SecurePassword(decrypt(rawPassword!!).toCharArray())
-            else -> SecurePassword(rawPassword!!.toCharArray())
-        }
+        get() = if (rawPassword == null) null
+        else SecurePassword(rawPassword!!.toCharArray())
         @JsonIgnore
         set(password) {
             rawPassword = password?.value
