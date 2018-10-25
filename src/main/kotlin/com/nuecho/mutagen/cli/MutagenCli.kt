@@ -19,7 +19,6 @@ import com.nuecho.mutagen.cli.commands.MutagenCliCommand
 import com.nuecho.mutagen.cli.commands.agent.Agent
 import com.nuecho.mutagen.cli.commands.audio.Audio
 import com.nuecho.mutagen.cli.commands.config.Config
-import com.nuecho.mutagen.cli.commands.password.SetPasswordCommand
 import com.nuecho.mutagen.cli.commands.services.Services
 import com.nuecho.mutagen.cli.preferences.Preferences
 import com.nuecho.mutagen.cli.preferences.SecurePassword
@@ -56,7 +55,7 @@ const val PASSWORD_FROM_STDIN = "--password-from-stdin"
     versionProvider = VersionProvider::class,
     footer = ["%n$FOOTER"],
     commandListHeading = "%nCommands:%n%n",
-    subcommands = [Agent::class, Audio::class, Config::class, SetPasswordCommand::class, Services::class]
+    subcommands = [Agent::class, Audio::class, Config::class, Services::class]
 )
 open class MutagenCli : MutagenCliCommand() {
 
