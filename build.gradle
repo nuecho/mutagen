@@ -26,7 +26,8 @@ plugins {
 }
 
 repositories {
-    maven { url 'http://knox.s.nuecho.com/artifactory/repo' }
+    mavenCentral()
+    maven { url "$System.env.GENESYS_PSDK_MAVEN_URL" }
 }
 
 apply plugin: 'com.github.ksoichiro.console.reporter'

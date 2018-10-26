@@ -16,6 +16,9 @@
       <option name="CONTINUATION_INDENT_IN_IF_CONDITIONS" value="false" />
       <option name="WRAP_EXPRESSION_BODY_FUNCTIONS" value="1" />
     </JetCodeStyleSettings>
+    <yaml>
+      <option name="INDENT_SEQUENCE_VALUE" value="true" />
+    </yaml>
     <codeStyleSettings language="kotlin">
       <option name="CALL_PARAMETERS_WRAP" value="5" />
       <option name="CALL_PARAMETERS_LPAREN_ON_NEXT_LINE" value="true" />
