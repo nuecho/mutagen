@@ -17,6 +17,7 @@ stages:
   - publish
 
 variables:
+  GENESYS_PSDK_MAVEN_URL: "http://knox.s.nuecho.com/artifactory/repo"
   RELEASE_PATH: "build/releases"
 
 check:shell:

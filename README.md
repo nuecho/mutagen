@@ -46,6 +46,11 @@ To get a list of all available tasks:
 ./gradlew tasks --all
 ```
 
+## Genesys PSDK
+
+To build this project, a maven repository containing Genesys PSDK 9.0 libraries is required.
+The url of this repository must be specified using the `GENESYS_PSDK_MAVEN_URL` environment variable.
+
 ## Run
 
 To run the application using Gradle
