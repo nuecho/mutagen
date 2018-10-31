@@ -25,6 +25,7 @@ import picocli.CommandLine
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.util.concurrent.Callable
+import kotlin.text.Charsets.UTF_8
 
 abstract class MutagenCliCommand : Callable<Int> {
     @Suppress("unused")
@@ -51,7 +52,7 @@ abstract class MutagenCliCommand : Callable<Int> {
         }
 
         if (mutagenCli.readPasswordFromStdin) {
-            val passwordReader = BufferedReader(InputStreamReader(System.`in`))
+            val passwordReader = BufferedReader(InputStreamReader(System.`in`, UTF_8))
             password = SecurePassword(passwordReader.readLine().toCharArray())
         }
 

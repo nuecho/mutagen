@@ -14,7 +14,6 @@ gax:
   host: gax
   port: 8080
   user: default
-  password: password
 
 invalid-encoding:
   host: configserver

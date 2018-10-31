@@ -40,7 +40,6 @@ object Console {
             |Can't prompt for password process not attached to console.  You may:
             |  - Add password in your environment file
             |  - Pass it on standard input using `mutagen -p ...`
-            |  - Use `mutagen set-password` to store an encrypted version of it.
             """.trimMargin()
         )
 

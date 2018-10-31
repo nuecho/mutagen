@@ -59,33 +59,15 @@ object AudioServices {
     fun buildGaxUrl(environment: Environment, apiPath: String) =
         "$HTTP${environment.host}:${environment.port}$apiPath"
 
-    fun login(user: String, password: String, encryptPassword: Boolean, gaxUrl: String) {
-        val effectivePassword = if (encryptPassword) encryptPassword(password) else password
-
+    fun login(user: String, password: String, isPasswordEncrypted: Boolean, gaxUrl: String) {
         "$gaxUrl$LOGIN_PATH"
             .httpPost()
             .header(CONTENT_TYPE to APPLICATION_JSON)
-            .body(LoginRequest(user, effectivePassword, encryptPassword).toJson())
+            .body(LoginRequest(user, password, isPasswordEncrypted).toJson())
             .responseString()
             .let { (request, response, result) ->
                 checkStatusCode(LOGIN_SUCCESS_CODE, "Failed to log in to GAX.", request, response, result)
             }
-    }
-
-    // Based on GAX quickEncrypt JS function
-    @Suppress("MagicNumber")
-    private fun encryptPassword(password: String): String {
-        val chars = password.chars().toArray()
-        val encryptedChars = IntArray(chars.size * 2)
-
-        for (charIndex in 0 until password.length) {
-            val random = (Math.round(Math.random() * 122) + 68).toInt()
-            val encryptedCharIndex = charIndex * 2
-            encryptedChars[encryptedCharIndex] = chars[charIndex] + random
-            encryptedChars[encryptedCharIndex + 1] = random
-        }
-
-        return String(encryptedChars.map { it.toChar() }.toCharArray())
     }
 
     internal fun createMessage(name: String, type: MessageType, description: String, gaxUrl: String): String {

@@ -22,9 +22,10 @@ const MISSING_AUDIO_FILES_PATH = getResourcePath("audio/missing-audio-files.csv"
 const VALID_FILE_PATH = getResourcePath("audio/import.csv");
 
 const OUTPUT_PREFIX = "/tmp/mutagen/test";
+const PASSWORD_FILE = "/tmp/gax_password"
 
 beforeAll(() => {
-  const { code } = mutagen(`--env gax audio import ${DEPENDENCIES_FILE_PATH}`);
+  const { code } = mutagen(`-p --env gax audio import ${DEPENDENCIES_FILE_PATH} < ${PASSWORD_FILE}`);
   expect(code).toBe(0);
 })
 
@@ -36,16 +37,16 @@ test("[mutagen audio --help] should print audio usage", () => {
 // Audio Export
 
 test("[mutagen audio export --help] should print export usage", () => {
-  assertMutagenResult(`--env gax audio export --help`, "export usage", 0);
+  assertMutagenResult(`audio export --help`, "export usage", 0);
 });
 
 test("[mutagen audio export] should print usage when output file is not specified", () => {
-  assertMutagenResult(`--env gax audio export`, "export usage", 1);
+  assertMutagenResult(`audio export`, "export usage", 1);
 });
 
 test("[mutagen audio export] should export messages into a csv file", () => {
   const outputFile = `${OUTPUT_PREFIX}/csv-only/output.csv`;
-  assertMutagenResult(`--env gax audio export ${outputFile}`, "export done", 0);
+  assertMutagenResult(`-p --env gax audio export ${outputFile} < ${PASSWORD_FILE}`, "export done", 0);
 
   const csvFile = readCsv(outputFile, "export_test");
   expect(csvFile).toMatchSnapshot("csv file");
@@ -53,7 +54,7 @@ test("[mutagen audio export] should export messages into a csv file", () => {
 
 test("[mutagen audio export --personality-ids=x] should export messages into a csv file only for selected personalities", () => {
   const outputFile = `${OUTPUT_PREFIX}/personalities/output.csv`;
-  assertMutagenResult(`--env gax audio export --personality-ids=11 ${outputFile}`, "export done", 0);
+  assertMutagenResult(`-p --env gax audio export --personality-ids=11 ${outputFile} < ${PASSWORD_FILE}`, "export done", 0);
 
   const csvFileContent = readCsv(outputFile, "export_test");
   expect(csvFileContent).toMatchSnapshot("csv file");
@@ -61,7 +62,7 @@ test("[mutagen audio export --personality-ids=x] should export messages into a c
 
 test("[mutagen audio export --with-audios] should export audio files", () => {
   const outputDirectory = `${OUTPUT_PREFIX}/with-audios`;
-  assertMutagenResult(`--env gax audio export --with-audios ${outputDirectory}/output.csv`, "export done", 0);
+  assertMutagenResult(`-p --env gax audio export --with-audios ${outputDirectory}/output.csv < ${PASSWORD_FILE}`, "export done", 0);
 
   const downloadedFiles = exec(`find ${outputDirectory} -type f -name *export_test* | sort`);
   expect(downloadedFiles.output).toMatchSnapshot("downloaded files");
@@ -69,7 +70,7 @@ test("[mutagen audio export --with-audios] should export audio files", () => {
 
 test("[mutagen audio export] should fail when GAX API path is invalid", () => {
   const outputDirectory = `${OUTPUT_PREFIX}/invalid-gax-api-path`;
-  assertMutagenResult(`--env gax audio export --gax-api-path=/foo/bar ${outputDirectory}/output.csv`, "invalid GAX API path", 1);
+  assertMutagenResult(`-p --env gax audio export --gax-api-path=/foo/bar ${outputDirectory}/output.csv < ${PASSWORD_FILE}`, "invalid GAX API path", 1);
 });
 
 
@@ -77,27 +78,27 @@ test("[mutagen audio export] should fail when GAX API path is invalid", () => {
 // Audio Import
 
 test("[mutagen audio import --help] should print import usage", () => {
-  assertMutagenResult(`--env gax audio import --help`, "import usage", 0);
+  assertMutagenResult(`audio import --help`, "import usage", 0);
 });
 
 test("[mutagen audio import] should print usage when file to import is not specified", () => {
-  assertMutagenResult(`--env gax audio import`, "import usage", 1);
+  assertMutagenResult(`audio import`, "import usage", 1);
 });
 
 test("[mutagen audio import] should fail when file to import does not exist", () => {
-  assertMutagenResult(`--env gax audio import /tmp/foo`, "no such file or directory", 1);
+  assertMutagenResult(`audio import /tmp/foo`, "no such file or directory", 1);
 });
 
 test("[mutagen audio import] should fail when file to import is not a valid CSV", () => {
-  assertMutagenResult(`--env gax audio import ${INVALID_FILE_PATH}`, "invalid csv", 1);
+  assertMutagenResult(`audio import ${INVALID_FILE_PATH}`, "invalid csv", 1);
 });
 
 test("[mutagen audio import] should fail when some audio files are missing", () => {
-  assertMutagenResult(`--env gax audio import ${MISSING_AUDIO_FILES_PATH}`, "missing audio files", 1);
+  assertMutagenResult(`-p --env gax audio import ${MISSING_AUDIO_FILES_PATH} < ${PASSWORD_FILE}`, "missing audio files", 1);
 });
 
 test("[mutagen audio import] should fail when the csv file references invalid personality", () => {
-  assertMutagenResult(`--env gax audio import ${INVALID_PERSONALITY_PATH}`, "missing personality", 1);
+  assertMutagenResult(`-p --env gax audio import ${INVALID_PERSONALITY_PATH} < ${PASSWORD_FILE}`, "missing personality", 1);
 });
 
 test("[mutagen audio import] should import messages and audio files", () => {
@@ -113,25 +114,25 @@ test("[mutagen audio import] should allow setting input file encoding with --enc
 });
 
 test("[mutagen audio import] should fail when the specified encoding is invalid", () => {
-  assertMutagenResult(`--env gax audio import --encoding=POTATO-8 ${VALID_FILE_PATH}`, "invalid encoding message", 1);
+  assertMutagenResult(`audio import --encoding=POTATO-8 ${VALID_FILE_PATH}`, "invalid encoding message", 1);
 });
 
 test("[mutagen audio import] should validate duplicated messages", () => {
-  assertMutagenResult(`--env gax audio import ${VALID_FILE_PATH}`, "duplicated messages", 1);
+  assertMutagenResult(`-p --env gax audio import ${VALID_FILE_PATH} < ${PASSWORD_FILE}`, "duplicated messages", 1);
 });
 
 test("[mutagen audio import] should fail when GAX API path is invalid", () => {
-  assertMutagenResult(`--env gax audio import --gax-api-path=/foo/bar ${VALID_FILE_PATH}`, "invalid GAX API path", 1);
+  assertMutagenResult(`-p --env gax audio import --gax-api-path=/foo/bar ${VALID_FILE_PATH} < ${PASSWORD_FILE}`, "invalid GAX API path", 1);
 });
 
 ///////////
 // Utilities
 
 function testImportWithAudios(importFilePath, messagesKey, additionalArgument = "") {
-  assertMutagenResult(`--env gax audio import ${additionalArgument} ${importFilePath}`, "mutagen import output", 0);
+  assertMutagenResult(`-p --env gax audio import ${additionalArgument} ${importFilePath} < ${PASSWORD_FILE}`, "mutagen import output", 0);
 
   const outputDirectory = `${OUTPUT_PREFIX}/${messagesKey}`;
-  assertMutagenResult(`--env gax audio export --with-audios ${outputDirectory}/output.csv`, "mutagen export output", 0);
+  assertMutagenResult(`-p --env gax audio export --with-audios ${outputDirectory}/output.csv < ${PASSWORD_FILE}`, "mutagen export output", 0);
 
   const findResult = exec(`find ${outputDirectory} -type f -name *${messagesKey}* | sort`);
   expect(findResult.output).toMatchSnapshot("export of the imported files");
