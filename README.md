@@ -1,135 +1,62 @@
-> Provide a powerful, enjoyable, yet lightweight, Genesys toolbox for the Service
-> Delivery team to rely on as part of any troubleshooting, testing, support, management,
-> development tasks.
+# mutagen
 
-## Windows
-- Before checking out the code, ensure that autocrlf is properly set: `git config --global core.autocrlf true`
-- The supported way to run Gradle commands is by using Git Bash through ConEmu.
-  - Use the following launcher config: `"%ConEmuDir%\..\Git\git-cmd.exe" --no-cd --command=usr/bin/bash.exe -l -i`
+> A powerful, enjoyable, yet lightweight, Genesys toolbox to rely on as part of any
+> troubleshooting, testing, support, management, development tasks.
 
-## Architecture
+[![](doc/mutagen.gif)]()
 
-Architectural decisions are documented in `doc/arch` following this [blog post](http://thinkrelevance.com/blog/2011/11/15/documenting-architecture-decisions) guidelines.
-The template can be found under `doc/arch/adr-000.md`
+## Table of Contents
 
-## Development
+- [Use Cases](#use-cases)
+- [Features](#features)
+- [Getting Started](#getting-started)
+- [Versioning](#versioning)
+- [Built With](#built-with)
+- [Support](#support)
+- [License](#license)
 
-Before you start, take a look at the [Getting Started](https://sites.google.com/m.nuecho.com/hub/mutagen) section.
+## Use Cases
 
-We are using IntelliJ IDEA as primary IDE and compiling with JDK 8.
+Here are a few use cases supported by `mutagen`.
 
-1. Get [IntelliJ IDEA Community](https://www.jetbrains.com/idea/download/).
-    - _For Ubuntu users_: you may choose the "Without JDK" version.
-2. After starting and configuring IntelliJ, choose "Import Project".
-    1. Select the mutagen repository folder.
-    2. Choose "Import project from external model", then choose Gradle.
-    3. On the next page, leave default settings and click Next.
-    4. You'll be asked if you want to override the `.idea` folder. Choose Yes.
-3. The project will then be imported to IntelliJ. But since we have checked-in some project configuration files,
-   other steps are mandatory:
-   1. Within IntelliJ, close the project (`File -> Close Project`).
-   2. Run `git clean -fdx` within the mutagen folder.
-   3. Within IntelliJ, open the project again.
-4. _For ubuntu users_, you may encounter compiling issues for whatever reason ("Unresolved reference: java").
-   If this is the case, a final step is required:
-   1. Go to `File -> Project Structure...`
-   2. Select `Platform Settings -> SDKs`.
-   3. You'll need to re-select the "JDK Home Path". This will refresh the Classpath items with missing jars.
-   4. Click OK and the project should now build without any compilation error.
+- Perform point-in-time configuration snapshot, for one or multiple environments.
+- Gain insights about configured Genesys services, including host, port, type, and name
+- Compare configuration objects* over time and/or across environments.
+- Get Genesys services status.
+- Import configuration objects* in a Configuration Server.
+- Get agent status.
+- Perform agent logout on voice channels.
+- Create messages and import audio files in GAX/ARM.
 
+## Features
+
+Here are some feature highlights.
+
+- Cross-platform Support. Works on Windows, Linux, and macOS.
+- Multi-Environment Aware. Define Genesys connection settings on a per-environment basis, and easily switch between one another.
+- Security in Mind. Supports encrypted TLS connections.
+- Embrace Unix philosophy. Supports command composability and machine-friendly input/output.
+- Export/Import. Supports configuration objects* and GAX/ARM messages and audios.
+- Status queries. Get Genesys service info/status and agent connectivity status.
 
 ## Getting Started
 
-To get a list of all available tasks:
+### Requirements
 
-```bash
-./gradlew tasks --all
-```
+#### Java
 
-## Genesys PSDK
+- `mutagen` requires a Java Development Kit (JDK) version 8 or greater to build.
+- `mutagen` requires a Java Runtime Environment (JRE) version 8 or greater to run.
 
-To build this project, a maven repository containing Genesys PSDK 9.0 libraries is required.
+#### Genesys PSDK
+
+A maven repository containing Genesys PSDK 9.0 libraries is also required for `mutagen` to properly build.
 The url of this repository must be specified using the `GENESYS_PSDK_MAVEN_URL` environment variable.
 
-## Run
+### Installation
 
-To run the application using Gradle
-
-```bash
-./gradlew assemble
-./gradlew runShadow -Dexec.args="<args>"
-```
-
-## Check
-
-To perform all verifications (tests, ktlint, detekt)
-
-```bash
-./gradlew check
-```
-
-## Code Coverage
-
-Since []JaCoCo does not work that well with kotlin code base](https://youtrack.jetbrains.com/issue/KT-18383), 
-we rely on IntelliJ to perform code coverage. To do so, click on the `test` then `Run All Tests with Coverage`.
-
-We are aiming for 80% line code coverage.
-
-## Test
-
-```bash
-./gradlew test
-```
-
-### Integration
-
-For integration testing purposes, a `docker/docker-compose.yml` file is available to spin
-your very own config server. The following will launch both a config server and a PostgreSQL
-RDBMS:
-
-```bash
-cd docker
-docker-compose run --rm -p 2020:2020 configserver
-```
-
-_For linux users_: since the docker-compose file uses environment variable, the preceding command won't work
-if it is ran with `sudo`. Please follow the [Manage Docker as a non-root user](https://docs.docker.com/install/linux/linux-postinstall/) 
-procedure.
-
-Here is a sample `environments.yml` configuration:
-
-```yaml
-default:
-  host: localhost
-  user: default
-  password: password
-```
-
-### Functional
-
-Functionnal tests are coded in JS (node) using Jest(https://facebook.github.io/jest/).
-The recommended method to run the functional test is to run them as part of the docker-compose setup.
-
-To do so you you can run:
-```bash
-./gradlew clean release
-cd docker
-docker-compose run test
-```
-
-This will launch the configserver along with postgres and a test runner container, the test container uses the mutagen 
-you built with `./gradlew release`.
-
-You can pass arguments to `docker-compose run test` that will be forwarded to jest.
-
-You can pass a string that will be matched against test file names. For example `docker-compose run test import` will run all
-test files that contains `import` in their name.
-
-To update the snapshot you need to run  `docker-compose run test -u`.
-
-The database and the configserver won't be cleaned up between each run so you should do `docker-compose down` before/after your tests.
-
-## Release
+To release `mutagen`, the following command must be executed.
+).
 
 ```bash
 ./gradlew -Pversion=$VERSION release
@@ -140,17 +67,53 @@ Windows executable from [launch4j](http://launch4j.sourceforge.net/).
 Artifacts are then available from `build/launch4j/mutagen.exe` and `build/mutagen` for
 Windows and Unix respectively.
 
-## Commit
+The generated executables can then be used anywhere as long as a JRE is available.
 
-We use [commitizen](https://github.com/commitizen/cz-cli) to format our commit messages.
-This is enforced at the CI level.
+### Usage
 
-## Publish
+`mutagen` is a self documenting command line executable.
+Simply execute it with no parameters to have a list of available commands and options.
 
-Publish is performed within the pipeline on tagging where binary releases (and associated sha1 file)
-are pushed over a public readable S3 bucket (`s://nuecho.com-mutagen-releases/`).
+#### Windows
 
-For instance:
+> mutagen.exe
 
- 	https://s3.amazonaws.com/nuecho.com-mutagen-releases/0.0.0/windows/mutagen.exe
- 	https://s3.amazonaws.com/nuecho.com-mutagen-releases/0.0.0/unix/mutagen
+#### Linux
+
+> ./mutagen
+
+#### Environment Configuration
+
+Since `mutagen` relies on connection details to interact with various Genesys endpoints, an environment configuration file needs to be created. This file should be located under $HOME/.mutagen/environments.yml or %USERPROFILE%\.mutagen\environments.yml.  It is also possible to override the default location by either using the $MUTAGEN_HOME variable or simply dropping an environments.yml file in the current working directory.
+
+The following presents a configuration file sample:
+
+    default:
+      host: cfgserver.mydomain.com
+      user: user
+      password: password
+      port: 2020
+      tls: false
+      application: myapp
+
+Notes:
+- port, tls, and application are optional, defaulting to 2020, false, and default respectively.
+- while password is also optional, it will be prompted for if not present.
+
+## Versioning
+
+We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/nuecho/mutagen/tags).
+
+## Built With
+
+* [Kotlin](https://kotlinlang.org/) - Programming Language
+* [Gradle](https://gradle.org/) - Build System
+* [Picocli](https://github.com/remkop/picocli) - CLI Library
+
+## Support
+
+You can reach the `mutagen` team by email at mutagen@nuecho.com
+
+## License
+
+This project is licensed under the Apache License, Version 2.0 - see the [LICENSE](LICENSE) file for details
