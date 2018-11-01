@@ -48,4 +48,5 @@ services:
     volumes:
       - $PWD/../build/mutagen:/usr/local/bin/mutagen
       - $PWD/environments.yml:/root/.mutagen/environments.yml:ro
+      - $PWD/gax_password:/tmp/gax_password:ro
       - $PWD/../tests:/usr/src/app/tests

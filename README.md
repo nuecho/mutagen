@@ -12,6 +12,7 @@
 - [Getting Started](#getting-started)
 - [Versioning](#versioning)
 - [Built With](#built-with)
+- [FAQ](#faq)
 - [Support](#support)
 - [License](#license)
 
@@ -109,6 +110,15 @@ We use [SemVer](http://semver.org/) for versioning. For the versions available, 
 * [Kotlin](https://kotlinlang.org/) - Programming Language
 * [Gradle](https://gradle.org/) - Build System
 * [Picocli](https://github.com/remkop/picocli) - CLI Library
+
+## FAQ
+
+> Why does GAX login fails even if I put the proper credentials?
+
+GAX uses a password encryption technique that is not included in `mutagen`.
+To make it work, you must generate an encrypted password by trying to log into GAX using the web interface.
+Using the correct password with an invalid username and checking the failed login request will get you the encrypted password.
+The password can then be put in a file and piped to `stdin` in conjunction with the `-p` switch.
 
 ## Support
 
