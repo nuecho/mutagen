@@ -1,11 +1,7 @@
 version: '3.2'
 services:
   postgres_configserver:
-    image: postgres:9.2 
-    environment:
-      - POSTGRES_PASSWORD=mysecretpassword
-    volumes:
-      - $PWD/sql_scripts/configserver/:/docker-entrypoint-initdb.d/
+    image: dr.s.nuecho.com/mutagen-postgres-configserver:9a5abebb3683b13dd6a1b1bc2f7df7bad8bbe81c
 
   configserver:
     image: dr.s.nuecho.com/genesys/config-server:8.5.1
@@ -18,11 +14,7 @@ services:
       - postgres_configserver:postgres
 
   postgres_gax:
-    image: postgres:9.2
-    environment:
-      - POSTGRES_PASSWORD=mysecretpassword
-    volumes:
-      - $PWD/sql_scripts/gax/:/docker-entrypoint-initdb.d/
+    image: dr.s.nuecho.com/mutagen-postgres-gax:f61ee9dc53178b9463e2b5dccbebe72640e83609
 
   gax:
     image: dr.s.nuecho.com/genesys/gax:8.5.2
