@@ -85,9 +85,16 @@ compileTestKotlin {
     }
 }
 
+jacoco {
+    applyTo run
+    toolVersion = "0.8.2"
+}
+
 jacocoTestReport {
     reports {
-        html.enabled true
+        xml.destination file("${buildDir}/reports/jacoco/report.xml")
+        csv.destination file("${buildDir}/reports/jacoco/report.csv")
+        html.destination file("${buildDir}/reports/jacoco/html")
     }
 }
 
@@ -95,11 +102,13 @@ jacocoTestCoverageVerification {
     violationRules {
         rule {
             limit {
-                minimum = 0.85
+                minimum = 0.8
             }
         }
     }
 }
+
+test.finalizedBy(jacocoTestReport, jacocoTestCoverageVerification)
 
 detekt {
     version = '1.0.0.RC6-4'
