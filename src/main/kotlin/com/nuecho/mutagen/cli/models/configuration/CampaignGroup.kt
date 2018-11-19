@@ -177,10 +177,7 @@ data class CampaignGroup(
     override fun afterPropertiesSet() {
         group?.tenant = campaign.tenant
         interactionQueue?.tenant = campaign.tenant
-        origDN?.run {
-            tenant = campaign.tenant
-            switch.tenant = campaign.tenant
-        }
+        origDN?.updateTenantReferences(campaign.tenant)
         script?.tenant = campaign.tenant
     }
 

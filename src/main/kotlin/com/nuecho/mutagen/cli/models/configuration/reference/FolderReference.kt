@@ -73,7 +73,7 @@ data class OwnerReference(val type: String, val name: String, val tenant: Tenant
 
     override fun toString() = if (tenant != null) "$type/$tenant/$name" else "$type/$name"
 
-    private fun toConfigurationObjectReference() = when (toCfgObjectType(type)) {
+    fun toConfigurationObjectReference() = when (toCfgObjectType(type)) {
         CFGCampaign -> CampaignReference(name, tenant)
         CFGEnumerator -> EnumeratorReference(name, tenant)
         CFGGVPCustomer -> GVPCustomerReference(name)
