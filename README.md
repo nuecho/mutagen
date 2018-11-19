@@ -22,9 +22,9 @@ Here are a few use cases supported by `mutagen`.
 
 - Perform point-in-time configuration snapshot, for one or multiple environments.
 - Gain insights about configured Genesys services, including host, port, type, and name
-- Compare configuration objects* over time and/or across environments.
+- Compare configuration objects over time and/or across environments.
 - Get Genesys services status.
-- Import configuration objects* in a Configuration Server.
+- Import configuration objects in a Configuration Server.
 - Get agent status.
 - Perform agent logout on voice channels.
 - Create messages and import audio files in GAX/ARM.
@@ -37,7 +37,7 @@ Here are some feature highlights.
 - Multi-Environment Aware. Define Genesys connection settings on a per-environment basis, and easily switch between one another.
 - Security in Mind. Supports encrypted TLS connections.
 - Embrace Unix philosophy. Supports command composability and machine-friendly input/output.
-- Export/Import. Supports configuration objects* and GAX/ARM messages and audios.
+- Export/Import. Supports configuration objects and GAX/ARM messages and audios.
 - Status queries. Get Genesys service info/status and agent connectivity status.
 
 ## Getting Started
