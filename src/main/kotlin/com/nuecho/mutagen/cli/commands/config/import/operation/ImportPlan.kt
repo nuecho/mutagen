@@ -118,6 +118,12 @@ class ImportPlan(val configuration: Configuration, val service: ConfService) {
             configurationObject: ConfigurationObject,
             remoteCfgObject: ICfgObject
         ): Boolean {
+            // If there is any object referenced by `configurationObject` that is not existing on the configuration
+            // server, that means this object will certainly not be identical after the update.
+            // We need this to prevent null pointer exceptions later on.
+            if (configurationObject.getReferences().any { service.retrieveObject(it) == null })
+                return false
+
             val remoteObject = ConfigurationBuilder.toConfigurationObject(remoteCfgObject)!!
             // Makes a copy of the remoteCfgObject because updateCfgObject mutates it (which sucks BTW)
             val remoteCfgObjectCopy = remoteObject.createCfgObject(service)
