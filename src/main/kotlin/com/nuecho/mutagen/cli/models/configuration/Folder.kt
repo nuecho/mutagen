@@ -37,6 +37,7 @@ import com.nuecho.mutagen.cli.toShortName
 
 data class Folder(
     val name: String,
+    val type: String,
     val description: String? = null,
     val folderClass: String? = null,
     val customType: Int? = null,
@@ -47,10 +48,11 @@ data class Folder(
     override val folder: FolderReference
 ) : ConfigurationObject {
     @get:JsonIgnore
-    override val reference = FolderReference(folder.type, folder.owner, folder.path + name)
+    override val reference = FolderReference(type, folder.owner, folder.path + name)
 
     constructor(cfgFolder: CfgFolder) : this(
         name = cfgFolder.name,
+        type = cfgFolder.type.toShortName(),
         description = cfgFolder.description,
         folderClass = cfgFolder.folderClass?.toShortName(),
         customType = cfgFolder.customType,
@@ -67,7 +69,7 @@ data class Folder(
 
             setProperty("name", name, it)
             setProperty("ownerID", folder.owner.toCfgOwnerID(it), it)
-            setProperty("type", toCfgObjectType(folder.type), it)
+            setProperty("type", toCfgObjectType(type), it)
             setProperty("folderClass", toCfgFolderClass(folderClass), it)
 
             ConfigurationObjectRepository[reference] = it
@@ -81,11 +83,17 @@ data class Folder(
             setProperty("userProperties", ConfigurationObjects.toKeyValueCollection(userProperties), it)
         }
 
-    override fun cloneBare() = Folder(name = name, folder = folder)
+    override fun cloneBare() = Folder(name = name, type = type, folder = folder)
 
     override fun checkMandatoryProperties(configuration: Configuration, service: ConfService): Set<String> = emptySet()
 
-    override fun checkUnchangeableProperties(cfgObject: CfgObject) = checkUnchangeableProperties(this, cfgObject)
+    override fun checkUnchangeableProperties(cfgObject: CfgObject): Set<String> {
+        val unchangeableProperties = checkUnchangeableProperties(this, cfgObject)
+        (cfgObject as CfgFolder).let { cfgFolder ->
+            if (type.toLowerCase() != cfgFolder.type.toShortName()) unchangeableProperties.add(TYPE)
+        }
+        return unchangeableProperties
+    }
 
     override fun getReferences(): Set<ConfigurationObjectReference<*>> =
         if (folder.isRoot()) setOf(folder.owner.toConfigurationObjectReference()) else setOf(folder)

@@ -18,6 +18,7 @@ package com.nuecho.mutagen.cli.models.configuration
 import com.genesyslab.platform.applicationblocks.com.objects.CfgFolder
 import com.genesyslab.platform.configuration.protocol.types.CfgFolderClass.CFGFCDefault
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectState.CFGEnabled
+import com.genesyslab.platform.configuration.protocol.types.CfgObjectType.CFGPerson
 import com.nuecho.mutagen.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_FOLDER_DBID
 import com.nuecho.mutagen.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_FOLDER_REFERENCE
 import com.nuecho.mutagen.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_DBID
@@ -43,6 +44,7 @@ import org.junit.jupiter.api.Test
 private const val FOLDER_NAME = "name"
 private val folder = Folder(
     name = FOLDER_NAME,
+    type = CFGPerson.toShortName(),
     description = "description",
     folderClass = CFGFCDefault.toShortName(),
     customType = 8,
@@ -53,7 +55,7 @@ private val folder = Folder(
 
 class FolderTest : ConfigurationObjectTest(
     configurationObject = folder,
-    emptyConfigurationObject = Folder(name = FOLDER_NAME, folder = DEFAULT_FOLDER_REFERENCE),
+    emptyConfigurationObject = Folder(name = FOLDER_NAME, type = CFGPerson.toShortName(), folder = DEFAULT_FOLDER_REFERENCE),
     mandatoryProperties = emptySet(),
     importedConfigurationObject = Folder(mockCfgFolder())
 ) {
@@ -84,6 +86,7 @@ class FolderTest : ConfigurationObjectTest(
 
                 with(cfgFolder) {
                     assertThat(name, equalTo(folder.name))
+                    assertThat(type, equalTo(CFGPerson))
                     assertThat(description, equalTo(folder.description))
                     assertThat(folderClass, equalTo(toCfgFolderClass(folder.folderClass)))
                     assertThat(customType, equalTo(folder.customType))
@@ -104,6 +107,7 @@ private fun mockCfgFolder(): CfgFolder {
     return ConfigurationObjectMocks.mockCfgFolder(folder.name).apply {
         every { configurationService } returns service
         every { name } returns folder.name
+        every { type } returns CFGPerson
         every { description } returns folder.description
         every { folderClass } returns toCfgFolderClass(folder.folderClass)
         every { customType } returns folder.customType

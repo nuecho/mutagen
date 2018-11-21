@@ -16,7 +16,8 @@
         ],
         "type": "person"
       },
-      "name": "cfgObjectTest"
+      "name": "cfgObjectTest",
+      "type": "person"
     }
   ]
 }

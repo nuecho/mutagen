@@ -9,5 +9,6 @@
     ],
     "type": "folder"
   },
-  "name": "name"
+  "name": "name",
+  "type": "person"
 }

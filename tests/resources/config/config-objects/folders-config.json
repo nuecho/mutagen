@@ -20,6 +20,7 @@
       "folderClass": "default",
       "name": "cfgObjectTest",
       "state": "enabled",
+      "type": "person",
       "userProperties": {
         "section": {
           "number": 456,
@@ -39,7 +40,8 @@
         ],
         "type": "person"
       },
-      "name": "personSubFolder"
+      "name": "personSubFolder",
+      "type": "person"
     }
   ]
 }
