@@ -23,7 +23,8 @@
         }
       },
       "folderClass": "site",
-      "name": "placeSite"
+      "name": "placeSite",
+      "type": "folder"
     }
   ],
   "physicalSwitches": [
@@ -48,11 +49,11 @@
         "path": [
           "placeSite"
         ],
-        "type": "folder",
         "owner": {
           "name": "Environment",
           "type": "tenant"
-        }
+        },
+        "type": "folder"
       },
       "state": "enabled",
       "tenant": "Environment",
