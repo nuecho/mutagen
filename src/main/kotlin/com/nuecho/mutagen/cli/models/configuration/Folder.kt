@@ -88,7 +88,7 @@ data class Folder(
     override fun checkUnchangeableProperties(cfgObject: CfgObject) = checkUnchangeableProperties(this, cfgObject)
 
     override fun getReferences(): Set<ConfigurationObjectReference<*>> =
-        if (folder.isRoot()) emptySet() else setOf(folder)
+        if (folder.isRoot()) setOf(folder.owner.toConfigurationObjectReference()) else setOf(folder)
 }
 
 private fun rootFolderReference(rootFolder: CfgFolder) =

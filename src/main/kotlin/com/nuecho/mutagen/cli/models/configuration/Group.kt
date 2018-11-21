@@ -84,7 +84,7 @@ data class Group(
 
     fun updateTenantReferences() {
         managers?.forEach { it.tenant = tenant }
-        routeDNs?.forEach { it.tenant = tenant }
+        routeDNs?.forEach { it.updateTenantReferences(tenant) }
         capacityTable?.tenant = tenant
         quotaTable?.tenant = tenant
         capacityRule?.tenant = tenant

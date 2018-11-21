@@ -112,10 +112,7 @@ data class DNGroup(
 
     override fun afterPropertiesSet() {
         group.updateTenantReferences()
-        dns?.forEach {
-            it.dn.tenant = group.tenant
-            it.dn.switch.tenant = group.tenant
-        }
+        dns?.forEach { it.dn.updateTenantReferences(group.tenant) }
     }
 
     override fun getReferences(): Set<ConfigurationObjectReference<*>> =

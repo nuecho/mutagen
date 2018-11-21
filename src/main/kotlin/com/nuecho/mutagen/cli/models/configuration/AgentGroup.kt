@@ -79,7 +79,10 @@ data class AgentGroup(
 
     override fun checkUnchangeableProperties(cfgObject: CfgObject) = checkUnchangeableProperties(this, cfgObject)
 
-    override fun afterPropertiesSet() = group.updateTenantReferences()
+    override fun afterPropertiesSet() {
+        group.updateTenantReferences()
+        agents?.forEach { it.tenant = group.tenant }
+    }
 
     override fun getReferences(): Set<ConfigurationObjectReference<*>> =
         referenceSetBuilder()

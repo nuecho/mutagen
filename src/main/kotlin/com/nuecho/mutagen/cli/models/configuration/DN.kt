@@ -186,7 +186,7 @@ data class DN(
 
     override fun afterPropertiesSet() {
         switch.tenant = tenant
-        destinationDNs?.forEach { it.tenant = tenant }
+        destinationDNs?.forEach { it.updateTenantReferences(tenant) }
         group?.tenant = tenant
         accessNumbers?.forEach { it.updateTenantReferences(tenant) }
         contract?.tenant = tenant
