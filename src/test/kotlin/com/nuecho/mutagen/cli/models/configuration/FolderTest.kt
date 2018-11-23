@@ -27,16 +27,11 @@ import com.nuecho.mutagen.cli.models.configuration.ConfigurationObjects.toCfgFol
 import com.nuecho.mutagen.cli.models.configuration.ConfigurationObjects.toCfgObjectState
 import com.nuecho.mutagen.cli.models.configuration.ConfigurationTestData.defaultProperties
 import com.nuecho.mutagen.cli.models.configuration.reference.referenceSetBuilder
-import com.nuecho.mutagen.cli.services.ConfServiceExtensionMocks.mockConfigurationObjectRepository
 import com.nuecho.mutagen.cli.services.ConfServiceExtensionMocks.mockRetrieveFolderByDbid
 import com.nuecho.mutagen.cli.services.ConfServiceExtensionMocks.mockRetrieveTenant
-import com.nuecho.mutagen.cli.services.ConfigurationObjectRepository
 import com.nuecho.mutagen.cli.services.ServiceMocks.mockConfService
 import com.nuecho.mutagen.cli.toShortName
 import io.mockk.every
-import io.mockk.objectMockk
-import io.mockk.staticMockk
-import io.mockk.use
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.jupiter.api.Test
@@ -76,26 +71,18 @@ class FolderTest : ConfigurationObjectTest(
     fun `createCfgObject should properly create CfgFolder`() {
         val service = mockConfService()
         mockRetrieveTenant(service)
+        val cfgFolder = folder.createCfgObject(service)
 
-        staticMockk("com.nuecho.mutagen.cli.services.ConfServiceExtensionsKt").use {
-
-            objectMockk(ConfigurationObjectRepository).use {
-                mockConfigurationObjectRepository()
-
-                val cfgFolder = folder.createCfgObject(service)
-
-                with(cfgFolder) {
-                    assertThat(name, equalTo(folder.name))
-                    assertThat(type, equalTo(CFGPerson))
-                    assertThat(description, equalTo(folder.description))
-                    assertThat(folderClass, equalTo(toCfgFolderClass(folder.folderClass)))
-                    assertThat(customType, equalTo(folder.customType))
-                    assertThat(state, equalTo(toCfgObjectState(folder.state)))
-                    assertThat(userProperties.asCategorizedProperties(), equalTo(folder.userProperties))
-                    assertThat(folderId, equalTo(DEFAULT_FOLDER_DBID))
-                    assertThat(ownerID.dbid, equalTo(DEFAULT_TENANT_DBID))
-                }
-            }
+        with(cfgFolder) {
+            assertThat(name, equalTo(folder.name))
+            assertThat(type, equalTo(CFGPerson))
+            assertThat(description, equalTo(folder.description))
+            assertThat(folderClass, equalTo(toCfgFolderClass(folder.folderClass)))
+            assertThat(customType, equalTo(folder.customType))
+            assertThat(state, equalTo(toCfgObjectState(folder.state)))
+            assertThat(userProperties.asCategorizedProperties(), equalTo(folder.userProperties))
+            assertThat(folderId, equalTo(DEFAULT_FOLDER_DBID))
+            assertThat(ownerID.dbid, equalTo(DEFAULT_TENANT_DBID))
         }
     }
 }

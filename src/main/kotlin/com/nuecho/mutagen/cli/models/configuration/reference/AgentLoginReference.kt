@@ -15,18 +15,17 @@
 
 package com.nuecho.mutagen.cli.models.configuration.reference
 
-import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgAgentLogin
 import com.genesyslab.platform.applicationblocks.com.queries.CfgAgentLoginQuery
 import com.nuecho.mutagen.cli.models.configuration.ConfigurationObjectNotFoundException
-import com.nuecho.mutagen.cli.services.getObjectDbid
+import com.nuecho.mutagen.cli.services.ConfService
 
 data class AgentLoginReference(
     val loginCode: String,
     val switch: SwitchReference
 ) : ConfigurationObjectReference<CfgAgentLogin>(CfgAgentLogin::class.java) {
 
-    override fun toQuery(service: IConfService) = CfgAgentLoginQuery().also {
+    override fun toQuery(service: ConfService) = CfgAgentLoginQuery().also {
         it.loginCode = loginCode
         it.switchDbid = service.getObjectDbid(switch) ?: throw ConfigurationObjectNotFoundException(switch)
     }

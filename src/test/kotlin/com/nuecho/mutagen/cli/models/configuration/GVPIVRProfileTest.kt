@@ -35,17 +35,13 @@ import com.nuecho.mutagen.cli.models.configuration.ConfigurationObjects.toCfgObj
 import com.nuecho.mutagen.cli.models.configuration.ConfigurationTestData.defaultProperties
 import com.nuecho.mutagen.cli.models.configuration.reference.DNReference
 import com.nuecho.mutagen.cli.models.configuration.reference.referenceSetBuilder
-import com.nuecho.mutagen.cli.services.ConfServiceExtensionMocks.mockConfigurationObjectRepository
 import com.nuecho.mutagen.cli.services.ConfServiceExtensionMocks.mockRetrieveDN
 import com.nuecho.mutagen.cli.services.ConfServiceExtensionMocks.mockRetrieveFolderByDbid
 import com.nuecho.mutagen.cli.services.ConfServiceExtensionMocks.mockRetrieveSwitch
 import com.nuecho.mutagen.cli.services.ConfServiceExtensionMocks.mockRetrieveTenant
-import com.nuecho.mutagen.cli.services.ConfigurationObjectRepository
 import com.nuecho.mutagen.cli.services.ServiceMocks.mockConfService
 import com.nuecho.mutagen.cli.toShortName
 import io.mockk.every
-import io.mockk.objectMockk
-import io.mockk.use
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.equalTo
 import org.junit.jupiter.api.Test
@@ -108,25 +104,22 @@ class GVPIVRProfileTest : ConfigurationObjectTest(
         mockRetrieveDN(service, mockCfgSwitch(SWITCH_NAME), dnDbid)
         mockRetrieveSwitch(service)
 
-        objectMockk(ConfigurationObjectRepository).use {
-            mockConfigurationObjectRepository()
-            val cfgGVPIVRProfile = gvpIVRProfile.createCfgObject(service)
+        val cfgGVPIVRProfile = gvpIVRProfile.createCfgObject(service)
 
-            with(cfgGVPIVRProfile) {
-                assertThat(description, equalTo(gvpIVRProfile.description))
-                assertThat(diddbiDs.toList(), equalTo(listOf(dnDbid)))
-                assertThat(displayName, equalTo(gvpIVRProfile.displayName))
-                assertThat(endServiceDate.time, equalTo(gvpIVRProfile.endServiceDate))
-                assertThat(folderId, equalTo(DEFAULT_FOLDER_DBID))
-                assertThat(name, equalTo(gvpIVRProfile.name))
-                assertThat(notes, equalTo(gvpIVRProfile.notes))
-                assertThat(startServiceDate.time, equalTo(gvpIVRProfile.startServiceDate))
-                assertThat(state, equalTo(toCfgObjectState(gvpIVRProfile.state)))
-                assertThat(tenantDBID, equalTo(DEFAULT_TENANT_DBID))
-                assertThat(tfn.split(',').map { it.trim() }, equalTo(gvpIVRProfile.tfn))
-                assertThat(type, equalTo(toCfgIVRProfileType(gvpIVRProfile.type)))
-                assertThat(userProperties.asCategorizedProperties(), equalTo(gvpIVRProfile.userProperties))
-            }
+        with(cfgGVPIVRProfile) {
+            assertThat(description, equalTo(gvpIVRProfile.description))
+            assertThat(diddbiDs.toList(), equalTo(listOf(dnDbid)))
+            assertThat(displayName, equalTo(gvpIVRProfile.displayName))
+            assertThat(endServiceDate.time, equalTo(gvpIVRProfile.endServiceDate))
+            assertThat(folderId, equalTo(DEFAULT_FOLDER_DBID))
+            assertThat(name, equalTo(gvpIVRProfile.name))
+            assertThat(notes, equalTo(gvpIVRProfile.notes))
+            assertThat(startServiceDate.time, equalTo(gvpIVRProfile.startServiceDate))
+            assertThat(state, equalTo(toCfgObjectState(gvpIVRProfile.state)))
+            assertThat(tenantDBID, equalTo(DEFAULT_TENANT_DBID))
+            assertThat(tfn.split(',').map { it.trim() }, equalTo(gvpIVRProfile.tfn))
+            assertThat(type, equalTo(toCfgIVRProfileType(gvpIVRProfile.type)))
+            assertThat(userProperties.asCategorizedProperties(), equalTo(gvpIVRProfile.userProperties))
         }
     }
 }

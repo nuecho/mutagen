@@ -33,15 +33,11 @@ import com.nuecho.mutagen.cli.models.configuration.ConfigurationObjectMocks.mock
 import com.nuecho.mutagen.cli.models.configuration.ConfigurationObjectMocks.mockEmptyCfgGroup
 import com.nuecho.mutagen.cli.models.configuration.reference.PersonReference
 import com.nuecho.mutagen.cli.models.configuration.reference.referenceSetBuilder
-import com.nuecho.mutagen.cli.services.ConfServiceExtensionMocks.mockConfigurationObjectRepository
 import com.nuecho.mutagen.cli.services.ConfServiceExtensionMocks.mockRetrieveFolderByDbid
-import com.nuecho.mutagen.cli.services.ConfigurationObjectRepository
 import com.nuecho.mutagen.cli.services.ServiceMocks.mockConfService
-import com.nuecho.mutagen.cli.services.getObjectDbid
 import com.nuecho.mutagen.cli.toShortName
 import io.mockk.every
 import io.mockk.objectMockk
-import io.mockk.staticMockk
 import io.mockk.use
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.equalTo
@@ -106,35 +102,29 @@ class AccessGroupTest : ConfigurationObjectTest(
 
     @Test
     fun `createCfgObject should properly create CfgAccessGroup`() {
-        val service = mockConfService()
         val member1Dbid = 102
         val member2Dbid = 103
 
-        staticMockk("com.nuecho.mutagen.cli.services.ConfServiceExtensionsKt").use {
+        val service = mockConfService()
+        every { service.getObjectDbid(DEFAULT_TENANT_REFERENCE) } returns DEFAULT_OBJECT_DBID
+        every { service.getObjectDbid(accessGroup.members!![0]) } returns member1Dbid
+        every { service.getObjectDbid(accessGroup.members!![1]) } returns member2Dbid
+        every { service.retrieveObject(CfgAccessGroup::class.java, any()) } returns null
 
-            every { service.getObjectDbid(DEFAULT_TENANT_REFERENCE) } returns DEFAULT_OBJECT_DBID
-            every { service.getObjectDbid(accessGroup.members!![0]) } returns member1Dbid
-            every { service.getObjectDbid(accessGroup.members!![1]) } returns member2Dbid
-            every { service.retrieveObject(CfgAccessGroup::class.java, any()) } returns null
+        val cfgAccessGroup = accessGroup.createCfgObject(service)
 
-            objectMockk(ConfigurationObjectRepository).use {
-                mockConfigurationObjectRepository()
-                val cfgAccessGroup = accessGroup.createCfgObject(service)
+        with(cfgAccessGroup) {
+            assertThat(type, equalTo(CFGDefaultGroup))
+            assertThat(folderId, equalTo(DEFAULT_FOLDER_DBID))
+            assertThat(memberIDs, hasSize(2))
+            assertThat(memberIDs.toList()[0].dbid, equalTo(member1Dbid))
+            assertThat(memberIDs.toList()[1].dbid, equalTo(member2Dbid))
+            assertThat(memberIDs.toList()[0].type, equalTo(CFGPerson))
+            assertThat(memberIDs.toList()[1].type, equalTo(CFGPerson))
 
-                with(cfgAccessGroup) {
-                    assertThat(type, equalTo(CFGDefaultGroup))
-                    assertThat(folderId, equalTo(DEFAULT_FOLDER_DBID))
-                    assertThat(memberIDs, hasSize(2))
-                    assertThat(memberIDs.toList()[0].dbid, equalTo(member1Dbid))
-                    assertThat(memberIDs.toList()[1].dbid, equalTo(member2Dbid))
-                    assertThat(memberIDs.toList()[0].type, equalTo(CFGPerson))
-                    assertThat(memberIDs.toList()[1].type, equalTo(CFGPerson))
-
-                    assertThat(groupInfo.name, equalTo(accessGroup.group.name))
-                    assertThat(groupInfo, equalTo(accessGroup.group.toUpdatedCfgGroup(service, CfgGroup(service, cfgAccessGroup))))
-                    assertThat(folderId, equalTo(DEFAULT_FOLDER_DBID))
-                }
-            }
+            assertThat(groupInfo.name, equalTo(accessGroup.group.name))
+            assertThat(groupInfo, equalTo(accessGroup.group.toUpdatedCfgGroup(service, CfgGroup(service, cfgAccessGroup))))
+            assertThat(folderId, equalTo(DEFAULT_FOLDER_DBID))
         }
     }
 }

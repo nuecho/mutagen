@@ -16,7 +16,7 @@
 package com.nuecho.mutagen.cli.commands.config.import.operation
 
 import com.genesyslab.platform.applicationblocks.com.ICfgObject
-import com.nuecho.mutagen.cli.Logging
+import com.nuecho.mutagen.cli.Logging.info
 import com.nuecho.mutagen.cli.commands.config.import.operation.ImportOperationType.CREATE
 import com.nuecho.mutagen.cli.commands.config.import.operation.ImportOperationType.SKIP
 import com.nuecho.mutagen.cli.commands.config.import.operation.ImportOperationType.UPDATE
@@ -24,7 +24,6 @@ import com.nuecho.mutagen.cli.models.configuration.Configuration
 import com.nuecho.mutagen.cli.models.configuration.ConfigurationBuilder
 import com.nuecho.mutagen.cli.models.configuration.ConfigurationObject
 import com.nuecho.mutagen.cli.services.ConfService
-import com.nuecho.mutagen.cli.services.retrieveObject
 import org.jgrapht.Graph
 import org.jgrapht.alg.cycle.CycleDetector
 import org.jgrapht.graph.DefaultDirectedGraph
@@ -44,11 +43,13 @@ class ImportPlan(val configuration: Configuration, val service: ConfService) {
 
     fun apply(): Map<ImportOperationType, Int> {
         for (operation in orderedOperations) {
-            operation.configurationObject.reference.let {
-                Logging.info { "Processing ${it.toConsoleString()}." }
+            val reference = operation.configurationObject.reference
+            info { "Processing ${reference.toConsoleString()}." }
+
+            operation.apply()?.let {
+                service.configurationObjectRepository[reference] = it
             }
 
-            operation.apply()
             operation.print(false)
         }
 
@@ -66,7 +67,6 @@ class ImportPlan(val configuration: Configuration, val service: ConfService) {
     }
 
     companion object {
-
         internal fun applyOperationOrder(service: ConfService, configuration: Configuration):
                 List<ImportOperation> {
             val operations = toOperations(service, configuration).toMutableList()

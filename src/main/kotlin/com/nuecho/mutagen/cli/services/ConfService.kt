@@ -18,10 +18,13 @@ package com.nuecho.mutagen.cli.services
 import com.genesyslab.platform.applicationblocks.com.ConfService
 import com.genesyslab.platform.applicationblocks.com.ConfServiceFactory
 import com.genesyslab.platform.applicationblocks.com.ConfigServerException
+import com.genesyslab.platform.applicationblocks.com.ICfgObject
 import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.commons.protocol.ChannelState
 import com.genesyslab.platform.configuration.protocol.ConfServerProtocol
 import com.nuecho.mutagen.cli.Logging
+import com.nuecho.mutagen.cli.models.configuration.ConfigurationObjectNotFoundException
+import com.nuecho.mutagen.cli.models.configuration.reference.ConfigurationObjectReference
 import com.nuecho.mutagen.cli.preferences.environment.Environment
 import com.nuecho.mutagen.cli.services.GenesysServices.createConfServerProtocol
 
@@ -29,6 +32,8 @@ class ConfService private constructor(
     private val protocol: ConfServerProtocol,
     private val confService: ConfService
 ) : Service, IConfService by confService {
+    val configurationObjectRepository = ConfigurationObjectRepository()
+
     constructor(
         environment: Environment,
         checkCertificate: Boolean
@@ -74,5 +79,26 @@ class ConfService private constructor(
         }
 
         Logging.debug { "Disconnected from Config Server." }
+    }
+
+    fun prefetchConfigurationObjects() = configurationObjectRepository.prefetchConfigurationObjects(this)
+
+    fun <T : ICfgObject> retrieveObject(reference: ConfigurationObjectReference<T>): T? {
+        @Suppress("UNCHECKED_CAST")
+        if (configurationObjectRepository.contains(reference)) return configurationObjectRepository[reference] as T
+
+        val query = try {
+            reference.toQuery(this)
+        } catch (_: ConfigurationObjectNotFoundException) {
+            return null
+        }
+        return retrieveObject(reference.cfgObjectClass, query)
+    }
+
+    fun getObjectDbid(reference: ConfigurationObjectReference<*>?): Int? {
+        if (reference == null) return null
+        val dbid = retrieveObject(reference)?.objectDbid ?: 0
+        if (dbid != 0) return dbid
+        return null
     }
 }

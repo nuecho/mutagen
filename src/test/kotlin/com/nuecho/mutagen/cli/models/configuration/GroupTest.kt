@@ -48,12 +48,9 @@ import com.nuecho.mutagen.cli.services.ConfServiceExtensionMocks.mockRetrieveObj
 import com.nuecho.mutagen.cli.services.ConfServiceExtensionMocks.mockRetrieveScript
 import com.nuecho.mutagen.cli.services.ConfServiceExtensionMocks.mockRetrieveTenant
 import com.nuecho.mutagen.cli.services.ServiceMocks.mockConfService
-import com.nuecho.mutagen.cli.services.getObjectDbid
 import com.nuecho.mutagen.cli.toShortName
 import io.mockk.every
 import io.mockk.mockk
-import io.mockk.staticMockk
-import io.mockk.use
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.equalTo
 import org.junit.jupiter.api.Test
@@ -138,35 +135,33 @@ class GroupTest {
         val dn1Dbid = 118
         val dn2Dbid = 119
 
-        staticMockk("com.nuecho.mutagen.cli.services.ConfServiceExtensionsKt").use {
-            mockRetrieveTenant(service)
-            mockRetrieveObjectiveTable(service, contractDbid)
-            mockRetrieveScript(service, capacityRuleDbid)
-            every { service.getObjectDbid(group.capacityTable) } returns capacityTableDbid
-            every { service.getObjectDbid(group.quotaTable) } returns quotaTableDbid
-            every { service.getObjectDbid(group.site) } returns siteDbid
-            every { service.getObjectDbid(group.managers!![0]) } returns manager1Dbid
-            every { service.getObjectDbid(group.managers!![1]) } returns manager2Dbid
-            every { service.getObjectDbid(group.routeDNs!![0]) } returns dn1Dbid
-            every { service.getObjectDbid(group.routeDNs!![1]) } returns dn2Dbid
+        mockRetrieveTenant(service)
+        mockRetrieveObjectiveTable(service, contractDbid)
+        mockRetrieveScript(service, capacityRuleDbid)
+        every { service.getObjectDbid(group.capacityTable) } returns capacityTableDbid
+        every { service.getObjectDbid(group.quotaTable) } returns quotaTableDbid
+        every { service.getObjectDbid(group.site) } returns siteDbid
+        every { service.getObjectDbid(group.managers!![0]) } returns manager1Dbid
+        every { service.getObjectDbid(group.managers!![1]) } returns manager2Dbid
+        every { service.getObjectDbid(group.routeDNs!![0]) } returns dn1Dbid
+        every { service.getObjectDbid(group.routeDNs!![1]) } returns dn2Dbid
 
-            val cfgGroup = group.toUpdatedCfgGroup(service, CfgGroup(service, parentObject))
+        val cfgGroup = group.toUpdatedCfgGroup(service, CfgGroup(service, parentObject))
 
-            with(cfgGroup) {
-                assertThat(name, equalTo(group.name))
-                assertThat(tenantDBID, equalTo(DEFAULT_TENANT_DBID))
-                assertThat(capacityTableDBID, equalTo(capacityTableDbid))
-                assertThat(quotaTableDBID, equalTo(quotaTableDbid))
-                assertThat(capacityRuleDBID, equalTo(capacityRuleDbid))
-                assertThat(siteDBID, equalTo(siteDbid))
-                assertThat(contractDBID, equalTo(contractDbid))
+        with(cfgGroup) {
+            assertThat(name, equalTo(group.name))
+            assertThat(tenantDBID, equalTo(DEFAULT_TENANT_DBID))
+            assertThat(capacityTableDBID, equalTo(capacityTableDbid))
+            assertThat(quotaTableDBID, equalTo(quotaTableDbid))
+            assertThat(capacityRuleDBID, equalTo(capacityRuleDbid))
+            assertThat(siteDBID, equalTo(siteDbid))
+            assertThat(contractDBID, equalTo(contractDbid))
 
-                assertThat(managerDBIDs.toList(), equalTo(listOf(manager1Dbid, manager2Dbid)))
-                assertThat(routeDNDBIDs.toList(), equalTo(listOf(dn1Dbid, dn2Dbid)))
+            assertThat(managerDBIDs.toList(), equalTo(listOf(manager1Dbid, manager2Dbid)))
+            assertThat(routeDNDBIDs.toList(), equalTo(listOf(dn1Dbid, dn2Dbid)))
 
-                assertThat(state, equalTo(ConfigurationObjects.toCfgObjectState(group.state)))
-                assertThat(userProperties.asCategorizedProperties(), equalTo(group.userProperties))
-            }
+            assertThat(state, equalTo(ConfigurationObjects.toCfgObjectState(group.state)))
+            assertThat(userProperties.asCategorizedProperties(), equalTo(group.userProperties))
         }
     }
 }

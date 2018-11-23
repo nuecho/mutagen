@@ -40,7 +40,6 @@ import com.nuecho.mutagen.cli.models.configuration.ConfigurationObjects
 import com.nuecho.mutagen.cli.models.configuration.Metadata
 import com.nuecho.mutagen.cli.preferences.environment.Environment
 import com.nuecho.mutagen.cli.services.ConfService
-import com.nuecho.mutagen.cli.services.ConfigurationObjectRepository.prefetchConfigurationObjects
 import picocli.CommandLine
 import java.io.OutputStream
 
@@ -60,7 +59,7 @@ class ExportCommand : ConfigServerCommand() {
 
     override fun execute(): Int {
         withEnvironmentConfService { service: ConfService, environment: Environment ->
-            prefetchConfigurationObjects(service)
+            service.prefetchConfigurationObjects()
 
             time(CONFIG_EXPORT) {
                 exportConfiguration(

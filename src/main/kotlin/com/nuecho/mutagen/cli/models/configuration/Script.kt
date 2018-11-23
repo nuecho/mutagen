@@ -20,7 +20,6 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.genesyslab.platform.applicationblocks.com.CfgObject
 import com.genesyslab.platform.applicationblocks.com.ICfgObject
-import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgScript
 import com.nuecho.mutagen.cli.getFolderReference
 import com.nuecho.mutagen.cli.getReference
@@ -36,7 +35,6 @@ import com.nuecho.mutagen.cli.models.configuration.reference.ScriptReference
 import com.nuecho.mutagen.cli.models.configuration.reference.TenantReference
 import com.nuecho.mutagen.cli.models.configuration.reference.referenceSetBuilder
 import com.nuecho.mutagen.cli.services.ConfService
-import com.nuecho.mutagen.cli.services.getObjectDbid
 import com.nuecho.mutagen.cli.toShortName
 
 data class Script(
@@ -65,16 +63,16 @@ data class Script(
         folder = script.getFolderReference()
     )
 
-    override fun createCfgObject(service: IConfService) =
+    override fun createCfgObject(service: ConfService) =
         updateCfgObject(service, CfgScript(service).also {
             applyDefaultValues()
             setProperty("tenantDBID", service.getObjectDbid(tenant), it)
             setProperty("name", name, it)
             setProperty(TYPE, toCfgScriptType(type), it)
-            setFolder(folder, it)
+            setFolder(folder, it, service)
         })
 
-    override fun updateCfgObject(service: IConfService, cfgObject: ICfgObject) =
+    override fun updateCfgObject(service: ConfService, cfgObject: ICfgObject) =
         (cfgObject as CfgScript).also {
             setProperty("index", index, it)
             setProperty("state", toCfgObjectState(state), it)

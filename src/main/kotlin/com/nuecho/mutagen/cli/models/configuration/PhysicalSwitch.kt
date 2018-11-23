@@ -20,7 +20,6 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.genesyslab.platform.applicationblocks.com.CfgObject
 import com.genesyslab.platform.applicationblocks.com.ICfgObject
-import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgPhysicalSwitch
 import com.nuecho.mutagen.cli.getFolderReference
 import com.nuecho.mutagen.cli.models.configuration.ConfigurationObjects.checkUnchangeableProperties
@@ -59,14 +58,14 @@ data class PhysicalSwitch(
         folder = physicalSwitch.getFolderReference()
     )
 
-    override fun createCfgObject(service: IConfService) =
+    override fun createCfgObject(service: ConfService) =
         updateCfgObject(service, CfgPhysicalSwitch(service)).also {
             setProperty("name", name, it)
             setProperty(TYPE, toCfgSwitchType(type), it)
-            setFolder(folder, it)
+            setFolder(folder, it, service)
         }
 
-    override fun updateCfgObject(service: IConfService, cfgObject: ICfgObject) =
+    override fun updateCfgObject(service: ConfService, cfgObject: ICfgObject) =
         (cfgObject as CfgPhysicalSwitch).also {
             setProperty("state", toCfgObjectState(state), it)
             setProperty("userProperties", toKeyValueCollection(userProperties), it)

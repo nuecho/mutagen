@@ -21,7 +21,6 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.genesyslab.platform.applicationblocks.com.CfgObject
 import com.genesyslab.platform.applicationblocks.com.ICfgObject
-import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgAlarmCondition
 import com.genesyslab.platform.applicationblocks.com.objects.CfgDetectEvent
 import com.genesyslab.platform.applicationblocks.com.objects.CfgRemovalEvent
@@ -45,7 +44,6 @@ import com.nuecho.mutagen.cli.models.configuration.reference.ConfigurationObject
 import com.nuecho.mutagen.cli.models.configuration.reference.FolderReference
 import com.nuecho.mutagen.cli.models.configuration.reference.referenceSetBuilder
 import com.nuecho.mutagen.cli.services.ConfService
-import com.nuecho.mutagen.cli.services.getObjectDbid
 import com.nuecho.mutagen.cli.toShortName
 
 data class AlarmCondition(
@@ -100,14 +98,14 @@ data class AlarmCondition(
         userProperties = alarmCondition.userProperties.asCategorizedProperties()
     )
 
-    override fun createCfgObject(service: IConfService) =
+    override fun createCfgObject(service: ConfService) =
         updateCfgObject(service, CfgAlarmCondition(service).also {
             applyDefaultValues()
             setProperty("name", name, it)
-            setFolder(folder, it)
+            setFolder(folder, it, service)
         })
 
-    override fun updateCfgObject(service: IConfService, cfgObject: ICfgObject) =
+    override fun updateCfgObject(service: ConfService, cfgObject: ICfgObject) =
         (cfgObject as CfgAlarmCondition).also {
             setProperty(
                 ALARM_DETECT_EVENT,
@@ -171,7 +169,7 @@ data class DetectEvent(
     val logEventID: Int? = null,
     val selectionMode: String? = null
 ) {
-    fun toUpdatedCfgDetectEvent(service: IConfService, cfgDetectEvent: CfgDetectEvent) = cfgDetectEvent.also {
+    fun toUpdatedCfgDetectEvent(service: ConfService, cfgDetectEvent: CfgDetectEvent) = cfgDetectEvent.also {
         setProperty("appDBID", service.getObjectDbid(app), it)
         // CFGNoApplication is the default value set by the config server
         setProperty("appType", appType?.let { toCfgAppType(it) } ?: CFGNoApplication, it)

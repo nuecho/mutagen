@@ -21,7 +21,6 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.genesyslab.platform.applicationblocks.com.CfgObject
 import com.genesyslab.platform.applicationblocks.com.ICfgObject
-import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgAppPrototype
 import com.genesyslab.platform.applicationblocks.com.objects.CfgApplication
 import com.genesyslab.platform.applicationblocks.com.objects.CfgConnInfo
@@ -45,8 +44,6 @@ import com.nuecho.mutagen.cli.models.configuration.reference.HostReference
 import com.nuecho.mutagen.cli.models.configuration.reference.TenantReference
 import com.nuecho.mutagen.cli.models.configuration.reference.referenceSetBuilder
 import com.nuecho.mutagen.cli.services.ConfService
-import com.nuecho.mutagen.cli.services.getObjectDbid
-import com.nuecho.mutagen.cli.services.retrieveObject
 import com.nuecho.mutagen.cli.toShortName
 
 /**
@@ -121,21 +118,21 @@ data class Application(
         folder = cfgApplication.getFolderReference()
     )
 
-    override fun createCfgObject(service: IConfService): CfgApplication {
+    override fun createCfgObject(service: ConfService): CfgApplication {
         val cfgAppPrototype = service.retrieveObject(appPrototype!!) as CfgAppPrototype
 
         return updateCfgObject(service, CfgApplication(service)).also {
             setProperty("name", name, it)
             setProperty("type", cfgAppPrototype.type, it)
             setProperty("version", cfgAppPrototype.version, it)
-            setFolder(folder, it)
+            setFolder(folder, it, service)
         }
     }
 
-    override fun updateCfgObject(service: IConfService, cfgObject: ICfgObject) =
+    override fun updateCfgObject(service: ConfService, cfgObject: ICfgObject) =
         (cfgObject as CfgApplication).also {
             setProperty("appPrototypeDBID", service.getObjectDbid(appPrototype), it)
-            setProperty("appServerDBIDs", appServers?.map { appServer -> appServer.toCfgConnInfo(it) }, it)
+            setProperty("appServerDBIDs", appServers?.map { appServer -> appServer.toCfgConnInfo(it, service) }, it)
             setProperty("autoRestart", toCfgFlag(autoRestart), it)
             setProperty("commandLine", commandLine, it)
             setProperty("commandLineArguments", commandLineArguments, it)
@@ -251,8 +248,7 @@ data class ConnInfo(
         transportParams = cfgConnInfo.transportParams
     )
 
-    fun toCfgConnInfo(application: CfgApplication): CfgConnInfo {
-        val service = application.configurationService
+    fun toCfgConnInfo(application: CfgApplication, service: ConfService): CfgConnInfo {
         val connInfo = CfgConnInfo(application.configurationService, application)
 
         setProperty("appParams", appParams, connInfo)
@@ -293,7 +289,7 @@ data class Server(
         timeout = cfgServer.timeout
     )
 
-    fun toUpdatedCfgServer(service: IConfService, cfgServer: CfgServer) = cfgServer.also {
+    fun toUpdatedCfgServer(service: ConfService, cfgServer: CfgServer) = cfgServer.also {
         setProperty("attempts", attempts, it)
         setProperty("backupServerDBID", service.getObjectDbid(backupServer), it)
         setProperty("hostDBID", service.getObjectDbid(host), it)

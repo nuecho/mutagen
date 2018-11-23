@@ -27,7 +27,6 @@ import com.nuecho.mutagen.cli.models.configuration.ConfigurationObjectMocks.mock
 import com.nuecho.mutagen.cli.models.configuration.ConfigurationObjectMocks.mockEmptyCfgGroup
 import com.nuecho.mutagen.cli.models.configuration.reference.PersonReference
 import com.nuecho.mutagen.cli.models.configuration.reference.referenceSetBuilder
-import com.nuecho.mutagen.cli.services.ConfServiceExtensionMocks.mockConfigurationObjectRepository
 import com.nuecho.mutagen.cli.services.ConfServiceExtensionMocks.mockRetrieveDN
 import com.nuecho.mutagen.cli.services.ConfServiceExtensionMocks.mockRetrieveFolderByDbid
 import com.nuecho.mutagen.cli.services.ConfServiceExtensionMocks.mockRetrieveObjectiveTable
@@ -35,12 +34,9 @@ import com.nuecho.mutagen.cli.services.ConfServiceExtensionMocks.mockRetrievePer
 import com.nuecho.mutagen.cli.services.ConfServiceExtensionMocks.mockRetrieveScript
 import com.nuecho.mutagen.cli.services.ConfServiceExtensionMocks.mockRetrieveStatTable
 import com.nuecho.mutagen.cli.services.ConfServiceExtensionMocks.mockRetrieveTenant
-import com.nuecho.mutagen.cli.services.ConfigurationObjectRepository
 import com.nuecho.mutagen.cli.services.ServiceMocks
 import com.nuecho.mutagen.cli.services.ServiceMocks.mockConfService
 import io.mockk.every
-import io.mockk.objectMockk
-import io.mockk.use
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.contains
 import org.hamcrest.Matchers.equalTo
@@ -102,15 +98,12 @@ class AgentGroupTest : ConfigurationObjectTest(
         mockRetrieveStatTable(service, statTableDbid)
         mockRetrieveScript(service, script1Dbid)
 
-        objectMockk(ConfigurationObjectRepository).use {
-            mockConfigurationObjectRepository()
-            val cfgAgentGroup = agentGroup.createCfgObject(service)
+        val cfgAgentGroup = agentGroup.createCfgObject(service)
 
-            with(cfgAgentGroup) {
-                assertThat(agentDBIDs, contains(personDbid, personDbid, personDbid))
-                assertThat(groupInfo, equalTo(agentGroup.group.toUpdatedCfgGroup(service, CfgGroup(service, this))))
-                assertThat(folderId, equalTo(DEFAULT_FOLDER_DBID))
-            }
+        with(cfgAgentGroup) {
+            assertThat(agentDBIDs, contains(personDbid, personDbid, personDbid))
+            assertThat(groupInfo, equalTo(agentGroup.group.toUpdatedCfgGroup(service, CfgGroup(service, this))))
+            assertThat(folderId, equalTo(DEFAULT_FOLDER_DBID))
         }
     }
 }

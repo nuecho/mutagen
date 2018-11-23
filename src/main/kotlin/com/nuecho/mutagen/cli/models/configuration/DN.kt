@@ -20,7 +20,6 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.genesyslab.platform.applicationblocks.com.CfgObject
 import com.genesyslab.platform.applicationblocks.com.ICfgObject
-import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgDN
 import com.genesyslab.platform.applicationblocks.com.objects.CfgDNAccessNumber
 import com.nuecho.mutagen.cli.asBoolean
@@ -45,7 +44,6 @@ import com.nuecho.mutagen.cli.models.configuration.reference.SwitchReference
 import com.nuecho.mutagen.cli.models.configuration.reference.TenantReference
 import com.nuecho.mutagen.cli.models.configuration.reference.referenceSetBuilder
 import com.nuecho.mutagen.cli.services.ConfService
-import com.nuecho.mutagen.cli.services.getObjectDbid
 import com.nuecho.mutagen.cli.toShortName
 
 /**
@@ -121,16 +119,16 @@ data class DN(
         contract = dn.contract?.getReference()
     )
 
-    override fun createCfgObject(service: IConfService) =
+    override fun createCfgObject(service: ConfService) =
         updateCfgObject(service, CfgDN(service)).also {
             setProperty("number", number, it)
             setProperty("switchDBID", service.getObjectDbid(switch), it)
             setProperty("tenantDBID", service.getObjectDbid(tenant), it)
             setProperty("type", toCfgDNType(type), it)
-            setFolder(folder, it)
+            setFolder(folder, it, service)
         }
 
-    override fun updateCfgObject(service: IConfService, cfgObject: ICfgObject) =
+    override fun updateCfgObject(service: ConfService, cfgObject: ICfgObject) =
         (cfgObject as CfgDN).also {
             // Switch
             setProperty("registerAll", toCfgDNRegisterFlag(registerAll), it)
@@ -154,7 +152,7 @@ data class DN(
             setProperty("name", name, it)
 
             setProperty("useOverride", toCfgFlag(useOverride), it)
-            setProperty("accessNumbers", toCfgDNAccessNumberList(accessNumbers, it), it)
+            setProperty("accessNumbers", toCfgDNAccessNumberList(accessNumbers, it, service), it)
 
             setProperty("siteDBID", service.getObjectDbid(site), it)
 
@@ -205,10 +203,9 @@ data class DN(
             .toSet()
 }
 
-fun toCfgDNAccessNumberList(accessNumbers: List<DNAccessNumber>?, dn: CfgDN) =
+fun toCfgDNAccessNumberList(accessNumbers: List<DNAccessNumber>?, dn: CfgDN, service: ConfService) =
     if (accessNumbers == null) null
     else {
-        val service = dn.configurationService
         accessNumbers.map {
             CfgDNAccessNumber(service, dn).apply {
                 number = it.number

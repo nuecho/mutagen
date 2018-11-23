@@ -45,19 +45,15 @@ import com.nuecho.mutagen.cli.models.configuration.reference.DNReference
 import com.nuecho.mutagen.cli.models.configuration.reference.ObjectiveTableReference
 import com.nuecho.mutagen.cli.models.configuration.reference.SwitchReference
 import com.nuecho.mutagen.cli.models.configuration.reference.referenceSetBuilder
-import com.nuecho.mutagen.cli.services.ConfServiceExtensionMocks.mockConfigurationObjectRepository
 import com.nuecho.mutagen.cli.services.ConfServiceExtensionMocks.mockRetrieveDNGroup
 import com.nuecho.mutagen.cli.services.ConfServiceExtensionMocks.mockRetrieveFolderByDbid
 import com.nuecho.mutagen.cli.services.ConfServiceExtensionMocks.mockRetrieveObjectiveTable
 import com.nuecho.mutagen.cli.services.ConfServiceExtensionMocks.mockRetrieveSwitch
 import com.nuecho.mutagen.cli.services.ConfServiceExtensionMocks.mockRetrieveTenant
-import com.nuecho.mutagen.cli.services.ConfigurationObjectRepository
 import com.nuecho.mutagen.cli.services.ServiceMocks.mockConfService
 import com.nuecho.mutagen.cli.toShortName
 import io.mockk.every
 import io.mockk.mockk
-import io.mockk.objectMockk
-import io.mockk.use
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.equalTo
 import org.junit.jupiter.api.Test
@@ -135,21 +131,18 @@ class DNTest : ConfigurationObjectTest(
         mockRetrieveSwitch(service, switchDbid)
         mockRetrieveObjectiveTable(service)
 
-        objectMockk(ConfigurationObjectRepository).use {
-            mockConfigurationObjectRepository()
-            val cfgDN = dn.createCfgObject(service)
+        val cfgDN = dn.createCfgObject(service)
 
-            with(cfgDN) {
-                assertThat(name, equalTo(dn.name))
+        with(cfgDN) {
+            assertThat(name, equalTo(dn.name))
+            assertThat(switchDBID, equalTo(switchDbid))
+            assertThat(registerAll, equalTo(toCfgDNRegisterFlag(dn.registerAll)))
+            assertThat(switchSpecificType, equalTo(dn.switchSpecificType))
+            assertThat(state, equalTo(toCfgObjectState(dn.state)))
+            assertThat(userProperties.asCategorizedProperties(), equalTo(dn.userProperties))
+            with(accessNumbers.toList()[0]) {
+                assertThat(number, equalTo(dn.accessNumbers!![0].number))
                 assertThat(switchDBID, equalTo(switchDbid))
-                assertThat(registerAll, equalTo(toCfgDNRegisterFlag(dn.registerAll)))
-                assertThat(switchSpecificType, equalTo(dn.switchSpecificType))
-                assertThat(state, equalTo(toCfgObjectState(dn.state)))
-                assertThat(userProperties.asCategorizedProperties(), equalTo(dn.userProperties))
-                with(accessNumbers.toList()[0]) {
-                    assertThat(number, equalTo(dn.accessNumbers!![0].number))
-                    assertThat(switchDBID, equalTo(switchDbid))
-                }
             }
         }
     }

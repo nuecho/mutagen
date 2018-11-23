@@ -30,10 +30,8 @@ import com.nuecho.mutagen.cli.models.configuration.ConfigurationObjectMocks.mock
 import com.nuecho.mutagen.cli.models.configuration.ConfigurationObjects.toCfgObjectState
 import com.nuecho.mutagen.cli.models.configuration.ConfigurationTestData.defaultProperties
 import com.nuecho.mutagen.cli.models.configuration.reference.referenceSetBuilder
-import com.nuecho.mutagen.cli.services.ConfServiceExtensionMocks.mockConfigurationObjectRepository
 import com.nuecho.mutagen.cli.services.ConfServiceExtensionMocks.mockRetrieveFolderByDbid
 import com.nuecho.mutagen.cli.services.ConfServiceExtensionMocks.mockRetrieveTenant
-import com.nuecho.mutagen.cli.services.ConfigurationObjectRepository
 import com.nuecho.mutagen.cli.services.ServiceMocks.mockConfService
 import com.nuecho.mutagen.cli.toShortName
 import io.mockk.every
@@ -102,18 +100,14 @@ class RoleTest : ConfigurationObjectTest(
         every { service.retrieveObject(CfgRole::class.java, any()) } returns null
         mockRetrieveTenant(service)
 
-        objectMockk(ConfigurationObjectRepository).use {
-            mockConfigurationObjectRepository()
+        val cfgRole = role.createCfgObject(service)
 
-            val cfgRole = role.createCfgObject(service)
-
-            with(cfgRole) {
-                assertThat(name, equalTo(role.name))
-                assertThat(description, equalTo(role.description))
-                assertThat(state, equalTo(toCfgObjectState(role.state)))
-                assertThat(members, hasSize(0))
-                assertThat(userProperties.asCategorizedProperties(), equalTo(role.userProperties))
-            }
+        with(cfgRole) {
+            assertThat(name, equalTo(role.name))
+            assertThat(description, equalTo(role.description))
+            assertThat(state, equalTo(toCfgObjectState(role.state)))
+            assertThat(members, hasSize(0))
+            assertThat(userProperties.asCategorizedProperties(), equalTo(role.userProperties))
         }
     }
 }

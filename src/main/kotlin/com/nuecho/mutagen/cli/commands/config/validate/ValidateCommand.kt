@@ -21,7 +21,6 @@ import com.nuecho.mutagen.cli.commands.config.Validator
 import com.nuecho.mutagen.cli.core.defaultJsonObjectMapper
 import com.nuecho.mutagen.cli.models.configuration.Configuration
 import com.nuecho.mutagen.cli.services.ConfService
-import com.nuecho.mutagen.cli.services.ConfigurationObjectRepository
 import picocli.CommandLine
 import java.io.File
 
@@ -45,7 +44,7 @@ class ValidateCommand : ConfigServerCommand() {
 
     override fun execute(): Int {
         withEnvironmentConfService { service: ConfService, _ ->
-            ConfigurationObjectRepository.prefetchConfigurationObjects(service)
+            service.prefetchConfigurationObjects()
 
             val configuration = defaultJsonObjectMapper().readValue(
                 inputFile!!.readText(),

@@ -15,18 +15,20 @@
 
 package com.nuecho.mutagen.cli.commands.config.import.operation
 
+import com.genesyslab.platform.applicationblocks.com.ICfgObject
 import com.nuecho.mutagen.cli.commands.config.import.operation.ImportOperationType.UPDATE
 import com.nuecho.mutagen.cli.models.configuration.ConfigurationObject
 import com.nuecho.mutagen.cli.services.ConfService
-import com.nuecho.mutagen.cli.services.retrieveObject
 
 class UpdateReferenceOperation(
     configurationObject: ConfigurationObject,
     service: ConfService
 ) : ImportOperation(UPDATE, configurationObject, service) {
 
-    override fun apply() {
+    override fun apply(): ICfgObject {
         val remoteCfgObject = service.retrieveObject(configurationObject.reference)!!
-        save(configurationObject.updateCfgObject(service, remoteCfgObject))
+        val updatedCfgObject = configurationObject.updateCfgObject(service, remoteCfgObject)
+        save(updatedCfgObject)
+        return updatedCfgObject
     }
 }

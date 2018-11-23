@@ -17,7 +17,6 @@ package com.nuecho.mutagen.cli.models.configuration.reference
 
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.genesyslab.platform.applicationblocks.com.CfgObject
-import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgFolder
 import com.genesyslab.platform.applicationblocks.com.objects.CfgOwnerID
 import com.genesyslab.platform.configuration.protocol.types.CfgObjectType.CFGCampaign
@@ -31,8 +30,7 @@ import com.nuecho.mutagen.cli.getPath
 import com.nuecho.mutagen.cli.getReference
 import com.nuecho.mutagen.cli.models.configuration.ConfigurationObjectNotFoundException
 import com.nuecho.mutagen.cli.models.configuration.ConfigurationObjects.toCfgObjectType
-import com.nuecho.mutagen.cli.services.getObjectDbid
-import com.nuecho.mutagen.cli.services.retrieveObject
+import com.nuecho.mutagen.cli.services.ConfService
 import com.nuecho.mutagen.cli.toShortName
 
 data class FolderReference(val type: String, val owner: OwnerReference, val path: List<String> = emptyList()) :
@@ -40,7 +38,7 @@ data class FolderReference(val type: String, val owner: OwnerReference, val path
 
     constructor(folder: CfgFolder) : this(folder.type.toShortName(), folder.ownerID.getReference(), folder.getPath())
 
-    override fun toQuery(service: IConfService) = throw ConfigurationObjectNotFoundException(this)
+    override fun toQuery(service: ConfService) = throw ConfigurationObjectNotFoundException(this)
 
     override fun compareTo(other: ConfigurationObjectReference<*>): Int {
         if (other !is FolderReference) return super.compareTo(other)
@@ -54,7 +52,7 @@ data class FolderReference(val type: String, val owner: OwnerReference, val path
 
     override fun toString() = "type: '$type', owner: '$owner', path: '${path.joinToString("/")}'"
 
-    fun toFolderDbid(service: IConfService) = service.retrieveObject(this)?.objectDbid
+    fun toFolderDbid(service: ConfService) = service.retrieveObject(this)?.objectDbid
             ?: throw ConfigurationObjectNotFoundException(this)
 
     @JsonIgnore
@@ -84,8 +82,8 @@ data class OwnerReference(val type: String, val name: String, val tenant: Tenant
         else -> throw IllegalArgumentException("Illegal owner type: '$type'")
     }
 
-    fun toCfgOwnerID(parent: CfgObject) = CfgOwnerID(parent.configurationService, parent).also {
+    fun toCfgOwnerID(parent: CfgObject, service: ConfService) = CfgOwnerID(parent.configurationService, parent).also {
         it.type = toCfgObjectType(type)
-        it.dbid = parent.configurationService.getObjectDbid(toConfigurationObjectReference())
+        it.dbid = service.getObjectDbid(toConfigurationObjectReference())
     }
 }

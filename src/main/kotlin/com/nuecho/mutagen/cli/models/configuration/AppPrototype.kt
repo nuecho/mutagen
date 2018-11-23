@@ -20,7 +20,6 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.genesyslab.platform.applicationblocks.com.CfgObject
 import com.genesyslab.platform.applicationblocks.com.ICfgObject
-import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgAppPrototype
 import com.nuecho.mutagen.cli.getFolderReference
 import com.nuecho.mutagen.cli.models.configuration.ConfigurationObjects.checkUnchangeableProperties
@@ -61,15 +60,15 @@ data class AppPrototype(
         folder = appPrototype.getFolderReference()
     )
 
-    override fun createCfgObject(service: IConfService) =
+    override fun createCfgObject(service: ConfService) =
         updateCfgObject(service, CfgAppPrototype(service)).also {
             setProperty("name", name, it)
             setProperty(TYPE, toCfgAppType(type), it)
             setProperty(VERSION, version, it)
-            setFolder(folder, it)
+            setFolder(folder, it, service)
         }
 
-    override fun updateCfgObject(service: IConfService, cfgObject: ICfgObject) =
+    override fun updateCfgObject(service: ConfService, cfgObject: ICfgObject) =
         (cfgObject as CfgAppPrototype).also {
             setProperty("options", ConfigurationObjects.toKeyValueCollection(options), it)
             setProperty("state", toCfgObjectState(state), it)

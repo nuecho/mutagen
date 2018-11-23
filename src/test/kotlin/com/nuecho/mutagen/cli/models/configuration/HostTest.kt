@@ -15,7 +15,6 @@
 
 package com.nuecho.mutagen.cli.models.configuration
 
-import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgHost
 import com.genesyslab.platform.configuration.protocol.types.CfgHostType.CFGAgentWorkstation
 import com.genesyslab.platform.configuration.protocol.types.CfgHostType.CFGNetworkServer
@@ -36,15 +35,12 @@ import com.nuecho.mutagen.cli.models.configuration.ConfigurationObjects.toCfgObj
 import com.nuecho.mutagen.cli.models.configuration.ConfigurationObjects.toCfgOsType
 import com.nuecho.mutagen.cli.models.configuration.reference.ApplicationReference
 import com.nuecho.mutagen.cli.models.configuration.reference.referenceSetBuilder
-import com.nuecho.mutagen.cli.services.ConfServiceExtensionMocks.mockConfigurationObjectRepository
+import com.nuecho.mutagen.cli.services.ConfService
 import com.nuecho.mutagen.cli.services.ConfServiceExtensionMocks.mockRetrieveFolderByDbid
-import com.nuecho.mutagen.cli.services.ConfigurationObjectRepository
 import com.nuecho.mutagen.cli.services.ServiceMocks.mockConfService
-import com.nuecho.mutagen.cli.services.getObjectDbid
 import com.nuecho.mutagen.cli.toShortName
 import io.mockk.every
 import io.mockk.objectMockk
-import io.mockk.staticMockk
 import io.mockk.use
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.equalTo
@@ -108,36 +104,29 @@ class HostTest : ConfigurationObjectTest(
 
     @Test
     fun `updateCfgObject should properly create CfgHost`() {
+        val scsDbid = 102
         val service = mockConfService()
         every { service.retrieveObject(CfgHost::class.java, any()) } returns null
+        every { service.getObjectDbid(host.scs) } answers { scsDbid }
 
-        staticMockk("com.nuecho.mutagen.cli.services.ConfServiceExtensionsKt").use {
-            val scsDbid = 102
-            every { service.getObjectDbid(host.scs) } answers { scsDbid }
+        val cfgHost = host.createCfgObject(service)
 
-            objectMockk(ConfigurationObjectRepository).use {
-                mockConfigurationObjectRepository()
-
-                val cfgHost = host.createCfgObject(service)
-
-                with(cfgHost) {
-                    assertThat(name, equalTo(host.name))
-                    assertThat(iPaddress, equalTo(host.ipAddress))
-                    assertThat(lcaPort, equalTo(host.lcaPort))
-                    assertThat(oSinfo.oStype, equalTo(toCfgOsType(host.osInfo!!.type)))
-                    assertThat(oSinfo.oSversion, equalTo(host.osInfo!!.version))
-                    assertThat(scsdbid, equalTo(scsDbid))
-                    assertThat(type, equalTo(toCfgHostType(host.type)))
-                    assertThat(folderId, equalTo(DEFAULT_FOLDER_DBID))
-                    assertThat(state, equalTo(toCfgObjectState(host.state)))
-                    assertThat(userProperties.asCategorizedProperties(), equalTo(host.userProperties))
-                }
-            }
+        with(cfgHost) {
+            assertThat(name, equalTo(host.name))
+            assertThat(iPaddress, equalTo(host.ipAddress))
+            assertThat(lcaPort, equalTo(host.lcaPort))
+            assertThat(oSinfo.oStype, equalTo(toCfgOsType(host.osInfo!!.type)))
+            assertThat(oSinfo.oSversion, equalTo(host.osInfo!!.version))
+            assertThat(scsdbid, equalTo(scsDbid))
+            assertThat(type, equalTo(toCfgHostType(host.type)))
+            assertThat(folderId, equalTo(DEFAULT_FOLDER_DBID))
+            assertThat(state, equalTo(toCfgObjectState(host.state)))
+            assertThat(userProperties.asCategorizedProperties(), equalTo(host.userProperties))
         }
     }
 }
 
-private fun mockCfgHost(service: IConfService): CfgHost {
+private fun mockCfgHost(service: ConfService): CfgHost {
     mockRetrieveFolderByDbid(service)
 
     val cfgHost = mockCfgHost(name = NAME)

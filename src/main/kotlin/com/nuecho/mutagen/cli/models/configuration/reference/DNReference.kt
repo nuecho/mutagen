@@ -16,14 +16,13 @@
 package com.nuecho.mutagen.cli.models.configuration.reference
 
 import com.fasterxml.jackson.annotation.JsonIgnore
-import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgDN
 import com.genesyslab.platform.applicationblocks.com.queries.CfgDNQuery
 import com.genesyslab.platform.configuration.protocol.types.CfgDNType
 import com.nuecho.mutagen.cli.getReference
 import com.nuecho.mutagen.cli.models.configuration.ConfigurationObjectNotFoundException
 import com.nuecho.mutagen.cli.models.configuration.ConfigurationObjects
-import com.nuecho.mutagen.cli.services.getObjectDbid
+import com.nuecho.mutagen.cli.services.ConfService
 import com.nuecho.mutagen.cli.toShortName
 
 data class DNReference(
@@ -50,7 +49,7 @@ data class DNReference(
         tenant = dn.tenant.getReference()
     )
 
-    override fun toQuery(service: IConfService): CfgDNQuery {
+    override fun toQuery(service: ConfService): CfgDNQuery {
         val query = CfgDNQuery()
         query.tenantDbid = service.getObjectDbid(tenant) ?: throw ConfigurationObjectNotFoundException(tenant)
         query.dnNumber = number

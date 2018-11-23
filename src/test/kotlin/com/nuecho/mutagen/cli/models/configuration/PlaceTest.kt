@@ -37,18 +37,14 @@ import com.nuecho.mutagen.cli.models.configuration.reference.ObjectiveTableRefer
 import com.nuecho.mutagen.cli.models.configuration.reference.ScriptReference
 import com.nuecho.mutagen.cli.models.configuration.reference.SwitchReference
 import com.nuecho.mutagen.cli.models.configuration.reference.referenceSetBuilder
-import com.nuecho.mutagen.cli.services.ConfServiceExtensionMocks.mockConfigurationObjectRepository
 import com.nuecho.mutagen.cli.services.ConfServiceExtensionMocks.mockRetrieveFolderByDbid
 import com.nuecho.mutagen.cli.services.ConfServiceExtensionMocks.mockRetrieveObjectiveTable
 import com.nuecho.mutagen.cli.services.ConfServiceExtensionMocks.mockRetrieveScript
 import com.nuecho.mutagen.cli.services.ConfServiceExtensionMocks.mockRetrieveSwitch
 import com.nuecho.mutagen.cli.services.ConfServiceExtensionMocks.mockRetrieveTenant
-import com.nuecho.mutagen.cli.services.ConfigurationObjectRepository
 import com.nuecho.mutagen.cli.services.ServiceMocks.mockConfService
 import com.nuecho.mutagen.cli.toShortName
 import io.mockk.every
-import io.mockk.objectMockk
-import io.mockk.use
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.jupiter.api.Test
@@ -113,22 +109,18 @@ class PlaceTest : ConfigurationObjectTest(
         val dn2Mock = mockCfgDN(dn2.number, DN_DBID_2)
         every { service.retrieveObject(CfgDN::class.java, any()) } returns dn1Mock andThen dn2Mock
 
-        objectMockk(ConfigurationObjectRepository).use {
-            mockConfigurationObjectRepository()
+        val cfgPlace = place.createCfgObject(service)
 
-            val cfgPlace = place.createCfgObject(service)
-
-            with(cfgPlace) {
-                assertThat(name, equalTo(place.name))
-                assertThat(tenantDBID, equalTo(DEFAULT_TENANT_DBID))
-                assertThat(dndbiDs, equalTo(listOf(DN_DBID_1, DN_DBID_2) as Collection<Int>))
-                assertThat(siteDBID, equalTo(DEFAULT_FOLDER_DBID))
-                assertThat(contractDBID, equalTo(contractDbid))
-                assertThat(capacityRuleDBID, equalTo(capacityRuleDbid))
-                assertThat(state, equalTo(toCfgObjectState(place.state)))
-                assertThat(userProperties.asCategorizedProperties(), equalTo(place.userProperties))
-                assertThat(folderId, equalTo(DEFAULT_FOLDER_DBID))
-            }
+        with(cfgPlace) {
+            assertThat(name, equalTo(place.name))
+            assertThat(tenantDBID, equalTo(DEFAULT_TENANT_DBID))
+            assertThat(dndbiDs, equalTo(listOf(DN_DBID_1, DN_DBID_2) as Collection<Int>))
+            assertThat(siteDBID, equalTo(DEFAULT_FOLDER_DBID))
+            assertThat(contractDBID, equalTo(contractDbid))
+            assertThat(capacityRuleDBID, equalTo(capacityRuleDbid))
+            assertThat(state, equalTo(toCfgObjectState(place.state)))
+            assertThat(userProperties.asCategorizedProperties(), equalTo(place.userProperties))
+            assertThat(folderId, equalTo(DEFAULT_FOLDER_DBID))
         }
     }
 }

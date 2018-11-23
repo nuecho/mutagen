@@ -52,11 +52,8 @@ import com.nuecho.mutagen.cli.services.ConfServiceExtensionMocks.mockRetrieveApp
 import com.nuecho.mutagen.cli.services.ConfServiceExtensionMocks.mockRetrieveScript
 import com.nuecho.mutagen.cli.services.ConfServiceExtensionMocks.mockRetrieveTenant
 import com.nuecho.mutagen.cli.services.ServiceMocks
-import com.nuecho.mutagen.cli.services.retrieveObject
 import com.nuecho.mutagen.cli.toShortName
 import io.mockk.every
-import io.mockk.staticMockk
-import io.mockk.use
 import org.hamcrest.MatcherAssert
 import org.hamcrest.Matchers
 import org.hamcrest.Matchers.equalTo
@@ -158,26 +155,24 @@ class ValidatorTest {
         )
 
         val service = ServiceMocks.mockConfService()
-        staticMockk("com.nuecho.mutagen.cli.services.ConfServiceExtensionsKt").use {
-            val cfgPhysicalSwitch = CfgPhysicalSwitch(service)
-            val cfgTenant = CfgTenant(service)
-            every { service.retrieveObject(existingPhysicalSwitch) } returns cfgPhysicalSwitch
-            every { service.retrieveObject(existingTenant) } returns cfgTenant
-            every { service.retrieveObject(missingTenant) } returns null
-            every { service.retrieveObject(missingApplication) } returns null
-            every { service.retrieveObject(missingSwitch1) } returns null
-            every { service.retrieveObject(missingSwitch2) } returns null
+        val cfgPhysicalSwitch = CfgPhysicalSwitch(service)
+        val cfgTenant = CfgTenant(service)
+        every { service.retrieveObject(existingPhysicalSwitch) } returns cfgPhysicalSwitch
+        every { service.retrieveObject(existingTenant) } returns cfgTenant
+        every { service.retrieveObject(missingTenant) } returns null
+        every { service.retrieveObject(missingApplication) } returns null
+        every { service.retrieveObject(missingSwitch1) } returns null
+        every { service.retrieveObject(missingSwitch2) } returns null
 
-            val missingDependencies = Validator(configuration, service).findMissingDependencies()
+        val missingDependencies = Validator(configuration, service).findMissingDependencies()
 
-            MatcherAssert.assertThat(
-                missingDependencies,
-                Matchers.containsInAnyOrder(
-                    MissingDependencies(script, setOf(missingTenant)),
-                    MissingDependencies(switch, setOf(missingApplication, missingSwitch1, missingSwitch2))
-                )
+        MatcherAssert.assertThat(
+            missingDependencies,
+            Matchers.containsInAnyOrder(
+                MissingDependencies(script, setOf(missingTenant)),
+                MissingDependencies(switch, setOf(missingApplication, missingSwitch1, missingSwitch2))
             )
-        }
+        )
     }
 
     @Test

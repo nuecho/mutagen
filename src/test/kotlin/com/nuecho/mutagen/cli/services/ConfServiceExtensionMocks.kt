@@ -42,7 +42,6 @@ import com.genesyslab.platform.configuration.protocol.types.CfgObjectType
 import com.genesyslab.platform.configuration.protocol.types.CfgScriptType
 import com.nuecho.mutagen.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_FOLDER
 import com.nuecho.mutagen.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_FOLDER_DBID
-import com.nuecho.mutagen.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_FOLDER_REFERENCE
 import com.nuecho.mutagen.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_OBJECT_DBID
 import com.nuecho.mutagen.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_DBID
 import com.nuecho.mutagen.cli.models.configuration.ConfigurationObjectMocks.mockCfgAgentGroup
@@ -71,13 +70,6 @@ import io.mockk.every
 
 object ConfServiceExtensionMocks {
     const val DEFAULT_NAME = "name"
-
-    fun mockConfigurationObjectRepository() {
-        val cfgFolder = mockCfgFolder("site", CfgObjectType.CFGFolder)
-        every { ConfigurationObjectRepository.contains(any()) } returns false
-        every { ConfigurationObjectRepository.contains(DEFAULT_FOLDER_REFERENCE) } returns true
-        every { ConfigurationObjectRepository[DEFAULT_FOLDER_REFERENCE] } returns cfgFolder
-    }
 
     fun mockRetrieveApplication(service: IConfService, dbid: Int = DEFAULT_OBJECT_DBID) =
         every { service.retrieveObject(CfgApplication::class.java, any()) } answers {

@@ -40,17 +40,13 @@ import com.nuecho.mutagen.cli.models.configuration.ConfigurationObjects.toCfgSta
 import com.nuecho.mutagen.cli.models.configuration.ConfigurationTestData.defaultProperties
 import com.nuecho.mutagen.cli.models.configuration.reference.ApplicationReference
 import com.nuecho.mutagen.cli.models.configuration.reference.referenceSetBuilder
-import com.nuecho.mutagen.cli.services.ConfServiceExtensionMocks.mockConfigurationObjectRepository
 import com.nuecho.mutagen.cli.services.ConfServiceExtensionMocks.mockRetrieveApplication
 import com.nuecho.mutagen.cli.services.ConfServiceExtensionMocks.mockRetrieveFolderByDbid
 import com.nuecho.mutagen.cli.services.ConfServiceExtensionMocks.mockRetrieveTenant
-import com.nuecho.mutagen.cli.services.ConfigurationObjectRepository
 import com.nuecho.mutagen.cli.services.ServiceMocks.mockConfService
 import com.nuecho.mutagen.cli.toShortName
 import io.mockk.every
 import io.mockk.mockk
-import io.mockk.objectMockk
-import io.mockk.use
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.jupiter.api.Test
@@ -117,37 +113,33 @@ class ServiceTest : ConfigurationObjectTest(
         mockRetrieveApplication(confService, applicationDbid)
         mockRetrieveTenant(confService)
 
-        objectMockk(ConfigurationObjectRepository).use {
-            mockConfigurationObjectRepository()
-            val cfgService = service.createCfgObject(confService)
-
-            with(cfgService) {
-                assertThat(name, equalTo(service.name))
-                assertThat(assignedTenantDBID, equalTo(DEFAULT_TENANT_DBID))
-                with(componentDefinitions.toList()[0]) {
-                    val expectedComponent = service.componentDefinitions!![0]
-                    assertThat(startupPriority, equalTo(expectedComponent.startupPriority))
-                    assertThat(type, equalTo(toCfgAppType(expectedComponent.type)))
-                    assertThat(isOptional, equalTo(toCfgFlag(expectedComponent.isOptional)))
-                    assertThat(version, equalTo(expectedComponent.version))
-                }
-                with(components.toList()[0]) {
-                    val expectedComponent = service.components!![0]
-                    assertThat(appDBID, equalTo(applicationDbid))
-                    assertThat(startupPriority, equalTo(expectedComponent.startupPriority))
-                    assertThat(isOptional, equalTo(toCfgFlag(expectedComponent.isOptional)))
-                }
-                assertThat(components.toList(), equalTo(
-                    service.components?.map { it.toCfgSolutionComponent(this) } as Collection<CfgSolutionComponent>
-                ))
-                assertThat(scsdbid, equalTo(applicationDbid))
-                assertThat(solutionType, equalTo(toCfgSolutionType(service.solutionType)))
-                assertThat(startupType, equalTo(toCfgStartupType(service.startupType)))
-                assertThat(version, equalTo(service.version))
-                assertThat(state, equalTo(toCfgObjectState(service.state)))
-                assertThat(userProperties.asCategorizedProperties(), equalTo(service.userProperties))
-                assertThat(folderId, equalTo(DEFAULT_FOLDER_DBID))
+        val cfgService = service.createCfgObject(confService)
+        with(cfgService) {
+            assertThat(name, equalTo(service.name))
+            assertThat(assignedTenantDBID, equalTo(DEFAULT_TENANT_DBID))
+            with(componentDefinitions.toList()[0]) {
+                val expectedComponent = service.componentDefinitions!![0]
+                assertThat(startupPriority, equalTo(expectedComponent.startupPriority))
+                assertThat(type, equalTo(toCfgAppType(expectedComponent.type)))
+                assertThat(isOptional, equalTo(toCfgFlag(expectedComponent.isOptional)))
+                assertThat(version, equalTo(expectedComponent.version))
             }
+            with(components.toList()[0]) {
+                val expectedComponent = service.components!![0]
+                assertThat(appDBID, equalTo(applicationDbid))
+                assertThat(startupPriority, equalTo(expectedComponent.startupPriority))
+                assertThat(isOptional, equalTo(toCfgFlag(expectedComponent.isOptional)))
+            }
+            assertThat(components.toList(), equalTo(
+                service.components?.map { it.toCfgSolutionComponent(this, confService) } as Collection<CfgSolutionComponent>
+            ))
+            assertThat(scsdbid, equalTo(applicationDbid))
+            assertThat(solutionType, equalTo(toCfgSolutionType(service.solutionType)))
+            assertThat(startupType, equalTo(toCfgStartupType(service.startupType)))
+            assertThat(version, equalTo(service.version))
+            assertThat(state, equalTo(toCfgObjectState(service.state)))
+            assertThat(userProperties.asCategorizedProperties(), equalTo(service.userProperties))
+            assertThat(folderId, equalTo(DEFAULT_FOLDER_DBID))
         }
     }
 }

@@ -48,19 +48,15 @@ import com.nuecho.mutagen.cli.models.configuration.reference.GVPIVRProfileRefere
 import com.nuecho.mutagen.cli.models.configuration.reference.ScriptReference
 import com.nuecho.mutagen.cli.models.configuration.reference.SwitchReference
 import com.nuecho.mutagen.cli.models.configuration.reference.referenceSetBuilder
-import com.nuecho.mutagen.cli.services.ConfServiceExtensionMocks.mockConfigurationObjectRepository
 import com.nuecho.mutagen.cli.services.ConfServiceExtensionMocks.mockRetrieveAgentGroup
 import com.nuecho.mutagen.cli.services.ConfServiceExtensionMocks.mockRetrieveApplication
 import com.nuecho.mutagen.cli.services.ConfServiceExtensionMocks.mockRetrieveCampaign
 import com.nuecho.mutagen.cli.services.ConfServiceExtensionMocks.mockRetrieveFolderByDbid
 import com.nuecho.mutagen.cli.services.ConfServiceExtensionMocks.mockRetrieveTenant
-import com.nuecho.mutagen.cli.services.ConfigurationObjectRepository
 import com.nuecho.mutagen.cli.services.ServiceMocks.mockConfService
-import com.nuecho.mutagen.cli.services.getObjectDbid
 import com.nuecho.mutagen.cli.toShortName
 import io.mockk.every
 import io.mockk.objectMockk
-import io.mockk.staticMockk
 import io.mockk.use
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.equalTo
@@ -161,42 +157,36 @@ class CampaignGroupTest : ConfigurationObjectTest(
         mockRetrieveApplication(service, applicationDbid)
         mockRetrieveCampaign(service, CAMPAIGN_DBID)
 
-        staticMockk("com.nuecho.mutagen.cli.services.ConfServiceExtensionsKt").use {
-            every { service.getObjectDbid(campaignGroup.interactionQueue) } returns script1Dbid
-            every { service.getObjectDbid(campaignGroup.ivrProfile) } returns ivrProfileDbid
-            every { service.getObjectDbid(campaignGroup.origDN) } returns origDnDbid
-            every { service.getObjectDbid(campaignGroup.script) } returns script2Dbid
+        every { service.getObjectDbid(campaignGroup.interactionQueue) } returns script1Dbid
+        every { service.getObjectDbid(campaignGroup.ivrProfile) } returns ivrProfileDbid
+        every { service.getObjectDbid(campaignGroup.origDN) } returns origDnDbid
+        every { service.getObjectDbid(campaignGroup.script) } returns script2Dbid
 
-            objectMockk(ConfigurationObjectRepository).use {
-                mockConfigurationObjectRepository()
+        val cfgCampaignGroup = campaignGroup.createCfgObject(service)
 
-                val cfgCampaignGroup = campaignGroup.createCfgObject(service)
+        with(cfgCampaignGroup) {
+            assertThat(campaignDBID, equalTo(CAMPAIGN_DBID))
+            assertThat(interactionQueueDBID, equalTo(script1Dbid))
+            assertThat(ivrProfileDBID, equalTo(ivrProfileDbid))
+            assertThat(groupDBID, equalTo(AGENT_GROUP_DBID))
+            assertThat(origDNDBID, equalTo(origDnDbid))
+            assertThat(scriptDBID, equalTo(script2Dbid))
+            assertThat(serverDBIDs.toList(), equalTo(listOf(applicationDbid)))
 
-                with(cfgCampaignGroup) {
-                    assertThat(campaignDBID, equalTo(CAMPAIGN_DBID))
-                    assertThat(interactionQueueDBID, equalTo(script1Dbid))
-                    assertThat(ivrProfileDBID, equalTo(ivrProfileDbid))
-                    assertThat(groupDBID, equalTo(AGENT_GROUP_DBID))
-                    assertThat(origDNDBID, equalTo(origDnDbid))
-                    assertThat(scriptDBID, equalTo(script2Dbid))
-                    assertThat(serverDBIDs.toList(), equalTo(listOf(applicationDbid)))
+            assertThat(campaignDBID, equalTo(CAMPAIGN_DBID))
+            assertThat(description, equalTo(campaignGroup.description))
+            assertThat(dialMode, equalTo(CFGDMPredict))
+            assertThat(maxQueueSize, equalTo(campaignGroup.maxQueueSize))
+            assertThat(minRecBuffSize, equalTo(campaignGroup.minRecBuffSize))
+            assertThat(numOfChannels, equalTo(campaignGroup.numOfChannels))
+            assertThat(operationMode, equalTo(OPERATION_MODE))
+            assertThat(optMethod, equalTo(OPT_METHOD))
+            assertThat(optMethodValue, equalTo(campaignGroup.optMethodValue))
+            assertThat(optRecBuffSize, equalTo(campaignGroup.optRecBuffSize))
 
-                    assertThat(campaignDBID, equalTo(CAMPAIGN_DBID))
-                    assertThat(description, equalTo(campaignGroup.description))
-                    assertThat(dialMode, equalTo(CFGDMPredict))
-                    assertThat(maxQueueSize, equalTo(campaignGroup.maxQueueSize))
-                    assertThat(minRecBuffSize, equalTo(campaignGroup.minRecBuffSize))
-                    assertThat(numOfChannels, equalTo(campaignGroup.numOfChannels))
-                    assertThat(operationMode, equalTo(OPERATION_MODE))
-                    assertThat(optMethod, equalTo(OPT_METHOD))
-                    assertThat(optMethodValue, equalTo(campaignGroup.optMethodValue))
-                    assertThat(optRecBuffSize, equalTo(campaignGroup.optRecBuffSize))
-
-                    assertThat(name, equalTo(campaignGroup.name))
-                    assertThat(state, equalTo(toCfgObjectState(campaignGroup.state)))
-                    assertThat(userProperties.asCategorizedProperties(), equalTo(campaignGroup.userProperties))
-                }
-            }
+            assertThat(name, equalTo(campaignGroup.name))
+            assertThat(state, equalTo(toCfgObjectState(campaignGroup.state)))
+            assertThat(userProperties.asCategorizedProperties(), equalTo(campaignGroup.userProperties))
         }
     }
 }

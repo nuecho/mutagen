@@ -32,17 +32,13 @@ import com.nuecho.mutagen.cli.models.configuration.ConfigurationTestData.default
 import com.nuecho.mutagen.cli.models.configuration.reference.CallingListReference
 import com.nuecho.mutagen.cli.models.configuration.reference.ScriptReference
 import com.nuecho.mutagen.cli.models.configuration.reference.referenceSetBuilder
-import com.nuecho.mutagen.cli.services.ConfServiceExtensionMocks.mockConfigurationObjectRepository
 import com.nuecho.mutagen.cli.services.ConfServiceExtensionMocks.mockRetrieveCallingList
 import com.nuecho.mutagen.cli.services.ConfServiceExtensionMocks.mockRetrieveFolderByDbid
 import com.nuecho.mutagen.cli.services.ConfServiceExtensionMocks.mockRetrieveScript
 import com.nuecho.mutagen.cli.services.ConfServiceExtensionMocks.mockRetrieveTenant
-import com.nuecho.mutagen.cli.services.ConfigurationObjectRepository
 import com.nuecho.mutagen.cli.services.ServiceMocks.mockConfService
 import com.nuecho.mutagen.cli.toShortName
 import io.mockk.every
-import io.mockk.objectMockk
-import io.mockk.use
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.equalTo
 import org.junit.jupiter.api.Test
@@ -106,20 +102,17 @@ class CampaignTest : ConfigurationObjectTest(
         mockRetrieveScript(service, scriptDbid)
         mockRetrieveTenant(service)
 
-        objectMockk(ConfigurationObjectRepository).use {
-            mockConfigurationObjectRepository()
-            val cfgCampaign = campaign.createCfgObject(service)
+        val cfgCampaign = campaign.createCfgObject(service)
 
-            with(cfgCampaign) {
-                assertThat(callingLists.toList()[0].callingListDBID, equalTo(callingListDbid))
-                assertThat(description, equalTo(campaign.description))
-                assertThat(name, equalTo(campaign.name))
-                assertThat(scriptDBID, equalTo(scriptDbid))
+        with(cfgCampaign) {
+            assertThat(callingLists.toList()[0].callingListDBID, equalTo(callingListDbid))
+            assertThat(description, equalTo(campaign.description))
+            assertThat(name, equalTo(campaign.name))
+            assertThat(scriptDBID, equalTo(scriptDbid))
 
-                assertThat(folderId, equalTo(DEFAULT_FOLDER_DBID))
-                assertThat(state, equalTo(toCfgObjectState(campaign.state)))
-                assertThat(userProperties.asCategorizedProperties(), equalTo(campaign.userProperties))
-            }
+            assertThat(folderId, equalTo(DEFAULT_FOLDER_DBID))
+            assertThat(state, equalTo(toCfgObjectState(campaign.state)))
+            assertThat(userProperties.asCategorizedProperties(), equalTo(campaign.userProperties))
         }
     }
 }

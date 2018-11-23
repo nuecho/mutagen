@@ -15,7 +15,6 @@
 
 package com.nuecho.mutagen.cli.models.configuration
 
-import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgSwitch
 import com.genesyslab.platform.applicationblocks.com.objects.CfgSwitchAccessCode
 import com.nuecho.mutagen.cli.getReference
@@ -24,7 +23,7 @@ import com.nuecho.mutagen.cli.models.configuration.ConfigurationObjects.toCfgRou
 import com.nuecho.mutagen.cli.models.configuration.ConfigurationObjects.toCfgTargetType
 import com.nuecho.mutagen.cli.models.configuration.reference.SwitchReference
 import com.nuecho.mutagen.cli.models.configuration.reference.TenantReference
-import com.nuecho.mutagen.cli.services.getObjectDbid
+import com.nuecho.mutagen.cli.services.ConfService
 import com.nuecho.mutagen.cli.toShortName
 
 /**
@@ -59,7 +58,7 @@ data class SwitchAccessCode(
         extensionSource = switchAccessCode.extensionSource
     )
 
-    fun toCfgSwitchAccessCode(service: IConfService, parent: CfgSwitch) = CfgSwitchAccessCode(service, parent).also {
+    fun toCfgSwitchAccessCode(service: ConfService, parent: CfgSwitch) = CfgSwitchAccessCode(service, parent).also {
         val switchDbid = if (switch == null) 0 else service.getObjectDbid(switch)
 
         setProperty("switchDBID", switchDbid, it)

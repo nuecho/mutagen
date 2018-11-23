@@ -18,7 +18,6 @@ package com.nuecho.mutagen.cli.models.configuration
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.genesyslab.platform.applicationblocks.com.CfgObject
 import com.genesyslab.platform.applicationblocks.com.ICfgObject
-import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.nuecho.mutagen.cli.core.defaultJsonObjectMapper
 import com.nuecho.mutagen.cli.models.configuration.reference.ConfigurationObjectReference
 import com.nuecho.mutagen.cli.models.configuration.reference.FolderReference
@@ -32,9 +31,9 @@ interface ConfigurationObject : Comparable<ConfigurationObject> {
 
     override fun compareTo(other: ConfigurationObject) = reference.compareTo(other.reference)
 
-    fun createCfgObject(service: IConfService): CfgObject
+    fun createCfgObject(service: ConfService): CfgObject
 
-    fun updateCfgObject(service: IConfService, cfgObject: ICfgObject): CfgObject
+    fun updateCfgObject(service: ConfService, cfgObject: ICfgObject): CfgObject
 
     fun checkMandatoryProperties(configuration: Configuration, service: ConfService): Set<String>
 

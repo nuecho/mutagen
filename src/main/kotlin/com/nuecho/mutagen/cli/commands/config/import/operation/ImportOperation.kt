@@ -16,7 +16,9 @@
 package com.nuecho.mutagen.cli.commands.config.import.operation
 
 import com.genesyslab.platform.applicationblocks.com.CfgObject
+import com.genesyslab.platform.applicationblocks.com.ICfgObject
 import com.nuecho.mutagen.cli.Console.ansiPrintln
+import com.nuecho.mutagen.cli.Logging.debug
 import com.nuecho.mutagen.cli.commands.config.PRINT_MARGIN
 import com.nuecho.mutagen.cli.models.configuration.ConfigurationObject
 import com.nuecho.mutagen.cli.services.ConfService
@@ -26,7 +28,7 @@ abstract class ImportOperation(
     val configurationObject: ConfigurationObject,
     val service: ConfService
 ) {
-    abstract fun apply()
+    abstract fun apply(): ICfgObject?
 
     fun print(detailed: Boolean = true) {
         val reference = configurationObject.reference
@@ -47,6 +49,9 @@ abstract class ImportOperation(
     }
 
     companion object {
-        internal fun save(cfgObject: CfgObject) = cfgObject.save()
+        internal fun save(cfgObject: CfgObject) {
+            debug { "About to save object: $cfgObject" }
+            cfgObject.save()
+        }
     }
 }

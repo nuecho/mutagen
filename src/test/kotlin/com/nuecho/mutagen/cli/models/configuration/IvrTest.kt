@@ -34,16 +34,12 @@ import com.nuecho.mutagen.cli.models.configuration.ConfigurationObjects.toCfgObj
 import com.nuecho.mutagen.cli.models.configuration.ConfigurationTestData.defaultProperties
 import com.nuecho.mutagen.cli.models.configuration.reference.ApplicationReference
 import com.nuecho.mutagen.cli.models.configuration.reference.referenceSetBuilder
-import com.nuecho.mutagen.cli.services.ConfServiceExtensionMocks.mockConfigurationObjectRepository
 import com.nuecho.mutagen.cli.services.ConfServiceExtensionMocks.mockRetrieveApplication
 import com.nuecho.mutagen.cli.services.ConfServiceExtensionMocks.mockRetrieveFolderByDbid
 import com.nuecho.mutagen.cli.services.ConfServiceExtensionMocks.mockRetrieveTenant
-import com.nuecho.mutagen.cli.services.ConfigurationObjectRepository
 import com.nuecho.mutagen.cli.services.ServiceMocks.mockConfService
 import com.nuecho.mutagen.cli.toShortName
 import io.mockk.every
-import io.mockk.objectMockk
-import io.mockk.use
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.equalTo
 import org.junit.jupiter.api.Test
@@ -99,22 +95,18 @@ class IvrTest : ConfigurationObjectTest(
         mockRetrieveTenant(service)
         mockRetrieveApplication(service, ivrServerDbid)
 
-        objectMockk(ConfigurationObjectRepository).use {
-            mockConfigurationObjectRepository()
+        val cfgIvr = ivr.createCfgObject(service)
 
-            val cfgIvr = ivr.createCfgObject(service)
-
-            with(cfgIvr) {
-                assertThat(description, equalTo(ivr.description))
-                assertThat(folderId, equalTo(DEFAULT_FOLDER_DBID))
-                assertThat(ivrServerDBID, equalTo(ivrServerDbid))
-                assertThat(name, equalTo(ivr.name))
-                assertThat(state, equalTo(toCfgObjectState(ivr.state)))
-                assertThat(tenantDBID, equalTo(DEFAULT_TENANT_DBID))
-                assertThat(type, equalTo(toCfgIVRType(ivr.type)))
-                assertThat(userProperties.asCategorizedProperties(), equalTo(ivr.userProperties))
-                assertThat(version, equalTo(ivr.version))
-            }
+        with(cfgIvr) {
+            assertThat(description, equalTo(ivr.description))
+            assertThat(folderId, equalTo(DEFAULT_FOLDER_DBID))
+            assertThat(ivrServerDBID, equalTo(ivrServerDbid))
+            assertThat(name, equalTo(ivr.name))
+            assertThat(state, equalTo(toCfgObjectState(ivr.state)))
+            assertThat(tenantDBID, equalTo(DEFAULT_TENANT_DBID))
+            assertThat(type, equalTo(toCfgIVRType(ivr.type)))
+            assertThat(userProperties.asCategorizedProperties(), equalTo(ivr.userProperties))
+            assertThat(version, equalTo(ivr.version))
         }
     }
 }

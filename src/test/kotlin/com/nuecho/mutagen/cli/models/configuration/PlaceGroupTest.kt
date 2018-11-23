@@ -31,13 +31,9 @@ import com.nuecho.mutagen.cli.models.configuration.ConfigurationObjectMocks.mock
 import com.nuecho.mutagen.cli.models.configuration.ConfigurationObjectMocks.mockEmptyCfgGroup
 import com.nuecho.mutagen.cli.models.configuration.reference.PlaceReference
 import com.nuecho.mutagen.cli.models.configuration.reference.referenceSetBuilder
-import com.nuecho.mutagen.cli.services.ConfServiceExtensionMocks.mockConfigurationObjectRepository
-import com.nuecho.mutagen.cli.services.ConfigurationObjectRepository
 import com.nuecho.mutagen.cli.services.ServiceMocks.mockConfService
-import com.nuecho.mutagen.cli.services.getObjectDbid
 import io.mockk.every
 import io.mockk.objectMockk
-import io.mockk.staticMockk
 import io.mockk.use
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.equalTo
@@ -108,23 +104,16 @@ class PlaceGroupTest : ConfigurationObjectTest(
             service.retrieveObject(CfgPlace::class.java, any())
         } returns place1 andThen place2
         every { service.retrieveObject(CfgPlaceGroup::class.java, any()) } returns null
+        every { service.getObjectDbid(placeGroup.group.tenant) } answers { TENANT_DBID }
+        every { service.getObjectDbid(placeGroup.places!![0]) } answers { PLACE1_DBID }
+        every { service.getObjectDbid(placeGroup.places!![1]) } answers { PLACE2_DBID }
 
-        staticMockk("com.nuecho.mutagen.cli.services.ConfServiceExtensionsKt").use {
-            every { service.getObjectDbid(placeGroup.group.tenant) } answers { TENANT_DBID }
-            every { service.getObjectDbid(placeGroup.places!![0]) } answers { PLACE1_DBID }
-            every { service.getObjectDbid(placeGroup.places!![1]) } answers { PLACE2_DBID }
+        val cfgPlaceGroup = placeGroup.createCfgObject(service)
 
-            objectMockk(ConfigurationObjectRepository).use {
-                mockConfigurationObjectRepository()
-
-                val cfgPlaceGroup = placeGroup.createCfgObject(service)
-
-                with(cfgPlaceGroup) {
-                    assertThat(placeDBIDs.toList(), equalTo(listOf(PLACE1_DBID, PLACE2_DBID)))
-                    assertThat(groupInfo, equalTo(placeGroup.group.toUpdatedCfgGroup(service, CfgGroup(service, this))))
-                    assertThat(folderId, equalTo(DEFAULT_FOLDER_DBID))
-                }
-            }
+        with(cfgPlaceGroup) {
+            assertThat(placeDBIDs.toList(), equalTo(listOf(PLACE1_DBID, PLACE2_DBID)))
+            assertThat(groupInfo, equalTo(placeGroup.group.toUpdatedCfgGroup(service, CfgGroup(service, this))))
+            assertThat(folderId, equalTo(DEFAULT_FOLDER_DBID))
         }
     }
 }

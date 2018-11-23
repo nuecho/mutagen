@@ -38,16 +38,12 @@ import com.nuecho.mutagen.cli.models.configuration.ConfigurationTestData.default
 import com.nuecho.mutagen.cli.models.configuration.reference.AlarmConditionScriptReference
 import com.nuecho.mutagen.cli.models.configuration.reference.ApplicationReference
 import com.nuecho.mutagen.cli.models.configuration.reference.referenceSetBuilder
-import com.nuecho.mutagen.cli.services.ConfServiceExtensionMocks.mockConfigurationObjectRepository
 import com.nuecho.mutagen.cli.services.ConfServiceExtensionMocks.mockRetrieveApplication
 import com.nuecho.mutagen.cli.services.ConfServiceExtensionMocks.mockRetrieveFolderByDbid
 import com.nuecho.mutagen.cli.services.ConfServiceExtensionMocks.mockRetrieveTenant
-import com.nuecho.mutagen.cli.services.ConfigurationObjectRepository
 import com.nuecho.mutagen.cli.services.ServiceMocks.mockConfService
 import com.nuecho.mutagen.cli.toShortName
 import io.mockk.every
-import io.mockk.objectMockk
-import io.mockk.use
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.equalTo
 import org.junit.jupiter.api.Test
@@ -124,29 +120,26 @@ class AlarmConditionTest : ConfigurationObjectTest(
             service.retrieveObject(CfgScript::class.java, any())
         } returns script1 andThen script2 andThen script3
 
-        objectMockk(ConfigurationObjectRepository).use {
-            mockConfigurationObjectRepository()
-            val cfgAlarmCondition = alarmCondition.createCfgObject(service)
+        val cfgAlarmCondition = alarmCondition.createCfgObject(service)
 
-            with(cfgAlarmCondition) {
-                assertThat(alarmDetectEvent.appDBID, equalTo(applicationDbid))
-                assertThat(alarmDetectEvent.appType, equalTo(toCfgAppType(DETECT_EVENT.appType)))
-                assertThat(alarmDetectEvent.logEventID, equalTo(DETECT_EVENT.logEventID))
-                assertThat(alarmDetectEvent.selectionMode, equalTo(toCfgSelectionMode(DETECT_EVENT.selectionMode)))
-                assertThat(alarmDetectScriptDBID, equalTo(script1.dbid))
-                assertThat(alarmRemovalEvent.logEventID, equalTo(REMOVAL_EVENT.logEventID))
-                assertThat(alarmRemovalEvent.selectionMode, equalTo(toCfgSelectionMode(REMOVAL_EVENT.selectionMode)))
-                assertThat(category, equalTo(CFGACMajor))
-                assertThat(clearanceScriptDBIDs.toList()[0], equalTo(script2.dbid))
-                assertThat(clearanceTimeout, equalTo(CLEARANCE_TIMEOUT))
-                assertThat(description, equalTo(DESCRIPTION))
-                assertThat(isMasked, equalTo(CFGFalse))
-                assertThat(reactionScriptDBIDs.toList()[0], equalTo(script3.dbid))
+        with(cfgAlarmCondition) {
+            assertThat(alarmDetectEvent.appDBID, equalTo(applicationDbid))
+            assertThat(alarmDetectEvent.appType, equalTo(toCfgAppType(DETECT_EVENT.appType)))
+            assertThat(alarmDetectEvent.logEventID, equalTo(DETECT_EVENT.logEventID))
+            assertThat(alarmDetectEvent.selectionMode, equalTo(toCfgSelectionMode(DETECT_EVENT.selectionMode)))
+            assertThat(alarmDetectScriptDBID, equalTo(script1.dbid))
+            assertThat(alarmRemovalEvent.logEventID, equalTo(REMOVAL_EVENT.logEventID))
+            assertThat(alarmRemovalEvent.selectionMode, equalTo(toCfgSelectionMode(REMOVAL_EVENT.selectionMode)))
+            assertThat(category, equalTo(CFGACMajor))
+            assertThat(clearanceScriptDBIDs.toList()[0], equalTo(script2.dbid))
+            assertThat(clearanceTimeout, equalTo(CLEARANCE_TIMEOUT))
+            assertThat(description, equalTo(DESCRIPTION))
+            assertThat(isMasked, equalTo(CFGFalse))
+            assertThat(reactionScriptDBIDs.toList()[0], equalTo(script3.dbid))
 
-                assertThat(name, equalTo(alarmCondition.name))
-                assertThat(state, equalTo(toCfgObjectState(alarmCondition.state)))
-                assertThat(userProperties.asCategorizedProperties(), equalTo(alarmCondition.userProperties))
-            }
+            assertThat(name, equalTo(alarmCondition.name))
+            assertThat(state, equalTo(toCfgObjectState(alarmCondition.state)))
+            assertThat(userProperties.asCategorizedProperties(), equalTo(alarmCondition.userProperties))
         }
     }
 }

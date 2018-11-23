@@ -30,15 +30,11 @@ import com.nuecho.mutagen.cli.models.configuration.ConfigurationObjects.toCfgAct
 import com.nuecho.mutagen.cli.models.configuration.ConfigurationObjects.toCfgObjectState
 import com.nuecho.mutagen.cli.models.configuration.ConfigurationTestData.defaultProperties
 import com.nuecho.mutagen.cli.models.configuration.reference.referenceSetBuilder
-import com.nuecho.mutagen.cli.services.ConfServiceExtensionMocks.mockConfigurationObjectRepository
 import com.nuecho.mutagen.cli.services.ConfServiceExtensionMocks.mockRetrieveFolderByDbid
 import com.nuecho.mutagen.cli.services.ConfServiceExtensionMocks.mockRetrieveTenant
-import com.nuecho.mutagen.cli.services.ConfigurationObjectRepository
 import com.nuecho.mutagen.cli.services.ServiceMocks.mockConfService
 import com.nuecho.mutagen.cli.toShortName
 import io.mockk.every
-import io.mockk.objectMockk
-import io.mockk.use
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.hasSize
@@ -83,24 +79,21 @@ class ActionCodeTest : ConfigurationObjectTest(
         every { service.retrieveObject(CfgActionCode::class.java, any()) } returns null
         mockRetrieveTenant(service)
 
-        objectMockk(ConfigurationObjectRepository).use {
-            mockConfigurationObjectRepository()
-            val cfgActionCode = actionCode.createCfgObject(service)
+        val cfgActionCode = actionCode.createCfgObject(service)
 
-            with(cfgActionCode) {
-                assertThat(name, equalTo(actionCode.name))
-                assertThat(type, equalTo(toCfgActionCodeType(actionCode.type)))
-                assertThat(code, equalTo(actionCode.code))
-                assertThat(subcodes, hasSize(1))
+        with(cfgActionCode) {
+            assertThat(name, equalTo(actionCode.name))
+            assertThat(type, equalTo(toCfgActionCodeType(actionCode.type)))
+            assertThat(code, equalTo(actionCode.code))
+            assertThat(subcodes, hasSize(1))
 
-                with(subcodes.iterator().next()) {
-                    assertThat(name, equalTo(SUBNAME))
-                    assertThat(code, equalTo(SUBCODE))
-                }
-
-                assertThat(state, equalTo(toCfgObjectState(actionCode.state)))
-                assertThat(userProperties.asCategorizedProperties(), equalTo(actionCode.userProperties))
+            with(subcodes.iterator().next()) {
+                assertThat(name, equalTo(SUBNAME))
+                assertThat(code, equalTo(SUBCODE))
             }
+
+            assertThat(state, equalTo(toCfgObjectState(actionCode.state)))
+            assertThat(userProperties.asCategorizedProperties(), equalTo(actionCode.userProperties))
         }
     }
 }

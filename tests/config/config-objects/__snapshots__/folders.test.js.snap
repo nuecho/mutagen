@@ -14,8 +14,8 @@ exports[`[mutagen folders config import-export] should skip the same folders: th
 Object {
   "stderr": "",
   "stdout": "= folder [type: 'person', owner: 'tenant/Environment', path: 'Persons/cfgObjectTest']
-~ folder [type: 'person', owner: 'tenant/Environment', path: 'Persons/cfgObjectTest/personSubFolder']
-Completed. 0 object created. 1 object updated. 1 object skipped.
+= folder [type: 'person', owner: 'tenant/Environment', path: 'Persons/cfgObjectTest/personSubFolder']
+Completed. 0 object created. 0 object updated. 2 objects skipped.
 ",
 }
 `;

@@ -45,17 +45,11 @@ import com.nuecho.mutagen.cli.models.configuration.reference.ApplicationReferenc
 import com.nuecho.mutagen.cli.models.configuration.reference.HostReference
 import com.nuecho.mutagen.cli.models.configuration.reference.referenceSetBuilder
 import com.nuecho.mutagen.cli.services.ConfServiceExtensionMocks
-import com.nuecho.mutagen.cli.services.ConfServiceExtensionMocks.mockConfigurationObjectRepository
 import com.nuecho.mutagen.cli.services.ConfServiceExtensionMocks.mockRetrieveFolderByDbid
-import com.nuecho.mutagen.cli.services.ConfigurationObjectRepository
 import com.nuecho.mutagen.cli.services.ServiceMocks.mockConfService
-import com.nuecho.mutagen.cli.services.retrieveObject
 import com.nuecho.mutagen.cli.toShortName
 import io.mockk.every
 import io.mockk.mockk
-import io.mockk.objectMockk
-import io.mockk.staticMockk
-import io.mockk.use
 import org.hamcrest.CoreMatchers.equalTo
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers
@@ -180,80 +174,75 @@ class ApplicationTest : ConfigurationObjectTest(
         ConfServiceExtensionMocks.mockRetrieveTenant(service)
         ConfServiceExtensionMocks.mockRetrieveAppPrototype(service, appPrototypeDbid, CFGAgentDesktop, APP_PROTOTYPE_VERSION)
 
-        staticMockk("com.nuecho.mutagen.cli.services.ConfServiceExtensionsKt").use {
-            val appServer = mockCfgApplication(APP_SERVER_NAME, appServerDbid)
-            val backupServer = mockCfgApplication(BACKUP_SERVER_NAME, backupServerDbid)
-            every { service.retrieveObject(application.reference) } returns null
-            every { service.retrieveObject(application.appServers!![0].appServer!!) } returns appServer
-            every { service.retrieveObject(application.serverInfo!!.backupServer!!) } returns backupServer
+        val appServer = mockCfgApplication(APP_SERVER_NAME, appServerDbid)
+        val backupServer = mockCfgApplication(BACKUP_SERVER_NAME, backupServerDbid)
+        every { service.retrieveObject(application.reference) } returns null
+        every { service.retrieveObject(application.appServers!![0].appServer!!) } returns appServer
+        every { service.retrieveObject(application.serverInfo!!.backupServer!!) } returns backupServer
 
-            objectMockk(ConfigurationObjectRepository).use {
-                mockConfigurationObjectRepository()
-                val cfgApplication = application.createCfgObject(service)
+        val cfgApplication = application.createCfgObject(service)
 
-                with(cfgApplication) {
-                    assertThat(appPrototypeDBID, equalTo(appPrototypeDbid))
-                    assertThat(autoRestart.asBoolean(), equalTo(application.autoRestart))
-                    assertThat(commandLine, equalTo(application.commandLine))
-                    assertThat(componentType.toShortName(), equalTo(application.componentType))
-                    assertThat(flexibleProperties.asCategorizedProperties(), equalTo(application.flexibleProperties))
-                    assertThat(folderId, equalTo(DEFAULT_FOLDER_DBID))
-                    assertThat(isPrimary?.asBoolean(), equalTo(application.isPrimary))
-                    assertThat(name, equalTo(application.name))
-                    assertThat(options.asCategorizedProperties(), equalTo(application.options))
-                    assertThat(redundancyType.toShortName(), equalTo(application.redundancyType))
-                    assertThat(state, equalTo(toCfgObjectState(application.state)))
-                    assertThat(tenantDBIDs.toList(), equalTo(listOf(DEFAULT_TENANT_DBID)))
-                    assertThat(type, equalTo(CFGAgentDesktop))
-                    assertThat(userProperties.asCategorizedProperties(), equalTo(application.userProperties))
-                    assertThat(version, equalTo(APP_PROTOTYPE_VERSION))
-                    assertThat(workDirectory, equalTo(application.workDirectory))
+        with(cfgApplication) {
+            assertThat(appPrototypeDBID, equalTo(appPrototypeDbid))
+            assertThat(autoRestart.asBoolean(), equalTo(application.autoRestart))
+            assertThat(commandLine, equalTo(application.commandLine))
+            assertThat(componentType.toShortName(), equalTo(application.componentType))
+            assertThat(flexibleProperties.asCategorizedProperties(), equalTo(application.flexibleProperties))
+            assertThat(folderId, equalTo(DEFAULT_FOLDER_DBID))
+            assertThat(isPrimary?.asBoolean(), equalTo(application.isPrimary))
+            assertThat(name, equalTo(application.name))
+            assertThat(options.asCategorizedProperties(), equalTo(application.options))
+            assertThat(redundancyType.toShortName(), equalTo(application.redundancyType))
+            assertThat(state, equalTo(toCfgObjectState(application.state)))
+            assertThat(tenantDBIDs.toList(), equalTo(listOf(DEFAULT_TENANT_DBID)))
+            assertThat(type, equalTo(CFGAgentDesktop))
+            assertThat(userProperties.asCategorizedProperties(), equalTo(application.userProperties))
+            assertThat(version, equalTo(APP_PROTOTYPE_VERSION))
+            assertThat(workDirectory, equalTo(application.workDirectory))
 
-                    val actualAppServer = appServers.toList()[0]
-                    val expectedAppServer = application.appServers!![0]
-                    assertThat(actualAppServer.appParams, equalTo(expectedAppServer.appParams))
-                    assertThat(actualAppServer.appServerDBID, equalTo(appServerDbid))
-                    assertThat(actualAppServer.charField1, equalTo(expectedAppServer.charField1))
-                    assertThat(actualAppServer.charField2, equalTo(expectedAppServer.charField2))
-                    assertThat(actualAppServer.charField3, equalTo(expectedAppServer.charField3))
-                    assertThat(actualAppServer.charField4, equalTo(expectedAppServer.charField4))
-                    assertThat(actualAppServer.connProtocol, equalTo(expectedAppServer.connProtocol))
-                    assertThat(actualAppServer.description, equalTo(expectedAppServer.description))
-                    assertThat(actualAppServer.id, equalTo(expectedAppServer.id))
-                    assertThat(actualAppServer.longField1, equalTo(expectedAppServer.longField1))
-                    assertThat(actualAppServer.longField2, equalTo(expectedAppServer.longField2))
-                    assertThat(actualAppServer.longField3, equalTo(expectedAppServer.longField3))
-                    assertThat(actualAppServer.longField4, equalTo(expectedAppServer.longField4))
-                    assertThat(actualAppServer.mode, equalTo(toCfgTraceMode(expectedAppServer.mode)))
-                    assertThat(actualAppServer.proxyParams, equalTo(expectedAppServer.proxyParams))
-                    assertThat(actualAppServer.timoutLocal, equalTo(expectedAppServer.timeoutLocal))
-                    assertThat(actualAppServer.timoutRemote, equalTo(expectedAppServer.timeoutRemote))
-                    assertThat(actualAppServer.transportParams, equalTo(expectedAppServer.transportParams))
+            val actualAppServer = appServers.toList()[0]
+            val expectedAppServer = application.appServers!![0]
+            assertThat(actualAppServer.appParams, equalTo(expectedAppServer.appParams))
+            assertThat(actualAppServer.appServerDBID, equalTo(appServerDbid))
+            assertThat(actualAppServer.charField1, equalTo(expectedAppServer.charField1))
+            assertThat(actualAppServer.charField2, equalTo(expectedAppServer.charField2))
+            assertThat(actualAppServer.charField3, equalTo(expectedAppServer.charField3))
+            assertThat(actualAppServer.charField4, equalTo(expectedAppServer.charField4))
+            assertThat(actualAppServer.connProtocol, equalTo(expectedAppServer.connProtocol))
+            assertThat(actualAppServer.description, equalTo(expectedAppServer.description))
+            assertThat(actualAppServer.id, equalTo(expectedAppServer.id))
+            assertThat(actualAppServer.longField1, equalTo(expectedAppServer.longField1))
+            assertThat(actualAppServer.longField2, equalTo(expectedAppServer.longField2))
+            assertThat(actualAppServer.longField3, equalTo(expectedAppServer.longField3))
+            assertThat(actualAppServer.longField4, equalTo(expectedAppServer.longField4))
+            assertThat(actualAppServer.mode, equalTo(toCfgTraceMode(expectedAppServer.mode)))
+            assertThat(actualAppServer.proxyParams, equalTo(expectedAppServer.proxyParams))
+            assertThat(actualAppServer.timoutLocal, equalTo(expectedAppServer.timeoutLocal))
+            assertThat(actualAppServer.timoutRemote, equalTo(expectedAppServer.timeoutRemote))
+            assertThat(actualAppServer.transportParams, equalTo(expectedAppServer.transportParams))
 
-                    val actualPortInfo = portInfos.toList()[0]
-                    val expectedPortInfo = application.portInfos!![0]
-                    assertThat(actualPortInfo.appParams, equalTo(expectedPortInfo.appParams))
-                    assertThat(actualPortInfo.charField1, equalTo(expectedPortInfo.charField1))
-                    assertThat(actualPortInfo.charField2, equalTo(expectedPortInfo.charField2))
-                    assertThat(actualPortInfo.charField3, equalTo(expectedPortInfo.charField3))
-                    assertThat(actualPortInfo.charField4, equalTo(expectedPortInfo.charField4))
-                    assertThat(actualPortInfo.connProtocol, equalTo(expectedPortInfo.connProtocol))
-                    assertThat(actualPortInfo.description, equalTo(expectedPortInfo.description))
-                    assertThat(actualPortInfo.id, equalTo(expectedPortInfo.id))
-                    assertThat(actualPortInfo.longField1, equalTo(expectedPortInfo.longField1))
-                    assertThat(actualPortInfo.longField2, equalTo(expectedPortInfo.longField2))
-                    assertThat(actualPortInfo.longField3, equalTo(expectedPortInfo.longField3))
-                    assertThat(actualPortInfo.longField4, equalTo(expectedPortInfo.longField4))
-                    assertThat(actualPortInfo.port, equalTo(expectedPortInfo.port))
-                    assertThat(actualPortInfo.transportParams, equalTo(expectedPortInfo.transportParams))
+            val actualPortInfo = portInfos.toList()[0]
+            val expectedPortInfo = application.portInfos!![0]
+            assertThat(actualPortInfo.appParams, equalTo(expectedPortInfo.appParams))
+            assertThat(actualPortInfo.charField1, equalTo(expectedPortInfo.charField1))
+            assertThat(actualPortInfo.charField2, equalTo(expectedPortInfo.charField2))
+            assertThat(actualPortInfo.charField3, equalTo(expectedPortInfo.charField3))
+            assertThat(actualPortInfo.charField4, equalTo(expectedPortInfo.charField4))
+            assertThat(actualPortInfo.connProtocol, equalTo(expectedPortInfo.connProtocol))
+            assertThat(actualPortInfo.description, equalTo(expectedPortInfo.description))
+            assertThat(actualPortInfo.id, equalTo(expectedPortInfo.id))
+            assertThat(actualPortInfo.longField1, equalTo(expectedPortInfo.longField1))
+            assertThat(actualPortInfo.longField2, equalTo(expectedPortInfo.longField2))
+            assertThat(actualPortInfo.longField3, equalTo(expectedPortInfo.longField3))
+            assertThat(actualPortInfo.longField4, equalTo(expectedPortInfo.longField4))
+            assertThat(actualPortInfo.port, equalTo(expectedPortInfo.port))
+            assertThat(actualPortInfo.transportParams, equalTo(expectedPortInfo.transportParams))
 
-                    val expectedServerInfo = application.serverInfo!!
-                    assertThat(serverInfo.attempts, equalTo(expectedServerInfo.attempts))
-                    assertThat(serverInfo.hostDBID, equalTo(hostDbid))
-                    assertThat(serverInfo.backupServerDBID, equalTo(backupServerDbid))
-                    assertThat(serverInfo.timeout, equalTo(expectedServerInfo.timeout))
-                }
-            }
+            val expectedServerInfo = application.serverInfo!!
+            assertThat(serverInfo.attempts, equalTo(expectedServerInfo.attempts))
+            assertThat(serverInfo.hostDBID, equalTo(hostDbid))
+            assertThat(serverInfo.backupServerDBID, equalTo(backupServerDbid))
+            assertThat(serverInfo.timeout, equalTo(expectedServerInfo.timeout))
         }
     }
 }

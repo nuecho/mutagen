@@ -345,7 +345,7 @@ object ConfigurationObjectMocks {
         mockk<CfgOwnerID>().also {
             val tenant = mockCfgTenant(DEFAULT_TENANT_NAME)
 
-            val confService = mockConfService()
+            val confService = mockConfService(withDefaultFolderReference = false)
             every { confService.retrieveObject(CFGTenant, DEFAULT_TENANT_DBID) } returns tenant
 
             every { it.dbid } returns DEFAULT_TENANT_DBID
