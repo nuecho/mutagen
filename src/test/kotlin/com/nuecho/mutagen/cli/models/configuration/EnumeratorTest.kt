@@ -27,15 +27,11 @@ import com.nuecho.mutagen.cli.models.configuration.ConfigurationObjects.toCfgEnu
 import com.nuecho.mutagen.cli.models.configuration.ConfigurationObjects.toCfgObjectState
 import com.nuecho.mutagen.cli.models.configuration.ConfigurationTestData.defaultProperties
 import com.nuecho.mutagen.cli.models.configuration.reference.referenceSetBuilder
-import com.nuecho.mutagen.cli.services.ConfServiceExtensionMocks.mockConfigurationObjectRepository
 import com.nuecho.mutagen.cli.services.ConfServiceExtensionMocks.mockRetrieveFolderByDbid
 import com.nuecho.mutagen.cli.services.ConfServiceExtensionMocks.mockRetrieveTenant
-import com.nuecho.mutagen.cli.services.ConfigurationObjectRepository
 import com.nuecho.mutagen.cli.services.ServiceMocks.mockConfService
 import com.nuecho.mutagen.cli.toShortName
 import io.mockk.every
-import io.mockk.objectMockk
-import io.mockk.use
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.equalTo
 import org.junit.jupiter.api.Test
@@ -78,18 +74,15 @@ class EnumeratorTest : ConfigurationObjectTest(
         every { service.retrieveObject(CfgEnumerator::class.java, any()) } returns null
         mockRetrieveTenant(service)
 
-        objectMockk(ConfigurationObjectRepository).use {
-            mockConfigurationObjectRepository()
-            val cfgEnumerator = enumerator.createCfgObject(service)
+        val cfgEnumerator = enumerator.createCfgObject(service)
 
-            with(cfgEnumerator) {
-                assertThat(name, equalTo(enumerator.name))
-                assertThat(displayName, equalTo(enumerator.displayName))
-                assertThat(description, equalTo(enumerator.description))
-                assertThat(type, equalTo(toCfgEnumeratorType(enumerator.type)))
-                assertThat(state, equalTo(toCfgObjectState(enumerator.state)))
-                assertThat(userProperties.asCategorizedProperties(), equalTo(enumerator.userProperties))
-            }
+        with(cfgEnumerator) {
+            assertThat(name, equalTo(enumerator.name))
+            assertThat(displayName, equalTo(enumerator.displayName))
+            assertThat(description, equalTo(enumerator.description))
+            assertThat(type, equalTo(toCfgEnumeratorType(enumerator.type)))
+            assertThat(state, equalTo(toCfgObjectState(enumerator.state)))
+            assertThat(userProperties.asCategorizedProperties(), equalTo(enumerator.userProperties))
         }
     }
 

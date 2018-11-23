@@ -16,13 +16,12 @@
 package com.nuecho.mutagen.cli.models.configuration.reference
 
 import com.fasterxml.jackson.annotation.JsonIgnore
-import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgActionCode
 import com.genesyslab.platform.applicationblocks.com.queries.CfgActionCodeQuery
 import com.genesyslab.platform.configuration.protocol.types.CfgActionCodeType
 import com.nuecho.mutagen.cli.models.configuration.ConfigurationObjectNotFoundException
 import com.nuecho.mutagen.cli.models.configuration.ConfigurationObjects.toCfgActionCodeType
-import com.nuecho.mutagen.cli.services.getObjectDbid
+import com.nuecho.mutagen.cli.services.ConfService
 import com.nuecho.mutagen.cli.toShortName
 
 data class ActionCodeReference(
@@ -37,7 +36,7 @@ data class ActionCodeReference(
         tenant: TenantReference? = null
     ) : this(name, type.toShortName(), tenant)
 
-    override fun toQuery(service: IConfService) = CfgActionCodeQuery(name).also {
+    override fun toQuery(service: ConfService) = CfgActionCodeQuery(name).also {
         it.tenantDbid = service.getObjectDbid(tenant) ?: throw ConfigurationObjectNotFoundException(tenant)
         it.name = name
         it.codeType = toCfgActionCodeType(type)

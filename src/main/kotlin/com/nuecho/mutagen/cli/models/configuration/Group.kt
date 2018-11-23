@@ -18,7 +18,6 @@ package com.nuecho.mutagen.cli.models.configuration
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
-import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgGroup
 import com.nuecho.mutagen.cli.getReference
 import com.nuecho.mutagen.cli.models.configuration.ConfigurationObjects.setProperty
@@ -33,7 +32,7 @@ import com.nuecho.mutagen.cli.models.configuration.reference.ScriptReference
 import com.nuecho.mutagen.cli.models.configuration.reference.StatTableReference
 import com.nuecho.mutagen.cli.models.configuration.reference.TenantReference
 import com.nuecho.mutagen.cli.models.configuration.reference.referenceSetBuilder
-import com.nuecho.mutagen.cli.services.getObjectDbid
+import com.nuecho.mutagen.cli.services.ConfService
 import com.nuecho.mutagen.cli.toShortName
 
 @Suppress("DataClassContainsFunctions")
@@ -66,7 +65,7 @@ data class Group(
         contract = group.contract?.getReference()
     )
 
-    fun toUpdatedCfgGroup(service: IConfService, groupInfo: CfgGroup) = groupInfo.also {
+    fun toUpdatedCfgGroup(service: ConfService, groupInfo: CfgGroup) = groupInfo.also {
         setProperty("tenantDBID", service.getObjectDbid(tenant), it)
         setProperty("name", name, it)
         setProperty("managerDBIDs", managers?.map { service.getObjectDbid(it) }, it)

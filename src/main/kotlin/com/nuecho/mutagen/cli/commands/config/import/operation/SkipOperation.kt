@@ -15,6 +15,7 @@
 
 package com.nuecho.mutagen.cli.commands.config.import.operation
 
+import com.genesyslab.platform.applicationblocks.com.ICfgObject
 import com.nuecho.mutagen.cli.commands.config.import.operation.ImportOperationType.SKIP
 import com.nuecho.mutagen.cli.models.configuration.ConfigurationObject
 import com.nuecho.mutagen.cli.services.ConfService
@@ -24,7 +25,5 @@ class SkipOperation(
     service: ConfService
 ) : ImportOperation(SKIP, configurationObject, service) {
 
-    override fun apply() {
-        // Do nothing
-    }
+    override fun apply(): ICfgObject? = null
 }

@@ -18,7 +18,6 @@ package com.nuecho.mutagen.cli.models.configuration
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.genesyslab.platform.applicationblocks.com.CfgObject
 import com.genesyslab.platform.applicationblocks.com.ICfgObject
-import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgGroup
 import com.genesyslab.platform.applicationblocks.com.objects.CfgPlace
 import com.genesyslab.platform.applicationblocks.com.objects.CfgPlaceGroup
@@ -36,7 +35,6 @@ import com.nuecho.mutagen.cli.models.configuration.reference.PlaceReference
 import com.nuecho.mutagen.cli.models.configuration.reference.TenantReference
 import com.nuecho.mutagen.cli.models.configuration.reference.referenceSetBuilder
 import com.nuecho.mutagen.cli.services.ConfService
-import com.nuecho.mutagen.cli.services.getObjectDbid
 
 data class PlaceGroup(
     val group: Group,
@@ -62,12 +60,12 @@ data class PlaceGroup(
         group = Group(tenant, name)
     )
 
-    override fun createCfgObject(service: IConfService) =
+    override fun createCfgObject(service: ConfService) =
         updateCfgObject(service, CfgPlaceGroup(service).also {
-            setFolder(folder, it)
+            setFolder(folder, it, service)
         })
 
-    override fun updateCfgObject(service: IConfService, cfgObject: ICfgObject) =
+    override fun updateCfgObject(service: ConfService, cfgObject: ICfgObject) =
         (cfgObject as CfgPlaceGroup).also {
             val groupInfo = group.toUpdatedCfgGroup(service, it.groupInfo ?: CfgGroup(service, it)).also { cfgGroup ->
                 it.dbid?.let { dbid -> cfgGroup.dbid = dbid }

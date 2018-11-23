@@ -16,13 +16,12 @@
 package com.nuecho.mutagen.cli.models.configuration.reference
 
 import com.fasterxml.jackson.annotation.JsonIgnore
-import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgTransaction
 import com.genesyslab.platform.applicationblocks.com.queries.CfgTransactionQuery
 import com.genesyslab.platform.configuration.protocol.types.CfgTransactionType
 import com.nuecho.mutagen.cli.models.configuration.ConfigurationObjectNotFoundException
 import com.nuecho.mutagen.cli.models.configuration.ConfigurationObjects.toCfgTransactionType
-import com.nuecho.mutagen.cli.services.getObjectDbid
+import com.nuecho.mutagen.cli.services.ConfService
 import com.nuecho.mutagen.cli.toShortName
 
 data class TransactionReference(
@@ -37,7 +36,7 @@ data class TransactionReference(
         tenant: TenantReference? = null
     ) : this(name, type.toShortName(), tenant)
 
-    override fun toQuery(service: IConfService) = CfgTransactionQuery(name).also {
+    override fun toQuery(service: ConfService) = CfgTransactionQuery(name).also {
         it.objectType = toCfgTransactionType(type)
         it.tenantDbid = service.getObjectDbid(tenant) ?: throw ConfigurationObjectNotFoundException(tenant)
     }

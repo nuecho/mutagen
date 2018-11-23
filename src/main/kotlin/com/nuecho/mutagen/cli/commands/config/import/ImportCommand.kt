@@ -30,7 +30,6 @@ import com.nuecho.mutagen.cli.core.defaultJsonObjectMapper
 import com.nuecho.mutagen.cli.models.configuration.Configuration
 import com.nuecho.mutagen.cli.pluralize
 import com.nuecho.mutagen.cli.services.ConfService
-import com.nuecho.mutagen.cli.services.ConfigurationObjectRepository
 import picocli.CommandLine
 import java.io.File
 
@@ -65,7 +64,7 @@ class ImportCommand : ConfigServerCommand() {
             throw ConfigImportException("$AUTO_CONFIRM must be specified in conjunction with $PASSWORD_FROM_STDIN.")
 
         val result = withEnvironmentConfService { service: ConfService, _ ->
-            ConfigurationObjectRepository.prefetchConfigurationObjects(service)
+            service.prefetchConfigurationObjects()
 
             val configurationString = Configuration.interpolateVariables(
                 inputFile!!.readText(),

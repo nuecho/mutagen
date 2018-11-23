@@ -18,7 +18,6 @@ package com.nuecho.mutagen.cli.models.configuration
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.genesyslab.platform.applicationblocks.com.CfgObject
 import com.genesyslab.platform.applicationblocks.com.ICfgObject
-import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgAccessGroup
 import com.genesyslab.platform.applicationblocks.com.objects.CfgGroup
 import com.genesyslab.platform.applicationblocks.com.objects.CfgID
@@ -39,7 +38,6 @@ import com.nuecho.mutagen.cli.models.configuration.reference.PersonReference
 import com.nuecho.mutagen.cli.models.configuration.reference.TenantReference
 import com.nuecho.mutagen.cli.models.configuration.reference.referenceSetBuilder
 import com.nuecho.mutagen.cli.services.ConfService
-import com.nuecho.mutagen.cli.services.getObjectDbid
 import com.nuecho.mutagen.cli.toShortName
 
 data class AccessGroup(
@@ -68,20 +66,20 @@ data class AccessGroup(
         group = Group(tenant, name)
     )
 
-    override fun createCfgObject(service: IConfService) =
+    override fun createCfgObject(service: ConfService) =
         updateCfgObject(service, CfgAccessGroup(service)).also {
             setProperty("type", toCfgAccessGroupType(type), it)
-            setFolder(folder, it)
+            setFolder(folder, it, service)
         }
 
-    override fun updateCfgObject(service: IConfService, cfgObject: ICfgObject) =
+    override fun updateCfgObject(service: ConfService, cfgObject: ICfgObject) =
         (cfgObject as CfgAccessGroup).also {
             val groupInfo = group.toUpdatedCfgGroup(service, it.groupInfo ?: CfgGroup(service, it)).also { cfgGroup ->
                 it.dbid?.let { dbid -> cfgGroup.dbid = dbid }
             }
 
             setProperty("groupInfo", groupInfo, it)
-            setProperty("memberIDs", toCfgIDList(members, it), it)
+            setProperty("memberIDs", toCfgIDList(members, it, service), it)
         }
 
     override fun cloneBare() = AccessGroup(Group(group.tenant, group.name))
@@ -109,9 +107,7 @@ data class AccessGroup(
             .toSet()
 }
 
-private fun toCfgIDList(members: List<PersonReference>?, parent: CfgObject) = members?.map {
-    val service = parent.configurationService
-
+private fun toCfgIDList(members: List<PersonReference>?, parent: CfgObject, service: ConfService) = members?.map {
     CfgID(service, parent).apply {
         dbid = service.getObjectDbid(it)
         type = CfgObjectType.CFGPerson

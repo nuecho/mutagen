@@ -36,16 +36,11 @@ import com.nuecho.mutagen.cli.models.configuration.ConfigurationObjectMocks.mock
 import com.nuecho.mutagen.cli.models.configuration.reference.DNReference
 import com.nuecho.mutagen.cli.models.configuration.reference.SwitchReference
 import com.nuecho.mutagen.cli.models.configuration.reference.referenceSetBuilder
-import com.nuecho.mutagen.cli.services.ConfServiceExtensionMocks.mockConfigurationObjectRepository
 import com.nuecho.mutagen.cli.services.ConfServiceExtensionMocks.mockRetrieveFolderByDbid
-import com.nuecho.mutagen.cli.services.ConfigurationObjectRepository
 import com.nuecho.mutagen.cli.services.ServiceMocks.mockConfService
-import com.nuecho.mutagen.cli.services.getObjectDbid
-import com.nuecho.mutagen.cli.services.retrieveObject
 import com.nuecho.mutagen.cli.toShortName
 import io.mockk.every
 import io.mockk.objectMockk
-import io.mockk.staticMockk
 import io.mockk.use
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.`is`
@@ -120,29 +115,22 @@ class DNGrouptTest : ConfigurationObjectTest(
     fun `createCfgObject should properly create CfgDNGroup`() {
         val service = mockConfService()
         every { service.retrieveObject(CfgDNGroup::class.java, any()) } returns null
+        every { service.getObjectDbid(any()) } answers { DEFAULT_OBJECT_DBID }
+        every { service.retrieveObject(DNReference(NUMBER1, SWITCH, CFGACDQueue, NAME)) } returns DN1
+        every { service.retrieveObject(DNReference(NUMBER2, SWITCH, CFGACDQueue, NAME)) } returns DN2
 
-        staticMockk("com.nuecho.mutagen.cli.services.ConfServiceExtensionsKt").use {
-            every { service.getObjectDbid(any()) } answers { DEFAULT_OBJECT_DBID }
-            every { service.retrieveObject(DNReference(NUMBER1, SWITCH, CFGACDQueue, NAME)) } returns DN1
-            every { service.retrieveObject(DNReference(NUMBER2, SWITCH, CFGACDQueue, NAME)) } returns DN2
+        val cfgDNGroup = dnGroup.createCfgObject(service)
 
-            objectMockk(ConfigurationObjectRepository).use {
-                mockConfigurationObjectRepository()
+        with(cfgDNGroup) {
+            assertThat(type, equalTo(CFGACDQueues))
+            assertThat(dNs, hasSize(2))
+            assertThat(dNs.toList()[0].trunks, `is`(nullValue()))
+            assertThat(dNs.toList()[0].dndbid, equalTo(DN_DBID1))
+            assertThat(dNs.toList()[1].trunks, equalTo(2))
+            assertThat(dNs.toList()[1].dndbid, equalTo(DN_DBID2))
 
-                val cfgDNGroup = dnGroup.createCfgObject(service)
-
-                with(cfgDNGroup) {
-                    assertThat(type, equalTo(CFGACDQueues))
-                    assertThat(dNs, hasSize(2))
-                    assertThat(dNs.toList()[0].trunks, `is`(nullValue()))
-                    assertThat(dNs.toList()[0].dndbid, equalTo(DN_DBID1))
-                    assertThat(dNs.toList()[1].trunks, equalTo(2))
-                    assertThat(dNs.toList()[1].dndbid, equalTo(DN_DBID2))
-
-                    assertThat(groupInfo, equalTo(dnGroup.group.toUpdatedCfgGroup(service, CfgGroup(service, this))))
-                    assertThat(folderId, equalTo(DEFAULT_FOLDER_DBID))
-                }
-            }
+            assertThat(groupInfo, equalTo(dnGroup.group.toUpdatedCfgGroup(service, CfgGroup(service, this))))
+            assertThat(folderId, equalTo(DEFAULT_FOLDER_DBID))
         }
     }
 }

@@ -15,9 +15,18 @@
 
 package com.nuecho.mutagen.cli.services
 
+import com.genesyslab.platform.configuration.protocol.types.CfgObjectType.CFGFolder
+import com.nuecho.mutagen.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_FOLDER_REFERENCE
+import com.nuecho.mutagen.cli.models.configuration.ConfigurationObjectMocks.mockCfgFolder
 import com.nuecho.mutagen.cli.preferences.environment.Environment
 import io.mockk.spyk
 
 object ServiceMocks {
-    fun mockConfService() = spyk(ConfService(Environment(host = "test", user = "test", rawPassword = "test"), true))
+    fun mockConfService(withDefaultFolderReference: Boolean = true): ConfService {
+        val service = spyk(ConfService(Environment(host = "test", user = "test", rawPassword = "test"), true))
+        if (withDefaultFolderReference) {
+            service.configurationObjectRepository[DEFAULT_FOLDER_REFERENCE] = mockCfgFolder("site", CFGFolder)
+        }
+        return service
+    }
 }

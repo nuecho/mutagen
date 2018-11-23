@@ -37,20 +37,14 @@ import com.nuecho.mutagen.cli.models.configuration.reference.ApplicationReferenc
 import com.nuecho.mutagen.cli.models.configuration.reference.PhysicalSwitchReference
 import com.nuecho.mutagen.cli.models.configuration.reference.SwitchReference
 import com.nuecho.mutagen.cli.models.configuration.reference.referenceSetBuilder
-import com.nuecho.mutagen.cli.services.ConfServiceExtensionMocks.mockConfigurationObjectRepository
 import com.nuecho.mutagen.cli.services.ConfServiceExtensionMocks.mockRetrieveApplication
 import com.nuecho.mutagen.cli.services.ConfServiceExtensionMocks.mockRetrieveFolderByDbid
 import com.nuecho.mutagen.cli.services.ConfServiceExtensionMocks.mockRetrievePhysicalSwitch
 import com.nuecho.mutagen.cli.services.ConfServiceExtensionMocks.mockRetrieveTenant
-import com.nuecho.mutagen.cli.services.ConfigurationObjectRepository
 import com.nuecho.mutagen.cli.services.ServiceMocks.mockConfService
-import com.nuecho.mutagen.cli.services.retrieveObject
 import com.nuecho.mutagen.cli.toShortName
 import io.mockk.every
 import io.mockk.mockk
-import io.mockk.objectMockk
-import io.mockk.staticMockk
-import io.mockk.use
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.hasSize
@@ -135,44 +129,38 @@ class SwitchTest : ConfigurationObjectTest(
         mockRetrievePhysicalSwitch(service, physicalSwitchDbid)
         mockRetrieveApplication(service, applicationDbid)
 
-        staticMockk("com.nuecho.mutagen.cli.services.ConfServiceExtensionsKt").use {
-            val otherCfgSwitch = mockOtherCfgSwitch()
-            every { service.retrieveObject(SwitchReference(MAIN_SWITCH, DEFAULT_TENANT_REFERENCE)) } returns null
-            every { service.retrieveObject(SwitchReference(OTHER_SWITCH, DEFAULT_TENANT_REFERENCE)) } returns otherCfgSwitch
+        val otherCfgSwitch = mockOtherCfgSwitch()
+        every { service.retrieveObject(SwitchReference(MAIN_SWITCH, DEFAULT_TENANT_REFERENCE)) } returns null
+        every { service.retrieveObject(SwitchReference(OTHER_SWITCH, DEFAULT_TENANT_REFERENCE)) } returns otherCfgSwitch
 
-            objectMockk(ConfigurationObjectRepository).use {
-                mockConfigurationObjectRepository()
-                val cfgSwitch = mainSwitch.createCfgObject(service)
+        val cfgSwitch = mainSwitch.createCfgObject(service)
+        with(cfgSwitch) {
+            assertThat(name, equalTo(mainSwitch.name))
+            assertThat(physSwitchDBID, equalTo(physicalSwitchDbid))
+            assertThat(tServerDBID, equalTo(applicationDbid))
+            assertThat(linkType, equalTo(CfgLinkType.CFGMadgeLink))
+            assertThat(dnRange, equalTo(mainSwitch.dnRange))
+            assertThat(state, equalTo(toCfgObjectState(mainSwitch.state)))
+            assertThat(userProperties.asCategorizedProperties(), equalTo(mainSwitch.userProperties))
 
-                with(cfgSwitch) {
-                    assertThat(name, equalTo(mainSwitch.name))
-                    assertThat(physSwitchDBID, equalTo(physicalSwitchDbid))
-                    assertThat(tServerDBID, equalTo(applicationDbid))
-                    assertThat(linkType, equalTo(CfgLinkType.CFGMadgeLink))
-                    assertThat(dnRange, equalTo(mainSwitch.dnRange))
-                    assertThat(state, equalTo(toCfgObjectState(mainSwitch.state)))
-                    assertThat(userProperties.asCategorizedProperties(), equalTo(mainSwitch.userProperties))
+            assertThat(switchAccessCodes, hasSize(2))
 
-                    assertThat(switchAccessCodes, hasSize(2))
-
-                    switchAccessCodes.zip(mainSwitch.switchAccessCodes!!) { actual, expected ->
-                        with(actual) {
-                            assertThat(accessCode, equalTo(expected.accessCode))
-                            assertThat(targetType, equalTo(toCfgTargetType(expected.targetType)))
-                            assertThat(routeType, equalTo(toCfgRouteType(expected.routeType)))
-                            assertThat(dnSource, equalTo(expected.dnSource))
-                            assertThat(destinationSource, equalTo(expected.destinationSource))
-                            assertThat(locationSource, equalTo(expected.locationSource))
-                            assertThat(dnisSource, equalTo(expected.dnisSource))
-                            assertThat(reasonSource, equalTo(expected.reasonSource))
-                            assertThat(extensionSource, equalTo(expected.extensionSource))
-                        }
-                    }
-
-                    assertThat(switchAccessCodes.elementAt(0).switchDBID, equalTo(OTHER_SWITCH_DBID))
-                    assertThat(switchAccessCodes.elementAt(1).switchDBID, equalTo(0))
+            switchAccessCodes.zip(mainSwitch.switchAccessCodes!!) { actual, expected ->
+                with(actual) {
+                    assertThat(accessCode, equalTo(expected.accessCode))
+                    assertThat(targetType, equalTo(toCfgTargetType(expected.targetType)))
+                    assertThat(routeType, equalTo(toCfgRouteType(expected.routeType)))
+                    assertThat(dnSource, equalTo(expected.dnSource))
+                    assertThat(destinationSource, equalTo(expected.destinationSource))
+                    assertThat(locationSource, equalTo(expected.locationSource))
+                    assertThat(dnisSource, equalTo(expected.dnisSource))
+                    assertThat(reasonSource, equalTo(expected.reasonSource))
+                    assertThat(extensionSource, equalTo(expected.extensionSource))
                 }
             }
+
+            assertThat(switchAccessCodes.elementAt(0).switchDBID, equalTo(OTHER_SWITCH_DBID))
+            assertThat(switchAccessCodes.elementAt(1).switchDBID, equalTo(0))
         }
     }
 }
@@ -181,46 +169,44 @@ private fun mockMainCfgSwitch(): CfgSwitch {
     val service = mockConfService()
     mockRetrieveFolderByDbid(service)
 
-    staticMockk("com.nuecho.mutagen.cli.services.ConfServiceExtensionsKt").use {
-        val otherCfgSwitch = mockOtherCfgSwitch()
-        every {
-            service.retrieveObject(SwitchReference("other-switch", DEFAULT_TENANT_REFERENCE))
-        } returns otherCfgSwitch
+    val otherCfgSwitch = mockOtherCfgSwitch()
+    every {
+        service.retrieveObject(SwitchReference("other-switch", DEFAULT_TENANT_REFERENCE))
+    } returns otherCfgSwitch
 
-        val mainCfgSwitch = mockCfgSwitch(mainSwitch.name)
-        val accessCodes = mainSwitch.switchAccessCodes?.map { code ->
-            mockk<CfgSwitchAccessCode>().apply {
-                every { accessCode } returns code.accessCode
-                every { targetType } returns toCfgTargetType(code.targetType)
-                every { routeType } returns toCfgRouteType(code.routeType)
-                every { dnSource } returns code.dnSource
-                every { destinationSource } returns code.destinationSource
-                every { locationSource } returns code.locationSource
-                every { dnisSource } returns code.dnisSource
-                every { reasonSource } returns code.reasonSource
-                every { extensionSource } returns code.extensionSource
+    val mainCfgSwitch = mockCfgSwitch(mainSwitch.name)
+    val accessCodes = mainSwitch.switchAccessCodes?.map { code ->
+        mockk<CfgSwitchAccessCode>().apply {
+            every { accessCode } returns code.accessCode
+            every { targetType } returns toCfgTargetType(code.targetType)
+            every { routeType } returns toCfgRouteType(code.routeType)
+            every { dnSource } returns code.dnSource
+            every { destinationSource } returns code.destinationSource
+            every { locationSource } returns code.locationSource
+            every { dnisSource } returns code.dnisSource
+            every { reasonSource } returns code.reasonSource
+            every { extensionSource } returns code.extensionSource
 
-                every { switchDBID } returns if (code.switch == null) 0 else OTHER_SWITCH_DBID
-                every { switch } returns if (code.switch == null) null else otherCfgSwitch
-            }
+            every { switchDBID } returns if (code.switch == null) 0 else OTHER_SWITCH_DBID
+            every { switch } returns if (code.switch == null) null else otherCfgSwitch
         }
+    }
 
-        val tServerApplication = mockCfgApplication("tServer")
-        val physicalSwitch = mockCfgPhysicalSwitch("physicalSwitch")
-        val cfgLinkType = toCfgLinkType(mainSwitch.linkType)
-        val objectState = toCfgObjectState(mainSwitch.state)
+    val tServerApplication = mockCfgApplication("tServer")
+    val physicalSwitch = mockCfgPhysicalSwitch("physicalSwitch")
+    val cfgLinkType = toCfgLinkType(mainSwitch.linkType)
+    val objectState = toCfgObjectState(mainSwitch.state)
 
-        return mainCfgSwitch.apply {
-            every { configurationService } returns service
-            every { linkType } returns cfgLinkType
-            every { dnRange } returns mainSwitch.dnRange
-            every { switchAccessCodes } returns accessCodes
-            every { state } returns objectState
-            every { userProperties } returns mockKeyValueCollection()
-            every { physSwitch } returns physicalSwitch
-            every { tServer } returns tServerApplication
-            every { folderId } returns DEFAULT_FOLDER_DBID
-        }
+    return mainCfgSwitch.apply {
+        every { configurationService } returns service
+        every { linkType } returns cfgLinkType
+        every { dnRange } returns mainSwitch.dnRange
+        every { switchAccessCodes } returns accessCodes
+        every { state } returns objectState
+        every { userProperties } returns mockKeyValueCollection()
+        every { physSwitch } returns physicalSwitch
+        every { tServer } returns tServerApplication
+        every { folderId } returns DEFAULT_FOLDER_DBID
     }
 }
 

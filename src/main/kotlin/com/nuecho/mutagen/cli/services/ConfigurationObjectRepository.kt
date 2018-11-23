@@ -25,7 +25,7 @@ import com.nuecho.mutagen.cli.core.Metrics.time
 import com.nuecho.mutagen.cli.getReference
 import com.nuecho.mutagen.cli.models.configuration.reference.ConfigurationObjectReference
 
-object ConfigurationObjectRepository {
+class ConfigurationObjectRepository {
     private val configurationObjects = HashMap<ConfigurationObjectReference<*>, ICfgObject>()
 
     fun contains(reference: ConfigurationObjectReference<*>) = configurationObjects.containsKey(reference)

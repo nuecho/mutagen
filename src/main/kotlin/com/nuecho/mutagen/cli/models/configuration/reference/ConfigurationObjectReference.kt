@@ -18,9 +18,9 @@ package com.nuecho.mutagen.cli.models.configuration.reference
 import com.fasterxml.jackson.annotation.JsonIgnore
 import com.genesyslab.platform.applicationblocks.com.ICfgObject
 import com.genesyslab.platform.applicationblocks.com.ICfgQuery
-import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.nuecho.mutagen.cli.core.setBuilder
 import com.nuecho.mutagen.cli.models.configuration.ConfigurationObjects.getCfgObjectType
+import com.nuecho.mutagen.cli.services.ConfService
 import com.nuecho.mutagen.cli.toShortName
 
 abstract class ConfigurationObjectReference<T : ICfgObject>(
@@ -28,7 +28,7 @@ abstract class ConfigurationObjectReference<T : ICfgObject>(
     val cfgObjectClass: Class<T>
 ) : Comparable<ConfigurationObjectReference<*>> {
 
-    abstract fun toQuery(service: IConfService): ICfgQuery<T>
+    abstract fun toQuery(service: ConfService): ICfgQuery<T>
 
     @JsonIgnore
     fun getCfgObjectType() = getCfgObjectType(cfgObjectClass)

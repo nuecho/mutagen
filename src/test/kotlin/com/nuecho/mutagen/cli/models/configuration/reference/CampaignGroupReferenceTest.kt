@@ -21,7 +21,6 @@ import com.nuecho.mutagen.cli.models.configuration.ConfigurationAsserts.checkSer
 import com.nuecho.mutagen.cli.models.configuration.ConfigurationObjectMocks.DEFAULT_TENANT_REFERENCE
 import com.nuecho.mutagen.cli.services.ConfServiceExtensionMocks.mockRetrieveTenant
 import com.nuecho.mutagen.cli.services.ServiceMocks
-import com.nuecho.mutagen.cli.services.getObjectDbid
 import io.mockk.every
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.contains

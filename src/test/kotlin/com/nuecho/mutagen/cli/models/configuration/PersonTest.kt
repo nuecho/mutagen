@@ -49,7 +49,6 @@ import com.nuecho.mutagen.cli.models.configuration.reference.ScriptReference
 import com.nuecho.mutagen.cli.models.configuration.reference.SkillReference
 import com.nuecho.mutagen.cli.models.configuration.reference.SwitchReference
 import com.nuecho.mutagen.cli.models.configuration.reference.referenceSetBuilder
-import com.nuecho.mutagen.cli.services.ConfServiceExtensionMocks.mockConfigurationObjectRepository
 import com.nuecho.mutagen.cli.services.ConfServiceExtensionMocks.mockRetrieveAgentLogin
 import com.nuecho.mutagen.cli.services.ConfServiceExtensionMocks.mockRetrieveFolderByDbid
 import com.nuecho.mutagen.cli.services.ConfServiceExtensionMocks.mockRetrieveObjectiveTable
@@ -57,13 +56,10 @@ import com.nuecho.mutagen.cli.services.ConfServiceExtensionMocks.mockRetrievePla
 import com.nuecho.mutagen.cli.services.ConfServiceExtensionMocks.mockRetrieveScript
 import com.nuecho.mutagen.cli.services.ConfServiceExtensionMocks.mockRetrieveSkill
 import com.nuecho.mutagen.cli.services.ConfServiceExtensionMocks.mockRetrieveTenant
-import com.nuecho.mutagen.cli.services.ConfigurationObjectRepository
 import com.nuecho.mutagen.cli.services.ServiceMocks.mockConfService
 import com.nuecho.mutagen.cli.toShortName
 import io.mockk.every
 import io.mockk.mockk
-import io.mockk.objectMockk
-import io.mockk.use
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.hasSize
@@ -151,37 +147,33 @@ class PersonTest : ConfigurationObjectTest(
         mockRetrieveScript(service, scriptDbid)
         mockRetrieveSkill(service, skillDbid)
 
-        objectMockk(ConfigurationObjectRepository).use {
-            mockConfigurationObjectRepository()
+        val cfgPerson = person.createCfgObject(service)
 
-            val cfgPerson = person.createCfgObject(service)
+        with(cfgPerson) {
+            assertThat(employeeID, equalTo(person.employeeId))
+            assertThat(externalID, equalTo(person.externalId))
+            assertThat(firstName, equalTo(person.firstName))
+            assertThat(lastName, equalTo(person.lastName))
+            assertThat(userName, equalTo(person.userName))
+            assertThat(password, equalTo(person.password))
+            assertThat(passwordHashAlgorithm, equalTo(person.passwordHashAlgorithm))
+            assertThat(changePasswordOnNextLogin, equalTo(toCfgFlag(person.changePasswordOnNextLogin)))
+            assertThat(emailAddress, equalTo(person.emailAddress))
+            assertThat(state, equalTo(toCfgObjectState(person.state)))
+            assertThat(isAgent, equalTo(toCfgFlag(person.agent)))
+            assertThat(isExternalAuth, equalTo(toCfgFlag(person.externalAuth)))
+            assertThat(appRanks, hasSize(2))
+            assertThat(userProperties.asCategorizedProperties(), equalTo(person.userProperties))
+        }
 
-            with(cfgPerson) {
-                assertThat(employeeID, equalTo(person.employeeId))
-                assertThat(externalID, equalTo(person.externalId))
-                assertThat(firstName, equalTo(person.firstName))
-                assertThat(lastName, equalTo(person.lastName))
-                assertThat(userName, equalTo(person.userName))
-                assertThat(password, equalTo(person.password))
-                assertThat(passwordHashAlgorithm, equalTo(person.passwordHashAlgorithm))
-                assertThat(changePasswordOnNextLogin, equalTo(toCfgFlag(person.changePasswordOnNextLogin)))
-                assertThat(emailAddress, equalTo(person.emailAddress))
-                assertThat(state, equalTo(toCfgObjectState(person.state)))
-                assertThat(isAgent, equalTo(toCfgFlag(person.agent)))
-                assertThat(isExternalAuth, equalTo(toCfgFlag(person.externalAuth)))
-                assertThat(appRanks, hasSize(2))
-                assertThat(userProperties.asCategorizedProperties(), equalTo(person.userProperties))
-            }
-
-            with(cfgPerson.agentInfo) {
-                assertThat(siteDBID, equalTo(DEFAULT_FOLDER_DBID))
-                assertThat(placeDBID, equalTo(placeDbid))
-                assertThat(contractDBID, equalTo(objectiveTableDbid))
-                assertThat(capacityRuleDBID, equalTo(scriptDbid))
-                assertThat(skillLevels, hasSize(3))
-                assertThat(skillLevels.toList()[0].skillDBID, equalTo(skillDbid))
-                assertThat(agentLogins, hasSize(0))
-            }
+        with(cfgPerson.agentInfo) {
+            assertThat(siteDBID, equalTo(DEFAULT_FOLDER_DBID))
+            assertThat(placeDBID, equalTo(placeDbid))
+            assertThat(contractDBID, equalTo(objectiveTableDbid))
+            assertThat(capacityRuleDBID, equalTo(scriptDbid))
+            assertThat(skillLevels, hasSize(3))
+            assertThat(skillLevels.toList()[0].skillDBID, equalTo(skillDbid))
+            assertThat(agentLogins, hasSize(0))
         }
     }
 

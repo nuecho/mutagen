@@ -20,10 +20,10 @@ Object {
   "stdout": "= dn [number: 'placeDN', switch: 'placeSwitch', type: 'cellular', tenant: 'Environment']
 = folder [type: 'folder', owner: 'tenant/Environment', path: 'placeSite']
 = physicalswitch [placePhysicalSwitch]
-~ place [Environment/cfgObjectTest]
+= place [Environment/cfgObjectTest]
 = script [Environment/placeCapacityRule]
 = switch [Environment/placeSwitch]
-Completed. 0 object created. 1 object updated. 5 objects skipped.
+Completed. 0 object created. 0 object updated. 6 objects skipped.
 ",
 }
 `;

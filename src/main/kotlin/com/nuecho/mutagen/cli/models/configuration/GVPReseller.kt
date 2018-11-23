@@ -21,7 +21,6 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.genesyslab.platform.applicationblocks.com.CfgObject
 import com.genesyslab.platform.applicationblocks.com.ICfgObject
-import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgGVPReseller
 import com.nuecho.mutagen.cli.asBoolean
 import com.nuecho.mutagen.cli.core.InitializingBean
@@ -40,7 +39,6 @@ import com.nuecho.mutagen.cli.models.configuration.reference.TenantReference
 import com.nuecho.mutagen.cli.models.configuration.reference.TimeZoneReference
 import com.nuecho.mutagen.cli.models.configuration.reference.referenceSetBuilder
 import com.nuecho.mutagen.cli.services.ConfService
-import com.nuecho.mutagen.cli.services.getObjectDbid
 import com.nuecho.mutagen.cli.toShortName
 import java.time.ZoneId
 import java.time.ZonedDateTime
@@ -82,14 +80,14 @@ data class GVPReseller(
         folder = gvpReseller.getFolderReference()
     )
 
-    override fun createCfgObject(service: IConfService) =
+    override fun createCfgObject(service: ConfService) =
         updateCfgObject(service, CfgGVPReseller(service)).also {
             setProperty("tenantDBID", service.getObjectDbid(tenant), it)
             setProperty("name", name, it)
-            setFolder(folder, it)
+            setFolder(folder, it, service)
         }
 
-    override fun updateCfgObject(service: IConfService, cfgObject: ICfgObject) =
+    override fun updateCfgObject(service: ConfService, cfgObject: ICfgObject) =
         (cfgObject as CfgGVPReseller).also {
             setProperty(DISPLAY_NAME, displayName ?: name, it)
             setProperty("notes", notes, it)

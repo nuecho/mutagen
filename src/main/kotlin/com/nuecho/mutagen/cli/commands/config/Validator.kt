@@ -21,7 +21,6 @@ import com.nuecho.mutagen.cli.models.configuration.Configuration
 import com.nuecho.mutagen.cli.models.configuration.ConfigurationObject
 import com.nuecho.mutagen.cli.models.configuration.reference.ConfigurationObjectReference
 import com.nuecho.mutagen.cli.services.ConfService
-import com.nuecho.mutagen.cli.services.retrieveObject
 import kotlin.reflect.KClass
 
 const val PRINT_MARGIN: String = "  "

@@ -28,16 +28,12 @@ import com.nuecho.mutagen.cli.models.configuration.ConfigurationObjects.toCfgObj
 import com.nuecho.mutagen.cli.models.configuration.ConfigurationTestData.defaultProperties
 import com.nuecho.mutagen.cli.models.configuration.reference.TimeZoneReference
 import com.nuecho.mutagen.cli.models.configuration.reference.referenceSetBuilder
-import com.nuecho.mutagen.cli.services.ConfServiceExtensionMocks.mockConfigurationObjectRepository
 import com.nuecho.mutagen.cli.services.ConfServiceExtensionMocks.mockRetrieveFolderByDbid
 import com.nuecho.mutagen.cli.services.ConfServiceExtensionMocks.mockRetrieveTenant
 import com.nuecho.mutagen.cli.services.ConfServiceExtensionMocks.mockRetrieveTimeZone
-import com.nuecho.mutagen.cli.services.ConfigurationObjectRepository
 import com.nuecho.mutagen.cli.services.ServiceMocks.mockConfService
 import com.nuecho.mutagen.cli.toShortName
 import io.mockk.every
-import io.mockk.objectMockk
-import io.mockk.use
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.equalTo
 import org.junit.jupiter.api.Test
@@ -87,19 +83,16 @@ class GVPResellerTest : ConfigurationObjectTest(
         mockRetrieveTenant(service)
         mockRetrieveTimeZone(service, timeZoneDbid)
 
-        objectMockk(ConfigurationObjectRepository).use {
-            mockConfigurationObjectRepository()
-            val cfgGVPReseller = gvpReseller.createCfgObject(service)
+        val cfgGVPReseller = gvpReseller.createCfgObject(service)
 
-            with(cfgGVPReseller) {
-                assertThat(tenantDBID, equalTo(DEFAULT_TENANT_DBID))
-                assertThat(name, equalTo(gvpReseller.name))
-                assertThat(timeZoneDBID, equalTo(timeZoneDbid))
-                assertThat(startDate.time, equalTo(gvpReseller.startDate))
-                assertThat(state, equalTo(toCfgObjectState(gvpReseller.state)))
-                assertThat(userProperties.asCategorizedProperties(), equalTo(gvpReseller.userProperties))
-                assertThat(folderId, equalTo(DEFAULT_FOLDER_DBID))
-            }
+        with(cfgGVPReseller) {
+            assertThat(tenantDBID, equalTo(DEFAULT_TENANT_DBID))
+            assertThat(name, equalTo(gvpReseller.name))
+            assertThat(timeZoneDBID, equalTo(timeZoneDbid))
+            assertThat(startDate.time, equalTo(gvpReseller.startDate))
+            assertThat(state, equalTo(toCfgObjectState(gvpReseller.state)))
+            assertThat(userProperties.asCategorizedProperties(), equalTo(gvpReseller.userProperties))
+            assertThat(folderId, equalTo(DEFAULT_FOLDER_DBID))
         }
     }
 }

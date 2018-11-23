@@ -20,7 +20,6 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.genesyslab.platform.applicationblocks.com.CfgObject
 import com.genesyslab.platform.applicationblocks.com.ICfgObject
-import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgAgentGroup
 import com.genesyslab.platform.applicationblocks.com.objects.CfgCampaignGroup
 import com.genesyslab.platform.applicationblocks.com.objects.CfgPlaceGroup
@@ -50,7 +49,6 @@ import com.nuecho.mutagen.cli.models.configuration.reference.ScriptReference
 import com.nuecho.mutagen.cli.models.configuration.reference.TenantReference
 import com.nuecho.mutagen.cli.models.configuration.reference.referenceSetBuilder
 import com.nuecho.mutagen.cli.services.ConfService
-import com.nuecho.mutagen.cli.services.getObjectDbid
 import com.nuecho.mutagen.cli.toShortName
 
 data class CampaignGroup(
@@ -118,14 +116,14 @@ data class CampaignGroup(
         userProperties = campaignGroup.userProperties.asCategorizedProperties()
     )
 
-    override fun createCfgObject(service: IConfService) =
+    override fun createCfgObject(service: ConfService) =
         updateCfgObject(service, CfgCampaignGroup(service)).also {
             setProperty("campaignDBID", campaign.let { service.getObjectDbid(it) }, it)
             setProperty("name", name, it)
-            setFolder(folder, it)
+            setFolder(folder, it, service)
         }
 
-    override fun updateCfgObject(service: IConfService, cfgObject: ICfgObject) =
+    override fun updateCfgObject(service: ConfService, cfgObject: ICfgObject) =
         (cfgObject as CfgCampaignGroup).also { cfgCampaignGroup ->
             setProperty("description", description, cfgCampaignGroup)
             setProperty("dialMode", toCfgDialMode(dialMode), cfgCampaignGroup)

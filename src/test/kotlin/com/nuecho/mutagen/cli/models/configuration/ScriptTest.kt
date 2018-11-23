@@ -28,15 +28,11 @@ import com.nuecho.mutagen.cli.models.configuration.ConfigurationObjects.toCfgObj
 import com.nuecho.mutagen.cli.models.configuration.ConfigurationObjects.toCfgScriptType
 import com.nuecho.mutagen.cli.models.configuration.ConfigurationTestData.defaultProperties
 import com.nuecho.mutagen.cli.models.configuration.reference.referenceSetBuilder
-import com.nuecho.mutagen.cli.services.ConfServiceExtensionMocks.mockConfigurationObjectRepository
 import com.nuecho.mutagen.cli.services.ConfServiceExtensionMocks.mockRetrieveFolderByDbid
 import com.nuecho.mutagen.cli.services.ConfServiceExtensionMocks.mockRetrieveTenant
-import com.nuecho.mutagen.cli.services.ConfigurationObjectRepository
 import com.nuecho.mutagen.cli.services.ServiceMocks.mockConfService
 import com.nuecho.mutagen.cli.toShortName
 import io.mockk.every
-import io.mockk.objectMockk
-import io.mockk.use
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.equalTo
 import org.junit.jupiter.api.Test
@@ -80,17 +76,14 @@ class ScriptTest : ConfigurationObjectTest(
         every { service.retrieveObject(CfgScript::class.java, any()) } returns null
         mockRetrieveTenant(service)
 
-        objectMockk(ConfigurationObjectRepository).use {
-            mockConfigurationObjectRepository()
-            val cfgScript = script.createCfgObject(service)
+        val cfgScript = script.createCfgObject(service)
 
-            with(cfgScript) {
-                assertThat(name, equalTo(script.name))
-                assertThat(index, equalTo(script.index))
-                assertThat(state, equalTo(toCfgObjectState(script.state)))
-                assertThat(type, equalTo(toCfgScriptType(script.type)))
-                assertThat(userProperties.asCategorizedProperties(), equalTo(script.userProperties))
-            }
+        with(cfgScript) {
+            assertThat(name, equalTo(script.name))
+            assertThat(index, equalTo(script.index))
+            assertThat(state, equalTo(toCfgObjectState(script.state)))
+            assertThat(type, equalTo(toCfgScriptType(script.type)))
+            assertThat(userProperties.asCategorizedProperties(), equalTo(script.userProperties))
         }
     }
 }

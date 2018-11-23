@@ -61,6 +61,7 @@ import com.genesyslab.platform.configuration.protocol.types.CfgTraceMode
 import com.genesyslab.platform.configuration.protocol.types.CfgTransactionType
 import com.nuecho.mutagen.cli.getFolderReference
 import com.nuecho.mutagen.cli.models.configuration.reference.FolderReference
+import com.nuecho.mutagen.cli.services.ConfService
 
 object ConfigurationObjects {
 
@@ -80,8 +81,8 @@ object ConfigurationObjects {
     fun getCfgObjectType(cfgObjectClass: Class<out ICfgObject>) =
         CfgObjectType.getValue(CfgObjectType::class.java, cfgObjectClass.simpleName) as CfgObjectType
 
-    fun setFolder(folder: FolderReference?, cfgObject: CfgObject) =
-        folder?.let { cfgObject.folderId = folder.toFolderDbid(cfgObject.configurationService) }
+    fun setFolder(folder: FolderReference?, cfgObject: CfgObject, service: ConfService) =
+        folder?.let { cfgObject.folderId = folder.toFolderDbid(service) }
 
     fun setProperty(name: String, value: Any?, cfgBase: ICfgBase) =
         value?.let { cfgBase.setProperty(name, it) }

@@ -27,15 +27,11 @@ import com.nuecho.mutagen.cli.models.configuration.ConfigurationObjects.toCfgObj
 import com.nuecho.mutagen.cli.models.configuration.ConfigurationObjects.toCfgTransactionType
 import com.nuecho.mutagen.cli.models.configuration.ConfigurationTestData.defaultProperties
 import com.nuecho.mutagen.cli.models.configuration.reference.referenceSetBuilder
-import com.nuecho.mutagen.cli.services.ConfServiceExtensionMocks.mockConfigurationObjectRepository
 import com.nuecho.mutagen.cli.services.ConfServiceExtensionMocks.mockRetrieveFolderByDbid
 import com.nuecho.mutagen.cli.services.ConfServiceExtensionMocks.mockRetrieveTenant
-import com.nuecho.mutagen.cli.services.ConfigurationObjectRepository
 import com.nuecho.mutagen.cli.services.ServiceMocks.mockConfService
 import com.nuecho.mutagen.cli.toShortName
 import io.mockk.every
-import io.mockk.objectMockk
-import io.mockk.use
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.equalTo
 import org.junit.jupiter.api.Test
@@ -84,19 +80,15 @@ class TransactionTest : ConfigurationObjectTest(
         every { service.retrieveObject(CfgTransaction::class.java, any()) } returns null
         mockRetrieveTenant(service)
 
-        objectMockk(ConfigurationObjectRepository).use {
-            mockConfigurationObjectRepository()
-            val cfgTransaction = transaction.createCfgObject(service)
-
-            with(cfgTransaction) {
-                assertThat(name, equalTo(transaction.name))
-                assertThat(alias, equalTo(transaction.alias))
-                assertThat(type, equalTo(toCfgTransactionType(transaction.type)))
-                assertThat(recordPeriod, equalTo(transaction.recordPeriod))
-                assertThat(description, equalTo(transaction.description))
-                assertThat(state, equalTo(toCfgObjectState(transaction.state)))
-                assertThat(userProperties.asCategorizedProperties(), equalTo(transaction.userProperties))
-            }
+        val cfgTransaction = transaction.createCfgObject(service)
+        with(cfgTransaction) {
+            assertThat(name, equalTo(transaction.name))
+            assertThat(alias, equalTo(transaction.alias))
+            assertThat(type, equalTo(toCfgTransactionType(transaction.type)))
+            assertThat(recordPeriod, equalTo(transaction.recordPeriod))
+            assertThat(description, equalTo(transaction.description))
+            assertThat(state, equalTo(toCfgObjectState(transaction.state)))
+            assertThat(userProperties.asCategorizedProperties(), equalTo(transaction.userProperties))
         }
     }
 }

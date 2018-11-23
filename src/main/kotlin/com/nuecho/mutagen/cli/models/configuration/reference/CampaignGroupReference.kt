@@ -15,18 +15,17 @@
 
 package com.nuecho.mutagen.cli.models.configuration.reference
 
-import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgCampaignGroup
 import com.genesyslab.platform.applicationblocks.com.queries.CfgCampaignGroupQuery
 import com.nuecho.mutagen.cli.models.configuration.ConfigurationObjectNotFoundException
-import com.nuecho.mutagen.cli.services.getObjectDbid
+import com.nuecho.mutagen.cli.services.ConfService
 
 data class CampaignGroupReference(
     val campaign: CampaignGroupCampaignReference,
     val name: String
 ) : ConfigurationObjectReference<CfgCampaignGroup>(CfgCampaignGroup::class.java) {
 
-    override fun toQuery(service: IConfService) = CfgCampaignGroupQuery().also {
+    override fun toQuery(service: ConfService) = CfgCampaignGroupQuery().also {
         it.name = name
         it.campaignDbid = service.getObjectDbid(campaign) ?: throw ConfigurationObjectNotFoundException(campaign)
     }

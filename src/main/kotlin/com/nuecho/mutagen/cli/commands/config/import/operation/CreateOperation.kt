@@ -22,7 +22,7 @@ import com.nuecho.mutagen.cli.services.ConfService
 class CreateOperation(configurationObject: ConfigurationObject, service: ConfService) :
     ImportOperation(CREATE, configurationObject, service) {
 
-    override fun apply() {
-        save(configurationObject.createCfgObject(service))
+    override fun apply() = configurationObject.createCfgObject(service).also {
+        save(it)
     }
 }

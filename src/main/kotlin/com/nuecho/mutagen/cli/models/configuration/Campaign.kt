@@ -21,7 +21,6 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.genesyslab.platform.applicationblocks.com.CfgObject
 import com.genesyslab.platform.applicationblocks.com.ICfgObject
-import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgCallingListInfo
 import com.genesyslab.platform.applicationblocks.com.objects.CfgCampaign
 import com.nuecho.mutagen.cli.asBoolean
@@ -42,7 +41,6 @@ import com.nuecho.mutagen.cli.models.configuration.reference.ScriptReference
 import com.nuecho.mutagen.cli.models.configuration.reference.TenantReference
 import com.nuecho.mutagen.cli.models.configuration.reference.referenceSetBuilder
 import com.nuecho.mutagen.cli.services.ConfService
-import com.nuecho.mutagen.cli.services.getObjectDbid
 import com.nuecho.mutagen.cli.toShortName
 
 /**
@@ -76,16 +74,16 @@ data class Campaign(
         userProperties = campaign.userProperties.asCategorizedProperties()
     )
 
-    override fun createCfgObject(service: IConfService) =
+    override fun createCfgObject(service: ConfService) =
         updateCfgObject(service, CfgCampaign(service)).also {
             setProperty("name", name, it)
             setProperty("tenantDBID", service.getObjectDbid(tenant), it)
-            setFolder(folder, it)
+            setFolder(folder, it, service)
         }
 
-    override fun updateCfgObject(service: IConfService, cfgObject: ICfgObject) =
+    override fun updateCfgObject(service: ConfService, cfgObject: ICfgObject) =
         (cfgObject as CfgCampaign).also {
-            setProperty("callingLists", toCfgCallingListList(callingLists, it), it)
+            setProperty("callingLists", toCfgCallingListList(callingLists, it, service), it)
             setProperty("description", description, it)
             setProperty("scriptDBID", service.getObjectDbid(script), it)
             setProperty("state", toCfgObjectState(state), it)
@@ -111,10 +109,9 @@ data class Campaign(
             .toSet()
 }
 
-fun toCfgCallingListList(callingListInfos: List<CallingListInfo>?, campaign: CfgCampaign) =
+fun toCfgCallingListList(callingListInfos: List<CallingListInfo>?, campaign: CfgCampaign, service: ConfService) =
     if (callingListInfos == null) null
     else {
-        val service = campaign.configurationService
         callingListInfos.map {
             CfgCallingListInfo(service, campaign).apply {
                 callingListDBID = service.getObjectDbid(it.callingList)

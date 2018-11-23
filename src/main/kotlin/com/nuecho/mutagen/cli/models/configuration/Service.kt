@@ -21,7 +21,6 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.genesyslab.platform.applicationblocks.com.CfgObject
 import com.genesyslab.platform.applicationblocks.com.ICfgObject
-import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgSolutionComponent
 import com.genesyslab.platform.applicationblocks.com.objects.CfgSolutionComponentDefinition
@@ -42,7 +41,6 @@ import com.nuecho.mutagen.cli.models.configuration.reference.ServiceReference
 import com.nuecho.mutagen.cli.models.configuration.reference.TenantReference
 import com.nuecho.mutagen.cli.models.configuration.reference.referenceSetBuilder
 import com.nuecho.mutagen.cli.services.ConfService
-import com.nuecho.mutagen.cli.services.getObjectDbid
 import com.nuecho.mutagen.cli.toShortName
 
 data class Service(
@@ -78,16 +76,18 @@ data class Service(
         folder = cfgService.getFolderReference()
     )
 
-    override fun createCfgObject(service: IConfService) =
+    override fun createCfgObject(service: ConfService) =
         updateCfgObject(service, CfgService(service)).also {
             setProperty("name", name, it)
             setProperty("solutionType", toCfgSolutionType(solutionType), it)
-            setFolder(folder, it)
+            setFolder(folder, it, service)
         }
 
-    override fun updateCfgObject(service: IConfService, cfgObject: ICfgObject): CfgService =
+    override fun updateCfgObject(service: ConfService, cfgObject: ICfgObject): CfgService =
         (cfgObject as CfgService).also {
-            setProperty("components", components?.map { component -> component.toCfgSolutionComponent(it) }, it)
+            setProperty("components", components?.map { component ->
+                component.toCfgSolutionComponent(it, service)
+            }, it)
             setProperty("SCSDBID", service.getObjectDbid(scs), it)
             setProperty("assignedTenantDBID", service.getObjectDbid(assignedTenant), it)
             setProperty("version", version, it)
@@ -139,8 +139,7 @@ data class SolutionComponent(
         isOptional = cfgSolutionComponent.isOptional?.asBoolean()
     )
 
-    fun toCfgSolutionComponent(cfgService: CfgService): CfgSolutionComponent {
-        val service = cfgService.configurationService
+    fun toCfgSolutionComponent(cfgService: CfgService, service: ConfService): CfgSolutionComponent {
         val solutionComponent = CfgSolutionComponent(cfgService.configurationService, cfgService)
 
         setProperty("startupPriority", startupPriority, solutionComponent)

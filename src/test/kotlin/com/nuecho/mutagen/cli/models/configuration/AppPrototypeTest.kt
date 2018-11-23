@@ -27,14 +27,10 @@ import com.nuecho.mutagen.cli.models.configuration.ConfigurationObjects.toCfgApp
 import com.nuecho.mutagen.cli.models.configuration.ConfigurationObjects.toCfgObjectState
 import com.nuecho.mutagen.cli.models.configuration.ConfigurationTestData.defaultProperties
 import com.nuecho.mutagen.cli.models.configuration.reference.referenceSetBuilder
-import com.nuecho.mutagen.cli.services.ConfServiceExtensionMocks.mockConfigurationObjectRepository
 import com.nuecho.mutagen.cli.services.ConfServiceExtensionMocks.mockRetrieveFolderByDbid
-import com.nuecho.mutagen.cli.services.ConfigurationObjectRepository
 import com.nuecho.mutagen.cli.services.ServiceMocks.mockConfService
 import com.nuecho.mutagen.cli.toShortName
 import io.mockk.every
-import io.mockk.objectMockk
-import io.mockk.use
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.equalTo
 import org.junit.jupiter.api.Test
@@ -90,19 +86,16 @@ class AppPrototypeTest : ConfigurationObjectTest(
     fun `updateCfgObject should properly create CfgAppPrototype`() {
         every { service.retrieveObject(CfgAppPrototype::class.java, any()) } returns null
 
-        objectMockk(ConfigurationObjectRepository).use {
-            mockConfigurationObjectRepository()
-            val cfgAppPrototype = appPrototype.createCfgObject(service)
+        val cfgAppPrototype = appPrototype.createCfgObject(service)
 
-            with(cfgAppPrototype) {
-                assertThat(name, equalTo(appPrototype.name))
-                assertThat(type, equalTo(toCfgAppType(appPrototype.type)))
-                assertThat(version, equalTo(appPrototype.version))
-                assertThat(options.asCategorizedProperties(), equalTo(appPrototype.options))
-                assertThat(state, equalTo(toCfgObjectState(appPrototype.state)))
-                assertThat(userProperties.asCategorizedProperties(), equalTo(appPrototype.userProperties))
-                assertThat(folderId, equalTo(DEFAULT_FOLDER_DBID))
-            }
+        with(cfgAppPrototype) {
+            assertThat(name, equalTo(appPrototype.name))
+            assertThat(type, equalTo(toCfgAppType(appPrototype.type)))
+            assertThat(version, equalTo(appPrototype.version))
+            assertThat(options.asCategorizedProperties(), equalTo(appPrototype.options))
+            assertThat(state, equalTo(toCfgObjectState(appPrototype.state)))
+            assertThat(userProperties.asCategorizedProperties(), equalTo(appPrototype.userProperties))
+            assertThat(folderId, equalTo(DEFAULT_FOLDER_DBID))
         }
     }
 }

@@ -26,7 +26,7 @@ class UpdateOperation(
     service: ConfService
 ) : ImportOperation(UPDATE, configurationObject, service) {
 
-    override fun apply() {
-        save(configurationObject.updateCfgObject(service, cfgRemoteObject))
+    override fun apply() = configurationObject.updateCfgObject(service, cfgRemoteObject).also {
+        save(it)
     }
 }

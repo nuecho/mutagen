@@ -19,7 +19,6 @@ import com.nuecho.mutagen.cli.models.configuration.ConfigurationObjectMocks.mock
 import com.nuecho.mutagen.cli.models.configuration.PhysicalSwitch
 import com.nuecho.mutagen.cli.models.configuration.reference.PhysicalSwitchReference
 import com.nuecho.mutagen.cli.services.ServiceMocks.mockConfService
-import com.nuecho.mutagen.cli.services.retrieveObject
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk

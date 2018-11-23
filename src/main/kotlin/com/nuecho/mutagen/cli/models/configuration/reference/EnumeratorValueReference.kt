@@ -15,18 +15,17 @@
 
 package com.nuecho.mutagen.cli.models.configuration.reference
 
-import com.genesyslab.platform.applicationblocks.com.IConfService
 import com.genesyslab.platform.applicationblocks.com.objects.CfgEnumeratorValue
 import com.genesyslab.platform.applicationblocks.com.queries.CfgEnumeratorValueQuery
 import com.nuecho.mutagen.cli.models.configuration.ConfigurationObjectNotFoundException
-import com.nuecho.mutagen.cli.services.getObjectDbid
+import com.nuecho.mutagen.cli.services.ConfService
 
 data class EnumeratorValueReference(
     val name: String,
     val enumerator: EnumeratorReference
 ) : ConfigurationObjectReference<CfgEnumeratorValue>(CfgEnumeratorValue::class.java) {
 
-    override fun toQuery(service: IConfService) = CfgEnumeratorValueQuery().also {
+    override fun toQuery(service: ConfService) = CfgEnumeratorValueQuery().also {
         it.name = name
         it.enumeratorDbid = service.getObjectDbid(enumerator) ?: throw ConfigurationObjectNotFoundException(enumerator)
     }
