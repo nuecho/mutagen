@@ -109,7 +109,7 @@ object AudioImport {
         info { "Logging in to GAX as '${environment.user}'." }
         login(environment.user, environment.password!!.value, true, gaxUrl)
 
-        val existingMessages = getMessagesData(gaxUrl)
+        val existingMessages = getMessagesData(gaxUrl, emptySet())
         checkDuplicatedMessagesNames(messages, existingMessages)
 
         val personalityIdToQueryIdMap = getPersonalityIdsMap(getPersonalities(gaxUrl))

@@ -37,12 +37,12 @@ object AudioServices {
 
     // URL Components
     const val HTTP = "http://"
+    const val HTTPS = "https://"
     const val DEFAULT_GAX_API_PATH = "/gax/api"
     const val LOGIN_PATH = "/session/login"
     const val UPLOAD_PATH = "/upload/?callback="
     const val AUDIO_RESOURCES_PATH = "/arm/audioresources"
     const val PERSONALITIES_PATH = "/arm/personalities/"
-    const val AUDIO_MESSAGES_PATH = "$AUDIO_RESOURCES_PATH/?tenantList=1"
     const val FILES_PATH = "/files"
     const val AUDIO_PATH = "/audio?"
 
@@ -56,8 +56,11 @@ object AudioServices {
     const val APPLICATION_JSON = "application/json"
     const val LOCATION = "Location"
 
+    // Parameters
+    const val TENANT_LIST = "tenantList"
+
     fun buildGaxUrl(environment: Environment, apiPath: String) =
-        "$HTTP${environment.host}:${environment.port}$apiPath"
+        "${if (environment.tls) HTTPS else HTTP}${environment.host}:${environment.port}$apiPath"
 
     fun login(user: String, password: String, isPasswordEncrypted: Boolean, gaxUrl: String) {
         "$gaxUrl$LOGIN_PATH"
@@ -138,12 +141,14 @@ object AudioServices {
             }
     }
 
-    fun getMessagesData(gaxUrl: String): List<ArmMessage> {
+    fun getMessagesData(gaxUrl: String, tenantDbids: Set<String>): List<ArmMessage> {
         val messageListType = TypeFactory
             .defaultInstance()
             .constructCollectionType(List::class.java, ArmMessage::class.java)
 
-        "$gaxUrl$AUDIO_MESSAGES_PATH"
+        val parameters = if (tenantDbids.isEmpty()) "" else "?$TENANT_LIST=" + tenantDbids.joinToString(",")
+
+        "$gaxUrl$AUDIO_RESOURCES_PATH$parameters"
             .httpGet()
             .header(CONTENT_TYPE to APPLICATION_JSON)
             .responseString()
@@ -175,7 +180,7 @@ object AudioServices {
             .let { (_, response, _) ->
                 if (response.statusCode != SUCCESS_CODE) {
                     warn {
-                        "${destination.parentFile}/$destination download failed, status code: ${response.statusCode}"
+                        "$destination download failed, status code: ${response.statusCode}"
                     }
                     destination.delete()
                 }
