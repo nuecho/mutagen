@@ -17,15 +17,18 @@ exports[`[mutagen audio export --help] should print export usage: export usage 1
 Object {
   "stderr": "",
   "stdout": "Usage: export [-?] [--with-audios] [--gax-api-path=<gaxApiPath>]
-              [--personality-ids=personality-id[,personality-id]...]...
-              outputFile
+              [--personality-ids=personalityId[,personalityId]...]...
+              [--tenant-dbids=tenantDbid[,tenantDbid]...]... outputFile
 Export audio files from ARM
       outputFile              Output audio description file.
       --gax-api-path=<gaxApiPath>
                               GAX API path. Defaults to '/gax/api'.
-      --personality-ids=personality-id[,personality-id]...
+      --personality-ids=personalityId[,personalityId]...
                               Comma separated list of which personalities'
                                 audios to export (10,11,12,...).
+      --tenant-dbids=tenantDbid[,tenantDbid]...
+                              Comma separated list of tenant dbids to export
+                                (101,102,103,...).
       --with-audios           Download messages' audio files.
   -?, -h, --help              Show this help message.
 ",
@@ -35,12 +38,12 @@ Export audio files from ARM
 exports[`[mutagen audio export --personality-ids=x] should export messages into a csv file only for selected personalities: csv file 1`] = `
 Object {
   "stderr": "",
-  "stdout": "name,type,description,messageArId,tenantId,11
-\\"export_test music name 1\\",MUSIC,\\"this is the description for music name 1\\",<removed-for-testing-purposes>,1,\\"11/export_test music name 1.wav\\"
-\\"export_test message name 1\\",ANNOUNCEMENT,\\"this is the description for message name 1\\",<removed-for-testing-purposes>,1,\\"11/export_test message name 1.wav\\"
-\\"export_test music name 2\\",MUSIC,\\"this is the description for music name 2\\",<removed-for-testing-purposes>,1,
-\\"export_test message name 2\\",ANNOUNCEMENT,\\"this is the description for message name 2\\",<removed-for-testing-purposes>,1,
-\\"export_test music name 3\\",MUSIC,\\"this is the description for music name 3\\",<removed-for-testing-purposes>,1,\\"11/export_test music name 3.wav\\"
+  "stdout": "name,type,description,messageArId,tenantId,10,11
+\\"export_test music name 1\\",MUSIC,\\"this is the description for music name 1\\",<removed-for-testing-purposes>,1,,\\"11/export_test music name 1.wav\\"
+\\"export_test message name 1\\",ANNOUNCEMENT,\\"this is the description for message name 1\\",<removed-for-testing-purposes>,1,\\"10/export_test message name 1.wav\\",\\"11/export_test message name 1.wav\\"
+\\"export_test music name 2\\",MUSIC,\\"this is the description for music name 2\\",<removed-for-testing-purposes>,1,,
+\\"export_test message name 2\\",ANNOUNCEMENT,\\"this is the description for message name 2\\",<removed-for-testing-purposes>,1,\\"10/export_test message name 2.wav\\",
+\\"export_test music name 3\\",MUSIC,\\"this is the description for music name 3\\",<removed-for-testing-purposes>,1,\\"10/export_test music name 3.wav\\",\\"11/export_test music name 3.wav\\"
 ",
 }
 `;
@@ -105,15 +108,18 @@ Object {
   "stderr": "",
   "stdout": "Missing required parameter: outputFile
 Usage: export [-?] [--with-audios] [--gax-api-path=<gaxApiPath>]
-              [--personality-ids=personality-id[,personality-id]...]...
-              outputFile
+              [--personality-ids=personalityId[,personalityId]...]...
+              [--tenant-dbids=tenantDbid[,tenantDbid]...]... outputFile
 Export audio files from ARM
       outputFile              Output audio description file.
       --gax-api-path=<gaxApiPath>
                               GAX API path. Defaults to '/gax/api'.
-      --personality-ids=personality-id[,personality-id]...
+      --personality-ids=personalityId[,personalityId]...
                               Comma separated list of which personalities'
                                 audios to export (10,11,12,...).
+      --tenant-dbids=tenantDbid[,tenantDbid]...
+                              Comma separated list of tenant dbids to export
+                                (101,102,103,...).
       --with-audios           Download messages' audio files.
   -?, -h, --help              Show this help message.
 ",

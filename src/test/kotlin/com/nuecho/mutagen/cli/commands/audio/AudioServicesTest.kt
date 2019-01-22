@@ -22,18 +22,21 @@ import com.github.kittinunf.fuel.core.Request
 import com.github.kittinunf.fuel.core.Response
 import com.nuecho.mutagen.cli.TestResources.getTestResource
 import com.nuecho.mutagen.cli.commands.audio.AudioServices.APPLICATION_JSON
-import com.nuecho.mutagen.cli.commands.audio.AudioServices.AUDIO_MESSAGES_PATH
 import com.nuecho.mutagen.cli.commands.audio.AudioServices.AUDIO_PATH
 import com.nuecho.mutagen.cli.commands.audio.AudioServices.AUDIO_RESOURCES_PATH
 import com.nuecho.mutagen.cli.commands.audio.AudioServices.CONTENT_TYPE
 import com.nuecho.mutagen.cli.commands.audio.AudioServices.CREATE_MESSAGE_SUCCESS_CODE
 import com.nuecho.mutagen.cli.commands.audio.AudioServices.FILES_PATH
+import com.nuecho.mutagen.cli.commands.audio.AudioServices.HTTP
+import com.nuecho.mutagen.cli.commands.audio.AudioServices.HTTPS
 import com.nuecho.mutagen.cli.commands.audio.AudioServices.LOCATION
 import com.nuecho.mutagen.cli.commands.audio.AudioServices.LOGIN_PATH
 import com.nuecho.mutagen.cli.commands.audio.AudioServices.LOGIN_SUCCESS_CODE
 import com.nuecho.mutagen.cli.commands.audio.AudioServices.PERSONALITIES_PATH
 import com.nuecho.mutagen.cli.commands.audio.AudioServices.SUCCESS_CODE
+import com.nuecho.mutagen.cli.commands.audio.AudioServices.TENANT_LIST
 import com.nuecho.mutagen.cli.commands.audio.AudioServices.UPLOAD_PATH
+import com.nuecho.mutagen.cli.commands.audio.AudioServices.buildGaxUrl
 import com.nuecho.mutagen.cli.commands.audio.AudioServices.createMessage
 import com.nuecho.mutagen.cli.commands.audio.AudioServices.downloadAudioFile
 import com.nuecho.mutagen.cli.commands.audio.AudioServices.getMessagesData
@@ -43,6 +46,7 @@ import com.nuecho.mutagen.cli.commands.audio.AudioServices.uploadAudio
 import com.nuecho.mutagen.cli.commands.audio.MessageType.ANNOUNCEMENT
 import com.nuecho.mutagen.cli.commands.audio.export.AudioExport.buildCsvSchema
 import com.nuecho.mutagen.cli.commands.audio.export.AudioExport.writeCsv
+import com.nuecho.mutagen.cli.preferences.environment.Environment
 import org.hamcrest.CoreMatchers.startsWith
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.containsString
@@ -65,6 +69,13 @@ class AudioServicesTest {
     private val messagesData = File(getTestResource("commands/audio/messages_data.json").toURI())
     private val parentFile = File(getTestResource("commands/audio").toURI())
     private val audioWav = File(getTestResource("commands/audio/audio.wav").toURI())
+
+    @Test
+    fun `buildGaxUrl should properly consider tls`() {
+        fun environment(tls: Boolean) = Environment(host = "host", user = "user", rawPassword = null, tls = tls)
+        assertThat(buildGaxUrl(environment(true), "path"), startsWith(HTTPS))
+        assertThat(buildGaxUrl(environment(false), "path"), startsWith(HTTP))
+    }
 
     @Test
     fun `uploadAudio should properly build the Request`() {
@@ -126,11 +137,11 @@ class AudioServicesTest {
         ) {
             assertThat(it.method, equalTo(Method.GET))
             assertThat(it.headers[CONTENT_TYPE], equalTo(APPLICATION_JSON))
-            assertThat(it.path, equalTo("$GAX_URL$AUDIO_MESSAGES_PATH"))
+            assertThat(it.path, equalTo("$GAX_URL$AUDIO_RESOURCES_PATH"))
         }
 
         writeCsv(
-            getMessagesData(GAX_URL),
+            getMessagesData(GAX_URL, emptySet()),
             buildCsvSchema(personalities),
             ByteArrayOutputStream()
         )
@@ -186,21 +197,24 @@ class AudioServicesTest {
             ByteArrayInputStream("".toByteArray())
         )
         assertThrows(AudioServicesException::class.java) {
-            getMessagesData(GAX_URL)
+            getMessagesData(GAX_URL, emptySet())
         }
     }
 
     @Test
-    fun `getMessagesData should properly build the Request`() {
+    fun `getMessagesData with tenant dbids should properly build the Request`() {
+        val tenantDbids = setOf("101", "102", "103")
+        val expectedPath = "$GAX_URL$AUDIO_RESOURCES_PATH?$TENANT_LIST=${tenantDbids.joinToString(",")}"
+
         mockHttpClient(
             SUCCESS_CODE, messagesData.inputStream()
         ) {
             assertThat(it.method, equalTo(Method.GET))
             assertThat(it.headers[CONTENT_TYPE], equalTo(APPLICATION_JSON))
-            assertThat(it.path, equalTo("$GAX_URL$AUDIO_MESSAGES_PATH"))
+            assertThat(it.path, equalTo(expectedPath))
         }
 
-        getMessagesData(GAX_URL)
+        getMessagesData(GAX_URL, tenantDbids)
     }
 
     @Test

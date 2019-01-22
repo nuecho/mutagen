@@ -98,7 +98,7 @@ class AudioExportCommandTest {
         )
         assertThrows(AudioServicesException::class.java) {
             writeCsv(
-                getMessagesData(GAX_URL),
+                getMessagesData(GAX_URL, emptySet()),
                 schema,
                 ByteArrayOutputStream()
             )
@@ -116,7 +116,7 @@ class AudioExportCommandTest {
         assertThat(isSelectedPersonality(FRANK_ID, setOf(FRANK_ID, JOELLA_ID)), `is`(true))
         assertThat(isSelectedPersonality(JOELLA_ID, setOf(FRANK_ID, JOELLA_ID)), `is`(true))
         assertThat(isSelectedPersonality(INVALID_PERSONALITY_ID, setOf(FRANK_ID, JOELLA_ID)), `is`(false))
-        assertThat(isSelectedPersonality(FRANK_ID, null), `is`(true))
+        assertThat(isSelectedPersonality(FRANK_ID, emptySet()), `is`(true))
     }
 
     @Test

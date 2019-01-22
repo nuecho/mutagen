@@ -59,10 +59,18 @@ class AudioExportCommand : MutagenCliCommand() {
     @CommandLine.Option(
         names = ["--personality-ids"],
         split = ",",
-        paramLabel = "personality-id",
+        paramLabel = "personalityId",
         description = ["Comma separated list of which personalities' audios to export (10,11,12,...)."]
     )
     private var personalityIds: Set<String>? = null
+
+    @CommandLine.Option(
+        names = ["--tenant-dbids"],
+        split = ",",
+        paramLabel = "tenantDbid",
+        description = ["Comma separated list of tenant dbids to export (101,102,103,...)."]
+    )
+    private var tenantIds: Set<String>? = null
 
     @CommandLine.Option(
         names = ["--gax-api-path"],
@@ -82,11 +90,14 @@ class AudioExportCommand : MutagenCliCommand() {
 
     override fun execute(): Int {
         AudioExport.exportAudios(
-            getMutagenCli().loadEnvironment(password),
-            outputFile!!,
-            withAudios,
-            personalityIds,
-            gaxApiPath
+            AudioExportParameters(
+                getMutagenCli().loadEnvironment(password),
+                outputFile!!,
+                withAudios,
+                tenantIds ?: emptySet(),
+                personalityIds ?: emptySet(),
+                gaxApiPath
+            )
         )
 
         return 0
@@ -94,36 +105,30 @@ class AudioExportCommand : MutagenCliCommand() {
 }
 
 object AudioExport {
-
-    fun exportAudios(
-        environment: Environment,
-        outputFile: File,
-        withAudios: Boolean,
-        selectedPersonalityIds: Set<String>?,
-        gaxApiPath: String
-    ) {
+    fun exportAudios(parameters: AudioExportParameters) {
         FuelManager.instance.removeAllResponseInterceptors()
         CookieHandler.setDefault(CookieManager())
 
+        val (environment, outputFile, withAudios, tenantDbids, personalityIds, gaxApiPath) = parameters
         val gaxUrl = buildGaxUrl(environment, gaxApiPath)
 
         info { "Logging in to GAX as '${environment.user}'." }
         login(environment.user, environment.password!!.value, true, gaxUrl)
 
         val personalities = getPersonalities(gaxUrl)
-        val missingPersonalityIds = getMissingPersonalityIds(personalities, selectedPersonalityIds)
+        val missingPersonalityIds = getMissingPersonalityIds(personalities, personalityIds)
         if (missingPersonalityIds.isNotEmpty()) {
             warn { "$missingPersonalityIds do not refer to existing personalities" }
         }
 
-        val csvSchema = buildCsvSchema(selectedPersonalityIds ?: personalities.map { it.personalityId }.toSortedSet())
-        val messages = getMessagesData(gaxUrl)
+        val csvSchema = buildCsvSchema(personalities.map { it.personalityId }.toSortedSet())
+        val messages = getMessagesData(gaxUrl, tenantDbids)
         val audioDirectory = (outputFile.parentFile ?: File(System.getProperty("user.dir"))).apply { createDirectory() }
 
         writeCsv(messages, csvSchema, outputFile.outputStream())
 
         if (withAudios) {
-            val audioFilesInfos = getAudioMap(messages, selectedPersonalityIds, audioDirectory.path)
+            val audioFilesInfos = getAudioMap(messages, personalityIds, audioDirectory.path)
             downloadAudioFiles(gaxUrl, audioFilesInfos)
         }
     }
@@ -150,7 +155,7 @@ object AudioExport {
 
     internal fun getAudioMap(
         messages: List<ArmMessage>,
-        selectedPersonalities: Set<String>?,
+        selectedPersonalities: Set<String>,
         audioDirectoryPath: String
     ): Map<String, AudioRequestInfo> {
         val audioFilesMap = mutableMapOf<String, AudioRequestInfo>()
@@ -170,8 +175,8 @@ object AudioExport {
         return audioFilesMap
     }
 
-    internal fun isSelectedPersonality(personalityId: String, selectedPersonalities: Set<String>?) =
-        selectedPersonalities == null || selectedPersonalities.contains(personalityId)
+    internal fun isSelectedPersonality(personalityId: String, selectedPersonalities: Set<String>) =
+        selectedPersonalities.isEmpty() || selectedPersonalities.contains(personalityId)
 
     internal fun getMissingPersonalityIds(personalities: Set<Personality>, selectedPersonalityIds: Set<String>?) =
         selectedPersonalityIds?.subtract(personalities.map { it.personalityId }) ?: emptySet()
@@ -193,3 +198,12 @@ object AudioExport {
             throw AudioServicesException("Failed to create directory $this")
     }
 }
+
+data class AudioExportParameters(
+    val environment: Environment,
+    val outputFile: File,
+    val withAudios: Boolean,
+    val tenantDbids: Set<String>,
+    val personalityIds: Set<String>,
+    val gaxApiPath: String
+)
